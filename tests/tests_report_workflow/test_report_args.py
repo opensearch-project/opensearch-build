@@ -45,6 +45,12 @@ class TestReportArgs(unittest.TestCase):
         self.assertIsNotNone(report_args.test_type)
         self.assertEqual(report_args.logging_level, logging.INFO)
         self.assertEqual(report_args.test_manifest_path, self.TEST_MANIFEST_PATH)
+        self.assertEqual(report_args.release_candidate, "0")
+
+    @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_PATH, "--release-candidate", "100"])
+    def test_release_candidate(self) -> None:
+        report_args = ReportArgs()
+        self.assertEqual(report_args.release_candidate, "100")
 
     @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_PATH, "--component", "component1", "component2"])
     def test_components(self) -> None:

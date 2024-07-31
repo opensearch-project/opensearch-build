@@ -15,6 +15,7 @@ from urllib.error import HTTPError
 import validators
 import yaml
 
+from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
 from manifests.test_report_manifest import TestReportManifest
 from report_workflow.report_args import ReportArgs
@@ -26,11 +27,13 @@ class TestReportRunner:
     tests_dir: str
     test_report_manifest: TestReportManifest
     test_run_data: dict
+    bundle_manifest: BundleManifest
 
     def __init__(self, args: ReportArgs, test_manifest: TestManifest) -> None:
         self.args = args
         self.base_path = args.base_path
         self.test_manifest = test_manifest
+        self.release_candidate = self.args.release_candidate
         self.test_run_data = self.test_report_manifest_data_template("manifest")
         self.product_name = test_manifest.__to_dict__().get("name")
         self.name = self.product_name.replace(" ", "-").lower()
@@ -48,6 +51,13 @@ class TestReportRunner:
 
     def update_data(self) -> dict:
         self.test_run_data["name"] = self.product_name
+        self.bundle_manifest = BundleManifest.from_urlpath(self.dist_manifest)
+        self.test_run_data["version"] = self.bundle_manifest.build.version
+        self.test_run_data["platform"] = self.bundle_manifest.build.platform
+        self.test_run_data["architecture"] = self.bundle_manifest.build.architecture
+        self.test_run_data["distribution"] = self.bundle_manifest.build.distribution
+        self.test_run_data["id"] = self.bundle_manifest.build.id
+        self.test_run_data["rc"] = self.release_candidate
         self.test_run_data["test-run"] = self.update_test_run_data()
         for component in self.test_components.select(focus=self.args.components):
             if self.test_manifest.components[component.name].__to_dict__().get(self.test_type) is not None:
@@ -109,8 +119,14 @@ class TestReportRunner:
     def test_report_manifest_data_template(self, template_type: str) -> Any:
         templates = {
             "manifest": {
-                "schema-version": "1.0",
+                "schema-version": "1.1",
                 "name": "",
+                "version": "",
+                "platform": "",
+                "architecture": "",
+                "distribution": "",
+                "id": "",
+                "rc": "",
                 "test-run": {},
                 "components": []
             },
@@ -120,6 +136,7 @@ class TestReportRunner:
                 "configs": []
             }
         }
+
         return templates[template_type]
 
 

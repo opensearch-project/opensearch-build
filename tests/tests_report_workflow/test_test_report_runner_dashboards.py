@@ -16,41 +16,40 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class TestTestReportRunnerDashboards(unittest.TestCase):
-    TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH = os.path.join(
-        os.path.dirname(__file__), "data", "test-manifest-opensearch-dashboards.yml"
-    )
-
+    DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+    TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH = os.path.join(DATA_DIR, "test-manifest-opensearch-dashboards.yml")
     TEST_MANIFEST_OPENSEARCH_DASHBOARDS = TestManifest.from_path(TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH)
 
     @patch("report_workflow.report_args.ReportArgs")
-    @patch("manifests.test_manifest.TestManifest")
-    def test_runner_dashboards_init(self, report_args_mock: MagicMock, test_manifest_mock: MagicMock) -> None:
+    def test_runner_dashboards_init(self, report_args_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH
-        report_args_mock.artifact_paths = {"opensearch-dashboards": "foo/bar"}
+        report_args_mock.artifact_paths = {"opensearch-dashboards": self.DATA_DIR}
         report_args_mock.test_run_id = 123
+        report_args_mock.base_path = self.DATA_DIR
         report_args_mock.test_type = "integ-test"
+        report_args_mock.release_candidate = "100"
 
         test_run_runner = TestReportRunner(report_args_mock, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS)
+        test_run_runner_data = test_run_runner.update_data()
         self.assertEqual(test_run_runner.name, "opensearch-dashboards")
         self.assertEqual(test_run_runner.test_run_id, 123)
         self.assertEqual(test_run_runner.test_type, "integ-test")
         self.assertEqual(test_run_runner.test_manifest_path, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH)
+        self.assertEqual(test_run_runner_data["version"], "1.3.18")
+        self.assertEqual(test_run_runner_data["platform"], "linux")
+        self.assertEqual(test_run_runner_data["architecture"], "x64")
+        self.assertEqual(test_run_runner_data["distribution"], "tar")
+        self.assertEqual(test_run_runner_data["id"], "7791")
+        self.assertEqual(test_run_runner_data["rc"], "100")
 
-    @patch("yaml.safe_load")
-    @patch("urllib.request.urlopen")
-    @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
-    def test_generate_file(self, report_args_mock: MagicMock, validators_mock: MagicMock, urlopen_mock: MagicMock,
-                           yaml_safe_load_mock: MagicMock) -> None:
+    def test_generate_file(self, report_args_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH
-        report_args_mock.artifact_paths = {"opensearch-dashboards": "foo/bar"}
+        report_args_mock.artifact_paths = {"opensearch-dashboards": self.DATA_DIR}
         report_args_mock.test_run_id = 123
-        report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
+        report_args_mock.base_path = self.DATA_DIR
         report_args_mock.test_type = "integ-test"
-
-        validators_mock.return_value = True
-        yaml_safe_load_mock.return_value = {"test_result": "PASS"}
-        urlopen_mock.return_value = MagicMock()
+        report_args_mock.release_candidate = "100"
 
         test_run_runner = TestReportRunner(report_args_mock, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS)
         test_run_runner_data = test_run_runner.update_data()
