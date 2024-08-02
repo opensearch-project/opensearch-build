@@ -61,10 +61,12 @@ class BenchmarkTestSuiteCompare(BenchmarkTestSuite):
             # construct the destination file path
             destination_dir = os.path.dirname(os.path.expanduser(self.args.results_file))
             destination_file = os.path.join(destination_dir, os.path.basename(self.args.results_file))
+            # convert destination_file to Unix-style path
+            unix_style_destination_file = destination_file.replace('\\', '/')
             # check if the destination directory exists
             if os.path.isdir(destination_dir):
                 # copy the results file to the destination path
-                shutil.copy(final_results_file[0], destination_file)
+                shutil.copy(final_results_file[0], unix_style_destination_file)
                 print(f"Final results copied to {destination_dir}")
             else:
                 print(f"Error: Destination directory '{destination_dir}' does not exist.")
