@@ -5,7 +5,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import io
+import logging
 import os
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -97,3 +100,60 @@ class TestBenchmarkArgs(unittest.TestCase):
                          'index,type:search,tag:setup')
         self.assertEqual(test_args.include_tasks,
                          'index,type:search,tag:setup')
+
+    @patch("argparse._sys.argv", [ARGS_PY, "compare", "baseline_id", "contender_id"])
+    def test_compare_with_required_arguments(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertEqual(test_args.baseline, "baseline_id")
+        self.assertEqual(test_args.contender, "contender_id")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "compare"])
+    def test_compare_without_required_arguments(self) -> None:
+        with self.assertRaises(ValueError) as context:
+            BenchmarkArgs()
+        self.assertEqual(str(context.exception), "Both 'baseline' and 'contender' arguments are required for the 'compare' command.")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "compare", "baseline_id", "contender_id", "--results-format", "csv"])
+    def test_compare_with_results_format(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertEqual(test_args.results_format, "csv")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "compare", "baseline_id", "contender_id", "--results-numbers-align", "left"])
+    def test_compare_with_results_numbers_align(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertEqual(test_args.results_numbers_align, "left")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "compare", "baseline_id", "contender_id", "--results-file", "results.txt"])
+    def test_compare_with_results_file(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertEqual(test_args.results_file, "results.txt")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "compare", "baseline_id", "contender_id", "--show-in-results", "true"])
+    def test_compare_with_show_in_results(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertEqual(test_args.show_in_results, "true")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "compare", "baseline_id", "contender_id", "--suffix", "test-suffix"])
+    def test_compare_with_suffix(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertEqual(test_args.stack_suffix, "test-suffix")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "compare", "baseline_id", "contender_id", "--benchmark-config", "benchmark.ini"])
+    def test_compare_with_benchmark_config(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertEqual(test_args.benchmark_config, "benchmark.ini")
+
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "invalid-command"])
+    def test_invalid_command(self):
+        # Capture stderr
+        captured_stderr = io.StringIO()
+        sys.stderr = captured_stderr
+
+        with self.assertRaises(SystemExit):
+            BenchmarkArgs()
+
+        # Assert that the expected error message is printed to stderr
+        self.assertIn("argument command: invalid choice: 'invalid-command'", captured_stderr.getvalue())
+
+        # Restore stderr
+        sys.stderr = sys.__stderr__
