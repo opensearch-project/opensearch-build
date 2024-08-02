@@ -60,7 +60,7 @@ class BenchmarkArgs:
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle or compare two tests")
-        subparsers = parser.add_subparsers(dest="command", required=True)
+        subparsers = parser.add_subparsers(dest="command", required=True, help="Please provide either 'execute-test' to run benchmark or 'compare' command to compare benchmark runs.")
 
         # command to run a benchmark test
         execute_test_parser = subparsers.add_parser("execute-test",

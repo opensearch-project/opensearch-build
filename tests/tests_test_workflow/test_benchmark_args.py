@@ -6,7 +6,6 @@
 # compatible open source license.
 
 import io
-import logging
 import os
 import sys
 import unittest
@@ -144,7 +143,7 @@ class TestBenchmarkArgs(unittest.TestCase):
         self.assertEqual(test_args.benchmark_config, "benchmark.ini")
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "invalid-command"])
-    def test_invalid_command(self):
+    def test_invalid_command(self) -> None:
         # Capture stderr
         captured_stderr = io.StringIO()
         sys.stderr = captured_stderr
