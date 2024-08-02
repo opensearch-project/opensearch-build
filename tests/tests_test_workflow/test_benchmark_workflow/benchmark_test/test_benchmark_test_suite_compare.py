@@ -56,6 +56,7 @@ class TestBenchmarkTestSuiteCompare(unittest.TestCase):
         mock_isdir.return_value = True
         mock_glob.return_value = ['/tmp/final_result.md']
         mock_expanduser.return_value = '/home/user/results/comparison.md'
+        normalized_path = os.path.normpath(mock_expanduser.return_value)
 
         with patch('test_workflow.benchmark_test.benchmark_test_suite_compare.TemporaryDirectory') as mock_temp_dir:
             mock_temp_dir.return_value.__enter__.return_value.path = '/tmp'
@@ -63,7 +64,7 @@ class TestBenchmarkTestSuiteCompare(unittest.TestCase):
 
         mock_check_call.assert_called_once()
         mock_glob.assert_called_once_with(os.path.join('/tmp', 'final_result.md'))
-        mock_shutil_copy.assert_called_once_with('/tmp/final_result.md', '/home/user/results/comparison.md')
+        mock_shutil_copy.assert_called_once_with('/tmp/final_result.md', normalized_path)
 
     def test_from_args_compare(self) -> None:
         from test_workflow.benchmark_test.benchmark_test_suite_runners import BenchmarkTestSuiteRunners
