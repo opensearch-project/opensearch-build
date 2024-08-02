@@ -15,7 +15,7 @@ components:
     ref: '2.16'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 553363108c9d85db79f00a859730a513deef3637
+    ref: ff972c3f174fa01fe42271c26252d701063221e5
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
     ref: 49057e4f82b0390dc28d0e08009ec5f892d7af1a
