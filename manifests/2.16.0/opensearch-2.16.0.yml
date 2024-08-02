@@ -130,7 +130,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 5d53662ecc5ffcd963a27454dbfa1cb092b2ae10
+    ref: 0eb95e938faeb93dce49e200969b82d18ddb37a5
     platforms:
       - linux
       - windows
