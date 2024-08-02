@@ -159,6 +159,7 @@ class BenchmarkArgs:
                                     help="Show more verbose output.")
         compare_parser.add_argument("--benchmark-config", dest="benchmark_config",
                                     help="absolute filepath to custom benchmark.ini config")
+        compare_parser.add_argument("--suffix", dest="suffix", help="Suffix to be added to stack name for performance comparison")
 
         args = parser.parse_args()
         self.command = args.command
@@ -213,7 +214,7 @@ class BenchmarkArgs:
             self.results_numbers_align = args.results_numbers_align if hasattr(args, "results_numbers_align") else None
             self.results_file = args.results_file if hasattr(args, "results_file") else None
             self.show_in_results = args.show_in_results if hasattr(args, "show_in_results") else None
-            self.stack_suffix = "comparison"
+            self.stack_suffix = args.suffix if args.suffix else None
             self.logging_level = args.logging_level
             self.benchmark_config = args.benchmark_config if args.benchmark_config else None
 

@@ -13,7 +13,7 @@ from manifests.bundle_manifest import BundleManifest
 from system import console
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
 from test_workflow.benchmark_test.benchmark_test_runners import BenchmarkTestRunners
-from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
+from test_workflow.benchmark_test.benchmark_test_suite_runners import BenchmarkTestSuiteRunners
 
 
 def main() -> int:
@@ -37,7 +37,7 @@ def main() -> int:
         else:
             BenchmarkTestRunners.from_args(benchmark_args).run()
     else:
-        benchmark_test_suite = BenchmarkTestSuite("", False, benchmark_args, "")
+        benchmark_test_suite = BenchmarkTestSuiteRunners.from_args(benchmark_args)
         benchmark_test_suite.execute()
 
     return 0

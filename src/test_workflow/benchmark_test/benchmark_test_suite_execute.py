@@ -16,12 +16,15 @@ import pandas as pd
 
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
-from test_workflow.benchmark_test.benchmark_test_base import BenchmarkTestBase
+from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
 
 
-class ExecuteTestSuite(BenchmarkTestBase):
+class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
+    def __init__(self, endpoint: str, security: bool, args: BenchmarkArgs, password: str):
+        super().__init__(args, endpoint, security, password)
+
     def execute(self) -> None:
-        self.form_command(self.args)
+        self.form_command()
         log_info = f"Executing {self.command.replace(self.endpoint, len(self.endpoint) * '*').replace(self.args.username, len(self.args.username) * '*')}"
         logging.info(log_info.replace(self.password, len(self.password) * "*") if self.password else log_info)
         try:
@@ -31,7 +34,7 @@ class ExecuteTestSuite(BenchmarkTestBase):
         finally:
             self.cleanup()
 
-    def form_command(self, args: BenchmarkArgs) -> str:
+    def form_command(self) -> str:
         # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
         self.command = f'docker run --name docker-container-{self.args.stack_suffix}'
         if self.args.benchmark_config:

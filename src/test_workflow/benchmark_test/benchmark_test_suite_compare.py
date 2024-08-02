@@ -12,19 +12,23 @@ import subprocess
 
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
-from test_workflow.benchmark_test.benchmark_test_base import BenchmarkTestBase
+from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
 
 
-class CompareTestSuite(BenchmarkTestBase):
+class BenchmarkTestSuiteCompare(BenchmarkTestSuite):
+    def __init__(self, args: BenchmarkArgs):
+        super().__init__(args)
+        self.command = ""
+
     def execute(self) -> None:
-        self.form_command(self.args)
+        self.form_command()
         try:
             subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)
             self.copy_comparison_results_to_local()
         finally:
             self.cleanup()
 
-    def form_command(self, args: BenchmarkArgs) -> str:
+    def form_command(self) -> str:
         command = f'docker run --name docker-container-{self.args.stack_suffix} ' \
                   "-v ~/.benchmark/benchmark.ini:/opensearch-benchmark/.benchmark/benchmark.ini " \
                   f"opensearchproject/opensearch-benchmark:1.6.0 " \

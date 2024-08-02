@@ -21,7 +21,7 @@ from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
 from test_workflow.benchmark_test.benchmark_create_cluster import BenchmarkCreateCluster
 from test_workflow.benchmark_test.benchmark_test_cluster import BenchmarkTestCluster
 from test_workflow.benchmark_test.benchmark_test_runner import BenchmarkTestRunner
-from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
+from test_workflow.benchmark_test.benchmark_test_suite_runners import BenchmarkTestSuiteRunners
 
 
 class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
@@ -41,7 +41,7 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
         if self.args.cluster_endpoint:
             cluster = BenchmarkTestCluster(self.args)
             cluster.start()
-            benchmark_test_suite = BenchmarkTestSuite(cluster.endpoint_with_port, self.security, self.args, cluster.fetch_password())
+            benchmark_test_suite = BenchmarkTestSuiteRunners.from_args(self.args, cluster.endpoint_with_port, self.security, cluster.fetch_password())
             retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
 
         else:
@@ -52,5 +52,5 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
                 with GitRepository(self.get_cluster_repo_url(), self.get_git_ref(), current_workspace):
                     with WorkingDirectory(current_workspace):
                         with BenchmarkCreateCluster.create(self.args, self.test_manifest, config, current_workspace) as test_cluster:
-                            benchmark_test_suite = BenchmarkTestSuite(test_cluster.endpoint_with_port, self.security, self.args, test_cluster.fetch_password())
+                            benchmark_test_suite = BenchmarkTestSuiteRunners.from_args(self.args, test_cluster.endpoint_with_port, self.security, test_cluster.fetch_password())
                             retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)

@@ -5,30 +5,34 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
+import subprocess
+from abc import ABC, abstractmethod
 from typing import Any
 
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
-from test_workflow.benchmark_test.benchmark_test_base import BenchmarkTestBase
-from test_workflow.benchmark_test.benchmark_test_suite_compare import CompareTestSuite
-from test_workflow.benchmark_test.benchmark_test_suite_execute import ExecuteTestSuite
 
 
-class BenchmarkTestSuite:
-    test_suite: BenchmarkTestBase
-
+class BenchmarkTestSuite(ABC):
     def __init__(
             self,
-            endpoint: Any,
-            security: bool,
             args: BenchmarkArgs,
-            password: str
+            endpoint: Any = None,
+            security: bool = False,
+            password: str = ''
     ) -> None:
-        if args.command == 'execute-test':
-            self.test_suite = ExecuteTestSuite(endpoint, security, args, password)
-        elif args.command == 'compare':
-            self.test_suite = CompareTestSuite(endpoint, security, args, password)
-        else:
-            raise ValueError(f"Invalid command: {args.command}")
+        self.endpoint = endpoint
+        self.security = security
+        self.args = args
+        self.password = password
 
+    @abstractmethod
+    def form_command(self) -> str:
+        pass
+
+    @abstractmethod
     def execute(self) -> None:
-        self.test_suite.execute()
+        pass
+
+    def cleanup(self) -> None:
+        subprocess.check_call(f"docker rm -f docker-container-{self.args.stack_suffix}", cwd=os.getcwd(), shell=True)

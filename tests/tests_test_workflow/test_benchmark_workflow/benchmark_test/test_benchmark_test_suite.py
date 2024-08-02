@@ -11,7 +11,7 @@ import unittest
 from typing import Any
 from unittest.mock import MagicMock, Mock, patch
 
-from test_workflow.benchmark_test.benchmark_test_suite_execute import ExecuteTestSuite
+from test_workflow.benchmark_test.benchmark_test_suite_execute import BenchmarkTestSuiteExecute
 from test_workflow.integ_test.utils import get_password
 
 
@@ -43,8 +43,8 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         self.args.insecure = True
         mock_check_call.return_value = 0
         mock_convert = MagicMock()
-        with patch.object(ExecuteTestSuite, 'convert', mock_convert):
-            test_suite = ExecuteTestSuite("abc.com:80", False, self.args, "")
+        with patch.object(BenchmarkTestSuiteExecute, 'convert', mock_convert):
+            test_suite = BenchmarkTestSuiteExecute("abc.com:80", False, self.args, "")
             test_suite.execute()
         self.assertEqual(mock_check_call.call_count, 2)
         self.assertEqual(test_suite.command,
@@ -52,11 +52,11 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          f'--workload=nyc_taxis --pipeline=benchmark-only --target-hosts=abc.com:80 --client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
-    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.ExecuteTestSuite.convert')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
     def test_execute_security_enabled_version_212_or_greater(self, mock_convert: Mock, mock_check_call: Mock) -> None:
         mock_check_call.return_value = 0
         self.args.insecure = False
-        test_suite = ExecuteTestSuite("abc.com:443", True, self.args, self.password)
+        test_suite = BenchmarkTestSuiteExecute("abc.com:443", True, self.args, self.password)
         test_suite.execute()
         self.assertEqual(mock_check_call.call_count, 2)
         mock_check_call.assert_called_with(
@@ -68,11 +68,11 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          f'--client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'myStrongPassword123!\'" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
-    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.ExecuteTestSuite.convert')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
     def test_execute_security_enabled(self, mock_convert: Mock, mock_check_call: Mock) -> None:
         mock_check_call.return_value = 0
         self.args.insecure = True
-        test_suite = ExecuteTestSuite("abc.com:443", True, self.args, "admin")
+        test_suite = BenchmarkTestSuiteExecute("abc.com:443", True, self.args, "admin")
         test_suite.execute()
         self.assertEqual(mock_check_call.call_count, 2)
         mock_check_call.assert_called_with(
@@ -84,7 +84,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
-    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.ExecuteTestSuite.convert')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
     def test_execute_default_with_optional_args(self, mock_convert: Mock, mock_check_call: Mock) -> None:
         mock_check_call.return_value = 0
         self.args.telemetry = []
@@ -92,7 +92,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         TestBenchmarkTestSuite.setUp(self, config="/home/test/benchmark.ini", tags="key1:value1,key2:value2",
                                      workload_params="{\"number_of_replicas\":\"1\"}", telemetry=['node-stats'],
                                      telemetry_params="{\"example_key\":\"example_value\"}")
-        test_suite = ExecuteTestSuite("abc.com:80", False, self.args, "")
+        test_suite = BenchmarkTestSuiteExecute("abc.com:80", False, self.args, "")
         test_suite.execute()
         self.assertEqual(mock_check_call.call_count, 2)
         mock_check_call.assert_called_with(
@@ -108,12 +108,12 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
-    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.ExecuteTestSuite.convert')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
     def test_execute_default_with_no_telemetry_params(self, mock_convert: Mock, mock_check_call: Mock) -> None:
         mock_check_call.return_value = 0
         TestBenchmarkTestSuite.setUp(self, config="/home/test/benchmark.ini", tags="key1:value1,key2:value2",
                                      workload_params="{\"number_of_replicas\":\"1\"}", telemetry=['node-stats', 'test'])
-        test_suite = ExecuteTestSuite("abc.com:80", False, self.args, "")
+        test_suite = BenchmarkTestSuiteExecute("abc.com:80", False, self.args, "")
         test_suite.execute()
         self.assertEqual(mock_check_call.call_count, 2)
         mock_check_call.assert_called_with(
@@ -129,13 +129,13 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
-    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.ExecuteTestSuite.convert')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
     def test_execute_with_test_procedure_params(self, mock_convert: Mock, mock_check_call: Mock) -> None:
         mock_check_call.return_value = 0
         self.args.insecure = True
         TestBenchmarkTestSuite.setUp(self, config="/home/test/benchmark.ini", tags="key1:value1,key2:value2",
                                      workload_params="{\"number_of_replicas\":\"1\"}", test_procedure="test-proc1,test-proc2")
-        test_suite = ExecuteTestSuite("abc.com:80", False, self.args, "")
+        test_suite = BenchmarkTestSuiteExecute("abc.com:80", False, self.args, "")
         test_suite.execute()
         self.assertEqual(mock_check_call.call_count, 2)
         mock_check_call.assert_called_with(
@@ -152,14 +152,14 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
-    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.ExecuteTestSuite.convert')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
     def test_execute_with_include_exclude_params(self, mock_convert: Mock, mock_check_call: Mock) -> None:
         mock_check_call.return_value = 0
         self.args.insecure = True
         TestBenchmarkTestSuite.setUp(self, config="/home/test/benchmark.ini", tags="key1:value1,key2:value2",
                                      workload_params="{\"number_of_replicas\":\"1\"}", include_tasks="task1,type:index",
                                      exclude_tasks="task2,type:search")
-        test_suite = ExecuteTestSuite("abc.com:80", False, self.args, "")
+        test_suite = BenchmarkTestSuiteExecute("abc.com:80", False, self.args, "")
         test_suite.execute()
         self.assertEqual(mock_check_call.call_count, 2)
         mock_check_call.assert_called_with(
@@ -176,14 +176,14 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--user-tag="key1:value1,key2:value2" '
                          '--client-options="timeout:300" --results-file=final_result.md')
 
-    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.ExecuteTestSuite.convert')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
     def test_execute_with_all_benchmark_optional_params(self, mock_convert: Mock) -> None:
         self.args.insecure = True
         TestBenchmarkTestSuite.setUp(self, config="/home/test/benchmark.ini", tags="key1:value1,key2:value2",
                                      workload_params="{\"number_of_replicas\":\"1\"}", test_procedure="test-proc1,test-proc2",
                                      include_tasks="task1,type:index", exclude_tasks="task2,type:search")
         with patch("subprocess.check_call") as mock_check_call:
-            test_suite = ExecuteTestSuite("abc.com:80", False, self.args, "")
+            test_suite = BenchmarkTestSuiteExecute("abc.com:80", False, self.args, "")
             test_suite.execute()
             self.assertEqual(mock_check_call.call_count, 2)
             mock_check_call.assert_called_with(
@@ -201,12 +201,12 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                                                  '--client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
-    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.ExecuteTestSuite.convert')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
     def test_execute_cluster_endpoint(self, mock_convert: Mock, mock_check_call: Mock) -> None:
         mock_check_call.return_value = 0
         self.args.cluster_endpoint = "abc.com"
         self.args.insecure = True
-        test_suite = ExecuteTestSuite("abc.com:443", True, self.args, "admin")
+        test_suite = BenchmarkTestSuiteExecute("abc.com:443", True, self.args, "admin")
         test_suite.execute()
         self.assertEqual(mock_check_call.call_count, 2)
         self.assertEqual(mock_convert.call_count, 1)
@@ -235,7 +235,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         mock_json_normalize.return_value = MagicMock()
         mock_read_csv.return_value = MagicMock()
 
-        test_suite = ExecuteTestSuite("abc.com:80", False, self.args, "")
+        test_suite = BenchmarkTestSuiteExecute("abc.com:80", False, self.args, "")
         with patch('test_workflow.benchmark_test.benchmark_test_suite_execute.TemporaryDirectory') as mock_temp_directory:
             mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
             mock_temp_directory.return_value.__enter__.return_value.path = '/mock/temp/dir'

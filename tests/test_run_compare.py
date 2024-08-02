@@ -7,14 +7,14 @@
 
 import unittest
 from typing import Any
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
 from run_benchmark_test import main
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
-from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
-from test_workflow.benchmark_test.benchmark_test_suite_compare import CompareTestSuite
+from test_workflow.benchmark_test.benchmark_test_suite_compare import BenchmarkTestSuiteCompare
+from test_workflow.benchmark_test.benchmark_test_suite_runners import BenchmarkTestSuiteRunners
 
 
 class TestRunBenchmarkTest(unittest.TestCase):
@@ -31,8 +31,13 @@ class TestRunBenchmarkTest(unittest.TestCase):
         self.assertTrue(out.startswith("usage:"))
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "compare", "12345", "54321"])
-    @patch.object(BenchmarkTestSuite, "execute")
-    def test_default_execute_compare_test(self, mock_benchmark_test_suite_execute: Mock, *mocks: Any) -> None:
+    @patch.object(BenchmarkTestSuiteRunners, "from_args")
+    def test_default_execute_compare_test(self, mock_from_args: Mock, *mocks: Any) -> None:
+        mock_instance = MagicMock()
+        mock_instance.execute = MagicMock()
+
+        mock_from_args.return_value = mock_instance
+
         # mock the BenchmarkArgs instance and set the command attribute
         mock_benchmark_args = Mock(spec=BenchmarkArgs)
         mock_benchmark_args.command = "compare"
@@ -41,11 +46,18 @@ class TestRunBenchmarkTest(unittest.TestCase):
             main()
 
         # assert that the execute method of BenchmarkTestSuite was called
-        mock_benchmark_test_suite_execute.assert_called_once()
+        mock_instance.execute.assert_called_once()
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "compare", "12345", "54321", "--results-format", "markdown", "--results-numbers-align", "right"])
-    @patch.object(BenchmarkTestSuite, "execute")
-    def test_execute_compare_test_with_params(self, mock_benchmark_test_suite_execute: Mock, *mocks: Any) -> None:
+    @patch.object(BenchmarkTestSuiteRunners, "from_args")
+    def test_execute_compare_test_with_params(self, mock_from_args: Mock, *mocks: Any) -> None:
+        # mock the instance returned by BenchmarkTestSuiteRunners.from_args
+        mock_instance = MagicMock()
+        mock_instance.execute = MagicMock()
+
+        # set the return value of BenchmarkTestSuiteRunners.from_args to the mocked instance
+        mock_from_args.return_value = mock_instance
+
         # mock the BenchmarkArgs instance and set the command attribute
         mock_benchmark_args = Mock(spec=BenchmarkArgs)
         mock_benchmark_args.command = "compare"
@@ -53,38 +65,48 @@ class TestRunBenchmarkTest(unittest.TestCase):
         with patch("test_workflow.benchmark_test.benchmark_args.BenchmarkArgs", return_value=mock_benchmark_args):
             main()
 
-        # assert that the execute method of BenchmarkTestSuite was called
-        mock_benchmark_test_suite_execute.assert_called_once()
+        # assert that the execute method of the mocked instance was called
+        mock_instance.execute.assert_called_once()
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "compare", "12345", ""])
-    @patch.object(BenchmarkTestSuite, "execute")
-    def test_compare_without_contender_id(self, mock_benchmark_test_suite_execute: Mock, *mocks: Any) -> None:
-        with self.assertRaises(ValueError) as cm:
-            main()
+    @patch.object(BenchmarkTestSuiteRunners, "from_args")
+    def test_compare_without_contender_id(self, mock_from_args: Mock, *mocks: Any) -> None:
+        # mock the instance returned by BenchmarkTestSuiteRunners.from_args
+        mock_instance = MagicMock()
+        mock_instance.execute = MagicMock()
 
-        # assert that the execute method of BenchmarkTestSuite was not called
-        mock_benchmark_test_suite_execute.assert_not_called()
+        # set the return value of BenchmarkTestSuiteRunners.from_args to the mocked instance
+        mock_from_args.return_value = mock_instance
+
+        # mock the BenchmarkArgs instance and set the command attribute
+        mock_benchmark_args = Mock(spec=BenchmarkArgs)
+        mock_benchmark_args.command = "compare"
+
+        with patch("test_workflow.benchmark_test.benchmark_args.BenchmarkArgs", return_value=mock_benchmark_args):
+            with self.assertRaises(ValueError) as cm:
+                main()
+
+        # assert that the execute method of the mocked instance was not called
+        mock_instance.execute.assert_not_called()
 
         # assert that the correct error message is raised
         self.assertEqual(str(cm.exception), "Both 'baseline' and 'contender' arguments are required for the 'compare' command.")
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "compare", "12345", "54321", "--results-format", "markdown",
                                   "--results-numbers-align", "right", "--results-file", "comparison_results.md", "--show-in-results", "all"])
-    @patch.object(BenchmarkTestSuite, "execute")
-    def test_execute_compare_test_with_all_params(self, mock_benchmark_test_suite_execute: Mock, *mocks: Any) -> None:
-        # mock the BenchmarkArgs instance and set the command attribute
-        mock_benchmark_args = Mock(spec=BenchmarkArgs)
-        mock_benchmark_args.command = "compare"
-        mock_benchmark_args.baseline = "12345"
-        mock_benchmark_args.contender = "54321"
-        mock_benchmark_args.results_format = "markdown"
-        mock_benchmark_args.results_numbers_align = "right"
-        mock_benchmark_args.results_file = "comparison_results.md"
-        mock_benchmark_args.show_in_results = "all"
-        mock_benchmark_args.stack_suffix = "stack_suffix"
+    def test_form_compare_command(self, *mocks: Any) -> None:
+        # create an actual BenchmarkArgs instance
+        args = BenchmarkArgs()
 
+        # create a BenchmarkTestSuiteCompare instance
+        compare_test_suite = BenchmarkTestSuiteCompare(args)
+
+        # call form_command directly
+        actual_command = compare_test_suite.form_command()
+
+        # define the expected command
         expected_command = (
-            "docker run --name docker-container-stack_suffix "
+            f"docker run --name docker-container-{args.stack_suffix} "
             "-v ~/.benchmark/benchmark.ini:/opensearch-benchmark/.benchmark/benchmark.ini "
             "opensearchproject/opensearch-benchmark:1.6.0 "
             "compare --baseline=12345 --contender=54321 "
@@ -94,15 +116,5 @@ class TestRunBenchmarkTest(unittest.TestCase):
             "--show-in-results=all "
         )
 
-        with patch("test_workflow.benchmark_test.benchmark_args.BenchmarkArgs", return_value=mock_benchmark_args):
-            main()
-
-        # assert that the execute method of BenchmarkTestSuite was called
-        mock_benchmark_test_suite_execute.assert_called_once()
-
-        # assert that the command was formed correctly
-        benchmark_test_suite = BenchmarkTestSuite("", False, mock_benchmark_args, "")
-        compare_test_suite = benchmark_test_suite.test_suite
-        assert isinstance(compare_test_suite, CompareTestSuite)
-        compare_test_suite.form_command(mock_benchmark_args)  # Call the form_command method
-        assert compare_test_suite.command == expected_command
+        # assert that the actual command matches the expected command
+        self.assertEqual(actual_command, expected_command)
