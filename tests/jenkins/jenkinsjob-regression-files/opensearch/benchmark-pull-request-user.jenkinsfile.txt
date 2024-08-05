@@ -52,7 +52,14 @@
                      runBenchmarkTestScript.writeFile({file=/tmp/workspace/benchmark.ini, text=})
                   runBenchmarkTestScript.sh(set +x && ./test.sh benchmark-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security   --single-node --min-distribution --use-50-percent-heap    --suffix 307      --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100)
                benchmark-pull-request.sh(cp /tmp/final_result_307.md final_result_307.md)
-         benchmark-pull-request.sh(sed -i '1i\#### Benchmark Results for Job: test://artifact.url' final_result_307.md)
+         benchmark-pull-request.sh(
+                        echo '<details><summary>Benchmark Results</summary>' > temp_result_307.md
+                        echo '' >> temp_result_307.md
+                        echo '#### Benchmark Results for Job: test://artifact.url' >> temp_result_307.md
+                        cat final_result_307.md >> temp_result_307.md
+                        echo '</details>' >> temp_result_307.md
+                        mv temp_result_307.md final_result_307.md
+                      )
          benchmark-pull-request.script(groovy.lang.Closure)
          benchmark-pull-request.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
