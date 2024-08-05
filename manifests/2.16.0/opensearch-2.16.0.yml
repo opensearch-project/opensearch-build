@@ -130,7 +130,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 0eb95e938faeb93dce49e200969b82d18ddb37a5
+    ref: 5e08bccd8440fa4c1f35ebafe4e89cd9f4d81e8d
     platforms:
       - linux
       - windows
@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 2aaf5c45e1529dee99e2b57c6b0988d22c996b3a
+    ref: 19af3f2d0057921d2be279deefbecc4073404136
     platforms:
       - linux
       - windows
