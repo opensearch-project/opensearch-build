@@ -267,7 +267,14 @@ pipeline {
             }
             post {
                 success {
-                      sh "sed -i '1i\\#### Benchmark Results for Job: ${BUILD_URL}' final_result_${BUILD_NUMBER}.md"
+                      sh """
+                        echo '<details><summary>Benchmark Results</summary>' > temp_result_${BUILD_NUMBER}.md
+                        echo '' >> temp_result_${BUILD_NUMBER}.md
+                        echo '#### Benchmark Results for Job: ${BUILD_URL}' >> temp_result_${BUILD_NUMBER}.md
+                        cat final_result_${BUILD_NUMBER}.md >> temp_result_${BUILD_NUMBER}.md
+                        echo '</details>' >> temp_result_${BUILD_NUMBER}.md
+                        mv temp_result_${BUILD_NUMBER}.md final_result_${BUILD_NUMBER}.md
+                      """
                       script {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
                             withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
