@@ -23,7 +23,8 @@ class TestRunBenchmarkTest(unittest.TestCase):
         self.capfd = capfd
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "--help"])
-    def test_usage(self) -> None:
+    @patch("run_benchmark_test.check_docker")
+    def test_usage(self, mock_docker: Mock) -> None:
         with self.assertRaises(SystemExit):
             main()
 
@@ -43,7 +44,8 @@ class TestRunBenchmarkTest(unittest.TestCase):
         mock_benchmark_args.command = "compare"
 
         with patch("test_workflow.benchmark_test.benchmark_args.BenchmarkArgs", return_value=mock_benchmark_args):
-            main()
+            with patch("run_benchmark_test.check_docker", return_value=Mock()):
+                main()
 
         # assert that the execute method of BenchmarkTestSuite was called
         mock_instance.execute.assert_called_once()
@@ -63,7 +65,8 @@ class TestRunBenchmarkTest(unittest.TestCase):
         mock_benchmark_args.command = "compare"
 
         with patch("test_workflow.benchmark_test.benchmark_args.BenchmarkArgs", return_value=mock_benchmark_args):
-            main()
+            with patch("run_benchmark_test.check_docker", return_value=Mock()):
+                main()
 
         # assert that the execute method of the mocked instance was called
         mock_instance.execute.assert_called_once()
@@ -83,8 +86,9 @@ class TestRunBenchmarkTest(unittest.TestCase):
         mock_benchmark_args.command = "compare"
 
         with patch("test_workflow.benchmark_test.benchmark_args.BenchmarkArgs", return_value=mock_benchmark_args):
-            with self.assertRaises(ValueError) as cm:
-                main()
+            with patch("run_benchmark_test.check_docker", return_value=Mock()):
+                with self.assertRaises(ValueError) as cm:
+                    main()
 
         # assert that the execute method of the mocked instance was not called
         mock_instance.execute.assert_not_called()
@@ -93,7 +97,7 @@ class TestRunBenchmarkTest(unittest.TestCase):
         self.assertEqual(str(cm.exception), "Both 'baseline' and 'contender' arguments are required for the 'compare' command.")
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "compare", "12345", "54321", "--results-format", "markdown",
-                                  "--results-numbers-align", "right", "--results-file", "comparison_results.md", "--show-in-results", "all"])
+                                  "--results-numbers-align", "right", "--show-in-results", "all"])
     def test_form_compare_command(self, *mocks: Any) -> None:
         # create an actual BenchmarkArgs instance
         args = BenchmarkArgs()

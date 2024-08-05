@@ -189,7 +189,8 @@ Internal tools provide dashboards for monitoring cluster behavior during these t
 
 ### Benchmarking Tests
 
-Usage: `./test.sh benchmark-test execute-test <workload> <bundle manifest OR distribution url OR cluster endpoint>`
+Usage: `./test.sh benchmark-test execute-test <workload> <bundle manifest OR distribution url OR cluster endpoint>`   
+Requires `docker` to be installed and running on the host.   
 
 Runs benchmarking tests on a remote opensource OpenSearch cluster, uses [OpenSearch Benchmark](https://github.com/opensearch-project/OpenSearch-Benchmark).
 At a high-level the benchmarking test workflow uses [opensearch-cluster-cdk](https://github.com/opensearch-project/opensearch-cluster-cdk.git) to first set-up an OpenSearch cluster (single/multi-node) and then executes `opensearch-benchmark` to run benchmark test against that cluster. The performance metric that opensearch-benchmark generates during the run are ingested into another OS cluster for further analysis and dashboarding purpose.

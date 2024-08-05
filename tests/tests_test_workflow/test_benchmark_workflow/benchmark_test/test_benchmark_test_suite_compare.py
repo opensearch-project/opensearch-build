@@ -22,7 +22,6 @@ class TestBenchmarkTestSuiteCompare(unittest.TestCase):
         self.args.contender = "contender-id"
         self.args.results_format = "markdown"
         self.args.results_numbers_align = "right"
-        self.args.results_file = "~/results/comparison.md"
         self.args.show_in_results = "all"
 
     def test_form_command(self) -> None:
@@ -54,25 +53,22 @@ class TestBenchmarkTestSuiteCompare(unittest.TestCase):
         mock_cleanup.assert_called_once()
 
     @patch('subprocess.check_call')
-    @patch('glob.glob')
-    @patch('shutil.copy')
-    @patch('os.path.isdir')
-    @patch('os.path.expanduser')
-    def test_copy_comparison_results_to_local(self, mock_expanduser: Mock, mock_isdir: Mock, mock_shutil_copy: Mock, mock_glob: Mock, mock_check_call: Mock) -> None:
+    @patch('logging.info')
+    def test_copy_comparison_results_to_local(self, mock_logging_info: Mock, mock_check_call: Mock) -> None:
         compare = BenchmarkTestSuiteCompare(self.args)
-        mock_isdir.return_value = True
-        mock_glob.return_value = ['/tmp/final_result.md']
-        mock_expanduser.return_value = '/home/user/results/comparison.md'
-        normalized_path = os.path.normpath(mock_expanduser.return_value)
-        unix_style_path = normalized_path.replace('\\', '/')  # Convert to Unix-style path
+        cwd = os.getcwd()
 
-        with patch('test_workflow.benchmark_test.benchmark_test_suite_compare.TemporaryDirectory') as mock_temp_dir:
-            mock_temp_dir.return_value.__enter__.return_value.path = '/tmp'
-            compare.copy_comparison_results_to_local()
+        compare.copy_comparison_results_to_local()
 
-        mock_check_call.assert_called_once()
-        mock_glob.assert_called_once_with(os.path.join('/tmp', 'final_result.md'))
-        mock_shutil_copy.assert_called_once_with('/tmp/final_result.md', unix_style_path)
+        mock_check_call.assert_called_once_with(
+            f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark"
+            f"/final_result.md {cwd}/final_result_{self.args.stack_suffix}.md",
+            cwd=cwd,
+            shell=True,
+        )
+
+        expected_log_message = f"Final results copied to {cwd}/final_result_{self.args.stack_suffix}.md"
+        mock_logging_info.assert_called_once_with(expected_log_message)
 
     def test_from_args_compare(self) -> None:
         from test_workflow.benchmark_test.benchmark_test_suite_runners import BenchmarkTestSuiteRunners

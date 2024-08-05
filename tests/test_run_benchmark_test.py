@@ -21,7 +21,8 @@ class TestRunBenchmarkTest(unittest.TestCase):
         self.capfd = capfd
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "--help"])
-    def test_usage(self) -> None:
+    @patch("run_benchmark_test.check_docker")
+    def test_usage(self, mock_docker: Mock) -> None:
         with self.assertRaises(SystemExit):
             main()
 
@@ -45,7 +46,8 @@ class TestRunBenchmarkTest(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "execute-test", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
                                   BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
     @patch("run_benchmark_test.BenchmarkTestRunners.from_args")
-    def test_default_execute_benchmark_test(self, mock_runner: Mock, *mocks: Any) -> None:
+    @patch("run_benchmark_test.check_docker")
+    def test_default_execute_benchmark_test(self, mock_docker: Mock, mock_runner: Mock, *mocks: Any) -> None:
         main()
         self.assertEqual(1, mock_runner.call_count)
 
@@ -53,7 +55,8 @@ class TestRunBenchmarkTest(unittest.TestCase):
                                   BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearchPlugins.run_tests")
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearch.run_tests")
-    def test_run_benchmark_test(self, os_mock_runner: Mock, plugin_mock_runner: Mock, *mock: Any) -> None:
+    @patch("run_benchmark_test.check_docker")
+    def test_run_benchmark_test(self, mock_docker: Mock, os_mock_runner: Mock, plugin_mock_runner: Mock, *mock: Any) -> None:
         main()
         self.assertEqual(1, os_mock_runner.call_count)
         self.assertEqual(0, plugin_mock_runner.call_count)
@@ -62,7 +65,8 @@ class TestRunBenchmarkTest(unittest.TestCase):
                                   BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test", "--component", "abc"])
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearchPlugins.run_tests")
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearch.run_tests")
-    def test_run_benchmark_test_plugins(self, os_mock_runner: Mock, plugin_mock_runner: Mock, *mock: Any) -> None:
+    @patch("run_benchmark_test.check_docker")
+    def test_run_benchmark_test_plugins(self, mock_docker: Mock, os_mock_runner: Mock, plugin_mock_runner: Mock, *mock: Any) -> None:
         main()
         self.assertEqual(0, os_mock_runner.call_count)
         self.assertEqual(1, plugin_mock_runner.call_count)
@@ -70,6 +74,7 @@ class TestRunBenchmarkTest(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "execute-test", "--distribution-url", "test.url", "--distribution-version", "2.10.0",
                                   "--config", BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
     @patch("run_benchmark_test.BenchmarkTestRunners.from_args")
-    def test_default_execute_benchmark_test_without_manifest(self, mock_runner: Mock) -> None:
+    @patch("run_benchmark_test.check_docker")
+    def test_default_execute_benchmark_test_without_manifest(self, mock_docker: Mock, mock_runner: Mock) -> None:
         main()
         self.assertEqual(1, mock_runner.call_count)

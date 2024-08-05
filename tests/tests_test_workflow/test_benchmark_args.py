@@ -122,11 +122,6 @@ class TestBenchmarkArgs(unittest.TestCase):
         test_args = BenchmarkArgs()
         self.assertEqual(test_args.results_numbers_align, "left")
 
-    @patch("argparse._sys.argv", [ARGS_PY, "compare", "baseline_id", "contender_id", "--results-file", "results.txt"])
-    def test_compare_with_results_file(self) -> None:
-        test_args = BenchmarkArgs()
-        self.assertEqual(test_args.results_file, "results.txt")
-
     @patch("argparse._sys.argv", [ARGS_PY, "compare", "baseline_id", "contender_id", "--show-in-results", "true"])
     def test_compare_with_show_in_results(self) -> None:
         test_args = BenchmarkArgs()

@@ -149,8 +149,6 @@ class BenchmarkArgs:
                                     help="Defines the output format for the results, markdown or csv (default: markdown)")
         compare_parser.add_argument("--results-numbers-align", default="right", type=str,
                                     help="Defines the format for the command line results. (Default: right)")
-        compare_parser.add_argument("--results-file", type=str,
-                                    help="File path to write the results file to")
         compare_parser.add_argument("--show-in-results", type=str,
                                     help="Determines whether to include the comparison in the results file")
         compare_parser.add_argument("-v", "--verbose", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level",
@@ -210,7 +208,6 @@ class BenchmarkArgs:
             self.contender = args.contender
             self.results_format = args.results_format if hasattr(args, "results_format") else None
             self.results_numbers_align = args.results_numbers_align if hasattr(args, "results_numbers_align") else None
-            self.results_file = args.results_file if hasattr(args, "results_file") else None
             self.show_in_results = args.show_in_results if hasattr(args, "show_in_results") else None
             self.stack_suffix = args.suffix if args.suffix else None
             self.logging_level = args.logging_level
