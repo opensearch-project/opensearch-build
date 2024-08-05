@@ -107,8 +107,6 @@ class BenchmarkArgs:
                                          help="Additional opensearch.yml config parameters passed as JSON")
         execute_test_parser.add_argument("--use-50-percent-heap", dest="use_50_percent_heap", action="store_true",
                                          help="Use 50 percent of physical memory as heap.")
-        execute_test_parser.add_argument("--ml-node storage", dest="ml_node_storage",
-                                         help="User provided ml-node ebs block storage size defaults to 100Gb")
         execute_test_parser.add_argument("--data-node-storage", dest="data_node_storage",
                                          help="User provided data-node ebs block storage size, defaults to 100Gb")
         execute_test_parser.add_argument("--enable-remote-store", dest="enable_remote_store", action="store_true",
