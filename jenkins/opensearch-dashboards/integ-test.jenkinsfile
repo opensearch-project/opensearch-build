@@ -346,16 +346,20 @@ pipeline {
                                     sh 'sleep 10'
                                     downloadBuildManifest(
                                         url: BUILD_MANIFEST_URL,
-                                        path: BUILD_MANIFEST
+                                        path: "manifests-osd-${env.BUILD_NUMBER}/${env.BUILD_MANIFEST}"
+                                        // path: BUILD_MANIFEST
                                     )
                                     downloadBuildManifest(
                                         url: BUILD_MANIFEST_URL_OPENSEARCH,
-                                        path: BUILD_MANIFEST_OPENSEARCH
+                                        path: "manifests-osd-${env.BUILD_NUMBER}/${env.BUILD_MANIFEST_OPENSEARCH}"
+                                        // path: BUILD_MANIFEST_OPENSEARCH
                                     )
                                     createUploadTestReportManifest(
                                         testManifest: "manifests/${TEST_MANIFEST}",
-                                        buildManifest: BUILD_MANIFEST_OPENSEARCH,
-                                        dashboardsBuildManifest: BUILD_MANIFEST,
+                                        buildManifest: "manifests-osd-${env.BUILD_NUMBER}/${env.BUILD_MANIFEST_OPENSEARCH}",
+                                        dashboardsBuildManifest: "manifests-osd-${env.BUILD_NUMBER}/${env.BUILD_MANIFEST}",
+                                        // buildManifest: BUILD_MANIFEST_OPENSEARCH,
+                                        // dashboardsBuildManifest: BUILD_MANIFEST,
                                         testRunID: "${env.BUILD_NUMBER}",
                                         testType: "integ-test",
                                         componentName: "${COMPONENT_NAME}",

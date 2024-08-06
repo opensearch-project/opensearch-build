@@ -76,11 +76,14 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
                 return new Yaml().load((testManifest as File).text)
             } else if (args.file == 'tests/jenkins/data/opensearch-3.0.0-build.yml') {
                 return new Yaml().load((buildManifest as File).text)
+            } else if (args.file == 'manifests-os-234/tests/jenkins/data/opensearch-3.0.0-build.yml') {
+                return new Yaml().load(('manifests-os-234/tests/jenkins/data/opensearch-3.0.0-build.yml' as File).text)
             } else {
                 println("Manifest not found ${args.file}")
             }
         })
         helper.addFileExistsMock("manifests/${testManifest}", true)
+        helper.addFileExistsMock("manifests-os-234/tests/jenkins/data/opensearch-3.0.0-build.yml", true)
         helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod('findFiles', [Map.class], null)
         helper.registerAllowedMethod('unstash', [String.class], null)
