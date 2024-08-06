@@ -28,15 +28,15 @@ Testing is run via `./test.sh`.
 
 The following options are available.
 
-| name                   | description                                                             |
-|------------------------|-------------------------------------------------------------------------|
-| test-type              | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
-| test-manifest-path     | Specify a test manifest path.                                           |
-| --paths                | Location of manifest(s).                                                |
-| --test-run-id          | Unique identifier for a test run.                                       |
-| --component [name ...] | Test a subset of specific components.                                   |
-| --keep                 | Do not delete the temporary working directory on both success or error. |
-| -v, --verbose          | Show more verbose output.                                               |
+| name                   | description                                                                                                           |
+|------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| test-type              | Run tests of a test suite. [integ-test, bwc-test, perf-test, benchmark-test execute-test, benchmark-test compare]     |
+| test-manifest-path     | Specify a test manifest path.                                                                                         |
+| --paths                | Location of manifest(s).                                                                                              |
+| --test-run-id          | Unique identifier for a test run.                                                                                     |
+| --component [name ...] | Test a subset of specific components.                                                                                 |
+| --keep                 | Do not delete the temporary working directory on both success or error.                                               |
+| -v, --verbose          | Show more verbose output.                                                                                             |
 
 ### Integration Tests
 
@@ -189,6 +189,9 @@ Internal tools provide dashboards for monitoring cluster behavior during these t
 
 ### Benchmarking Tests
 
+Usage: `./test.sh benchmark-test execute-test <workload> <bundle manifest OR distribution url OR cluster endpoint>`   
+Requires `docker` to be installed and running on the host.   
+
 Runs benchmarking tests on a remote opensource OpenSearch cluster, uses [OpenSearch Benchmark](https://github.com/opensearch-project/OpenSearch-Benchmark).
 At a high-level the benchmarking test workflow uses [opensearch-cluster-cdk](https://github.com/opensearch-project/opensearch-cluster-cdk.git) to first set-up an OpenSearch cluster (single/multi-node) and then executes `opensearch-benchmark` to run benchmark test against that cluster. The performance metric that opensearch-benchmark generates during the run are ingested into another OS cluster for further analysis and dashboarding purpose.
 
@@ -215,7 +218,14 @@ Here's the sample entry for enabling nightly runs for `remote-store` feature
 H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;USE_50_PERCENT_HEAP=true;ENABLE_REMOTE_STORE=true;CAPTURE_SEGMENT_REPLICATION_STAT=true;USER_TAGS=run-type:nightly,segrep:enabled-with-remote-store,arch:arm64,instance-type:r6g.xlarge,major-version:2x,cluster-config:arm64-r6g.xlarge-3-data-3-shards;ADDITIONAL_CONFIG=opensearch.experimental.feature.remote_store.enabled:true cluster.remote_store.enabled:true opensearch.experimental.feature.segment_replication_experimental.enabled:true cluster.indices.replication.strategy:SEGMENT;WORKLOAD_PARAMS={"number_of_replicas":"2","number_of_shards":"3"}
 ```
 
-Once you have added the configuration in the jenkinsfile please raise the PR and opensearch-infra team will review it.   
+Once you have added the configuration in the jenkinsfile please raise the PR and opensearch-infra team will review it.
+
+## Benchmark Comparison
+Usage: `./test.sh benchmark-test compare <baseline_id> <contender_id>`
+
+Runs a comparison between two test executions, given the test execution ID for each test.
+The comparison workflow executes `opensearch-benchmark` to run a comparison between two tests, the 'baseline' and 'contender'. The results of the comparison are then displayed in the terminal, and can be written onto a file on the users system.
+For more information on other parameters, please visit [here](https://opensearch.org/docs/latest/benchmark/reference/commands/compare/)
 
 ## Testing in CI/CD
 

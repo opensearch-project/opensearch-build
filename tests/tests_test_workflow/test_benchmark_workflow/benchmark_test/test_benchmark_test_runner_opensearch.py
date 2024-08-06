@@ -19,6 +19,7 @@ from test_workflow.benchmark_test.benchmark_test_runners import BenchmarkTestRun
 class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py",
+                                  "execute-test",
                                   "--bundle-manifest",
                                   os.path.join(os.path.dirname(__file__), "data", "bundle_manifest.yml"),
                                   "--config", os.path.join(os.path.dirname(__file__), "data", "test-config.yml"),
@@ -28,7 +29,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.TemporaryDirectory")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.GitRepository")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkCreateCluster.create")
-    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuite")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuiteRunners.from_args")
     def test_run(self, mock_suite: Mock, mock_cluster: Mock, mock_git: Mock, mock_temp_directory: Mock,
                  *mocks: Any) -> None:
         mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
@@ -47,6 +48,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
         self.assertEqual(mock_temp_directory.call_count, 1)
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py",
+                                  "execute-test",
                                   "--distribution-url",
                                   "https://artifacts.opensearch.org/2.10.0/opensearch.tar.gz",
                                   "--distribution-version",
@@ -58,7 +60,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.TemporaryDirectory")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.GitRepository")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkCreateCluster.create")
-    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuite")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuiteRunners.from_args")
     def test_run_with_dist_url_and_version(self, mock_suite: Mock, mock_cluster: Mock, mock_git: Mock,
                                            mock_temp_directory: Mock,
                                            *mocks: Any) -> None:
@@ -76,7 +78,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
         self.assertEqual(mock_temp_directory.call_count, 1)
 
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestCluster.start")
-    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuite")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuiteRunners.from_args")
     @patch('test_workflow.benchmark_test.benchmark_test_runner_opensearch.retry_call')
     def test_run_with_cluster_endpoint(self, mock_retry_call: Mock, mock_suite: Mock, mock_benchmark_test_cluster: Mock) -> None:
         args = MagicMock(cluster_endpoint=True)
@@ -90,7 +92,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
         mock_retry_call.assert_called_once_with(mock_suite.return_value.execute, tries=3, delay=60, backoff=2)
 
     @patch('test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing')
-    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuite")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuiteRunners.from_args")
     @patch('test_workflow.benchmark_test.benchmark_test_runner_opensearch.retry_call')
     @patch("subprocess.run")
     @patch("requests.get")
