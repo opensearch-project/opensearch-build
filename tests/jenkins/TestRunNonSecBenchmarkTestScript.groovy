@@ -26,7 +26,7 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('6.4.1')
+                        .defaultVersion('6.8.0')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -116,7 +116,7 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
 
         assertThat(curlCommands.size(), equalTo(3))
         assertThat(curlCommands, hasItem(
-                "curl -sSL test://artifact.url --output tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml".toString()
+                "curl -sSL --retry 5 test://artifact.url --output tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml".toString()
         ))
 
         def s3DownloadCommands = getCommandExecutions('s3Download', 'bucket').findAll {
@@ -140,7 +140,7 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItem(
-                "./test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml    --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false,jenkins-build-id:307 --without-security   --use-50-percent-heap    --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts --exclude-tasks type:search,scroll --include-tasks type:search,scroll  --data-node-storage 100".toString()
+                "set +x && ./test.sh benchmark-test execute-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml    --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false,jenkins-build-id:307 --without-security     --use-50-percent-heap    --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts --exclude-tasks type:search,scroll --include-tasks type:search,scroll  --data-node-storage 100".toString()
         ))
     }
 

@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.4.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.8.0', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -360,6 +360,7 @@ pipeline {
                             }
 
                             runBenchmarkTestScript(
+                                command: 'execute-test',
                                 bundleManifest: BUNDLE_MANIFEST,
                                 distributionUrl: DISTRIBUTION_URL,
                                 distributionVersion: DISTRIBUTION_VERSION,
@@ -419,6 +420,7 @@ pipeline {
                             }
 
                             runBenchmarkTestScript(
+                                command: 'execute-test',
                                 bundleManifest: BUNDLE_MANIFEST,
                                 distributionUrl: DISTRIBUTION_URL,
                                 distributionVersion: DISTRIBUTION_VERSION,

@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.4.3', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.8.0', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -115,6 +115,7 @@ parameters {
                     echo "security-enabled: ${SECURITY_ENABLED}"
 
                     runBenchmarkTestScript(
+                        command: 'execute-test',
                         endpoint: CLUSTER_ENDPOINT,
                         insecure: !(params.SECURITY_ENABLED),
                         username: USERNAME,
