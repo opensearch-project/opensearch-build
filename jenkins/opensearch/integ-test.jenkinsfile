@@ -297,16 +297,16 @@ pipeline {
                             docker.withRegistry('https://public.ecr.aws/') {
                                 docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
                                     dir ("manifests-os-${env.BUILD_NUMBER}") {
-                                        sh 'sleep 10'
                                         checkout scm
+                                        sh 'sleep 10'
                                         downloadBuildManifest(
                                             url: BUILD_MANIFEST_URL,
                                             path: BUILD_MANIFEST
                                         )
                                     }
+                                    sh "cp manifests-os-${env.BUILD_NUMBER}/${BUILD_MANIFEST} ."
                                     checkout scm
                                     sh 'sleep 5'
-                                    sh "cp manifests-os-${env.BUILD_NUMBER}/${BUILD_MANIFEST} ."
                                     createUploadTestReportManifest(
                                         testManifest: "manifests/${TEST_MANIFEST}",
                                         buildManifest: BUILD_MANIFEST,
