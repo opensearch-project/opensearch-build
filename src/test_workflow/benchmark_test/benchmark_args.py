@@ -60,11 +60,18 @@ class BenchmarkArgs:
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle or compare two tests")
-        subparsers = parser.add_subparsers(dest="command", required=True, help="Please provide either 'execute-test' to run benchmark or 'compare' command to compare benchmark runs.")
+        parent_parser = argparse.ArgumentParser(add_help=False)
+        parent_parser.add_argument("--suffix", dest="suffix",
+                                   help="Suffix to be added to stack name for performance test")
 
+        parent_parser.add_argument("--benchmark-config", dest="benchmark_config",
+                                   help="absolute filepath to custom benchmark.ini config")
+
+        subparsers = parser.add_subparsers(dest="command", required=True,
+                                           help="Please provide either 'execute-test' to run benchmark or 'compare' command to compare benchmark runs.")
         # command to run a benchmark test
         execute_test_parser = subparsers.add_parser("execute-test",
-                                                    help="Execute benchmark test")
+                                                    help="Execute benchmark test", parents=[parent_parser])
         execute_test_parser.add_argument("--bundle-manifest", type=argparse.FileType("r"),
                                          help="Bundle Manifest file.")
         execute_test_parser.add_argument("--distribution-url", dest="distribution_url",
@@ -77,8 +84,6 @@ class BenchmarkArgs:
                                          help="Username for the cluster")
         execute_test_parser.add_argument("--password", dest="password",
                                          help="Password for the cluster")
-        execute_test_parser.add_argument("--suffix", dest="suffix",
-                                         help="Suffix to be added to stack name for performance test")
         execute_test_parser.add_argument("--component", dest="component", default="OpenSearch",
                                          help="Component name that needs to be performance tested")
         execute_test_parser.add_argument("--config", type=argparse.FileType("r"),
@@ -115,21 +120,19 @@ class BenchmarkArgs:
                                          help="EC2 instance type for data node, defaults to r5.xlarge.")
         execute_test_parser.add_argument("--workload", dest="workload", required=True,
                                          help="Name of the workload that OpenSearch Benchmark should run")
-        execute_test_parser.add_argument("--benchmark-config", dest="benchmark_config",
-                                         help="absolute filepath to custom benchmark.ini config")
         execute_test_parser.add_argument("--user-tag", dest="user_tag",
                                          help="Attach arbitrary text to the meta-data of each metric record")
         execute_test_parser.add_argument("--workload-params", dest="workload_params",
                                          help="With this parameter you can inject variables into workloads. Parameters differs "
-                                         'for each workload type. e.g., --workload-params "number_of_replicas:1,number_of_shards:5"')
+                                              'for each workload type. e.g., --workload-params "number_of_replicas:1,number_of_shards:5"')
         execute_test_parser.add_argument("--test-procedure", dest="test_procedure",
                                          help="Defines a test procedure to use. You can find a list of test procedures by using "
-                                         'opensearch-benchmark list test-procedures. E.g. --test-procedure="ingest-only"')
+                                              'opensearch-benchmark list test-procedures. E.g. --test-procedure="ingest-only"')
         execute_test_parser.add_argument("--exclude-tasks", dest="exclude_tasks",
                                          help='Defines a comma-separated list of test procedure tasks not to run. E.g. --exclude-tasks="index-append"')
         execute_test_parser.add_argument("--include-tasks", dest="include_tasks",
                                          help="Defines a comma-separated list of test procedure tasks to run. By default, all tasks listed in a test procedure array are run."
-                                         ' E.g. --include-tasks="scroll"',)
+                                              ' E.g. --include-tasks="scroll"',)
         execute_test_parser.add_argument("--capture-node-stat", dest="telemetry", action="append_const", const="node-stats",
                                          help="Enable opensearch-benchmark to capture node stat metrics such as cpu, mem, jvm etc as well.")
         execute_test_parser.add_argument("--capture-segment-replication-stat", dest="telemetry", action="append_const", const="segment-replication-stats",
@@ -142,7 +145,8 @@ class BenchmarkArgs:
                                          help="User provided ml-node ebs block storage size defaults to 100Gb")
 
         # command to run comparison
-        compare_parser = subparsers.add_parser("compare", help="Compare two tests using their test execution IDs")
+        compare_parser = subparsers.add_parser("compare", parents=[parent_parser],
+                                               help="Compare two tests using their test execution IDs")
         compare_parser.add_argument("baseline", type=str, help="The baseline ID to compare", nargs='?')
         compare_parser.add_argument("contender", type=str, help="The contender ID to compare", nargs='?')
         compare_parser.add_argument("--results-format", default="markdown", type=str,
@@ -153,18 +157,17 @@ class BenchmarkArgs:
                                     help="Determines whether to include the comparison in the results file")
         compare_parser.add_argument("-v", "--verbose", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level",
                                     help="Show more verbose output.")
-        compare_parser.add_argument("--benchmark-config", dest="benchmark_config",
-                                    help="absolute filepath to custom benchmark.ini config")
-        compare_parser.add_argument("--suffix", dest="suffix", help="Suffix to be added to stack name for performance comparison")
 
         args = parser.parse_args()
         self.command = args.command
+        self.stack_suffix = args.suffix if args.suffix else None
+        self.benchmark_config = args.benchmark_config if args.benchmark_config else None
+
         if args.command == "execute-test":
             self.bundle_manifest = args.bundle_manifest if args.bundle_manifest else None
             self.distribution_url = args.distribution_url if args.distribution_url else None
             self.cluster_endpoint = args.cluster_endpoint if args.cluster_endpoint else None
             self.distribution_version = args.distribution_version if args.distribution_version else None
-            self.stack_suffix = args.suffix if args.suffix else None
             self.config = args.config
             self.keep = args.keep
             self.single_node = args.single_node
@@ -188,7 +191,6 @@ class BenchmarkArgs:
             self.test_procedure = args.test_procedure if args.test_procedure else None
             self.exclude_tasks = args.exclude_tasks if args.exclude_tasks else None
             self.include_tasks = args.include_tasks if args.include_tasks else None
-            self.benchmark_config = args.benchmark_config if args.benchmark_config else None
             self.user_tag = args.user_tag if args.user_tag else None
             self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None
             self.use_50_percent_heap = args.use_50_percent_heap
@@ -209,9 +211,7 @@ class BenchmarkArgs:
             self.results_format = args.results_format if hasattr(args, "results_format") else None
             self.results_numbers_align = args.results_numbers_align if hasattr(args, "results_numbers_align") else None
             self.show_in_results = args.show_in_results if hasattr(args, "show_in_results") else None
-            self.stack_suffix = args.suffix if args.suffix else None
             self.logging_level = args.logging_level
-            self.benchmark_config = args.benchmark_config if args.benchmark_config else None
 
         else:
             logging.error("Invalid command: %s" % args.command)

@@ -17,7 +17,7 @@ from test_workflow.benchmark_test.benchmark_test_suite_compare import BenchmarkT
 from test_workflow.benchmark_test.benchmark_test_suite_runners import BenchmarkTestSuiteRunners
 
 
-class TestRunBenchmarkTest(unittest.TestCase):
+class TestRunBenchmarkTestCompare(unittest.TestCase):
     @pytest.fixture(autouse=True)
     def _capfd(self, capfd: Any) -> None:
         self.capfd = capfd
@@ -111,7 +111,6 @@ class TestRunBenchmarkTest(unittest.TestCase):
         # define the expected command
         expected_command = (
             f"docker run --name docker-container-{args.stack_suffix} "
-            "-v ~/.benchmark/benchmark.ini:/opensearch-benchmark/.benchmark/benchmark.ini "
             "opensearchproject/opensearch-benchmark:1.6.0 "
             "compare --baseline=12345 --contender=54321 "
             "--results-format=markdown "

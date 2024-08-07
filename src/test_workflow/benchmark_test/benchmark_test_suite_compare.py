@@ -27,23 +27,23 @@ class BenchmarkTestSuiteCompare(BenchmarkTestSuite):
             self.cleanup()
 
     def form_command(self) -> str:
-        command = f'docker run --name docker-container-{self.args.stack_suffix} ' \
-                  "-v ~/.benchmark/benchmark.ini:/opensearch-benchmark/.benchmark/benchmark.ini " \
-                  f"opensearchproject/opensearch-benchmark:1.6.0 " \
-                  f"compare --baseline={self.args.baseline} --contender={self.args.contender} "
+        self.command = f'docker run --name docker-container-{self.args.stack_suffix} '
+        if self.args.benchmark_config:
+            self.command += f" -v {self.args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini "
+        self.command += f"opensearchproject/opensearch-benchmark:1.6.0 " \
+                        f"compare --baseline={self.args.baseline} --contender={self.args.contender} "
 
         if self.args.results_format:
-            command += f"--results-format={self.args.results_format} "
+            self.command += f"--results-format={self.args.results_format} "
 
         if self.args.results_numbers_align:
-            command += f"--results-numbers-align={self.args.results_numbers_align} "
+            self.command += f"--results-numbers-align={self.args.results_numbers_align} "
 
-        command += "--results-file=final_result.md "
+        self.command += "--results-file=final_result.md "
 
         if self.args.show_in_results:
-            command += f"--show-in-results={self.args.show_in_results} "
+            self.command += f"--show-in-results={self.args.show_in_results} "
 
-        self.command = command
         return self.command
 
     def copy_comparison_results_to_local(self) -> None:

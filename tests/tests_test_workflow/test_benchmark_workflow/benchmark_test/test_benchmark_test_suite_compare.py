@@ -24,31 +24,37 @@ class TestBenchmarkTestSuiteCompare(unittest.TestCase):
         self.args.results_numbers_align = "right"
         self.args.show_in_results = "all"
 
-    def test_form_command(self) -> None:
-        expected_command = (
-            f'docker run --name docker-container-{self.args.stack_suffix} '
-            '-v ~/.benchmark/benchmark.ini:/opensearch-benchmark/.benchmark/benchmark.ini '
-            'opensearchproject/opensearch-benchmark:1.6.0 '
-            f'compare --baseline={self.args.baseline} --contender={self.args.contender} '
-            f'--results-format={self.args.results_format} '
-            f'--results-numbers-align={self.args.results_numbers_align} '
-            '--results-file=final_result.md '
-            f'--show-in-results={self.args.show_in_results} '
-        )
-
-        with patch('test_workflow.benchmark_test.benchmark_test_suite_compare.BenchmarkTestSuiteCompare.form_command') as mock_form_command:
-            mock_form_command.return_value = expected_command
-            compare = BenchmarkTestSuiteCompare(self.args)
-            command = compare.form_command()
-            self.assertEqual(command, expected_command)
-
     @patch('subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite_compare.BenchmarkTestSuiteCompare.copy_comparison_results_to_local')
     @patch('test_workflow.benchmark_test.benchmark_test_suite_compare.BenchmarkTestSuiteCompare.cleanup')
     def test_execute(self, mock_cleanup: Mock, mock_copy_results: Mock, mock_check_call: Mock) -> None:
+        self.args.benchmark_config = None
         compare = BenchmarkTestSuiteCompare(self.args)
         compare.execute()
         mock_check_call.assert_called_once()
+
+        self.assertEqual(compare.command, 'docker run --name docker-container-test-suffix '
+                                          'opensearchproject/opensearch-benchmark:1.6.0 compare '
+                                          '--baseline=baseline-id --contender=contender-id --results-format=markdown '
+                                          '--results-numbers-align=right --results-file=final_result.md '
+                                          '--show-in-results=all ')
+        mock_copy_results.assert_called_once()
+        mock_cleanup.assert_called_once()
+
+    @patch('subprocess.check_call')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_compare.BenchmarkTestSuiteCompare.copy_comparison_results_to_local')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_compare.BenchmarkTestSuiteCompare.cleanup')
+    def test_execute_with_benchmark_config(self, mock_cleanup: Mock, mock_copy_results: Mock, mock_check_call: Mock) -> None:
+        self.args.benchmark_config = '/some/path/benchmark.ini'
+        compare = BenchmarkTestSuiteCompare(self.args)
+        compare.execute()
+        mock_check_call.assert_called_once()
+        self.assertEqual(compare.command, 'docker run --name docker-container-test-suffix  -v '
+                                          '/some/path/benchmark.ini:/opensearch-benchmark/.benchmark/benchmark.ini '
+                                          'opensearchproject/opensearch-benchmark:1.6.0 compare '
+                                          '--baseline=baseline-id --contender=contender-id --results-format=markdown '
+                                          '--results-numbers-align=right --results-file=final_result.md '
+                                          '--show-in-results=all ')
         mock_copy_results.assert_called_once()
         mock_cleanup.assert_called_once()
 
