@@ -10,34 +10,34 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: f84a26e76807ea67a69822c37b1a1d89e7177d9b
+    ref: tags/2.16.0
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: cbc06a5eafe0009edbb2c865d7cd30262d04e502
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: b36f79336db82fd45db5665a5ac2e9368f0a1cdf
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 30760168263404e628a25fd13a54100d2610810c
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: c8ec49f1e2c9603498ca679727a499dc0b296e26
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 7a82ac2816dbccebb4cbd58b2e527e39ea3c0f40
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -45,7 +45,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 7a06e099897d4fd13ed371baac6413d6b7473c5f
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: da2a2db8690b11e0a06d6886c556e0eea8f4ef6f
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -61,7 +61,7 @@ components:
       - common-utils
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 768991f59fca85bf1889f578d25dc6118038f710
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -70,7 +70,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 941c5cb30d51dbb2f53c3a38411db1a9fc746156
+    ref: tags/2.16.0.0
     working_directory: notifications
     platforms:
       - linux
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 941c5cb30d51dbb2f53c3a38411db1a9fc746156
+    ref: tags/2.16.0.0
     working_directory: notifications
     platforms:
       - linux
@@ -88,7 +88,7 @@ components:
       - common-utils
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: 8c84962b704d37dbaf9c398b23c14fca0baf0dc4
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -96,7 +96,7 @@ components:
       - common-utils
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: 829cb1330c6933f25109ea101534cd4fb34364f8
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -105,7 +105,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 0848bf09a07513e8a4dda6ab0b4ec1c3a1e524c9
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -113,7 +113,7 @@ components:
       - ml-commons
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 05860fa1d85922aab74a38f86fedb8f54f163ef4
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -121,7 +121,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 08a98c5c19a01c91ac89008153daea0080b6c053
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -130,7 +130,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 30c3d1386290386ab31ffaa4c112a3dc8a501faf
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 19af3f2d0057921d2be279deefbecc4073404136
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -148,7 +148,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: ba8370e7352a285bb4f04dbed08b3f82f9a6e225
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -157,18 +157,18 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 680a54763ac87312913a77efa682d5adde826281
+    ref: tags/2.16.0.0
     platforms:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: bd594f54d47f432cac5a5d84ed883fca4a18245d
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: e28e18a5d565e327a1e8b656ee965e1d5e547816
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -176,7 +176,7 @@ components:
       - common-utils
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: 0ea88032465fb2b9eff35fec1815cb99baa8b06a
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
@@ -187,7 +187,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: 2ce7e3edf89c668258a0064af8843fcf535c634c
+    ref: tags/2.16.0.0
     platforms:
       - linux
       - windows
