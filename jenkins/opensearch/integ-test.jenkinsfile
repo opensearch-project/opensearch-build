@@ -293,50 +293,49 @@ pipeline {
             post {
                 always {
                     script {
-                        node(AGENT_LABEL) {
-                            docker.withRegistry('https://public.ecr.aws/') {
-                                docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
-                                    dir ("manifests-os-${env.BUILD_NUMBER}") {
+                        retry(5) {
+                            node(AGENT_LABEL) {
+                                docker.withRegistry('https://public.ecr.aws/') {
+                                    docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
                                         checkout scm
-                                        sh 'sleep 10'
                                         downloadBuildManifest(
                                             url: BUILD_MANIFEST_URL,
                                             path: BUILD_MANIFEST
                                         )
+                                        createUploadTestReportManifest(
+                                            testManifest: "manifests/${TEST_MANIFEST}",
+                                            buildManifest: BUILD_MANIFEST,
+                                            testRunID: "${env.BUILD_NUMBER}",
+                                            testType: 'integ-test',
+                                            componentName: "${COMPONENT_NAME}",
+                                        )
+                                        echo("Download report manifest from https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml")
+                                        archiveArtifacts artifacts: 'test-report.yml'
                                     }
-                                    sh "cp manifests-os-${env.BUILD_NUMBER}/${BUILD_MANIFEST} ."
-                                    checkout scm
-                                    sh 'sleep 5'
-                                    createUploadTestReportManifest(
-                                        testManifest: "manifests/${TEST_MANIFEST}",
-                                        buildManifest: BUILD_MANIFEST,
-                                        testRunID: "${env.BUILD_NUMBER}",
-                                        testType: 'integ-test',
-                                        componentName: "${COMPONENT_NAME}",
-                                    )
-                                    echo("Download report manifest from https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml")
-                                    archiveArtifacts artifacts: 'test-report.yml'
                                 }
                             }
                         }
-                        node(agent_nodes['linux_x64']) {
-                            def rc = (params.RC_NUMBER.toInteger() > 0)
-                            sh "mkdir -p test-results-os-${env.BUILD_NUMBER}"
-                            sh "curl -sSL https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml --output test-results-os-${env.BUILD_NUMBER}/test-report.yml"
-                            publishIntegTestResults(
-                                version: env.version,
-                                distributionBuildNumber: env.buildId,
-                                distributionBuildUrl: "https://build.ci.opensearch.org/blue/organizations/jenkins/${env.BUILD_JOB_NAME}/detail/${env.BUILD_JOB_NAME}/${env.buildId}/pipeline",
-                                rc: rc,
-                                jobName: env.JOB_NAME,
-                                rcNumber: env.RC_NUMBER,
-                                platform: env.platform,
-                                architecture: env.architecture,
-                                distribution: env.distribution,
-                                testReportManifestYml: "test-results-os-${env.BUILD_NUMBER}/test-report.yml"
-                            )
-                            postCleanup()
+                        retry(5) { 
+                            node(agent_nodes['linux_x64']) {
+                                def rc = (params.RC_NUMBER.toInteger() > 0)
+                                sh "mkdir -p test-results-os-${env.BUILD_NUMBER}"
+                                sh "curl -sSL https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml --output test-results-os-${env.BUILD_NUMBER}/test-report.yml"
+                                publishIntegTestResults(
+                                    version: env.version,
+                                    distributionBuildNumber: env.buildId,
+                                    distributionBuildUrl: "https://build.ci.opensearch.org/blue/organizations/jenkins/${env.BUILD_JOB_NAME}/detail/${env.BUILD_JOB_NAME}/${env.buildId}/pipeline",
+                                    rc: rc,
+                                    jobName: env.JOB_NAME,
+                                    rcNumber: env.RC_NUMBER,
+                                    platform: env.platform,
+                                    architecture: env.architecture,
+                                    distribution: env.distribution,
+                                    testReportManifestYml: "test-results-os-${env.BUILD_NUMBER}/test-report.yml"
+                                )
+                                postCleanup()
+                            }
                         }
+
                     }
                     postCleanup()
                 }
