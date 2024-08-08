@@ -139,7 +139,7 @@ pipeline {
                             def status = sh(returnStdout: true, script: 'git status --porcelain')
                             if (status) {
                                 sh """
-                                    git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
+                                    git add .
                                     git commit -sm "Add consolidated release notes for ${params.RELEASE_VERSION}"
                                     git push origin release-notes --force
                                     gh pr create --title 'Add consolidated release notes for ${params.RELEASE_VERSION}' --body 'Add consolidated release notes for ${params.RELEASE_VERSION}' -H release-notes -B main
