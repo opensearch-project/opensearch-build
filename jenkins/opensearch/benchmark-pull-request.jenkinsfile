@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.8.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.8.2', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -158,6 +158,7 @@ pipeline {
                 genericVariables: [
                     [key: 'pull_request_number', value: '$.pull_request_number'],
                     [key: 'repository', value: '$.repository'],
+                    [key: 'baseline_cluster_config', value: '$.baseline_cluster_config'],
                     [key: 'DISTRIBUTION_URL', value: '$.DISTRIBUTION_URL'],
                     [key: 'DISTRIBUTION_VERSION', value: '$.DISTRIBUTION_VERSION'],
                     [key: 'TEST_WORKLOAD', value: '$.TEST_WORKLOAD'],
@@ -278,9 +279,29 @@ pipeline {
                       """
                       script {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
-                            withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
-                                def pull_request = Integer.parseInt("${pull_request_number}")
-                                sh ("gh pr comment ${pull_request} --repo ${repository} --body-file final_result_${BUILD_NUMBER}.md")
+                            if ("${pull_request_number}" != '' && "${repository}" != '') {
+                                withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                    def pull_request = Integer.parseInt("${pull_request_number}")
+                                    sh ("gh pr comment ${pull_request} --repo ${repository} --body-file final_result_${BUILD_NUMBER}.md")
+                                }
+                                if ("${baseline_cluster_config}" != '') {
+                                        Map <String, String> benchmarkTestIds = getCompareBenchmarkIds(
+                                                                                   baselineClusterConfig: "${baseline_cluster_config}",
+                                                                                   distributionVersion: "${DISTRIBUTION_VERSION}-SNAPSHOT",
+                                                                                   workload: "${TEST_WORKLOAD}",
+                                                                                   pullRequestNumber: "${pull_request_number}"
+                                                                                )
+                                        // Trigger compare-benchmarks job
+                                            build job: 'compare-benchmarks',
+                                                parameters: [
+                                                    string(name:'BASELINE_TEST_EXECUTION_ID', value: "${benchmarkTestIds.baseline}"),
+                                                    string(name:'BASELINE_TEST_EXECUTION_ID', value: "${benchmarkTestIds.contender}"),
+                                                    string(name:'PULL_REQUEST_NUMBER', value: "${pull_request_number}"),
+                                                    string(name:'REPOSITORY', value: "${repository}")
+                                                ],
+                                                wait: false,
+                                                propagate: false
+                                }
                             }
                         }
                       }
@@ -290,11 +311,14 @@ pipeline {
                 failure {
                     script {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
-                            withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
-                                def pull_request = Integer.parseInt("${pull_request_number}")
-                                sh ("gh pr comment ${pull_request} --repo ${repository} --body \"The benchmark job ${BUILD_URL} failed.\n Please see logs to debug.\"")
+                            if ("${pull_request_number}" != '' && "${repository}" != '') {
+                                withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                    def pull_request = Integer.parseInt("${pull_request_number}")
+                                    sh ("gh pr comment ${pull_request} --repo ${repository} --body \"The benchmark job ${BUILD_URL} failed.\n Please see logs to debug.\"")
+                                }
                             }
                         }
+                        postCleanup()
                     }
 
                 }
@@ -325,7 +349,6 @@ pipeline {
                       }
                     }
                     postCleanup()
-
                 }
             }
         }
