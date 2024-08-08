@@ -172,6 +172,14 @@ pipeline {
                             echo "Skipping tests for ${component_check} as is not present in the provided build manifest."
                             componentList -= component_check
                         }
+                        // Due to inability to install multiple versions of deb/rpm packages on the same EC2 host.
+                        // CCR plugin remoteIntegTest are failing in deb and rpm distribution due to multiple clusters are not forming.(Issue-https://github.com/opensearch-project/opensearch-build/issues/4610)
+                        // A multi-cluster setup is needed. TODO: Explore multi-cluster setup solutions.
+                        // Temporarily Skipping integTest for cross-cluster-replication component when running on deb and rpm distribution.
+                        if ((distribution.equals('rpm') || distribution.equals('deb')) && component_check.equals('cross-cluster-replication')) {
+                            echo "Skipping integTest for ${distribution} distribution for cross-cluster-replication"
+                            componentList -= component_check
+                        }
                     }
                     echo "Testing components: ${componentList}"
                     currentBuild.description = "$TEST_MANIFEST, $version, $architecture, $platform, $buildId, $distribution, $componentList"
