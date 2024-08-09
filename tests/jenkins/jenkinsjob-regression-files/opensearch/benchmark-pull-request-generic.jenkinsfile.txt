@@ -142,7 +142,7 @@
         , returnStdout=true})
                   getCompareBenchmarkIds.echo(Latest test-execution-id: test-id)
             benchmark-pull-request.string({name=BASELINE_TEST_EXECUTION_ID, value=test-id})
-            benchmark-pull-request.string({name=BASELINE_TEST_EXECUTION_ID, value=test-id})
+            benchmark-pull-request.string({name=CONTENDER_TEST_EXECUTION_ID, value=test-id})
             benchmark-pull-request.string({name=PULL_REQUEST_NUMBER, value=1234})
             benchmark-pull-request.string({name=REPOSITORY, value=opensearch-project/OpenSearch})
             benchmark-pull-request.build({job=benchmark-compare, parameters=[null, null, null, null], wait=false, propagate=false})

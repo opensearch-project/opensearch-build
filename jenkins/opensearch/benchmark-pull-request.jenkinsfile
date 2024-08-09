@@ -295,7 +295,7 @@ pipeline {
                                         build job: 'benchmark-compare',
                                            parameters: [
                                              string(name:'BASELINE_TEST_EXECUTION_ID', value: "${benchmarkTestIds.baseline}"),
-                                             string(name:'BASELINE_TEST_EXECUTION_ID', value: "${benchmarkTestIds.contender}"),
+                                             string(name:'CONTENDER_TEST_EXECUTION_ID', value: "${benchmarkTestIds.contender}"),
                                              string(name:'PULL_REQUEST_NUMBER', value: "${pull_request_number}"),
                                              string(name:'REPOSITORY', value: "${repository}")
                                            ],
