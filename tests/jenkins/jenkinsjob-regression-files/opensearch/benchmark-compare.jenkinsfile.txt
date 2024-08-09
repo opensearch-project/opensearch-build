@@ -1,0 +1,41 @@
+   benchmark-compare.run()
+      benchmark-compare.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      benchmark-compare.library({identifier=jenkins@6.8.2, retriever=null})
+      benchmark-compare.pipeline(groovy.lang.Closure)
+         benchmark-compare.timeout({time=1, unit=HOURS})
+         benchmark-compare.logRotator({daysToKeepStr=30})
+         benchmark-compare.buildDiscarder(null)
+         benchmark-compare.throttleJobProperty({categories=[], limitOneJobWithMatchingParams=false, maxConcurrentPerNode=0, maxConcurrentTotal=20, paramsToUseForLimit=, throttleEnabled=true, throttleOption=project})
+         benchmark-compare.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test])
+         benchmark-compare.stage(validate-and-set-parameters, groovy.lang.Closure)
+            benchmark-compare.script(groovy.lang.Closure)
+         benchmark-compare.stage(benchmark-pull-request, groovy.lang.Closure)
+            benchmark-compare.script(groovy.lang.Closure)
+               benchmark-compare.runBenchmarkTestScript({command=compare, baseline=baseline-id, contender=contender-id, suffix=307})
+                  runBenchmarkTestScript.legacySCM(groovy.lang.Closure)
+                  runBenchmarkTestScript.library({identifier=jenkins@6.8.2, retriever=null})
+                  runBenchmarkTestScript.string({credentialsId=jenkins-aws-account-public, variable=AWS_ACCOUNT_PUBLIC})
+                  runBenchmarkTestScript.string({credentialsId=jenkins-artifact-bucket-name, variable=ARTIFACT_BUCKET_NAME})
+                  runBenchmarkTestScript.withCredentials([AWS_ACCOUNT_PUBLIC, ARTIFACT_BUCKET_NAME], groovy.lang.Closure)
+                     runBenchmarkTestScript.withAWS({role=opensearch-test, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                        runBenchmarkTestScript.s3Download({file=benchmark.ini, bucket=ARTIFACT_BUCKET_NAME, path=test_config/benchmark.ini, force=true})
+                  runBenchmarkTestScript.string({credentialsId=benchmark-metrics-datastore-user, variable=DATASTORE_USER})
+                  runBenchmarkTestScript.string({credentialsId=benchmark-metrics-datastore-password, variable=DATASTORE_PASSWORD})
+                  runBenchmarkTestScript.withCredentials([DATASTORE_USER, DATASTORE_PASSWORD], groovy.lang.Closure)
+                     runBenchmarkTestScript.readFile({file=/tmp/workspace/benchmark.ini})
+                     runBenchmarkTestScript.writeFile({file=/tmp/workspace/benchmark.ini, text=})
+                  runBenchmarkTestScript.sh(set +x && ./test.sh benchmark-test compare baseline-id contender-id --benchmark-config /tmp/workspace/benchmark.ini --suffix 307)
+         benchmark-compare.sh(
+                        echo '<details><summary>Benchmark Baseline Comparison Results</summary>' > temp_result_307.md
+                        echo '' >> temp_result_307.md
+                        echo '#### Benchmark Results for Job: test://artifact.url' >> temp_result_307.md
+                        cat final_result_307.md >> temp_result_307.md
+                        echo '</details>' >> temp_result_307.md
+                        mv temp_result_307.md final_result_307.md
+                    )
+         benchmark-compare.script(groovy.lang.Closure)
+            benchmark-compare.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
+            benchmark-compare.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+               benchmark-compare.sh(gh pr comment 1234 --repo opensearch-project/OpenSearch --body-file final_result_307.md)
+         benchmark-compare.postCleanup()
+            postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

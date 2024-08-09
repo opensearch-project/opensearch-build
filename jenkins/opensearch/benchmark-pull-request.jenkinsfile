@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.8.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.8.2', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -158,6 +158,7 @@ pipeline {
                 genericVariables: [
                     [key: 'pull_request_number', value: '$.pull_request_number'],
                     [key: 'repository', value: '$.repository'],
+                    [key: 'baseline_cluster_config', value: '$.baseline_cluster_config'],
                     [key: 'DISTRIBUTION_URL', value: '$.DISTRIBUTION_URL'],
                     [key: 'DISTRIBUTION_VERSION', value: '$.DISTRIBUTION_VERSION'],
                     [key: 'TEST_WORKLOAD', value: '$.TEST_WORKLOAD'],
@@ -190,14 +191,14 @@ pipeline {
             )
 
             parameterizedCron '''
-                H 4 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.16.0-SNAPSHOT/opensearch-min-2.16.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.16.0;TEST_WORKLOAD=big5;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=r5.xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,cluster-config:x64-r5.xlarge-1-shard-0-replica-snapshot-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots","snapshot_name":"big5_1_shard"};TEST_PROCEDURE=restore-from-snapshot;CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=true
-                H 4 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.16.0-SNAPSHOT/opensearch-min-2.16.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.16.0;TEST_WORKLOAD=nyc_taxis;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=r5.xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,cluster-config:x64-r5.xlarge-1-shard-0-replica-snapshot-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots","snapshot_name":"nyc_taxis_1_shard"};TEST_PROCEDURE=restore-from-snapshot;CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=true
-                H 4 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.16.0-SNAPSHOT/opensearch-min-2.16.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.16.0;TEST_WORKLOAD=http_logs;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=r5.xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,cluster-config:x64-r5.xlarge-1-shard-0-replica-snapshot-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots","snapshot_name":"http_logs_1_shard"};TEST_PROCEDURE=restore-from-snapshot;CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=true
+                H 4 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.17.0-SNAPSHOT/opensearch-min-2.17.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.17.0;TEST_WORKLOAD=big5;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=r5.xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,cluster-config:x64-r5.xlarge-1-shard-0-replica-snapshot-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots","snapshot_name":"big5_1_shard"};TEST_PROCEDURE=restore-from-snapshot;CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=true
+                H 4 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.17.0-SNAPSHOT/opensearch-min-2.17.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.17.0;TEST_WORKLOAD=nyc_taxis;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=r5.xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,cluster-config:x64-r5.xlarge-1-shard-0-replica-snapshot-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots","snapshot_name":"nyc_taxis_1_shard"};TEST_PROCEDURE=restore-from-snapshot;CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=true
+                H 4 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.17.0-SNAPSHOT/opensearch-min-2.17.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.17.0;TEST_WORKLOAD=http_logs;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=r5.xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,cluster-config:x64-r5.xlarge-1-shard-0-replica-snapshot-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots","snapshot_name":"http_logs_1_shard"};TEST_PROCEDURE=restore-from-snapshot;CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=true
 
-                H 5 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.16.0-SNAPSHOT/opensearch-min-2.16.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.16.0;TEST_WORKLOAD=http_logs;SINGLE_NODE_CLUSTER=true;USE_50_PERCENT_HEAP=true;USER_TAGS=cluster-config:x64-r5.xlarge-single-node-1-shard-0-replica-baseline;WORKLOAD_PARAMS={"number_of_replicas":"0","number_of_shards":"1"};EXCLUDE_TASKS=type:search;MIN_DISTRIBUTION=true
-                H 5 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.16.0-SNAPSHOT/opensearch-min-2.16.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.16.0;TEST_WORKLOAD=nyc_taxis;SINGLE_NODE_CLUSTER=true;USE_50_PERCENT_HEAP=true;USER_TAGS=cluster-config:x64-r5.xlarge-single-node-1-shard-0-replica-baseline;WORKLOAD_PARAMS={"number_of_replicas":"0","number_of_shards":"1"};EXCLUDE_TASKS=type:search;MIN_DISTRIBUTION=true
-                H 5 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.16.0-SNAPSHOT/opensearch-min-2.16.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.16.0;TEST_WORKLOAD=pmc;SINGLE_NODE_CLUSTER=true;USE_50_PERCENT_HEAP=true;USER_TAGS=cluster-config:x64-r5.xlarge-single-node-1-shard-0-replica-baseline;WORKLOAD_PARAMS={"number_of_replicas":"0","number_of_shards":"1"};MIN_DISTRIBUTION=true
-                H 5 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.16.0-SNAPSHOT/opensearch-min-2.16.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.16.0;TEST_WORKLOAD=so;SINGLE_NODE_CLUSTER=true;USE_50_PERCENT_HEAP=true;USER_TAGS=cluster-config:x64-r5.xlarge-single-node-1-shard-0-replica-baseline;WORKLOAD_PARAMS={"number_of_replicas":"0","number_of_shards":"1"};MIN_DISTRIBUTION=true
+                H 5 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.17.0-SNAPSHOT/opensearch-min-2.17.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.17.0;TEST_WORKLOAD=http_logs;SINGLE_NODE_CLUSTER=true;USE_50_PERCENT_HEAP=true;USER_TAGS=cluster-config:x64-r5.xlarge-single-node-1-shard-0-replica-baseline;WORKLOAD_PARAMS={"number_of_replicas":"0","number_of_shards":"1"};EXCLUDE_TASKS=type:search;MIN_DISTRIBUTION=true
+                H 5 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.17.0-SNAPSHOT/opensearch-min-2.17.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.17.0;TEST_WORKLOAD=nyc_taxis;SINGLE_NODE_CLUSTER=true;USE_50_PERCENT_HEAP=true;USER_TAGS=cluster-config:x64-r5.xlarge-single-node-1-shard-0-replica-baseline;WORKLOAD_PARAMS={"number_of_replicas":"0","number_of_shards":"1"};EXCLUDE_TASKS=type:search;MIN_DISTRIBUTION=true
+                H 5 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.17.0-SNAPSHOT/opensearch-min-2.17.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.17.0;TEST_WORKLOAD=pmc;SINGLE_NODE_CLUSTER=true;USE_50_PERCENT_HEAP=true;USER_TAGS=cluster-config:x64-r5.xlarge-single-node-1-shard-0-replica-baseline;WORKLOAD_PARAMS={"number_of_replicas":"0","number_of_shards":"1"};MIN_DISTRIBUTION=true
+                H 5 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/2.17.0-SNAPSHOT/opensearch-min-2.17.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=2.17.0;TEST_WORKLOAD=so;SINGLE_NODE_CLUSTER=true;USE_50_PERCENT_HEAP=true;USER_TAGS=cluster-config:x64-r5.xlarge-single-node-1-shard-0-replica-baseline;WORKLOAD_PARAMS={"number_of_replicas":"0","number_of_shards":"1"};MIN_DISTRIBUTION=true
 
                 H 6 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=3.0.0;TEST_WORKLOAD=big5;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=r5.xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,cluster-config:x64-r5.xlarge-1-shard-0-replica-snapshot-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo-300","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots-300","snapshot_name":"big5_1_shard"};TEST_PROCEDURE=restore-from-snapshot;CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=true
                 H 6 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=3.0.0;TEST_WORKLOAD=nyc_taxis;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=r5.xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,cluster-config:x64-r5.xlarge-1-shard-0-replica-snapshot-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo-300","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots-300","snapshot_name":"nyc_taxis_1_shard"};TEST_PROCEDURE=restore-from-snapshot;CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=true
@@ -278,9 +279,29 @@ pipeline {
                       """
                       script {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
-                            withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
-                                def pull_request = Integer.parseInt("${pull_request_number}")
-                                sh ("gh pr comment ${pull_request} --repo ${repository} --body-file final_result_${BUILD_NUMBER}.md")
+                            if ("${pull_request_number}" != '' && "${repository}" != '') {
+                                withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                    def pull_request = Integer.parseInt("${pull_request_number}")
+                                    sh ("gh pr comment ${pull_request} --repo ${repository} --body-file final_result_${BUILD_NUMBER}.md")
+                                }
+                                if ("${baseline_cluster_config}" != '') {
+                                        Map <String, String> benchmarkTestIds = getCompareBenchmarkIds(
+                                                                                   baselineClusterConfig: "${baseline_cluster_config}",
+                                                                                   distributionVersion: "${DISTRIBUTION_VERSION}-SNAPSHOT",
+                                                                                   workload: "${TEST_WORKLOAD}",
+                                                                                   pullRequestNumber: "${pull_request_number}"
+                                                                                )
+                                        // Trigger benchmark-compare job
+                                        build job: 'benchmark-compare',
+                                           parameters: [
+                                             string(name:'BASELINE_TEST_EXECUTION_ID', value: "${benchmarkTestIds.baseline}"),
+                                             string(name:'BASELINE_TEST_EXECUTION_ID', value: "${benchmarkTestIds.contender}"),
+                                             string(name:'PULL_REQUEST_NUMBER', value: "${pull_request_number}"),
+                                             string(name:'REPOSITORY', value: "${repository}")
+                                           ],
+                                           wait: false,
+                                           propagate: false
+                                }
                             }
                         }
                       }
@@ -290,11 +311,14 @@ pipeline {
                 failure {
                     script {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
-                            withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
-                                def pull_request = Integer.parseInt("${pull_request_number}")
-                                sh ("gh pr comment ${pull_request} --repo ${repository} --body \"The benchmark job ${BUILD_URL} failed.\n Please see logs to debug.\"")
+                            if ("${pull_request_number}" != '' && "${repository}" != '') {
+                                withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                    def pull_request = Integer.parseInt("${pull_request_number}")
+                                    sh ("gh pr comment ${pull_request} --repo ${repository} --body \"The benchmark job ${BUILD_URL} failed.\n Please see logs to debug.\"")
+                                }
                             }
                         }
+                        postCleanup()
                     }
 
                 }
@@ -325,7 +349,6 @@ pipeline {
                       }
                     }
                     postCleanup()
-
                 }
             }
         }
