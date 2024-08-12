@@ -24,7 +24,7 @@
                             )
                   release-notes-check.sh({returnStdout=true, script=git status --porcelain})
                   release-notes-check.sh(
-                                    git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
+                                    git add .
                                     git commit -sm "Add consolidated release notes for 3.0.0"
                                     git push origin release-notes --force
                                     gh pr create --title 'Add consolidated release notes for 3.0.0' --body 'Add consolidated release notes for 3.0.0' -H release-notes -B main
