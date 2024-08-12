@@ -2,7 +2,7 @@
 
 The maintainers of the OpenSearch-build Repo seek to promote an inclusive and engaged community of contributors. In order to facilitate this, bi-weekly triage meetings are open-to-all and attendance is encouraged for anyone who hopes to contribute, discuss an issue, or learn more about the project. To learn more about contributing to the OpenSearch-build Repo visit the [Contributing](./CONTRIBUTING.md) documentation.
 
-### Do I need to attend for my issue to be addressed/triaged?
+### Do I need to attend the meeting for my issue to be addressed/triaged?
 
 Attendance is not required for your issue to be triaged or addressed. All new issues are triaged bi-weekly.
 
@@ -42,7 +42,7 @@ There is no specific ordering within each category.
 
 If you have an issue you would like to discuss but do not have the ability to attend the entire meeting, please attend when is best for you and signal that you have an issue to discuss when you arrive.
 
-### Do I need to have already contributed to the project to attend a triage meeting?
+### Is prior contribution to the project required to attend a triage meeting?
 
 No, all are welcome and encouraged to attend. Attending the Backlog & Triage meetings is a great way for a new contributor to learn about the project as well as explore different avenues of contribution.
 
@@ -66,4 +66,4 @@ Yes, there are several labels that are used to identify the 'state' of issues fi
 
 ### Who should I contact if I have further questions?
 
-You can always file an [issue](https://github.com/opensearch-project/opensearch-build/issues/new/choose) for any question you have about the project. Alternatively, you can use [opensearch slack](https://opensearch.org/slack.html) channels named #infra #devops to ask any queries.
+You can always file an [issue](https://github.com/opensearch-project/opensearch-build/issues/new/choose) for any question you have about the project. Alternatively, you can use [opensearch slack](https://opensearch.org/slack.html) channels such as #infra #devops for any related queries.
