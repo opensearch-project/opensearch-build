@@ -40,7 +40,7 @@ Meetings are 45 minutes and structured as follows:
 
 There is no specific ordering within each category.
 
-If you have an issue you would like to discuss but do not have the ability to attend the entire meeting please attend when is best for you and signal that you have an issue to discuss when you arrive.
+If you have an issue you would like to discuss but do not have the ability to attend the entire meeting, please attend when is best for you and signal that you have an issue to discuss when you arrive.
 
 ### Do I need to have already contributed to the project to attend a triage meeting?
 
