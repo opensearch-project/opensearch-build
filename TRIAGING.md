@@ -34,7 +34,7 @@ Meetings are 45 minutes and structured as follows:
     1. [opensearch-cluster-cdk](https://github.com/opensearch-project/opensearch-cluster-cdk)
     1. [opensearch-devops](https://github.com/opensearch-project/opensearch-devops)
 4. Member Requests: Opportunity for any meeting member to ask for consideration of an issue or pull request.
-5. Untriaged Items: Review any [issues](https://github.com/issues?q=is%3Aissue+label%3Auntriaged+repo%3Aopensearch-project%2Fopensearch-build+repo%3Aopensearch-project%2Fhelm-charts+repo%3Aopensearch-project%2Fansible-playbook+repo%3Aopensearch-project%2Fopensearch-ci+repo%3Aopensearch-project%2Fopensearch-cluster-cdk+repo%3Aopensearch-project%2Fterraform-provider-opensearch+repo%3Aopensearch-project%2Fopensearch-devops+repo%3Aopensearch-project%2Fopensearch-build-libraries+is%3Aopen+) that might have had the 'untriaged' label removed but require additional triage discussion.
+5. Untriaged Items: Review any [issues](https://github.com/issues?q=is%3Aissue+label%3Auntriaged+repo%3Aopensearch-project%2Fopensearch-build+repo%3Aopensearch-project%2Fhelm-charts+repo%3Aopensearch-project%2Fansible-playbook+repo%3Aopensearch-project%2Fopensearch-ci+repo%3Aopensearch-project%2Fopensearch-cluster-cdk+repo%3Aopensearch-project%2Fterraform-provider-opensearch+repo%3Aopensearch-project%2Fopensearch-devops+repo%3Aopensearch-project%2Fopensearch-build-libraries+is%3Aopen+ ) that might have had the 'untriaged' label removed but require additional triage discussion.
 6. Open Discussion: Allow for members of the meeting to surface any topics without issues filed or pull request created.
 
 
