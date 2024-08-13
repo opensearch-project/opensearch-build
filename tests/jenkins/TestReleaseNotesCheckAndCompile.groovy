@@ -75,7 +75,7 @@ class TestReleaseNotesCheckAndCompile extends BuildPipelineTest {
         assertThat(helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.any { call ->
-            callArgsToString(call).contains('./release_notes.sh compile manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --output table.md')
+            callArgsToString(call).contains('./release_notes.sh compile manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --output opensearch-release-notes-3.0.0.md')
         }).isTrue()
     }
 }
