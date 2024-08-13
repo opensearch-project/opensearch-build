@@ -58,3 +58,6 @@ components:
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
     ref: main
+  - name: dashboardsFlowFramework
+    repository: https://github.com/opensearch-project/dashboards-flow-framework.git
+    ref: main
