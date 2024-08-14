@@ -47,7 +47,7 @@ def main() -> int:
     output_dir = BuildOutputDir(manifest.build.filename, args.distribution).dir
 
     if args.incremental:
-        buildIncremental = BuildIncremental(manifest, args.distribution)
+        buildIncremental = BuildIncremental(manifest, args.distribution, args.platform)
         list_of_updated_plugins = buildIncremental.commits_diff(manifest)
         components = buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)
 
