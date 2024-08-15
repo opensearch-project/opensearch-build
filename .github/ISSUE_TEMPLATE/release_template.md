@@ -87,7 +87,7 @@ Release blog is ready | :red_circle: |   |
 - [ ] [Windows Integration Test](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#windows-integration-test).
 - [ ] [Broadcast and Communication](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#broadcast-and-communication).
 - [ ] [Release Candidate Lock](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-candidate-lock).
-
+- [ ] [Stop Release Candidate periodic auto builds](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#stop-periodic-auto-builds)
 ### [Performance testing validation](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#benchmark-tests) - _Ends __REPLACE_RELEASE-minus-6-days___
 
 - [ ] Post the benchmark-tests
@@ -147,7 +147,6 @@ Release blog is ready | :red_circle: |   |
 ### Post-Release activities
 - [ ] Release Tags.
 - [ ] Input Manifest Update.
-- [ ] Decrease the Build Frequency.
 - [ ] OpenSearch Build Release notes.
 - [ ] Retrospective Issue.
 - [ ] Helm and Ansible Playbook release.
