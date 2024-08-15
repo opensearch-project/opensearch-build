@@ -294,6 +294,7 @@ All the failed logs are in s3 accessed through the cloudfront. Sample [link](htt
 
 Stop builds for this version of OpenSearch and/or OpenSearch Dashboards in order to avoid accidental commits going in unknowingly. Restart only if necessary, else manually run the build workflow and declare new release candidate.
 
+#### Stop Periodic Auto Builds
 Once the RC is finalized, in order to exclude the release from running periodically, at this point it is necessary for the release manager to lock the input manifest and update the `check-for-build.jenkins` to remove it from the scheduled execution, sample [PR](https://github.com/opensearch-project/opensearch-build/pull/3523/files).
 
 
@@ -383,10 +384,6 @@ Replace `refs` in input manifest with tags. The `refs` can be identified from th
 ### OpenSearch Build Release notes
 
 Generate distribution release notes for opensearch-build repository, sample [1.3.10](https://github.com/opensearch-project/opensearch-build/releases/tag/1.3.10) release details.
-
-### Decrease the build frequency
-
-Lower the frequency of builds for the release version of OpenSearch and/or OpenSearch Dashboards, sample [PR](https://github.com/opensearch-project/opensearch-build/pull/3523).
 
 ### Retrospective Issue
 
