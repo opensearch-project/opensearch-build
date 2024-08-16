@@ -23,6 +23,7 @@ Please refer to the following link for the release version dates: [Release Sched
 ### [Entrance Criteria](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#entrance-criteria-to-start-release-window)
 Criteria | Status | Description  | Comments
 -- | -- | -- | --
+Each component release issue has an assigned owner | :red_circle: |   |
 Documentation draft PRs are up and in tech review for all component changes | :red_circle: |   |
 Sanity testing is done for all components | :red_circle: |   |
 Code coverage has not decreased (all new code has tests) | :red_circle: |   |
