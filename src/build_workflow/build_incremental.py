@@ -34,7 +34,7 @@ class BuildIncremental:
         components = []
         for component in stable_input_manifest.components.select():
             if component.platforms and self.platform not in component.platforms:
-                logging.info(f"Skipping {component.name} as it's not compatible on {self.platform}.")
+                logging.info(f"Skipping {component.name} as it is not compatible with {self.platform}.")
                 continue
             if component.name not in previous_build_manifest.components:
                 components.append(component.name)
