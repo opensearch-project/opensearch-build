@@ -20,12 +20,14 @@ class TestBuildIncremental(unittest.TestCase):
         os.path.join(os.path.dirname(__file__), "data", "opensearch-input-2.12.0.yml"))
     BUILD_MANIFEST = BuildManifest.from_path(
         os.path.join(os.path.dirname(__file__), "data", "opensearch-build-tar-2.12.0.yml"))
+    BUILD_MANIFEST_WINDOWS = BuildManifest.from_path(
+        os.path.join(os.path.dirname(__file__), "data", "opensearch-build-zip-2.12.0.yml"))
     BUILD_MANIFEST_PATH = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-tar-2.12.0.yml")
     INPUT_MANIFEST_DASHBOARDS = InputManifest.from_path(
         os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-input-2.12.0.yml"))
     BUILD_MANIFEST_DASHBOARDS = BuildManifest.from_path(
         os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-build-tar-2.12.0.yml"))
-    buildIncremental = BuildIncremental(INPUT_MANIFEST, "tar")
+    buildIncremental = BuildIncremental(INPUT_MANIFEST, "tar", "linux")
 
     @patch("os.path.exists")
     @patch("manifests.build_manifest.BuildManifest.from_path")
@@ -65,7 +67,7 @@ class TestBuildIncremental(unittest.TestCase):
         stable_mock_input_manifest.assert_called_once()
         mock_build_manifest.assert_called_once()
         self.assertIsNotNone(diff_list)
-        self.assertEqual(len(diff_list), 8)
+        self.assertEqual(len(diff_list), 9)
         self.assertTrue("k-NN" in diff_list)
         self.assertTrue("geospatial" in diff_list)
         self.assertTrue("security" in diff_list)
@@ -74,6 +76,7 @@ class TestBuildIncremental(unittest.TestCase):
         self.assertTrue("neural-search" in diff_list)
         self.assertTrue("opensearch-observability" in diff_list)
         self.assertTrue("security-analytics" in diff_list)
+        self.assertTrue("performance-analyzer" in diff_list)
 
     @patch("os.path.exists")
     @patch("manifests.build_manifest.BuildManifest.from_path")
@@ -114,6 +117,20 @@ class TestBuildIncremental(unittest.TestCase):
         mock_build_manifest.assert_called_once()
         self.assertEqual(diff_list, ["OpenSearch"])
 
+    @patch("os.path.exists")
+    @patch("manifests.build_manifest.BuildManifest.from_path")
+    @patch("manifests.input_manifest.InputManifest.stable")
+    def test_commits_diff_platform_incompatible(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
+        mock_path_exists.return_value = True
+        stable_mock_input_manifest.return_value = self.INPUT_MANIFEST
+        mock_build_manifest.return_value = self.BUILD_MANIFEST_WINDOWS
+
+        diff_list = BuildIncremental(self.INPUT_MANIFEST, "zip", "windows").commits_diff(self.INPUT_MANIFEST)
+        stable_mock_input_manifest.assert_called_once()
+        mock_build_manifest.assert_called_once()
+        self.assertFalse(diff_list)
+        self.assertEqual(len(diff_list), 0)
+
     def test_rebuild_plugins_with_no_update(self) -> None:
         diff_list: List[str] = []
         rebuild_list = self.buildIncremental.rebuild_plugins(diff_list, self.INPUT_MANIFEST)
@@ -125,7 +142,7 @@ class TestBuildIncremental(unittest.TestCase):
         rebuild_list = self.buildIncremental.rebuild_plugins(diff_list, self.INPUT_MANIFEST)
 
         self.assertTrue(rebuild_list)
-        self.assertEqual(len(rebuild_list), 19)
+        self.assertEqual(len(rebuild_list), 20)
         for component in rebuild_list:
             self.assertTrue(component in self.INPUT_MANIFEST.components)
 
@@ -152,7 +169,7 @@ class TestBuildIncremental(unittest.TestCase):
         self.assertTrue("geospatial" in rebuild_list_js)
 
     def test_rebuild_plugins_with_dashboards(self) -> None:
-        buildIncrementDashboards = BuildIncremental(self.INPUT_MANIFEST_DASHBOARDS, "tar")
+        buildIncrementDashboards = BuildIncremental(self.INPUT_MANIFEST_DASHBOARDS, "tar", "linux")
         diff_list = ["observabilityDashboards"]
         rebuild_list = buildIncrementDashboards.rebuild_plugins(diff_list, self.INPUT_MANIFEST_DASHBOARDS)
         self.assertTrue(rebuild_list)
