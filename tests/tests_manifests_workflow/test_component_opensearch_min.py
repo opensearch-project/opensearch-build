@@ -10,9 +10,13 @@ from unittest.mock import MagicMock, patch
 
 from git.git_repository import GitRepository
 from manifests_workflow.component_opensearch_min import ComponentOpenSearchMin
+import os
 
 
 class TestComponentOpenSearchMin(unittest.TestCase):
+    TEST_DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
+    TEST_REPO_PATH = os.path.join(TEST_DATA_PATH, "repository")
+
     @patch("subprocess.check_output")
     def test_branches(self, mock: MagicMock) -> None:
         mock.return_value = "\n".join(["main", "1.x", "1.21", "20.1", "something", "else"]).encode()
@@ -25,7 +29,7 @@ class TestComponentOpenSearchMin(unittest.TestCase):
     @patch("os.makedirs")
     @patch.object(GitRepository, "__checkout__")
     def test_checkout(self, *mocks: MagicMock) -> None:
-        component = ComponentOpenSearchMin.checkout("path")
+        component = ComponentOpenSearchMin.checkout(self.TEST_REPO_PATH)
         self.assertEqual(component.name, "OpenSearch")
         self.assertFalse(component.snapshot)
 
