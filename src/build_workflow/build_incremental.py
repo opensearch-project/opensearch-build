@@ -11,12 +11,14 @@ from typing import List
 
 from manifests.build_manifest import BuildManifest
 from manifests.input_manifest import InputManifest
+from system.os import current_platform
 
 
 class BuildIncremental:
-    def __init__(self, input_manifest: InputManifest, distribution: str):
+    def __init__(self, input_manifest: InputManifest, distribution: str, platform: str):
         self.distribution = distribution
         self.input_manifest = input_manifest
+        self.platform = platform or current_platform()
 
     # Given input manifest and return a list of what components changed and added.
     def commits_diff(self, input_manifest: InputManifest) -> List[str]:
@@ -31,6 +33,9 @@ class BuildIncremental:
             return [input_manifest.build.name.replace(" ", "-")]
         components = []
         for component in stable_input_manifest.components.select():
+            if component.platforms and self.platform not in component.platforms:
+                logging.info(f"Skipping {component.name} as it is not compatible with {self.platform}.")
+                continue
             if component.name not in previous_build_manifest.components:
                 components.append(component.name)
                 logging.info(f"Adding {component.name} since it is missing from previous build manifest")

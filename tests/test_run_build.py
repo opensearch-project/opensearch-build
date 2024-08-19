@@ -51,7 +51,7 @@ class TestRunBuild(unittest.TestCase):
         os.path.join(os.path.dirname(__file__), "tests_build_workflow", "data", "opensearch-dashboards-input-2.12.0.yml"))
     BUILD_MANIFEST_DASHBOARDS = BuildManifest.from_path(
         os.path.join(os.path.dirname(__file__), "tests_build_workflow", "data", "opensearch-dashboards-build-tar-2.12.0.yml"))
-    buildIncremental = BuildIncremental(INPUT_MANIFEST, "tar")
+    buildIncremental = BuildIncremental(INPUT_MANIFEST, "tar", "linux")
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "linux"])
     @patch("run_build.Builders.builder_from", return_value=MagicMock())

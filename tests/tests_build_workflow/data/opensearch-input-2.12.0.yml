@@ -203,3 +203,8 @@ components:
     depends_on:
       - common-utils
       - job-scheduler
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: f2d6b0b4a6a8931e2898a53210975d7ed321953c
+    platforms:
+      - linux
