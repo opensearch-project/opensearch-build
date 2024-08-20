@@ -26,7 +26,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('6.7.2')
+                .defaultVersion('6.8.3')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -114,9 +114,9 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
                 'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component reportsDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '.toString(),
                 'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '.toString()
         ))
-        assertThat(getCommandExecutions('sh', 'report.sh'), hasItems('./report.sh manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/215/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/3.0.0/215/linux/x64/tar --test-run-id 215 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '))
+        assertThat(getCommandExecutions('sh', 'report.sh'), hasItems('./report.sh manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/215/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/3.0.0/215/linux/x64/tar --test-run-id 215 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar --release-candidate 0 '))
         assertCallStack().contains('curl -sSL https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/3.0.0/215/linux/x64/tar/test-results/215/integ-test/test-report.yml --output test-results-osd-215/test-report.yml')
-        assertCallStack().contains('{version=3.0.0, distributionBuildNumber=215, distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch-dashboards/detail/distribution-build-opensearch-dashboards/215/pipeline, rc=false, jobName=dummy_job, rcNumber=null, platform=linux, architecture=x64, distribution=tar, testReportManifestYml=test-results-osd-215/test-report.yml}')
+        assertCallStack().contains('{jobName=distribution-build-opensearch-dashboards, componentName=ganttChartDashboards, buildManifest=tests/jenkins/data/opensearch-dashboards-3.0.0-build.yml, testManifest=manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml, localPath=/tmp/workspace/tar, switchUserNonRoot=false}')
     }
 
     @Test
