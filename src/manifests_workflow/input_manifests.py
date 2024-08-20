@@ -110,8 +110,9 @@ class InputManifests(Manifests):
             logging.info(f"Ignoring {self.name} {sorted(set(all_branches) - set(branches))} branches as they are legacy")
 
             for branch in branches:
+                repo_path = os.path.join(work_dir.name, self.name.replace(" ", ""), branch)
                 min_component_klass = min_klass.checkout(
-                    path=os.path.join(work_dir.name, self.name.replace(" ", ""), branch),
+                    path=repo_path,
                     branch=branch,
                 )
 

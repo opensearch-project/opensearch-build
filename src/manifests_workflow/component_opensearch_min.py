@@ -5,16 +5,18 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
 from typing import Any, List
 
 from git.git_repository import GitRepository
 from manifests_workflow.component import Component
 from manifests_workflow.component_opensearch import ComponentOpenSearch
 from system.properties_file import PropertiesFile
-import os
 
 
 class ComponentOpenSearchMin(Component):
+    path = None
+
     def __init__(self, repo: GitRepository, snapshot: bool = False) -> None:
         super().__init__(
             "OpenSearch",
@@ -24,12 +26,12 @@ class ComponentOpenSearchMin(Component):
         )
 
     @classmethod
-    def branches(self, url: str = "https://github.com/opensearch-project/OpenSearch.git") -> List[str]:
+    def branches(cls, url: str = "https://github.com/opensearch-project/OpenSearch.git") -> List[str]:
         return Component.branches(url)
 
     @classmethod
-    def checkout(self, path: str, branch: str = "main", snapshot: bool = False) -> 'ComponentOpenSearchMin':
-        self.path = path
+    def checkout(cls, path: str, branch: str = "main", snapshot: bool = False) -> 'ComponentOpenSearchMin':
+        cls.path = path
         return ComponentOpenSearchMin(
             GitRepository("https://github.com/opensearch-project/OpenSearch.git", branch, path),
             snapshot,
