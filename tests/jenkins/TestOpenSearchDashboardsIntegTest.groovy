@@ -116,7 +116,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         ))
         assertThat(getCommandExecutions('sh', 'report.sh'), hasItems('./report.sh manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/215/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/3.0.0/215/linux/x64/tar --test-run-id 215 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar --release-candidate 0 '))
         assertCallStack().contains('curl -sSL https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/3.0.0/215/linux/x64/tar/test-results/215/integ-test/test-report.yml --output test-results-osd-215/test-report.yml')
-        assertCallStack().contains('{jobName=distribution-build-opensearch-dashboards, componentName=ganttChartDashboards, buildManifest=tests/jenkins/data/opensearch-dashboards-3.0.0-build.yml, testManifest=manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml, localPath=/tmp/workspace/tar, switchUserNonRoot=false}')
+        assertCallStack().contains('{distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch-dashboards/detail/distribution-build-opensearch-dashboards/215/pipeline, jobName=dummy_job, testReportManifestYml=test-results-osd-215/test-report.yml}')
     }
 
     @Test
