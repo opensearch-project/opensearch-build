@@ -21,7 +21,7 @@ pipeline {
             agent {
                 docker {
                     label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3'
+                    image 'opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1'
                     args '-e JAVA_HOME=/opt/java/openjdk-11'
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
@@ -32,6 +32,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         try {
                             sh """
+                                set +x
+                                source /etc/profile.d/java_home.sh
                                 git remote set-url origin https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build
                                 git config user.email "opensearch-infra@amazon.com"
                                 git config user.name "opensearch-ci"
