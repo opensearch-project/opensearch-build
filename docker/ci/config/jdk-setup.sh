@@ -58,7 +58,8 @@ for jdk in ${JDKS}; do
     ESUM=$(echo ${jdk} | cut -d '@' -f1)
     BINARY_URL=$(echo ${jdk} | cut -d '@' -f2)
     regex="temurin([0-9]+)[-]"
-    if [[ $jdk =~ $regex ]]; then
+    regex2="openjdk([0-9]+)[-]"
+    if [[ $jdk =~ $regex || $jdk =~ $regex2 ]]; then
         MAJOR=${BASH_REMATCH[1]}
         curl -LfsSo /tmp/openjdk-${MAJOR}.tar.gz ${BINARY_URL}
         echo "${ESUM} */tmp/openjdk-${MAJOR}.tar.gz" | sha256sum -c -
