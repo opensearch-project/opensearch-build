@@ -38,8 +38,8 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
                     mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
                     *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
-        mock_component_opensearch_min.branches.return_value = ["2.12"]
-        mock_component_opensearch_min.checkout.return_value = MagicMock(version="2.12.1000")
+        mock_component_opensearch_min.branches.return_value = ["2.1000"]
+        mock_component_opensearch_min.checkout.return_value = MagicMock(version="2.1000.1000")
         manifests = InputManifestsOpenSearch()
         manifests.update()
         self.assertEqual(mock_manifest_to_file.call_count, 1)
@@ -47,17 +47,17 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
             call(
                 os.path.join(
                     InputManifestsOpenSearch.manifests_path(),
-                    "2.12.1000",
-                    "opensearch-2.12.1000.yml",
+                    "2.1000.1000",
+                    "opensearch-2.1000.1000.yml",
                 )
             )
         ]
         mock_manifest_to_file.assert_has_calls(calls)
         mock_add_to_cron.assert_has_calls([
-            call('2.12.1000'),
+            call('2.1000.1000'),
         ])
         mock_add_to_versionincrement_workflow.assert_has_calls([
-            call('2.12.1000'),
+            call('2.1000.1000'),
         ])
 
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
