@@ -15,7 +15,7 @@ from manifests_workflow.component_opensearch_min import ComponentOpenSearchMin
 
 class TestComponentOpenSearchMin(unittest.TestCase):
     TEST_DATA_PATH = os.path.join(os.path.dirname(__file__), "data")
-    TEST_REPO_PATH = os.path.join(TEST_DATA_PATH, "repository")
+    TEST_REPO_PATH = os.path.join(TEST_DATA_PATH, "repository", "OpenSearch")
 
     @patch("subprocess.check_output")
     def test_branches(self, mock: MagicMock) -> None:
