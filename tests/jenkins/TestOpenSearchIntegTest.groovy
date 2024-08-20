@@ -25,7 +25,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('6.7.2')
+                .defaultVersion('6.8.3')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -93,10 +93,10 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
                 'tests/jenkins/jenkinsjob-regression-files/opensearch/integ-test.jenkinsfile')
         assert getCommandExecutions('stage', 'validate-artifacts').size() == 1
         assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component k-NN --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
-        assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/9010/linux/x64/tar --test-run-id 234 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
+        assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/9010/linux/x64/tar --test-run-id 234 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar --release-candidate 0 '))
         assertThat(getCommandExecutions('echo', 'Testing'), hasItem('Testing components: [ml-commons, anomaly-detection, neural-search, security-analytics, security, k-NN, notifications]'))
         assertCallStack().contains('curl -sSL https://ci.opensearch.org/ci/dbc/integ-test/3.0.0/9010/linux/x64/tar/test-results/234/integ-test/test-report.yml --output test-results-os-234/test-report.yml')
-        assertCallStack().contains('{version=3.0.0, distributionBuildNumber=9010, distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch/detail/distribution-build-opensearch/9010/pipeline, rc=false, jobName=dummy_job, rcNumber=null, platform=linux, architecture=x64, distribution=tar, testReportManifestYml=test-results-os-234/test-report.yml}')
+        assertCallStack().contains('{distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch/detail/distribution-build-opensearch/9010/pipeline, jobName=dummy_job, testReportManifestYml=test-results-os-234/test-report.yml}')
     }
 
     @Test
