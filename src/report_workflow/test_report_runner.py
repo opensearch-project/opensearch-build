@@ -26,7 +26,7 @@ class TestReportRunner:
     test_manifest: TestManifest
     tests_dir: str
     test_report_manifest: TestReportManifest
-    test_run_data: dict
+    test_report_data: dict
     bundle_manifest: BundleManifest
 
     def __init__(self, args: ReportArgs, test_manifest: TestManifest) -> None:
@@ -34,7 +34,7 @@ class TestReportRunner:
         self.base_path = args.base_path
         self.test_manifest = test_manifest
         self.release_candidate = self.args.release_candidate
-        self.test_run_data = self.test_report_manifest_data_template("manifest")
+        self.test_report_data = self.test_report_manifest_data_template("manifest")
         self.product_name = test_manifest.__to_dict__().get("name")
         self.name = self.product_name.replace(" ", "-").lower()
         self.components = self.args.components
@@ -50,26 +50,24 @@ class TestReportRunner:
         self.test_components = self.test_manifest.components
 
     def update_data(self) -> dict:
-        self.test_run_data["name"] = self.product_name
+        self.test_report_data["name"] = self.product_name
         self.bundle_manifest = BundleManifest.from_urlpath(self.dist_manifest)
-        self.test_run_data["version"] = self.bundle_manifest.build.version
-        self.test_run_data["platform"] = self.bundle_manifest.build.platform
-        self.test_run_data["architecture"] = self.bundle_manifest.build.architecture
-        self.test_run_data["distribution"] = self.bundle_manifest.build.distribution
-        self.test_run_data["id"] = self.bundle_manifest.build.id
-        self.test_run_data["rc"] = self.release_candidate
-        self.test_run_data["test-run"] = self.update_test_run_data()
+        self.test_report_data["version"] = self.bundle_manifest.build.version
+        self.test_report_data["platform"] = self.bundle_manifest.build.platform
+        self.test_report_data["architecture"] = self.bundle_manifest.build.architecture
+        self.test_report_data["distribution"] = self.bundle_manifest.build.distribution
+        self.test_report_data["id"] = self.bundle_manifest.build.id
+        self.test_report_data["rc"] = self.release_candidate
+        self.test_report_data["test-run"] = self.update_test_run_data()
         for component in self.test_components.select(focus=self.args.components):
             if self.test_manifest.components[component.name].__to_dict__().get(self.test_type) is not None:
-                logging.info(f"component is {component.name}")
                 component_ci_group = getattr(component, self.test_type.replace("-", "_")).get("ci-groups", None)
                 if component_ci_group:
-                    logging.info(f"ci-group is {component_ci_group}")
                     for i in range(component_ci_group):
-                        self.test_run_data["components"].append(self.component_entry(component.name, i + 1))
+                        self.test_report_data["components"].append(self.component_entry(component.name, i + 1))
                 else:
-                    self.test_run_data["components"].append(self.component_entry(component.name))
-        return self.test_run_data
+                    self.test_report_data["components"].append(self.component_entry(component.name))
+        return self.test_report_data
 
     def update_test_run_data(self) -> dict:
         test_run_data = {
