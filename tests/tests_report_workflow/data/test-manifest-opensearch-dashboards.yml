@@ -13,6 +13,7 @@ components:
       additional-cluster-configs:
         vis_builder.enabled: true
         data_source.enabled: true
+      ci-groups: 3
   - name: alertingDashboards
     integ-test:
       test-configs:

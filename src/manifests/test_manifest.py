@@ -31,6 +31,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                 - with-less-security
               additional-cluster-configs:
                 - key : value
+              ci-group: 6
             bwc-test:
               test-configs:
                 - with-security

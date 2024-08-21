@@ -59,6 +59,21 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
             test_run_runner.generate_report(test_run_runner_data, path.name)
             self.assertTrue(os.path.isfile(output_path))
 
+    @patch("report_workflow.report_args.ReportArgs")
+    def test_ci_group(self, report_args_mock: MagicMock) -> None:
+        report_args_mock.test_manifest_path = self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH
+        report_args_mock.artifact_paths = {"opensearch-dashboards": self.DATA_DIR}
+        report_args_mock.test_run_id = 123
+        report_args_mock.base_path = self.DATA_DIR
+        report_args_mock.test_type = "integ-test"
+        report_args_mock.release_candidate = "100"
+
+        test_run_runner = TestReportRunner(report_args_mock, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS)
+        test_run_runner_data = test_run_runner.update_data()
+
+        self.assertEqual(len(test_run_runner_data["components"]), 9)
+        self.assertEqual(test_run_runner_data["components"][0]["name"], "OpenSearch-Dashboards-ci-group-1")
+
     @patch("yaml.safe_load")
     @patch("urllib.request.urlopen")
     @patch("validators.url")

@@ -61,7 +61,14 @@ class TestReportRunner:
         self.test_run_data["test-run"] = self.update_test_run_data()
         for component in self.test_components.select(focus=self.args.components):
             if self.test_manifest.components[component.name].__to_dict__().get(self.test_type) is not None:
-                self.test_run_data["components"].append(self.component_entry(component.name))
+                logging.info(f"component is {component.name}")
+                component_ci_group = getattr(component, self.test_type.replace("-", "_")).get("ci-groups", None)
+                if component_ci_group:
+                    logging.info(f"ci-group is {component_ci_group}")
+                    for i in range(component_ci_group):
+                        self.test_run_data["components"].append(self.component_entry(component.name, i + 1))
+                else:
+                    self.test_run_data["components"].append(self.component_entry(component.name))
         return self.test_run_data
 
     def update_test_run_data(self) -> dict:
@@ -80,9 +87,10 @@ class TestReportRunner:
         logging.info(f"Generating test-report.yml in {output_dir}")
         return test_report_manifest.to_file(test_report_manifest_file)
 
-    def component_entry(self, component_name: str) -> Any:
+    def component_entry(self, component_name: str, ci_group: int = None) -> Any:
         component = self.test_report_manifest_data_template("component")
-        component["name"] = component_name
+        test_report_component_name = component_name if not ci_group else f"{component_name}-ci-group-{ci_group}"
+        component["name"] = test_report_component_name
         component["command"] = generate_test_command(self.test_type, self.test_manifest_path, self.artifact_paths, component_name)
 
         test_component = self.test_manifest.components[component_name]
@@ -94,7 +102,7 @@ class TestReportRunner:
                 "name": config,
             }
 
-            component_yml_ref = generate_component_yml_ref(self.base_path, str(self.test_run_id), self.test_type, component_name, config)
+            component_yml_ref = generate_component_yml_ref(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config)
             logging.info(f"Loading {component_yml_ref}")
             try:
                 if validators.url(component_yml_ref):
@@ -111,8 +119,8 @@ class TestReportRunner:
                 component_yml_ref = "URL not available"
             config_dict["yml"] = component_yml_ref
             config_dict["status"] = test_result
-            config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, component_name, config, self.name)[0]
-            config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, component_name, config, self.name)[1]
+            config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
+            config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
             component["configs"].append(config_dict)
         return component
 
