@@ -891,6 +891,7 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
+                    sleep 10
                     def rc = (params.RC_NUMBER.toInteger() > 0)
                     publishDistributionBuildResults(
                         failureMessages: buildMessage(search: 'Error building'),

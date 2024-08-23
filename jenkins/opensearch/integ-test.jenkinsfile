@@ -326,6 +326,7 @@ pipeline {
                         }
                         retry(5) { 
                             node(agent_nodes['linux_x64']) {
+                                sleep 10
                                 def rc = (params.RC_NUMBER.toInteger() > 0)
                                 sh "mkdir -p test-results-os-${env.BUILD_NUMBER}"
                                 sh "curl -sSL https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml --output test-results-os-${env.BUILD_NUMBER}/test-report.yml"
