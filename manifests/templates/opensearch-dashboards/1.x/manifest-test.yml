@@ -1,0 +1,12 @@
+---
+schema-version: '1.0'
+name: OpenSearch Dashboards
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4
+components:
+  - name: indexManagementDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security

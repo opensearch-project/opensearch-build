@@ -28,11 +28,20 @@ components:
       test-configs:
         - with-security
 
+  - name: flow-framework
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
   - name: asynchronous-search
     integ-test:
       test-configs:
         - with-security
         - without-security
+    bwc-test:
+      test-configs:
+        - with-security
 
   - name: cross-cluster-replication
     integ-test:
@@ -138,7 +147,13 @@ components:
         - with-security
         - without-security
 
-  - name: flow-framework
+  - name: skills
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: query-insights
     integ-test:
       test-configs:
         - with-security

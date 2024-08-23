@@ -1,0 +1,26 @@
+---
+schema-version: '1.0'
+name: OpenSearch Dashboards
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1
+components:
+  - name: OpenSearch-Dashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+      ci-groups: 9
+  - name: indexManagementDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security

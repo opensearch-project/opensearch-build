@@ -10,7 +10,7 @@ import logging
 import os
 import re
 from abc import abstractmethod
-from typing import Dict, List, Type, Union
+from typing import Dict, List, Tuple, Type, Union
 
 import ruamel.yaml
 from packaging.version import Version
@@ -18,6 +18,7 @@ from packaging.version import parse as version_parse
 
 from manifests.input_manifest import InputManifest
 from manifests.manifests import Manifests
+from manifests.test_manifest import TestManifest
 from manifests_workflow.component_opensearch import ComponentOpenSearch
 from manifests_workflow.component_opensearch_dashboards_min import ComponentOpenSearchDashboardsMin
 from manifests_workflow.component_opensearch_min import ComponentOpenSearchMin
@@ -122,7 +123,7 @@ class InputManifests(Manifests):
                 self.add_to_versionincrement_workflow(new_version_entry)
                 known_versions.append(new_version_entry)
 
-    def create_manifest(self, version: str, branch: str, known_versions: List[str]) -> InputManifest:
+    def create_manifest(self, version: str, branch: str, known_versions: List[str]) -> Tuple[InputManifest, TestManifest]:
         # If  : No known_versions manifests exist or new version smaller than the min(known_versions), create new manifests from the templates
         #       (1.0.0-3.0.0 based on template 1.x-3.x, 4.0.0+ from default.x, previous behavior)
         # Else: Create new manifests based on the latest version before the new version
@@ -132,35 +133,46 @@ class InputManifests(Manifests):
             templates_base_path = os.path.join(self.manifests_path(), "templates")
             template_version_folder = version.split(".")[0] + ".x"
             template_full_path = os.path.join(templates_base_path, self.prefix, template_version_folder, "manifest.yml")
+            template_test_full_path = os.path.join(templates_base_path, self.prefix, template_version_folder, "manifest-test.yml")
             if not os.path.exists(template_full_path):
                 template_full_path = os.path.join(templates_base_path, self.prefix, "default", "manifest.yml")
+                template_test_full_path = os.path.join(templates_base_path, self.prefix, "default", "manifest-test.yml")
         else:
             previous_versions = [v for v in known_versions if Version(v) < Version(version)]
             base_version = max(previous_versions, key=version_parse)
             logging.info(f"Base Version: {base_version} is the highest version before {version}")
             template_full_path = os.path.join(self.manifests_path(), base_version, f"{self.prefix}-{base_version}.yml")
+            template_test_full_path = os.path.join(self.manifests_path(), base_version, f"{self.prefix}-{base_version}-test.yml")
             if not os.path.exists(template_full_path):
                 template_full_path = os.path.join(self.legacy_manifests_path(), base_version, f"{self.prefix}-{base_version}.yml")
+                template_test_full_path = os.path.join(self.legacy_manifests_path(), base_version, f"{self.prefix}-{base_version}-test.yml")
 
-        logging.info(f"Using {template_full_path} as the base manifest")
-
+        # Input Manifest
+        logging.info(f"Using {template_full_path} as the base input manifest")
         manifest = InputManifest.from_file(open(template_full_path))
-
         manifest.build.version = version
-
         for component in manifest.components.select():
             component.ref = branch  # type: ignore
 
-        return manifest
+        # Test Manifest
+        logging.info(f"Using {template_test_full_path} as the base test manifest")
+        manifest_test = TestManifest.from_file(open(template_test_full_path))
+
+        return (manifest, manifest_test)
 
     def write_manifest(self, version: str, branch: str, known_versions: List[str]) -> None:
         logging.info(f"Creating new version: {version}")
-        manifest = self.create_manifest(version, branch, known_versions)
+        manifests = self.create_manifest(version, branch, known_versions)
         manifest_dir = os.path.join(self.manifests_path(), version)
         os.makedirs(manifest_dir, exist_ok=True)
-        manifest_path = os.path.join(manifest_dir, f"{self.prefix}-{version}.yml")
-        manifest.to_file(manifest_path)
-        logging.info(f"Wrote {manifest_path} as the new manifest")
+        for manifest in manifests:
+            if manifest.__class__.__name__ == 'TestManifest':
+                manifest_path = os.path.join(manifest_dir, f"{self.prefix}-{version}-test.yml")
+                logging.info(f"Wrote {manifest_path} as the new test manifest")
+            else:
+                manifest_path = os.path.join(manifest_dir, f"{self.prefix}-{version}.yml")
+                logging.info(f"Wrote {manifest_path} as the new input manifest")
+            manifest.to_file(manifest_path)  # type: ignore[attr-defined]
 
     def add_to_cron(self, version: str) -> None:
         logging.info(f"Adding new version to cron: {version}")

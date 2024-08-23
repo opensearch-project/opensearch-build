@@ -5,7 +5,7 @@ build:
   version: 'replace'
 ci:
   image:
-    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3
+    name: opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1
     args: -e JAVA_HOME=/opt/java/openjdk-21
 components:
   - name: OpenSearch

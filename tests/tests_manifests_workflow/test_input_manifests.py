@@ -10,10 +10,12 @@ import unittest
 from unittest.mock import MagicMock, call, mock_open, patch
 
 from manifests.input_manifest import InputManifest
+from manifests.test_manifest import TestManifest
 from manifests_workflow.input_manifests import InputManifests
 
 
 class TestInputManifests(unittest.TestCase):
+
     def test_manifests_path(self) -> None:
         path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
         self.assertEqual(path, InputManifests.manifests_path())
@@ -44,7 +46,7 @@ class TestInputManifests(unittest.TestCase):
         input_manifests = InputManifests("OpenSearch")
         input_manifest = input_manifests.create_manifest("1.2.3", "1.x", [])
         self.assertEqual(
-            input_manifest.to_dict(),
+            input_manifest[0].to_dict(),
             {
                 "schema-version": "1.0",
                 "build": {"name": "OpenSearch", "version": "1.2.3"},
@@ -56,21 +58,47 @@ class TestInputManifests(unittest.TestCase):
                                 "checks": ["gradle:publish", "gradle:properties:version"]}]
             }
         )
+        self.assertEqual(
+            input_manifest[1].to_dict(),
+            {
+                'schema-version': '1.0',
+                'name': 'OpenSearch',
+                'ci': {'image': {'name': 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3',
+                                 'args': '-e JAVA_HOME=/opt/java/openjdk-11'}},
+                'components': [{'name': 'index-management',
+                                'integ-test': {'build-dependencies': ['job-scheduler'],
+                                               'test-configs': ['with-security', 'without-security'],
+                                               'additional-cluster-configs': {'path.repo': ['/tmp']}}, 'bwc-test': {'test-configs': ['with-security']}}]
+            }
+        )
 
     def test_create_manifest_opensearch_default_template(self) -> None:
         input_manifests = InputManifests("OpenSearch")
         input_manifest = input_manifests.create_manifest("0.2.3", "0.x", [])
         self.assertEqual(
-            input_manifest.to_dict(),
+            input_manifest[0].to_dict(),
             {
                 "schema-version": "1.1",
                 "build": {"name": "OpenSearch", "version": "0.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3",
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1",
                        "args": "-e JAVA_HOME=/opt/java/openjdk-21"}},
                 "components": [{"name": "OpenSearch",
                                 "repository": "https://github.com/opensearch-project/OpenSearch.git",
                                 "ref": "0.x",
                                 "checks": ["gradle:publish", "gradle:properties:version"]}]
+            }
+        )
+        self.assertEqual(
+            input_manifest[1].to_dict(),
+            {
+                'schema-version': '1.0',
+                'name': 'OpenSearch',
+                'ci': {'image': {'name': 'opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1',
+                                 'args': '-e JAVA_HOME=/opt/java/openjdk-21'}},
+                'components': [{'name': 'index-management',
+                                'integ-test': {'build-dependencies': ['job-scheduler'],
+                                               'test-configs': ['with-security', 'without-security'],
+                                               'additional-cluster-configs': {'path.repo': ['/tmp']}}, 'bwc-test': {'test-configs': ['with-security']}}]
             }
         )
 
@@ -79,13 +107,13 @@ class TestInputManifests(unittest.TestCase):
         input_manifest = input_manifests.create_manifest("2.12.1000", "2.12", ["0.9.2", "1.3.1", "1.3.14", "2.12.0", "2.14.0", "3.0.0"])  # based on 2.12.0
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-2.12.1000.yml")
         input_manifest_compare = InputManifest.from_file(open(manifest_path))
-        self.assertEqual(input_manifest.to_dict(), input_manifest_compare.to_dict())
+        self.assertEqual(input_manifest[0].to_dict(), input_manifest_compare.to_dict())
 
     def test_create_manifest_opensearch_dashboards_template(self) -> None:
         input_manifests = InputManifests("OpenSearch Dashboards")
         input_manifest = input_manifests.create_manifest("1.2.3", "1.x", [])
         self.assertEqual(
-            input_manifest.to_dict(),
+            input_manifest[0].to_dict(),
             {
                 "schema-version": "1.0",
                 "build": {"name": "OpenSearch Dashboards", "version": "1.2.3"},
@@ -95,12 +123,22 @@ class TestInputManifests(unittest.TestCase):
                                 "ref": "1.x"}]
             }
         )
+        self.assertEqual(
+            input_manifest[1].to_dict(),
+            {
+                'schema-version': '1.0',
+                'name': 'OpenSearch Dashboards',
+                'ci': {'image': {'name': 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4'}},
+                'components': [{'name': 'indexManagementDashboards',
+                                'integ-test': {'test-configs': ['with-security', 'without-security']}}]
+            }
+        )
 
     def test_create_manifest_opensearch_dashboards_default_template(self) -> None:
         input_manifests = InputManifests("OpenSearch Dashboards")
         input_manifest = input_manifests.create_manifest("4.2.3", "4.x", [])
         self.assertEqual(
-            input_manifest.to_dict(),
+            input_manifest[0].to_dict(),
             {
                 "schema-version": "1.1",
                 "build": {"name": "OpenSearch Dashboards", "version": "4.2.3"},
@@ -111,23 +149,52 @@ class TestInputManifests(unittest.TestCase):
                                 "checks": ["npm:package:version"]}]
             }
         )
+        self.assertEqual(
+            input_manifest[1].to_dict(),
+            {
+                'schema-version': '1.0',
+                'name': 'OpenSearch Dashboards',
+                'ci': {'image': {'name': 'opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1'}},
+                'components': [{'name': 'OpenSearch-Dashboards',
+                                'integ-test': {'test-configs': ['with-security', 'without-security'],
+                                               'additional-cluster-configs': {'vis_builder.enabled': True,
+                                                                              'data_source.enabled': True,
+                                                                              'savedObjects.maxImportPayloadBytes': 10485760,
+                                                                              'server.maxPayloadBytes': 1759977,
+                                                                              'logging.json': False,
+                                                                              'data.search.aggs.shardDelay.enabled': True,
+                                                                              'csp.warnLegacyBrowsers': False},
+                                               'ci-groups': 9}},
+                               {'name': 'indexManagementDashboards',
+                                'integ-test': {'test-configs': ['with-security', 'without-security']}}]
+            }
+        )
 
     def test_create_manifest_opensearch_dashboards_previous_base_version(self) -> None:
         input_manifests = InputManifests("OpenSearch-Dashboards")
         input_manifest = input_manifests.create_manifest("2.12.1000", "2.12", ["0.9.2", "1.3.1", "1.3.14", "2.12.0", "2.14.0", "3.0.0"])  # based on 2.12.0
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-2.12.1000.yml")
         input_manifest_compare = InputManifest.from_file(open(manifest_path))
-        self.assertEqual(input_manifest.to_dict(), input_manifest_compare.to_dict())
+        self.assertEqual(input_manifest[0].to_dict(), input_manifest_compare.to_dict())
 
+    @patch("manifests.manifest.Manifest.to_file")
     @patch("os.makedirs")
     @patch("manifests_workflow.input_manifests.InputManifests.create_manifest")
-    def test_write_manifest(self, mock_create_manifest: MagicMock, mock_makedirs: MagicMock) -> None:
+    def test_write_manifest(self, mock_create_manifest: MagicMock, mock_makedirs: MagicMock, mock_to_file: MagicMock) -> None:
+        input_manifest = InputManifest.from_file(open(os.path.join(os.path.dirname(__file__), "data", "opensearch-2.12.1000.yml")))
+        test_manifest = TestManifest.from_file(open(os.path.join(os.path.dirname(__file__), "data", "opensearch-2.12.1000-test.yml")))
+        mock_create_manifest.return_value = (input_manifest, test_manifest)
         input_manifests = InputManifests("opensearch")
-        input_manifests.write_manifest('0.1.2', '0.x', [])
-        mock_create_manifest.assert_called_with('0.1.2', '0.x', [])
-        mock_makedirs.assert_called_with(os.path.join(InputManifests.manifests_path(), '0.1.2'), exist_ok=True)
-        mock_create_manifest.return_value.to_file.assert_called_with(
-            os.path.join(InputManifests.manifests_path(), '0.1.2', 'opensearch-0.1.2.yml')
+        input_manifests.write_manifest('2.12.1000', '2.x', [])
+        mock_create_manifest.assert_called_with('2.12.1000', '2.x', [])
+        mock_makedirs.assert_called_with(os.path.join(InputManifests.manifests_path(), '2.12.1000'), exist_ok=True)
+        self.assertEqual(
+            mock_to_file.call_args_list[0][0][0],
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests", "2.12.1000", "opensearch-2.12.1000.yml"))
+        )
+        self.assertEqual(
+            mock_to_file.call_args_list[1][0][0],
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests", "2.12.1000", "opensearch-2.12.1000-test.yml"))
         )
 
     def test_jenkins_path(self) -> None:

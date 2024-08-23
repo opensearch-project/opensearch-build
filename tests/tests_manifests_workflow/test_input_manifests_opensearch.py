@@ -42,7 +42,7 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
         mock_component_opensearch_min.checkout.return_value = MagicMock(version="2.1000.1000")
         manifests = InputManifestsOpenSearch()
         manifests.update()
-        self.assertEqual(mock_manifest_to_file.call_count, 1)
+        self.assertEqual(mock_manifest_to_file.call_count, 2)
         calls = [
             call(
                 os.path.join(
