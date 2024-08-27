@@ -2,7 +2,7 @@
 
 ## Release Details
 
-[OpenSearch and OpenSearch Dashboards 1.3.19](https://opensearch.org/versions/opensearch-1-3-19.html) includes the following maintenance updates.
+[OpenSearch and OpenSearch Dashboards 1.3.19](https://opensearch.org/versions/opensearch-1-3-19.html) includes the following bug fixes, infrastructure and maintenance updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-1.3.19.md).
 
