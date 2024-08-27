@@ -25,15 +25,6 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class InputManifests(Manifests):
-    BUILD_PLATFORM = {
-        "opensearch": "linux macos windows",
-        "opensearch-dashboards": "linux windows"
-    }
-    BUILD_DISTRIBUTION = {
-        "opensearch": "tar rpm deb zip",
-        "opensearch-dashboards": "tar rpm deb zip"
-    }
-
     def __init__(self, name: str) -> None:
         self.name = name
         self.prefix = name.lower().replace(" ", "-")
@@ -106,6 +97,7 @@ class InputManifests(Manifests):
             # check out and build #main, 1.x, etc.
             all_branches = sorted(min_klass.branches())
             branches = [b for b in all_branches if not any(b == o or b.startswith((f"{o}-", f"{o}/")) for o in legacy_branches)]
+            # TODO: Remove
             logging.info(f"Checking {self.name} {sorted(branches)} branches")
             logging.info(f"Ignoring {self.name} {sorted(set(all_branches) - set(branches))} branches as they are legacy")
 
@@ -176,13 +168,27 @@ class InputManifests(Manifests):
         with open(jenkinsfile, "r") as f:
             data = f.read()
 
-        build_platform = self.BUILD_PLATFORM.get(self.prefix, "linux")
-        build_distribution = self.BUILD_DISTRIBUTION.get(self.prefix, "tar")
+        # Note: default to linux tar for now as integTest is very heavy on resources
+        build_platform_map = {
+            "opensearch": "linux windows",
+            "opensearch-dashboards": "linux windows"
+        }
+        build_distribution_map = {
+            "opensearch": "tar rpm deb zip",
+            "opensearch-dashboards": "tar rpm deb zip"
+        }
+        build_platform = build_platform_map.get(self.prefix, "linux")
+        build_distribution = build_distribution_map.get(self.prefix, "tar")
+        test_platform = "linux"
+        test_distribution = "tar"
 
         cron_entry = f"H 1 * * * %INPUT_MANIFEST={version}/{self.prefix}-{version}.yml;" \
                      f"TARGET_JOB_NAME=distribution-build-{self.prefix};" \
                      f"BUILD_PLATFORM={build_platform};" \
-                     f"BUILD_DISTRIBUTION={build_distribution}\n"
+                     f"BUILD_DISTRIBUTION={build_distribution};" \
+                     f"TEST_MANIFEST={version}/{self.prefix}-{version}-test.yml;" \
+                     f"TEST_PLATFORM={test_platform};" \
+                     f"TEST_DISTRIBUTION={test_distribution}\n"
 
         if cron_entry in data:
             raise ValueError(f"{jenkinsfile} already contains an entry for {self.prefix} {version}")
