@@ -1,0 +1,35 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch
+  version: 2.16.0
+  platform: linux
+  architecture: x64
+  distribution: tar
+  location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.16.0/10154/linux/x64/tar/dist/opensearch/opensearch-2.16.0-linux-x64.tar.gz
+  id: '10154'
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: f84a26e76807ea67a69822c37b1a1d89e7177d9b
+    commit_id: f84a26e76807ea67a69822c37b1a1d89e7177d9b
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.16.0/10154/linux/x64/tar/builds/opensearch/dist/opensearch-min-2.16.0-linux-x64.tar.gz
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: cbc06a5eafe0009edbb2c865d7cd30262d04e502
+    commit_id: cbc06a5eafe0009edbb2c865d7cd30262d04e502
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: b36f79336db82fd45db5665a5ac2e9368f0a1cdf
+    commit_id: b36f79336db82fd45db5665a5ac2e9368f0a1cdf
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.16.0/10154/linux/x64/tar/builds/opensearch/plugins/opensearch-job-scheduler-2.16.0.0.zip
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: 30760168263404e628a25fd13a54100d2610810c
+    commit_id: 30760168263404e628a25fd13a54100d2610810c
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.16.0/10154/linux/x64/tar/builds/opensearch/plugins/opensearch-security-2.16.0.0.zip
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: c8ec49f1e2c9603498ca679727a499dc0b296e26
+    commit_id: c8ec49f1e2c9603498ca679727a499dc0b296e26
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.16.0/10154/linux/x64/tar/builds/opensearch/plugins/opensearch-knn-2.16.0.0.zip

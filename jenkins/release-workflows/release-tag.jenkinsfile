@@ -30,35 +30,43 @@ pipeline {
             description: 'Version of the release.',
             trim: true
         )
-        choice(
-            choices: ['opensearch', 'opensearch-dashboards'],
-            name: 'PRODUCT',
-            description: 'Product for tag creation.'
-        )
     }
     environment {
-        DISTRIBUTION_MANIFEST = "$PRODUCT-$VERSION/manifest.yml"
+        OS_DISTRIBUTION_MANIFEST = "opensearch-$VERSION/manifest.yml"
+        OSD_DISTRIBUTION_MANIFEST = "opensearch-dashboards-$VERSION/manifest.yml"
     }
     stages {
-        stage('Create Release Tag') {
+        stage('Create Release Tag for OpenSearch components') {
             steps {
                 script {
-                    release_url = "https://artifacts.opensearch.org/releases/bundle/$PRODUCT/$VERSION/$PRODUCT-$VERSION-linux-x64.tar.gz"
-                    sh "curl -SLO $release_url && tar -xf $PRODUCT-$VERSION-linux-x64.tar.gz $PRODUCT-$VERSION/manifest.yml"
-                    echo "The release distribution manifest is downloaded to $DISTRIBUTION_MANIFEST"
+                    os_artifact_url = "https://artifacts.opensearch.org/releases/bundle/opensearch/$VERSION/opensearch-$VERSION-linux-x64.tar.gz"
+                    sh "curl -SLO $os_artifact_url && tar -xf opensearch-$VERSION-linux-x64.tar.gz ${OS_DISTRIBUTION_MANIFEST}"
+                    echo "The release distribution manifest is downloaded to $OS_DISTRIBUTION_MANIFEST"
                     createReleaseTag(
-                        distManifest: "$DISTRIBUTION_MANIFEST",
+                        distManifest: "$OS_DISTRIBUTION_MANIFEST",
                         tagVersion: VERSION
                     )
-
                 }
             }
         }
-        stage('Update Manifest') {
+        stage('Create Release Tag for OpenSearch-Dasboards components') {
+            steps {
+                script {
+                    osd_artifact_url = "https://artifacts.opensearch.org/releases/bundle/opensearch-dashboards/$VERSION/opensearch-dashboards-$VERSION-linux-x64.tar.gz"
+                    sh "curl -SLO $osd_artifact_url && tar -xf opensearch-dashboards-$VERSION-linux-x64.tar.gz ${OSD_DISTRIBUTION_MANIFEST}"
+                    echo "The release distribution manifest is downloaded to $OSD_DISTRIBUTION_MANIFEST"
+                    createReleaseTag(
+                        distManifest: "$OSD_DISTRIBUTION_MANIFEST",
+                        tagVersion: VERSION
+                    )
+                }
+            }
+        }
+        stage('Lock Manifests to tags') {
             steps {
                 echo 'Triggering manifest lock workflow'
                 build job: 'release-manifest-commit-lock', wait: true, parameters: [
-                    string(name: 'RELEASE_VERSION', value: "${params.RELEASE_VERSION}"),
+                    string(name: 'RELEASE_VERSION', value: "${params.VERSION}"),
                     string(name: 'MANIFEST_LOCK_ACTION', value: "UPDATE_TO_TAGS")
                     ]
                 echo 'Pull Request to lock manifest created successfully!'

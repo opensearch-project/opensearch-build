@@ -1,0 +1,35 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch Dashboards
+  version: 2.16.0
+  platform: linux
+  architecture: x64
+  distribution: tar
+  location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.16.0/7858/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-2.16.0-linux-x64.tar.gz
+  id: '7858'
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: 4b8826e7ffa6562825ca8aad676a8d89983c2d70
+    commit_id: 4b8826e7ffa6562825ca8aad676a8d89983c2d70
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.16.0/7858/linux/x64/tar/builds/opensearch-dashboards/dist/opensearch-dashboards-min-2.16.0-linux-x64.tar.gz
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: '2.16'
+    commit_id: 7c5e0482b844828cf2aec3b63841bd5d336d5668
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/dashboards-observability.git
+    ref: 24d368e882ec01ff98e556725b84e332d4ab825e
+    commit_id: 24d368e882ec01ff98e556725b84e332d4ab825e
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.16.0/7858/linux/x64/tar/builds/opensearch-dashboards/plugins/observabilityDashboards-2.16.0.zip
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reporting.git
+    ref: 49057e4f82b0390dc28d0e08009ec5f892d7af1a
+    commit_id: 49057e4f82b0390dc28d0e08009ec5f892d7af1a
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.16.0/7858/linux/x64/tar/builds/opensearch-dashboards/plugins/reportsDashboards-2.16.0.zip
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    ref: 5e86965658791648fad9d0fc573e470c59cce674
+    commit_id: 5e86965658791648fad9d0fc573e470c59cce674
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.16.0/7858/linux/x64/tar/builds/opensearch-dashboards/plugins/ganttChartDashboards-2.16.0.zip
