@@ -56,20 +56,32 @@ pipeline {
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: 'Build selected platform related artifacts, choices include linux windows. Can combine multiple platforms with space in between (docker is only available on linux)',
+            description: "Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
             defaultValue: 'linux windows',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
+            name: 'BUILD_DISTRIBUTION',
+            description: "Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            defaultValue: 'tar rpm deb zip',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
+            name: 'TEST_PLATFORM',
+            description: "Test selected platform, choices include 'linux', 'windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
+            defaultValue: 'linux windows',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
+            name: 'TEST_DISTRIBUTION',
+            description: "Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            defaultValue: 'tar rpm deb zip',
             trim: true
         )
         string(
             name: 'RC_NUMBER',
             description: 'The RC build count. Default is 0 which means its not an RC build.',
             defaultValue: '0'
-        )
-        string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
-            name: 'BUILD_DISTRIBUTION',
-            description: 'Build selected distribution related artifacts, choices include tar, rpm, deb, zip. Can combine multiple distributions with space in between (docker is only available on tar)',
-            defaultValue: 'tar rpm deb zip',
-            trim: true
         )
         choice(
             name: 'BUILD_DOCKER',
@@ -124,40 +136,15 @@ pipeline {
                     dockerAgent = detectDockerAgent()
                     currentBuild.description = INPUT_MANIFEST
 
-                    echo('Verify Build Platforms')
-                    def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
-                    echo("User Entry Platforms: '${params.BUILD_PLATFORM}', ${build_platform_array}")
-                    def all_platforms = 'linux windows'
-                    echo("All Supported Platforms: '${all_platforms}'")
+                    paramType = [
+                        'BUILD_PLATFORM': 'linux windows',
+                        'BUILD_DISTRIBUTION': 'tar rpm deb zip',
+                        'TEST_PLATFORM': 'linux windows',
+                        'TEST_DISTRIBUTION': 'tar rpm deb zip',
+                    ]
 
-                    if (params.BUILD_PLATFORM == null || params.BUILD_PLATFORM == '') {
-                        currentBuild.result = 'ABORTED'
-                        error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
-                    }
-
-                    for (String plat : build_platform_array) {
-                        if (! all_platforms.contains(plat)) {
-                            currentBuild.result = 'ABORTED'
-                            error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
-                        }
-                    }
-
-                    echo('Verify Build Distributions')
-                    def build_distribution_array = params.BUILD_DISTRIBUTION.tokenize(' ')
-                    echo("User Entry Distributions: '${params.BUILD_DISTRIBUTION}', ${build_distribution_array}")
-                    def all_distributions = 'tar rpm deb zip'
-                    echo("All Supported Platforms: '${all_distributions}'")
-
-                    if (params.BUILD_DISTRIBUTION == null || params.BUILD_DISTRIBUTION == '') {
-                        currentBuild.result = 'ABORTED'
-                        error("Missing parameter: BUILD_DISTRIBUTION (possible entries: ${all_distributions}).")
-                    }
-
-                    for (String plat : build_distribution_array) {
-                        if (! all_distributions.contains(plat)) {
-                            currentBuild.result = 'ABORTED'
-                            error("Missing parameter: BUILD_DISTRIBUTION (possible entries: ${all_distributions}).")
-                        }
+                    paramType.each { key, value ->
+                        verifyParameterPlatformDistribution(key, value)
                     }
                 }
             }
@@ -208,10 +195,10 @@ pipeline {
 
                             parallel([
                                 'integ-test': {
-                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
+                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'tar')
                                 },
                                 'bwc-test': {
-                                    triggerBWCTests(buildManifestUrl)
+                                    triggerBWCTests(buildManifestUrl, 'linux', 'tar')
                                 }
                             ])
                         }
@@ -328,10 +315,10 @@ pipeline {
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
                                     parallel([
                                         'integ-test': {
-                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
+                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'rpm')
                                         },
                                         'rpm-validation': {
-                                            triggerRpmValidation(bundleManifestUrl)
+                                            triggerRpmValidation(bundleManifestUrl, 'linux', 'rpm')
                                         }
                                     ])
                                 }
@@ -443,7 +430,8 @@ pipeline {
 
                                     echo "buildManifestUrl (linux, x64, deb): ${buildManifestUrl}"
                                     echo "artifactUrl (linux, x64, deb): ${artifactUrl}"
-                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
+
+                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'deb')
                                 }
                             }
                             post {
@@ -559,10 +547,10 @@ pipeline {
 
                                     parallel([
                                         'integ-test': {
-                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
+                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'tar')
                                         },
                                         'bwc-test': {
-                                            triggerBWCTests(buildManifestUrl)
+                                            triggerBWCTests(buildManifestUrl, 'linux', 'tar')
                                         }
                                     ])
                                 }
@@ -679,10 +667,10 @@ pipeline {
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
                                     parallel([
                                         'integ-test': {
-                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
+                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'rpm')
                                         },
                                         'rpm-validation': {
-                                            triggerRpmValidation(bundleManifestUrl)
+                                            triggerRpmValidation(bundleManifestUrl, 'linux', 'rpm')
                                         }
                                     ])
                                 }
@@ -794,7 +782,8 @@ pipeline {
 
                                     echo "buildManifestUrl (linux, arm64, deb): ${buildManifestUrl}"
                                     echo "artifactUrl (linux, arm64, deb): ${artifactUrl}"
-                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
+
+                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'deb')
                                 }
                             }
                             post {
@@ -866,7 +855,8 @@ pipeline {
 
                             echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
                             echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
-                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
+
+                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'windows', 'zip')
                         }
                     }
                     post {
@@ -942,31 +932,31 @@ pipeline {
         }
     }
     post {
-        always {
-            node(AGENT_LINUX_X64) {
-                checkout scm
-                script {
-                    sleep 10
-                    def rc = (params.RC_NUMBER.toInteger() > 0)
-                    publishDistributionBuildResults(
-                        failureMessages: buildMessage(search: 'Error building'),
-                        passMessages: buildMessage(search: 'Successfully built'),
-                        inputManifestPath: "manifests/$INPUT_MANIFEST",
-                        rc: rc,
-                        rcNumber: env.RC_NUMBER,
-                        componentCategory: "OpenSearch Dashboards"
-                    )
-                    if (params.UPDATE_GITHUB_ISSUE) {
-                        UpdateBuildFailureIssues(
-                            failureMessages: buildMessage(search: 'Error building'),
-                            passMessages: buildMessage(search: 'Successfully built'),
-                            inputManifestPath: "manifests/$INPUT_MANIFEST"
-                        )
-                    }
-                    postCleanup()
-                }
-            }
-        }
+        //always {
+        //    node(AGENT_LINUX_X64) {
+        //        checkout scm
+        //        script {
+        //            sleep 10
+        //            def rc = (params.RC_NUMBER.toInteger() > 0)
+        //            publishDistributionBuildResults(
+        //                failureMessages: buildMessage(search: 'Error building'),
+        //                passMessages: buildMessage(search: 'Successfully built'),
+        //                inputManifestPath: "manifests/$INPUT_MANIFEST",
+        //                rc: rc,
+        //                rcNumber: env.RC_NUMBER,
+        //                componentCategory: "OpenSearch Dashboards"
+        //            )
+        //            if (params.UPDATE_GITHUB_ISSUE) {
+        //                UpdateBuildFailureIssues(
+        //                    failureMessages: buildMessage(search: 'Error building'),
+        //                    passMessages: buildMessage(search: 'Successfully built'),
+        //                    inputManifestPath: "manifests/$INPUT_MANIFEST"
+        //                )
+        //            }
+        //            postCleanup()
+        //        }
+        //    }
+        //}
         success {
             node(AGENT_LINUX_X64) {
                 script {
@@ -1011,14 +1001,14 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
-                    if (params.PUBLISH_NOTIFICATION) {
-                        publishNotification(
-                            icon: ':warning:',
-                            message: buildMessage(search: 'Error building'),
-                            credentialsId: 'jenkins-build-notice-webhook',
-                            manifest: "${INPUT_MANIFEST}"
-                        )
-                    }
+                    //if (params.PUBLISH_NOTIFICATION) {
+                    //    publishNotification(
+                    //        icon: ':warning:',
+                    //        message: buildMessage(search: 'Error building'),
+                    //        credentialsId: 'jenkins-build-notice-webhook',
+                    //        manifest: "${INPUT_MANIFEST}"
+                    //    )
+                    //}
                     postCleanup()
                 }
             }
@@ -1033,9 +1023,9 @@ def markStageUnstableIfPluginsFailedToBuild() {
     }
 }
 
-def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpenSearch) {
-    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || buildManifestUrlOpenSearch == '')
-    echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, buildManifestUrlOpenSearch' : 'Running integration tests'}"
+def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpenSearch, String platform, String distribution) {
+    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || buildManifestUrlOpenSearch == '' || !TEST_PLATFORM.contains(platform) || !TEST_DISTRIBUTION.contains(distribution))
+    echo "${skipIntegTests ? 'Skipping INTEG tests as one of the values has empty or wrong string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, buildManifestUrlOpenSearch, TEST_PLATFORM, TEST_DISTRIBUTION' : 'Running INTEG tests'}"
     if (!skipIntegTests) {
         def integTestResults =
                 build job: INTEG_TEST_JOB_NAME,
@@ -1051,9 +1041,9 @@ def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpen
     }
 }
 
-def triggerBWCTests(String buildManifestUrl) {
-    Boolean skipBwcTests = (BWC_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
-    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty string: BWC_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running BWC tests'}"
+def triggerBWCTests(String buildManifestUrl, String platform, String distribution) {
+    Boolean skipBwcTests = (BWC_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || !TEST_PLATFORM.contains(platform) || !TEST_DISTRIBUTION.contains(distribution))
+    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty or wrong string: BWC_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, TEST_PLATFORM, TEST_DISTRIBUTION' : 'Running BWC tests'}"
     if (!skipBwcTests) {
         def bwcTestResults =
                 build job: BWC_TEST_JOB_NAME,
@@ -1081,4 +1071,26 @@ def triggerRpmValidation(String bundleManifestUrl) {
 
 def addMessageToNotificationQueue() {
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]))
+}
+
+def verifyParameterPlatformDistribution(String paramName, String allowedValue) {
+    echo("Verify Parameter '$paramName'")
+    def paramValue = env."$paramName"
+    def checkArray = paramValue.tokenize(' ')
+    echo("Parameter Entry: '$paramValue', $checkArray")
+    echo("Supported Entry: '$allowedValue'")
+
+    if (paramValue == null || paramValue == '') {
+        currentBuild.result = 'ABORTED'
+        error("Missing parameter '$paramName' (possible entries: $allowedValue).")
+    }
+
+    for (String entry : paramValue) {
+        if (! allowedValue.contains(entry)) {
+            currentBuild.result = 'ABORTED'
+            error("Error parameter '$paramName': $paramValue (possible entries: ${allowedValue}).")
+        }
+    }
+
+    echo("Verified '$paramName': $paramValue\n")
 }
