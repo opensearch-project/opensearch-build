@@ -54,7 +54,7 @@
                         createReleaseTag.echo(Tag 2.16.0 has been created with identical commit ID. Skipping creating new tag for OpenSearch.)
          release-tag.stage(Create Release Tag for OpenSearch-Dasboards components, groovy.lang.Closure)
             release-tag.script(groovy.lang.Closure)
-               release-tag.sh(curl -SLO https://artifacts.opensearch.org/releases/bundle/opensearch-dashboards/2.16.0/opensearch-dashboards-2.16.0-linux-x64.tar.gz && tar -xf opensearch-dashboards-2.16.0-linux-x64.tar.gz opensearch-dashboards-2.16.0/manifest.ymll)
+               release-tag.sh(curl -SLO https://artifacts.opensearch.org/releases/bundle/opensearch-dashboards/2.16.0/opensearch-dashboards-2.16.0-linux-x64.tar.gz && tar -xf opensearch-dashboards-2.16.0-linux-x64.tar.gz opensearch-dashboards-2.16.0/manifest.yml)
                release-tag.echo(The release distribution manifest is downloaded to opensearch-dashboards-2.16.0/manifest.yml)
                release-tag.createReleaseTag({distManifest=opensearch-dashboards-2.16.0/manifest.yml, tagVersion=2.16.0})
                   createReleaseTag.legacySCM(groovy.lang.Closure)

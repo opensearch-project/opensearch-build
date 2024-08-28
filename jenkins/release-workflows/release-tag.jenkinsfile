@@ -53,7 +53,7 @@ pipeline {
             steps {
                 script {
                     osd_artifact_url = "https://artifacts.opensearch.org/releases/bundle/opensearch-dashboards/$VERSION/opensearch-dashboards-$VERSION-linux-x64.tar.gz"
-                    sh "curl -SLO $osd_artifact_url && tar -xf opensearch-dashboards-$VERSION-linux-x64.tar.gz ${OSD_DISTRIBUTION_MANIFEST}l"
+                    sh "curl -SLO $osd_artifact_url && tar -xf opensearch-dashboards-$VERSION-linux-x64.tar.gz ${OSD_DISTRIBUTION_MANIFEST}"
                     echo "The release distribution manifest is downloaded to $OSD_DISTRIBUTION_MANIFEST"
                     createReleaseTag(
                         distManifest: "$OSD_DISTRIBUTION_MANIFEST",
