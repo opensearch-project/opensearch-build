@@ -318,7 +318,7 @@ pipeline {
                                             triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'rpm')
                                         },
                                         'rpm-validation': {
-                                            triggerRpmValidation(bundleManifestUrl, 'linux', 'rpm')
+                                            triggerRpmValidation(bundleManifestUrl)
                                         }
                                     ])
                                 }
@@ -670,7 +670,7 @@ pipeline {
                                             triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'rpm')
                                         },
                                         'rpm-validation': {
-                                            triggerRpmValidation(bundleManifestUrl, 'linux', 'rpm')
+                                            triggerRpmValidation(bundleManifestUrl)
                                         }
                                     ])
                                 }
