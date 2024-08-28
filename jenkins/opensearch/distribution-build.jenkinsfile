@@ -55,8 +55,26 @@ pipeline {
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Build selected platform related artifacts, choices include 'linux', 'macos', 'windows'. Can combine multiple platforms with space in between (maven snapshot is only on linux)",
-            defaultValue: 'linux macos windows',
+            description: "Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
+            defaultValue: 'linux windows',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
+            name: 'BUILD_DISTRIBUTION',
+            description: "Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            defaultValue: 'tar rpm deb zip',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
+            name: 'TEST_PLATFORM',
+            description: "Test selected platform, choices include 'linux', 'windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
+            defaultValue: 'linux windows',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
+            name: 'TEST_DISTRIBUTION',
+            description: "Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            defaultValue: 'tar rpm deb zip',
             trim: true
         )
         string(
@@ -118,22 +136,15 @@ pipeline {
                     env.javaVersionNumber = dockerAgent.javaVersion.replaceAll('[^0-9]', '') // Only get number
                     currentBuild.description = INPUT_MANIFEST
 
-                    echo('Verify Build Platforms')
-                    def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
-                    echo("User Entry Platforms: '${params.BUILD_PLATFORM}', ${build_platform_array}")
-                    def all_platforms = 'linux macos windows'
-                    echo("All Supported Platforms: '${all_platforms}'")
+                    paramType = [
+                        'BUILD_PLATFORM': 'linux windows',
+                        'BUILD_DISTRIBUTION': 'tar rpm deb zip',
+                        'TEST_PLATFORM': 'linux windows',
+                        'TEST_DISTRIBUTION': 'tar rpm deb zip',
+                    ]
 
-                    if (params.BUILD_PLATFORM == null || params.BUILD_PLATFORM == '') {
-                        currentBuild.result = 'ABORTED'
-                        error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
-                    }
-
-                    for (String plat : build_platform_array) {
-                        if (! all_platforms.contains(plat)) {
-                            currentBuild.result = 'ABORTED'
-                            error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
-                        }
+                    paramType.each { key, value ->
+                        verifyParameterPlatformDistribution(key, value)
                     }
                 }
             }
@@ -167,6 +178,9 @@ pipeline {
                         expression {
                             params.BUILD_PLATFORM.contains('linux')
                         }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('tar')
+                        }
                     }
                     agent {
                         docker {
@@ -199,24 +213,12 @@ pipeline {
 
                             parallel([
                                 'integ-test': {
-                                    triggerIntegrationTests(buildManifestUrl)
+                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'tar')
                                 },
                                 'bwc-test': {
-                                    Boolean skipBwcTests = (BWC_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
-                                    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty string: BWC_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running BWC tests'}"
-                                    if (!skipBwcTests) {
-                                        def bwcTestResults =
-                                            build job: BWC_TEST_JOB_NAME,
-                                            propagate: false,
-                                            wait: false,
-                                            parameters: [
-                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
-                                            ]
-                                    }
+                                    triggerBWCTests(buildManifestUrl, 'linux', 'tar')
                                 }
-                                ])
+                            ])
                         }
                     }
                     post {
@@ -257,6 +259,9 @@ pipeline {
                         beforeAgent true
                         expression {
                             params.BUILD_PLATFORM.contains('linux')
+                        }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('rpm')
                         }
                     }
                     agent { label AGENT_LINUX_X64 }
@@ -328,7 +333,7 @@ pipeline {
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
                                     parallel([
                                         'integ-test': {
-                                            triggerIntegrationTests(buildManifestUrl)
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
                                         },
                                         'rpm-validation': {
                                             triggerRpmValidation(bundleManifestUrl)
@@ -373,6 +378,9 @@ pipeline {
                         beforeAgent true
                         expression {
                             params.BUILD_PLATFORM.contains('linux')
+                        }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('deb')
                         }
                     }
                     agent { label AGENT_LINUX_X64 }
@@ -442,7 +450,8 @@ pipeline {
                                     echo "artifactUrl (linux, x64, deb): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-                                    triggerIntegrationTests(buildManifestUrl)
+
+                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
                                 }
                             }
                             post {
@@ -484,6 +493,9 @@ pipeline {
                         expression {
                             params.BUILD_PLATFORM.contains('linux')
                         }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('tar')
+                        }
                     }
                     agent {
                         docker {
@@ -513,7 +525,8 @@ pipeline {
 
                             echo "buildManifestUrl (linux, arm64, tar): ${buildManifestUrl}"
                             echo "artifactUrl (linux, arm64, tar): ${artifactUrl}"
-                            triggerIntegrationTests(buildManifestUrl)
+
+                            triggerIntegrationTests(buildManifestUrl, 'linux', 'tar')
                         }
                     }
                     post {
@@ -554,6 +567,9 @@ pipeline {
                         beforeAgent true
                         expression {
                             params.BUILD_PLATFORM.contains('linux')
+                        }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('rpm')
                         }
                     }
                     agent { label AGENT_LINUX_X64 }
@@ -625,7 +641,7 @@ pipeline {
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
                                     parallel([
                                         'integ-test': {
-                                            triggerIntegrationTests(buildManifestUrl)
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
                                         },
                                         'rpm-validation': {
                                             triggerRpmValidation(bundleManifestUrl)
@@ -670,6 +686,9 @@ pipeline {
                         beforeAgent true
                         expression {
                             params.BUILD_PLATFORM.contains('linux')
+                        }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('deb')
                         }
                         
                     }
@@ -740,7 +759,8 @@ pipeline {
                                     echo "artifactUrl (linux, arm64, deb): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-                                    triggerIntegrationTests(buildManifestUrl)
+
+                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
                                 }
                             }
                             post {
@@ -781,6 +801,9 @@ pipeline {
                         expression {
                             params.BUILD_PLATFORM.contains('windows')
                         }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('zip')
+                        }
                     }
                     agent {
                         docker {
@@ -811,7 +834,8 @@ pipeline {
 
                             echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
                             echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
-                            triggerIntegrationTests(buildManifestUrl)
+
+                            triggerIntegrationTests(buildManifestUrl, 'windows', 'zip')
                         }
                     }
                     post {
@@ -972,9 +996,9 @@ def markStageUnstableIfPluginsFailedToBuild() {
 }
     }
 
-def triggerIntegrationTests(String buildManifestUrl) {
-    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
-    echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running integration tests'}"
+def triggerIntegrationTests(String buildManifestUrl, String platform, String distribution) {
+    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || !TEST_PLATFORM.contains(platform) || !TEST_DISTRIBUTION.contains(distribution))
+    echo "${skipIntegTests ? 'Skipping INTEG tests as one of the values has empty or wrong string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, TEST_PLATFORM, TEST_DISTRIBUTION' : 'Running INTEG tests'}"
     if (!skipIntegTests) {
         def integTestResults =
                 build job: INTEG_TEST_JOB_NAME,
@@ -989,6 +1013,22 @@ def triggerIntegrationTests(String buildManifestUrl) {
     }
 }
 
+def triggerBWCTests(String buildManifestUrl, String platform, String distribution) {
+    Boolean skipBwcTests = (BWC_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || !TEST_PLATFORM.contains(platform) || !TEST_DISTRIBUTION.contains(distribution))
+    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty or wrong string: BWC_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, TEST_PLATFORM, TEST_DISTRIBUTION' : 'Running BWC tests'}"
+    if (!skipBwcTests) {
+        def bwcTestResults =
+                build job: BWC_TEST_JOB_NAME,
+                propagate: false,
+                wait: false,
+                parameters: [
+                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                    string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
+                ]
+    }
+}
+
 def triggerRpmValidation(String bundleManifestUrl) {
     echo "Triggering RPM validation for ${bundleManifestUrl}"
     def rpmValidationResults =
@@ -999,4 +1039,26 @@ def triggerRpmValidation(String bundleManifestUrl) {
                 string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
                 string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
             ]
+}
+
+def verifyParameterPlatformDistribution(String paramName, String allowedValue) {
+    echo("Verify Parameter '$paramName'")
+    def paramValue = env."$paramName"
+    def checkArray = paramValue.tokenize(' ')
+    echo("Parameter Entry: '$paramValue', $checkArray")
+    echo("Supported Entry: '$allowedValue'")
+
+    if (paramValue == null || paramValue == '') {
+        currentBuild.result = 'ABORTED'
+        error("Missing parameter '$paramName' (possible entries: $allowedValue).")
+    }
+
+    for (String entry : paramValue) {
+        if (! allowedValue.contains(entry)) {
+            currentBuild.result = 'ABORTED'
+            error("Error parameter '$paramName': $paramValue (possible entries: ${allowedValue}).")
+        }
+    }
+
+    echo("Verified '$paramName': $paramValue\n")
 }
