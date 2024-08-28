@@ -151,27 +151,27 @@ pipeline {
         }
         stage('build') {
             parallel {
-                //stage('Trigger-min-snapshot-build') {
-                //    agent {
-                //        docker {
-                //            label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
-                //            image 'docker/library/alpine:3'
-                //            registryUrl 'https://public.ecr.aws/'
-                //            alwaysPull true
-                //        }
-                //    }
-                //    steps {
-                //        script {
-                //            def snapshotBuild =
-                //                build job: 'publish-opensearch-min-snapshots',
-                //                propagate: false,
-                //                wait: false,
-                //                parameters: [
-                //                    string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
-                //                ]
-                //        }
-                //    }
-                //}
+                stage('Trigger-min-snapshot-build') {
+                    agent {
+                        docker {
+                            label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            def snapshotBuild =
+                                build job: 'publish-opensearch-min-snapshots',
+                                propagate: false,
+                                wait: false,
+                                parameters: [
+                                    string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
+                                ]
+                        }
+                    }
+                }
                 stage('build-and-test-linux-x64-tar') {
                     when {
                         beforeAgent true
@@ -911,32 +911,32 @@ pipeline {
         }
     }
     post {
-        //always {
-        //    node(AGENT_LINUX_X64) {
-        //        checkout scm
-        //        script {
-        //            sleep 10
-        //            def rc = (params.RC_NUMBER.toInteger() > 0)
-        //            publishDistributionBuildResults(
-        //                failureMessages: buildMessage(search: 'Error building'),
-        //                passMessages: buildMessage(search: 'Successfully built'),
-        //                inputManifestPath: "manifests/$INPUT_MANIFEST",
-        //                rc: rc,
-        //                rcNumber: env.RC_NUMBER,
-        //                componentCategory: "OpenSearch"
-        //            )
-        //            if (params.UPDATE_GITHUB_ISSUE) {
-        //                UpdateBuildFailureIssues(
-        //                    failureMessages: buildMessage(search: 'Error building'),
-        //                    passMessages: buildMessage(search: 'Successfully built'),
-        //                    inputManifestPath: "manifests/$INPUT_MANIFEST"
-        //                )
-        //            }
-        //            postCleanup()
-        //        }
-        //    
-        //    }
-        //}
+        always {
+            node(AGENT_LINUX_X64) {
+                checkout scm
+                script {
+                    sleep 10
+                    def rc = (params.RC_NUMBER.toInteger() > 0)
+                    publishDistributionBuildResults(
+                        failureMessages: buildMessage(search: 'Error building'),
+                        passMessages: buildMessage(search: 'Successfully built'),
+                        inputManifestPath: "manifests/$INPUT_MANIFEST",
+                        rc: rc,
+                        rcNumber: env.RC_NUMBER,
+                        componentCategory: "OpenSearch"
+                    )
+                    if (params.UPDATE_GITHUB_ISSUE) {
+                        UpdateBuildFailureIssues(
+                            failureMessages: buildMessage(search: 'Error building'),
+                            passMessages: buildMessage(search: 'Successfully built'),
+                            inputManifestPath: "manifests/$INPUT_MANIFEST"
+                        )
+                    }
+                    postCleanup()
+                }
+            
+            }
+        }
         success {
             node(AGENT_LINUX_X64) {
                 script {
@@ -974,14 +974,14 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
-                    //if (params.PUBLISH_NOTIFICATION) {
-                    //    publishNotification(
-                    //        icon: ':warning:',
-                    //        message: buildMessage(search: 'Error building'),
-                    //        credentialsId: 'jenkins-build-notice-webhook',
-                    //        manifest: "${INPUT_MANIFEST}"
-                    //    )
-                    //}
+                    if (params.PUBLISH_NOTIFICATION) {
+                        publishNotification(
+                            icon: ':warning:',
+                            message: buildMessage(search: 'Error building'),
+                            credentialsId: 'jenkins-build-notice-webhook',
+                            manifest: "${INPUT_MANIFEST}"
+                        )
+                    }
                     postCleanup()
                 }
             }
