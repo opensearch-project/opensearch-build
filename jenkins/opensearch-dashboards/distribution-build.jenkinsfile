@@ -69,13 +69,11 @@ pipeline {
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'TEST_PLATFORM',
             description: "Test selected platform, choices include 'linux', 'windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
-            defaultValue: 'linux windows',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
             name: 'TEST_DISTRIBUTION',
             description: "Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
-            defaultValue: 'tar rpm deb zip',
             trim: true
         )
         string(
@@ -142,6 +140,15 @@ pipeline {
                         'TEST_PLATFORM': 'linux windows',
                         'TEST_DISTRIBUTION': 'tar rpm deb zip',
                     ]
+
+                    // BUILD params are required while TEST params are not
+                    if (params.TEST_PLATFORM == null || params.TEST_PLATFORM == '') {
+                        paramType.remove('TEST_PLATFORM')
+                    }
+
+                    if (params.TEST_DISTRIBUTION == null || params.TEST_DISTRIBUTION == '') {
+                        paramType.remove('TEST_DISTRIBUTION')
+                    }
 
                     paramType.each { key, value ->
                         verifyParameterPlatformDistribution(key, value)
