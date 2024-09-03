@@ -75,7 +75,7 @@ sharedLibrary {
         dependency('org.jenkins-ci.plugins', 'script-security', '1229.v4880b_b_e905a_6')
         dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
         dependency('org.jenkins-ci.plugins', 'git-client', '3.11.1')
-        dependency('org.apache.sshd', 'sshd-core', '2.9.2')
+        dependency('org.apache.sshd', 'sshd-core', '2.12.1')
         dependency('org.jenkins-ci.plugins', 'junit', '1166.1168.vd6b_8042a_06de')
         dependency('org.jenkins-ci.plugins', 'mailer', '408.vd726a_1130320') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
     }
