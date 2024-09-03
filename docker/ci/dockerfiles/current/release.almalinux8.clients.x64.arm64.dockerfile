@@ -37,14 +37,8 @@ ARG DOT_NET_LIST="8.0"
 RUN for dotnet_version in $DOT_NET_LIST; do dnf install -y dotnet-sdk-$dotnet_version; done
 
 # Tools setup
-COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
-
-# Install JDK
-RUN curl -SL https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.15_10.tar.gz -o /opt/jdk11.tar.gz && \
-    mkdir -p /opt/java/openjdk-11 && \
-    tar -xzf /opt/jdk11.tar.gz --strip-components 1 -C /opt/java/openjdk-11/ && \
-    rm /opt/jdk11.tar.gz
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN dnf install -y go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
@@ -67,34 +61,11 @@ RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
 
-# Install PKG builder dependencies with rvm
-RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
-    curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import - && \
-    curl -sSL https://get.rvm.io | bash -s stable
-
-# Switch shell for rvm related commands
-SHELL ["/bin/bash", "-lc"]
-CMD ["/bin/bash", "-l"]
-
-# Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && \
-    rvm install 2.6.0 && \
-    rvm install 3.1.2 && \
-    rvm install jruby-9.3.0.0 && \
-    rvm --default use 2.6.0 && \
-    dnf install -y rpm-build rpm-sign createrepo pinentry && \
-    dnf clean all
-
-ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.6.0/bin
-ENV RVM_HOME=/usr/local/rvm/bin
-ENV GEM_HOME=$CONTAINER_USER_HOME/.gem
-ENV GEM_PATH=$GEM_HOME
-ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
-
-# Installing Python binary
+# Setup Python
 RUN update-alternatives --set python /usr/bin/python3.9 && \
     update-alternatives --set python3 /usr/bin/python3.9 && \
-    pip3 install pip==23.1.2 && pip3 install twine==4.0.2 cmake==3.24.1.1
+    pip3 install pip==23.1.2 && \
+    pip3 install twine==4.0.2 cmake==3.26.4 pipenv==2023.6.12 awscli==1.32.17
 
 # Installing osslsigncode
 RUN dnf install -y libcurl-devel && dnf clean all && \
@@ -104,9 +75,33 @@ RUN dnf install -y libcurl-devel && dnf clean all && \
     cmake -S .. && cmake --build . && cmake --install . && \
     osslsigncode --version
 
+# Installing rvm dependencies
+RUN dnf install -y patch make ruby && dnf clean all
+
 # Change User
 USER $CONTAINER_USER
 WORKDIR $CONTAINER_USER_HOME
+
+# Install PKG builder dependencies with rvm
+RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
+    curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import - && \
+    curl -sSL https://get.rvm.io | bash -s stable
+
+# Switch shell for rvm related commands
+SHELL ["/bin/bash", "-lc"]
+CMD ["/bin/bash", "-l"]
+
+# Install ruby versions
+RUN . $CONTAINER_USER_HOME/.rvm/scripts/rvm && \
+    rvm install 2.6.0 && \
+    rvm install 3.1.2 && \
+    rvm install jruby-9.3.0.0 && \
+    rvm --default use 2.6.0
+
+ENV RVM_HOME=$CONTAINER_USER_HOME/.rvm/bin
+ENV GEM_HOME=$CONTAINER_USER_HOME/.gem
+ENV GEM_PATH=$GEM_HOME
+ENV PATH=$RVM_HOME:$PATH
 
 # Installing rust cargo
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
