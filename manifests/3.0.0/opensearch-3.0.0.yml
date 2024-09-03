@@ -221,3 +221,9 @@ components:
       - windows
     depends_on:
       - common-utils
+  - name: opensearch-system-templates
+    repository: https://github.com/opensearch-project/opensearch-system-templates.git
+    ref: main
+    platforms:
+      - linux
+      - windows

@@ -61,6 +61,7 @@ jobs:
           - {repo: flow-framework}
           - {repo: skills}
           - {repo: query-insights}
+          - {repo: opensearch-system-templates}
         release_version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
       - name: GitHub App token

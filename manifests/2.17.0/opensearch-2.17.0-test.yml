@@ -158,3 +158,9 @@ components:
       test-configs:
         - with-security
         - without-security
+
+  - name: opensearch-system-templates
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
