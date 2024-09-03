@@ -191,3 +191,9 @@ components:
     platforms:
       - linux
       - windows
+  - name: opensearch-system-templates
+    repository: https://github.com/opensearch-project/opensearch-system-templates.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows

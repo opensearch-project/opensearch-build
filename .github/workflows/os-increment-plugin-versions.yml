@@ -49,6 +49,7 @@ jobs:
           - {repo: flow-framework}
           - {repo: skills}
           - {repo: query-insights}
+          - {repo: opensearch-system-templates}
         branch:
           - 1.x
           - '1.3'
