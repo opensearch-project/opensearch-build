@@ -12,11 +12,12 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
+        plugins.destination.host.deny_list:
+          - 10.0.0.0/8
+          - 127.0.0.1
     bwc-test:
       test-configs:
         - with-security
-
   - name: anomaly-detection
     integ-test:
       build-dependencies:
@@ -27,32 +28,34 @@ components:
     bwc-test:
       test-configs:
         - with-security
-
+  - name: flow-framework
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
   - name: asynchronous-search
     integ-test:
       test-configs:
         - with-security
         - without-security
-
+    bwc-test:
+      test-configs:
+        - with-security
   - name: cross-cluster-replication
     integ-test:
       topology:
         - cluster_name: leader
           data_nodes: 2
-          cluster_manager_nodes: 0
         - cluster_name: follower
           data_nodes: 2
-          cluster_manager_nodes: 0
       test-configs:
         - with-security
         - without-security
-
   - name: geospatial
     integ-test:
       test-configs:
         - with-security
         - without-security
-
   - name: index-management
     integ-test:
       build-dependencies:
@@ -61,29 +64,26 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        path.repo: [/tmp]
+        path.repo:
+          - /tmp
     bwc-test:
       test-configs:
         - with-security
-
   - name: k-NN
     integ-test:
       test-configs:
         - with-security
         - without-security
-
   - name: ml-commons
     integ-test:
       test-configs:
         - with-security
         - without-security
-
   - name: neural-search
     integ-test:
       test-configs:
         - with-security
         - without-security
-
   - name: notifications
     working-directory: notifications
     integ-test:
@@ -93,7 +93,6 @@ components:
     bwc-test:
       test-configs:
         - with-security
-
   - name: opensearch-observability
     integ-test:
       test-configs:
@@ -102,24 +101,20 @@ components:
     bwc-test:
       test-configs:
         - with-security
-
   - name: opensearch-reports
     integ-test:
       test-configs:
         - with-security
         - without-security
-
   - name: security
     integ-test:
       test-configs:
         - with-security
-
   - name: security-analytics
     integ-test:
       test-configs:
         - with-security
         - without-security
-
   - name: sql
     integ-test:
       test-configs:
@@ -131,20 +126,17 @@ components:
     bwc-test:
       test-configs:
         - with-security
-
   - name: custom-codecs
     integ-test:
       test-configs:
         - with-security
         - without-security
-
-  - name: flow-framework
+  - name: skills
     integ-test:
       test-configs:
         - with-security
         - without-security
-
-  - name: opensearch-system-templates
+  - name: query-insights
     integ-test:
       test-configs:
         - with-security

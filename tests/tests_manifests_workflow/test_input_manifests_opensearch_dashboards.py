@@ -43,7 +43,7 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
 
         manifests = InputManifestsOpenSearchDashboards()
         manifests.update()
-        self.assertEqual(mock_manifest_to_file.call_count, 1)
+        self.assertEqual(mock_manifest_to_file.call_count, 2)
         calls = [
             call(
                 os.path.join(
