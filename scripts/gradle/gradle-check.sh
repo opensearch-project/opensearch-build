@@ -66,7 +66,7 @@ echo "wait for jenkins to start workflow" && sleep 15
 
 echo "Check if queue exist in Jenkins after triggering"
 if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
-    while [ "$TIMEPASS" -le "$TIMEOUT" ]; do
+    while [ "$RESULT" == "null" ] && [ "$TIMEPASS" -le "$TIMEOUT" ]; do
         WORKFLOW_URL=$(curl -s -XGET ${JENKINS_URL}/${QUEUE_URL}api/json | jq --raw-output .executable.url)
         echo WORKFLOW_URL $WORKFLOW_URL
     
@@ -95,6 +95,7 @@ if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
     
         else
             echo "Job not started yet. Waiting for 60 seconds before next attempt."
+            TIMEPASS=$(( TIMEPASS + 60 )) && echo time pass: $TIMEPASS
             sleep 60
         fi
     done
