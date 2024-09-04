@@ -67,10 +67,10 @@ echo "wait for jenkins to start workflow" && sleep 15
 echo "Check if queue exist in Jenkins after triggering"
 if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
     while [ "$RESULT" = "null" ] && [ "$TIMEPASS" -le "$TIMEOUT" ]; do
+        echo "Use queue information to find build number in Jenkins if available"
         WORKFLOW_URL=$(curl -s -XGET ${JENKINS_URL}/${QUEUE_URL}api/json | jq --raw-output .executable.url)
         echo WORKFLOW_URL $WORKFLOW_URL
     
-        echo "Use queue information to find build number in Jenkins if available"
         if [ -n "$WORKFLOW_URL" ] || [ "$WORKFLOW_URL" != "null" ]; then
     
             RUNNING="true"
