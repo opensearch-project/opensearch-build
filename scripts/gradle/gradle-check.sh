@@ -66,33 +66,39 @@ echo "wait for jenkins to start workflow" && sleep 15
 
 echo "Check if queue exist in Jenkins after triggering"
 if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
-    WORKFLOW_URL=$(curl -s -XGET ${JENKINS_URL}/${QUEUE_URL}api/json | jq --raw-output .executable.url)
-    echo WORKFLOW_URL $WORKFLOW_URL
-
-    echo "Use queue information to find build number in Jenkins if available"
-    if [ -z "$WORKFLOW_URL" ] || [ "$WORKFLOW_URL" != "null" ]; then
-
-        RUNNING="true"
-
-        echo "Waiting for Jenkins to complete the run"
-        while [ "$RUNNING" = "true" ] && [ "$TIMEPASS" -le "$TIMEOUT" ]; do
-            echo "Still running, wait for another 30 seconds before checking again, max timeout $TIMEOUT"
-            echo "Jenkins Workflow Url: $WORKFLOW_URL"
-            TIMEPASS=$(( TIMEPASS + 30 )) && echo time pass: $TIMEPASS
-            sleep 30
-            RUNNING=$(perform_curl_and_process_with_jq "$WORKFLOW_URL" ".building" 10)
-            echo "Workflow running status :$RUNNING"
-        done
-
-        if [ "$RUNNING" = "true" ]; then
-            echo "Timed out"
-            RESULT="TIMEOUT"
+    while [ "$RESULT" = "null" ] && [ "$TIMEPASS" -le "$TIMEOUT" ]; do
+        echo "Use queue information to find build number in Jenkins if available"
+        WORKFLOW_URL=$(curl -s -XGET ${JENKINS_URL}/${QUEUE_URL}api/json | jq --raw-output .executable.url)
+        echo WORKFLOW_URL $WORKFLOW_URL
+    
+        if [ -n "$WORKFLOW_URL" ] && [ "$WORKFLOW_URL" != "null" ]; then
+    
+            RUNNING="true"
+    
+            echo "Waiting for Jenkins to complete the run"
+            while [ "$RUNNING" = "true" ] && [ "$TIMEPASS" -le "$TIMEOUT" ]; do
+                echo "Still running, wait for another 30 seconds before checking again, max timeout $TIMEOUT"
+                echo "Jenkins Workflow Url: $WORKFLOW_URL"
+                TIMEPASS=$(( TIMEPASS + 30 )) && echo time pass: $TIMEPASS
+                sleep 30
+                RUNNING=$(perform_curl_and_process_with_jq "$WORKFLOW_URL" ".building" 10)
+                echo "Workflow running status :$RUNNING"
+            done
+    
+            if [ "$RUNNING" = "true" ]; then
+                echo "Timed out"
+                RESULT="TIMEOUT"
+            else
+                echo "Complete the run, checking results now......"
+                RESULT=$(curl -s -XGET ${WORKFLOW_URL}api/json | jq --raw-output .result)
+            fi
+    
         else
-            echo "Complete the run, checking results now......"
-            RESULT=$(curl -s -XGET ${WORKFLOW_URL}api/json | jq --raw-output .result)
+            echo "Job not started yet. Waiting for 60 seconds before next attempt."
+            TIMEPASS=$(( TIMEPASS + 60 )) && echo time pass: $TIMEPASS
+            sleep 60
         fi
-
-    fi
+    done
 fi
 
 echo "Please check jenkins url for logs: $WORKFLOW_URL"
