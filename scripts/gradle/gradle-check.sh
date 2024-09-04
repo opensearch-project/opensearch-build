@@ -71,7 +71,7 @@ if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
         WORKFLOW_URL=$(curl -s -XGET ${JENKINS_URL}/${QUEUE_URL}api/json | jq --raw-output .executable.url)
         echo WORKFLOW_URL $WORKFLOW_URL
     
-        if [ -n "$WORKFLOW_URL" ] || [ "$WORKFLOW_URL" != "null" ]; then
+        if [ -n "$WORKFLOW_URL" ] && [ "$WORKFLOW_URL" != "null" ]; then
     
             RUNNING="true"
     
