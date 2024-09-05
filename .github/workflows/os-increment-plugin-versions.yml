@@ -58,6 +58,7 @@ jobs:
           - '2.15'
           - '2.16'
           - '2.17'
+          - '2.18'
         exclude:
           - {entry: {repo: geospatial}, branch: '1.3'}
           - {entry: {repo: neural-search}, branch: '1.3'}
