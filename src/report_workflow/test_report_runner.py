@@ -117,6 +117,8 @@ class TestReportRunner:
                 component_yml_ref = "URL not available"
             config_dict["yml"] = component_yml_ref
             config_dict["status"] = test_result
+            config_dict["test_stdout"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
+            config_dict["test_stderr"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
             config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
             config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
             component["configs"].append(config_dict)
@@ -162,6 +164,16 @@ def generate_test_command(test_type: str, test_manifest_path: str, artifacts_pat
         command = " ".join([command, "--component", component])
     logging.info(command)
     return command
+
+
+def get_test_logs(base_path: str, test_number: str, test_type: str, component_name: str, config: str,
+                  product_name: str) -> typing.List[str]:
+    if base_path.startswith("https://"):
+        return ["/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "stdout.txt"]),
+                "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "stderr.txt"])]
+    else:
+        return [os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "stdout.txt"),
+                os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "stderr.txt")]
 
 
 def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, component_name: str, config: str,
