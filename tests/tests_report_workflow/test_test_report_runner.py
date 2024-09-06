@@ -214,9 +214,9 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[0]["name"], "with-security")
         self.assertEqual(test_run_component_dict.get("configs")[0]["yml"], "URL not available")
         self.assertEqual(test_run_component_dict.get("configs")[0]["test_stdout"], "https://ci.opensearch.org/ci"
-                                                                                         "/dbc/mock/test-results/123/integ-test/geospatial/with-security/stdout.txt")
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/with-security/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[1]["test_stdout"], "https://ci.opensearch.org/ci"
-                                                                                         "/dbc/mock/test-results/123/integ-test/geospatial/without-security/stdout.txt")
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/without-security/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/with-security/local-cluster-logs/id-0/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
