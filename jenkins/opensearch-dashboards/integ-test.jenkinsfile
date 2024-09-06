@@ -344,6 +344,7 @@ pipeline {
                                 docker.withRegistry('https://public.ecr.aws/') {
                                     docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
                                         checkout scm
+                                        sleep 10
                                         downloadBuildManifest(
                                             url: BUILD_MANIFEST_URL,
                                             path: BUILD_MANIFEST
