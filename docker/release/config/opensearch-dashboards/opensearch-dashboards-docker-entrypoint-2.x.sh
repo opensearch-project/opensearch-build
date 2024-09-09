@@ -170,6 +170,7 @@ opensearch_dashboards_vars=(
     assistant.chat.enabled
     observability.query_assist.enabled
     usageCollection.uiMetric.enabled
+    workspace.enabled
 )
 
 function setupSecurityDashboardsPlugin {
