@@ -117,12 +117,19 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[0]["name"], "with-security")
         self.assertEqual(test_run_component_dict.get("configs")[0]["yml"],
                          "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/geospatial/with-security/geospatial.yml")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["test_stdout"], "https://ci.opensearch.org/ci"
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/with-security/stdout.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["test_stderr"], "https://ci.opensearch.org/ci"
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/with-security/stderr.txt")
         self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/with-security/local-cluster-logs/id-0/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stderr"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/with-security/local-cluster-logs/id-0/stderr.txt")
-
         self.assertEqual(test_run_component_dict.get("configs")[1]["name"], "without-security")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["test_stdout"], "https://ci.opensearch.org/ci"
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/without-security/stdout.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["test_stderr"], "https://ci.opensearch.org/ci"
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/without-security/stderr.txt")
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/without-security/local-cluster-logs/id-1/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stderr"][0], "https://ci.opensearch.org/ci"
@@ -154,6 +161,8 @@ class TestTestReportRunner(unittest.TestCase):
                          "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/geospatial/with-security/geospatial.yml")
         self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/with-security/local-cluster-logs/id-0/stdout.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["test_stdout"], "https://ci.opensearch.org/ci"
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/with-security/stdout.txt")
 
     @patch("yaml.safe_load")
     @patch("validators.url")
@@ -172,6 +181,10 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "Not Available")
         self.assertEqual(test_run_component_dict.get("configs")[0]["name"], "with-security")
         self.assertEqual(test_run_component_dict.get("configs")[0]["yml"], "URL not available")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["test_stdout"], "https://ci.opensearch.org/ci"
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/with-security/stdout.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["test_stdout"], "https://ci.opensearch.org/ci"
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/without-security/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/with-security/local-cluster-logs/id-0/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
@@ -200,6 +213,10 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "Not Available")
         self.assertEqual(test_run_component_dict.get("configs")[0]["name"], "with-security")
         self.assertEqual(test_run_component_dict.get("configs")[0]["yml"], "URL not available")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["test_stdout"], "https://ci.opensearch.org/ci"
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/with-security/stdout.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["test_stdout"], "https://ci.opensearch.org/ci"
+                                                                                   "/dbc/mock/test-results/123/integ-test/geospatial/without-security/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/with-security/local-cluster-logs/id-0/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
