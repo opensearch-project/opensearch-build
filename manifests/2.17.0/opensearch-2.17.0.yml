@@ -176,7 +176,7 @@ components:
       - common-utils
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: 5e0fdf5bbba31a732a6c1d9bbbebf78448f6f595
+    ref: 09dc7dad7eb200e2df3a173e129eb6e2c627ed0d
     platforms:
       - linux
       - windows
