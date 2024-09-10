@@ -31,7 +31,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: e111eb0ba8a3c88b1d141dcad2645bdc7f6ad631
+    ref: 9cb0ff252136da81c7fb67d246f551c566719dbd
     platforms:
       - linux
       - windows
@@ -45,7 +45,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 0ebea49fd5dbc0977f9dd36c61fa0a8dfbe8af66
+    ref: 56b8b663a25c8996d12b15492a18fb27650e057f
     platforms:
       - linux
       - windows
