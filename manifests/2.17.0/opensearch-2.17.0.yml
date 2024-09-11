@@ -25,13 +25,13 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: aa0952c8e1382ad070f6f91b974a34fb4fea8800
+    ref: cabff2541b0dbbf5d56685edf9cfc63d92821641
     platforms:
       - linux
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 9cb0ff252136da81c7fb67d246f551c566719dbd
+    ref: 009c8f39d541f3edb2d665e4300257bee0d97d83
     platforms:
       - linux
       - windows
@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 5e6ac303d6217f13bc4d1837713da71d2a03922a
+    ref: 0135cb9899d280c89538d5879184d61d5f627794
     platforms:
       - linux
       - windows
