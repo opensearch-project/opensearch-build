@@ -34,7 +34,7 @@ class TestBenchmarkTestSuiteCompare(unittest.TestCase):
         mock_check_call.assert_called_once()
 
         self.assertEqual(compare.command, 'docker run --name docker-container-test-suffix '
-                                          'opensearchproject/opensearch-benchmark:1.6.0 compare '
+                                          'opensearchproject/opensearch-benchmark:1.9.0 compare '
                                           '--baseline=baseline-id --contender=contender-id --results-format=markdown '
                                           '--results-numbers-align=right --results-file=final_result.md '
                                           '--show-in-results=all ')
@@ -51,7 +51,7 @@ class TestBenchmarkTestSuiteCompare(unittest.TestCase):
         mock_check_call.assert_called_once()
         self.assertEqual(compare.command, 'docker run --name docker-container-test-suffix  -v '
                                           '/some/path/benchmark.ini:/opensearch-benchmark/.benchmark/benchmark.ini '
-                                          'opensearchproject/opensearch-benchmark:1.6.0 compare '
+                                          'opensearchproject/opensearch-benchmark:1.9.0 compare '
                                           '--baseline=baseline-id --contender=contender-id --results-format=markdown '
                                           '--results-numbers-align=right --results-file=final_result.md '
                                           '--show-in-results=all ')

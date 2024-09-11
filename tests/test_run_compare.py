@@ -111,7 +111,7 @@ class TestRunBenchmarkTestCompare(unittest.TestCase):
         # define the expected command
         expected_command = (
             f"docker run --name docker-container-{args.stack_suffix} "
-            "opensearchproject/opensearch-benchmark:1.6.0 "
+            "opensearchproject/opensearch-benchmark:1.9.0 "
             "compare --baseline=12345 --contender=54321 "
             "--results-format=markdown "
             "--results-numbers-align=right "
