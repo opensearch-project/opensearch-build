@@ -30,7 +30,7 @@ class BenchmarkTestSuiteCompare(BenchmarkTestSuite):
         self.command = f'docker run --name docker-container-{self.args.stack_suffix} '
         if self.args.benchmark_config:
             self.command += f" -v {self.args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini "
-        self.command += f"opensearchproject/opensearch-benchmark:1.9.0 " \
+        self.command += f"opensearchproject/opensearch-benchmark:1.8.0 " \
                         f"compare --baseline={self.args.baseline} --contender={self.args.contender} "
 
         if self.args.results_format:
