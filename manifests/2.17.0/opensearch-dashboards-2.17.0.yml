@@ -36,7 +36,7 @@ components:
     ref: 63bb1e31d6b609cbc32e0e15c0b45e97af7275e5
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
-    ref: c488c3b556849758f3402e7850653ddde452d42d
+    ref: 4c9d61789f1ae32d95d76ecf44b983980204ffc8
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
     ref: 67cb2140c6bc762273739628557f72a47a376716
