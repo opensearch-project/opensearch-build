@@ -326,12 +326,12 @@ class TestValidationRpm(unittest.TestCase):
         mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
         validate_rpm.filename = 'example.rpm'
 
-        with self.assertRaises(Exception) as context:
+        with self.assertRaises(AssertionError) as context:
             validate_rpm.validate_signature()
         mock_logging_info.assert_any_call('Key digest "Header SHA256 digest" is validated to be present.')
         mock_logging_info.assert_any_call('Key digest "Payload SHA256 digest" is validated to be present.')
         mock_logging_info.assert_any_call('Validation of all key digests starts: ')
-        self.assertEqual(str(context.exception), 'Key digest "MD5 digest" is not found')
+        self.assertIsInstance(context.exception, AssertionError)
 
         mock_execute.assert_called_once_with(
             'rpm -K -v /tmp/trytytyuit/example.rpm', '.'

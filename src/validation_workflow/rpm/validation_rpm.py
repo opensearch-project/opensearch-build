@@ -39,7 +39,12 @@ class ValidateRpm(Validation, DownloadUtils):
         try:
             for project in self.args.projects:
                 execute(f'sudo systemctl start {project}', ".")
-                (status, _, _) = execute(f'sudo systemctl status {project}', ".")
+                (stdout, stderr, status) = execute(f'sudo systemctl status {project}', ".")
+                if(status == 0):
+                    logging.info(stdout)
+                else:
+                    logging.info(stderr)
+
         except:
             raise Exception('Failed to Start Cluster')
         return True
@@ -122,8 +127,7 @@ class ValidateRpm(Validation, DownloadUtils):
                 present_key.append(key)
         logging.info("Validation of all key digests starts: ")
         for digest in key_list:
-            if digest in present_key:
-                logging.info(f'Key digest "{digest}" is validated to be present.')
-            else:
-                raise ValueError(f'Key digest "{digest}" is not found')
+            assert digest in present_key
+            logging.info(f'Key digest "{digest}" is validated to be present.')
+
         logging.info("Validation for signature of RPM distribution completed.")
