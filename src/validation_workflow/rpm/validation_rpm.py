@@ -119,12 +119,11 @@ class ValidateRpm(Validation, DownloadUtils):
         key_list = ["Header V4 RSA/SHA512 Signature, key ID 9310d3fc", "Header SHA256 digest", "Header SHA1 digest",
                     "Payload SHA256 digest", "V4 RSA/SHA512 Signature, key ID 9310d3fc", "MD5 digest"]
         present_key = []
-        for line in stdout.rstrip('\n').split('\n'):
+        for line in stdout.rstrip('\n').split('\n')[1:]:
             key = line.split(':')[0].strip()
-            if key != os.path.join(self.tmp_dir.path, self.filename):
-                assert "OK" == line.split(':')[1].strip()
-                logging.info(f"{key} is validated as: {line}")
-                present_key.append(key)
+            assert "OK" == line.split(':')[1].strip()
+            logging.info(f"{key} is validated as: {line}")
+            present_key.append(key)
         logging.info("Validation of all key digests starts: ")
         for digest in key_list:
             assert digest in present_key

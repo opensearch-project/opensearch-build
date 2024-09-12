@@ -275,7 +275,7 @@ class TestValidationRpm(unittest.TestCase):
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_validate_signature(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_logging_info: Mock, mock_execute: Mock) -> None:
-        mock_execute.return_value = (None, 'Header V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\nHeader SHA1 digest: OK\nV4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n'
+        mock_execute.return_value = (None, '/tmp/trytytyuit/example.rpm\nHeader V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\nHeader SHA1 digest: OK\nV4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n'
                                            'MD5 digest: OK\nHeader SHA256 digest: OK\nPayload SHA256 digest: OK\n', None)
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
@@ -297,7 +297,7 @@ class TestValidationRpm(unittest.TestCase):
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_validate_signature_exception(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_logging_info: Mock, mock_execute: Mock) -> None:
-        mock_execute.return_value = (None, 'Header V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\nHeader SHA1 digest: OK\nV4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n'
+        mock_execute.return_value = (None, '/tmp/trytytyuit/example.rpm\nHeader V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\nHeader SHA1 digest: OK\nV4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n'
                                            'MD5 digest: not OK\nHeader SHA256 digest: OK\nPayload SHA256 digest: OK\n', None)
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
@@ -318,6 +318,7 @@ class TestValidationRpm(unittest.TestCase):
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_validate_signature_except(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_logging_info: Mock, mock_execute: Mock) -> None:
         mock_execute.return_value = (None,
+                                     '/tmp/trytytyuit/example.rpm\n'
                                      'Header V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\nHeader SHA256 digest: OK\n'
                                      'Header SHA1 digest: OK\nPayload SHA256 digest: OK\nV4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n',
                                      None)
