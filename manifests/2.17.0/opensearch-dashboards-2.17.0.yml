@@ -45,7 +45,7 @@ components:
     ref: 3edb13d430426ea3c631e8826e51f816e9612409
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: 338b5f890947ff216c9d522c64b2c81cce75fd93
+    ref: f892976282efa99abc45897f6122ee1a18460dfb
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: cc39b752d89237c1c1cdfe9e8e2979a985582554
