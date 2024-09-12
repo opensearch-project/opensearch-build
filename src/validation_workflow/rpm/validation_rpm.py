@@ -39,12 +39,7 @@ class ValidateRpm(Validation, DownloadUtils):
         try:
             for project in self.args.projects:
                 execute(f'sudo systemctl start {project}', ".")
-                (stdout, stderr, status) = execute(f'sudo systemctl status {project}', ".")
-                if(status == 0):
-                    logging.info(stdout)
-                else:
-                    logging.info(stderr)
-
+                (status, _, _) = execute(f'sudo systemctl status {project}', ".")
         except:
             raise Exception('Failed to Start Cluster')
         return True
@@ -85,16 +80,18 @@ class ValidateRpm(Validation, DownloadUtils):
         # The context the meta data should be based on type OpenSearch or OpenSearchDashBoards
         if product_type == "opensearch":
             ref_map['Summary'] = "An open source distributed and RESTful search engine"
-            ref_map['Description'] = "OpenSearch makes it easy to ingest, search, visualize, and analyze your data\nFor more information, see: https://opensearch.org/"
+            ref_map[
+                'Description'] = "OpenSearch makes it easy to ingest, search, visualize, and analyze your data\nFor more information, see: https://opensearch.org/"
         else:
             ref_map['Summary'] = "Open source visualization dashboards for OpenSearch"
-            ref_map['Description'] = "OpenSearch Dashboards is the visualization tool for data in OpenSearch\nFor more information, see: https://opensearch.org/"
+            ref_map[
+                'Description'] = "OpenSearch Dashboards is the visualization tool for data in OpenSearch\nFor more information, see: https://opensearch.org/"
 
         meta_map = {}
         for line in stdout.split('\n'):
             key = line.split(':')[0].strip()
             if key != 'Description':
-                meta_map[key] = line.split(':', 2)[1].strip()
+                meta_map[key] = line.split(':', 1)[1].strip()
             else:
                 description_index = stdout.find(line)
                 meta_map[key] = stdout[description_index + len(line):].strip()
@@ -107,25 +104,26 @@ class ValidateRpm(Validation, DownloadUtils):
                 elif value == 'arm64':
                     assert meta_map.get(key) == 'aarch64'
             else:
-                if meta_map.get(key) == value:
-                    logging.info(value)
-            logging.info(f"Meta data for {key} is validated")
-
+                assert meta_map.get(key) == value
+                logging.info(f"Meta data for {key} -> {value} is validated")
         logging.info(f"Validation for {product_type} meta data of RPM distribution completed.")
 
     def validate_signature(self) -> None:
         (_, stdout, _) = execute(f'rpm -K -v {os.path.join(self.tmp_dir.path, self.filename)}', ".")
         logging.info(stdout)
-        key_list = ["Header V4 RSA/SHA512 Signature, key ID 9310d3fc", "Header SHA256 digest", "Header SHA1 digest", "Payload SHA256 digest", "V4 RSA/SHA512 Signature, key ID 9310d3fc", "MD5 digest"]
+        key_list = ["Header V4 RSA/SHA512 Signature, key ID 9310d3fc", "Header SHA256 digest", "Header SHA1 digest",
+                    "Payload SHA256 digest", "V4 RSA/SHA512 Signature, key ID 9310d3fc", "MD5 digest"]
         present_key = []
         for line in stdout.rstrip('\n').split('\n'):
             key = line.split(':')[0].strip()
             if key != os.path.join(self.tmp_dir.path, self.filename):
-                if "OK" == line.split(':')[1].strip():
-                    logging.info(f"{key} is validated as: {line}")
-                    present_key.append(key)
+                assert "OK" == line.split(':')[1].strip()
+                logging.info(f"{key} is validated as: {line}")
+                present_key.append(key)
         logging.info("Validation of all key digests starts: ")
         for digest in key_list:
             if digest in present_key:
                 logging.info(f'Key digest "{digest}" is validated to be present.')
+            else:
+                raise ValueError(f'Key digest "{digest}" is not found')
         logging.info("Validation for signature of RPM distribution completed.")
