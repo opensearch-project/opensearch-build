@@ -93,7 +93,9 @@ class TestValidationRpm(unittest.TestCase):
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
     @patch("validation_workflow.rpm.validation_rpm.execute")
-    def test_installation(self, mock_temporary_directory: Mock, mock_system: Mock, mock_validation_args: Mock) -> None:
+    @patch("validation_workflow.rpm.validation_rpm.ValidateRpm.validate_metadata")
+    @patch("validation_workflow.rpm.validation_rpm.ValidateRpm.validate_signature")
+    def test_installation(self, mock_validate_signature: Mock, mock_validate_metadata: Mock, mock_temporary_directory: Mock, mock_system: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.platform = 'linux'
@@ -207,3 +209,131 @@ class TestValidationRpm(unittest.TestCase):
 
         result = validate_rpm.cleanup()
         self.assertTrue(result)
+
+    @patch('validation_workflow.rpm.validation_rpm.execute')
+    @patch('validation_workflow.rpm.validation_rpm.logging.info')
+    @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_validate_metadata(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
+                               mock_logging_info: Mock, mock_execute: Mock) -> None:
+        mock_execute.return_value = (None,
+                                     'Name        : opensearch\n'
+                                     'Version     : 1.3.0\n'
+                                     'Architecture : x86_64\n'
+                                     'Group       : Application/Internet\n'
+                                     'License     : Apache-2.0\n'
+                                     'Relocations : (not relocatable)\n'
+                                     'URL         : https://opensearch.org/\n'
+                                     'Summary     : An open source distributed and RESTful search engine\n'
+                                     'Description:\nOpenSearch makes it easy to ingest, search, visualize, and analyze your data\n'
+                                     'For more information, see: https://opensearch.org/',
+                                     None)
+
+        validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_rpm.filename = 'example.rpm'
+        validate_rpm.args.version = '1.3.0'
+        validate_rpm.args.arch = "x64"
+
+        validate_rpm.validate_metadata('opensearch')
+
+        mock_logging_info.assert_any_call("Meta data for Name -> opensearch is validated")
+        mock_logging_info.assert_any_call("Meta data for Version -> 1.3.0 is validated")
+        mock_logging_info.assert_any_call(
+            "Meta data for Description -> OpenSearch makes it easy to ingest, search, visualize, and analyze your data\nFor more information, see: https://opensearch.org/ is validated")
+        mock_logging_info.assert_any_call("Validation for opensearch meta data of RPM distribution completed.")
+
+        mock_execute.assert_called_once_with(
+            'rpm -qip /tmp/trytytyuit/example.rpm', '.'
+        )
+
+    @patch('validation_workflow.rpm.validation_rpm.execute')
+    @patch('validation_workflow.rpm.validation_rpm.logging.info')
+    @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_validate_metadata_exception(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
+                                         mock_logging_info: Mock, mock_execute: Mock) -> None:
+        mock_execute.return_value = (None, 'Name: opensearch\nVersion: 1.2.3\nArchitecture: x86_64\nURL: https://opensearch.org/Summary: '
+                                           'An open source distributed and RESTful search engine\nDescription: This is a test application\n'
+                                           ' "OpenSearch makes it easy to ingest, search, visualize, and analyze your data\nFor more information, see: https://opensearch.org/', None)
+
+        validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_rpm.filename = 'example.rpm'
+        validate_rpm.args.version = '1.3.0'
+        validate_rpm.args.arch = "x64"
+        with self.assertRaises(AssertionError) as context:
+            validate_rpm.validate_metadata('opensearch')
+        self.assertIsInstance(context.exception, AssertionError)
+
+        mock_execute.assert_called_once_with(
+            'rpm -qip /tmp/trytytyuit/example.rpm', '.'
+        )
+
+    @patch('validation_workflow.rpm.validation_rpm.execute')
+    @patch('validation_workflow.rpm.validation_rpm.logging.info')
+    @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_validate_signature(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_logging_info: Mock, mock_execute: Mock) -> None:
+        mock_execute.return_value = (None, '/tmp/trytytyuit/example.rpm\nHeader V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\nHeader SHA1 digest: OK\nV4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n'
+                                           'MD5 digest: OK\nHeader SHA256 digest: OK\nPayload SHA256 digest: OK\n', None)
+
+        validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_rpm.filename = 'example.rpm'
+
+        validate_rpm.validate_signature()
+
+        mock_logging_info.assert_any_call('Key digest "Header SHA256 digest" is validated to be present.')
+        mock_logging_info.assert_any_call('Key digest "Payload SHA256 digest" is validated to be present.')
+        mock_logging_info.assert_any_call('Validation of all key digests starts: ')
+        mock_logging_info.assert_any_call('Validation for signature of RPM distribution completed.')
+        mock_execute.assert_called_once_with(
+            'rpm -K -v /tmp/trytytyuit/example.rpm', '.'
+        )
+
+    @patch('validation_workflow.rpm.validation_rpm.execute')
+    @patch('validation_workflow.rpm.validation_rpm.logging.info')
+    @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_validate_signature_exception(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_logging_info: Mock, mock_execute: Mock) -> None:
+        mock_execute.return_value = (None, '/tmp/trytytyuit/example.rpm\nHeader V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\nHeader SHA1 digest: OK\nV4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n'
+                                           'MD5 digest: not OK\nHeader SHA256 digest: OK\nPayload SHA256 digest: OK\n', None)
+
+        validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_rpm.filename = 'example.rpm'
+
+        with self.assertRaises(AssertionError) as context:
+            validate_rpm.validate_signature()
+        self.assertIsInstance(context.exception, AssertionError)
+
+        mock_execute.assert_called_once_with(
+            'rpm -K -v /tmp/trytytyuit/example.rpm', '.'
+        )
+
+    @patch('validation_workflow.rpm.validation_rpm.execute')
+    @patch('validation_workflow.rpm.validation_rpm.logging.info')
+    @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_validate_signature_except(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_logging_info: Mock, mock_execute: Mock) -> None:
+        mock_execute.return_value = (None,
+                                     '/tmp/trytytyuit/example.rpm\n'
+                                     'Header V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\nHeader SHA256 digest: OK\n'
+                                     'Header SHA1 digest: OK\nPayload SHA256 digest: OK\nV4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n',
+                                     None)
+
+        validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_rpm.filename = 'example.rpm'
+
+        with self.assertRaises(AssertionError) as context:
+            validate_rpm.validate_signature()
+        mock_logging_info.assert_any_call('Key digest "Header SHA256 digest" is validated to be present.')
+        mock_logging_info.assert_any_call('Key digest "Payload SHA256 digest" is validated to be present.')
+        mock_logging_info.assert_any_call('Validation of all key digests starts: ')
+        self.assertIsInstance(context.exception, AssertionError)
+
+        mock_execute.assert_called_once_with(
+            'rpm -K -v /tmp/trytytyuit/example.rpm', '.'
+        )
