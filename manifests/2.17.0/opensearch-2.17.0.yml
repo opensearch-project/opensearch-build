@@ -31,7 +31,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 009c8f39d541f3edb2d665e4300257bee0d97d83
+    ref: 272324c9197b1bcb4e32a7ee8f55c516580800fc
     platforms:
       - linux
       - windows
@@ -45,7 +45,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 56b8b663a25c8996d12b15492a18fb27650e057f
+    ref: 4afb5ca54d7f6d07c922e40f453b90ca9f280b10
     platforms:
       - linux
       - windows
@@ -121,7 +121,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 47d159c71a3b935fe6c59f52b860a3bf54e5ea86
+    ref: 752dbffd6aab3685779dbca990d4d4892147d72e
     platforms:
       - linux
       - windows
@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 9bea213aa85d77f02d143e0169178961522adbbf
+    ref: 1fc34b01ec4aa43aba76c11137fef6ba1bf385ee
     platforms:
       - linux
       - windows
@@ -148,7 +148,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 56ea466d3978194448909bcf03699628ef4201e8
+    ref: 5cb0dbc7fa15c0f90743a504838b60b5ad085849
     platforms:
       - linux
       - windows
