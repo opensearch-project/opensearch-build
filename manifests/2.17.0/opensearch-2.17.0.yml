@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 6729220987d152270d1fce41689fdbf1e6165fd3
+    ref: 8586481dc99b1740ca3c7c966aee15ad0fc7b412
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 15480c93af342cfcd5a5ac9c99de1ec364cdbd2c
@@ -31,7 +31,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 272324c9197b1bcb4e32a7ee8f55c516580800fc
+    ref: 00328ecd414ff765c71eddc77b385b528a54fd5a
     platforms:
       - linux
       - windows
@@ -193,7 +193,7 @@ components:
       - windows
   - name: opensearch-system-templates
     repository: https://github.com/opensearch-project/opensearch-system-templates.git
-    ref: d709a0ca8151b79b7e4535b597f9457648baec76
+    ref: b38bad932f9f71551fa443909a7cc308f94a4ee4
     platforms:
       - linux
       - windows
