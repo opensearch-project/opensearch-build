@@ -10,7 +10,6 @@ import os
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
 from report_workflow.test_report_runner import TestReportRunner
 from system.temporary_directory import TemporaryDirectory
