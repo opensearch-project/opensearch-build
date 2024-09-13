@@ -12,7 +12,7 @@
                release-notes-check.sh(
                         #!/bin/bash
                         set +e
-                        ./release_notes.sh compile manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --output opensearch-release-notes-3.0.0.md
+                        ./release_notes.sh compile manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --output release-notes/opensearch-release-notes-3.0.0.md
                     )
                release-notes-check.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
                release-notes-check.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
