@@ -126,7 +126,7 @@ pipeline {
                     sh """
                         #!/bin/bash
                         set +e
-                        ./release_notes.sh compile manifests/${RELEASE_VERSION}/opensearch-${RELEASE_VERSION}.yml manifests/${RELEASE_VERSION}/opensearch-dashboards-${RELEASE_VERSION}.yml --output opensearch-release-notes-${RELEASE_VERSION}.md
+                        ./release_notes.sh compile manifests/${RELEASE_VERSION}/opensearch-${RELEASE_VERSION}.yml manifests/${RELEASE_VERSION}/opensearch-dashboards-${RELEASE_VERSION}.yml --output release-notes/opensearch-release-notes-${RELEASE_VERSION}.md
                     """
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         try {
