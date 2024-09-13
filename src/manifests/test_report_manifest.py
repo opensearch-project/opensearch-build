@@ -33,6 +33,7 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
         components:
           - name: sql
             command: command to trigger the integ test for only sql component
+            repository: the repository url of the component
             configs:
               - name: with-security
                 status: the status of the test run with this config. e.g. pass/fail
@@ -77,6 +78,7 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
                 "schema": {
                     "name": {"required": True, "type": "string"},
                     "command": {"type": "string"},
+                    "repository": {"type": "string"},
                     "configs": {
                         "type": "list",
                         "schema": {
@@ -157,12 +159,14 @@ class TestComponent(Component):
     def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.command = data["command"]
+        self.repository = data["repository"]
         self.configs = self.TestComponentConfigs(data.get("configs", None))
 
     def __to_dict__(self) -> dict:
         return {
             "name": self.name,
             "command": self.command,
+            "repository": self.repository,
             "configs": self.configs.__to_list__()
         }
 

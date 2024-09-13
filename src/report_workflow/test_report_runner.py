@@ -48,10 +48,10 @@ class TestReportRunner:
         self.dist_manifest = "/".join([self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml"]) if self.args.artifact_paths[self.name].startswith("https://") \
             else os.path.join(self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml")
         self.test_components = self.test_manifest.components
+        self.bundle_manifest = BundleManifest.from_urlpath(self.dist_manifest)
 
     def update_data(self) -> dict:
         self.test_report_data["name"] = self.product_name
-        self.bundle_manifest = BundleManifest.from_urlpath(self.dist_manifest)
         self.test_report_data["version"] = self.bundle_manifest.build.version
         self.test_report_data["platform"] = self.bundle_manifest.build.platform
         self.test_report_data["architecture"] = self.bundle_manifest.build.architecture
@@ -90,6 +90,7 @@ class TestReportRunner:
         test_report_component_name = component_name if not ci_group else f"{component_name}-ci-group-{ci_group}"
         component["name"] = test_report_component_name
         component["command"] = generate_test_command(self.test_type, self.test_manifest_path, self.artifact_paths, component_name)
+        component["repository"] = self.bundle_manifest.components[component_name].repository
 
         test_component = self.test_manifest.components[component_name]
 
