@@ -41,6 +41,7 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
         self.assertEqual(test_report_runner_data["distribution"], "tar")
         self.assertEqual(test_report_runner_data["id"], "7791")
         self.assertEqual(test_report_runner_data["rc"], "100")
+        self.assertEqual(test_report_runner_data["components"][3]["repository"], "https://github.com/opensearch-project/alerting-dashboards-plugin.git")
 
     @patch("report_workflow.report_args.ReportArgs")
     def test_generate_file(self, report_args_mock: MagicMock) -> None:
@@ -74,6 +75,7 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
         self.assertEqual(len(test_report_runner_data["components"]), 9)
         for i in range(3):
             self.assertEqual(test_report_runner_data["components"][i]["name"], f"OpenSearch-Dashboards-ci-group-{i + 1}")
+            self.assertEqual(test_report_runner_data["components"][i]["repository"], "https://github.com/opensearch-project/OpenSearch-Dashboards.git")
 
         for i in range(len(self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS.components.__to_dict__())):
             if self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS.components.__to_dict__()[i]["name"] == "OpenSearch-Dashboards":
@@ -82,12 +84,13 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
                 self.assertEqual(self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS.components.__to_dict__()[i]["name"],
                                  test_report_runner_data["components"][i + 2]["name"])
 
+    @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
     @patch("yaml.safe_load")
     @patch("urllib.request.urlopen")
     @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
     def test_runner_component_entry_url(self, report_args_mock: MagicMock, validators_mock: MagicMock,
-                                        urlopen_mock: MagicMock, yaml_safe_load_mock: MagicMock) -> None:
+                                        urlopen_mock: MagicMock, yaml_safe_load_mock: MagicMock, bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH
         report_args_mock.artifact_paths = {"opensearch-dashboards": "foo/bar"}
         report_args_mock.test_run_id = 123

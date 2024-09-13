@@ -41,6 +41,7 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_runner_data["distribution"], "tar")
         self.assertEqual(test_run_runner_data["id"], "9992")
         self.assertEqual(test_run_runner_data["rc"], "100")
+        self.assertEqual(test_run_runner_data["components"][3]["repository"], "https://github.com/opensearch-project/cross-cluster-replication.git")
 
     @patch("report_workflow.report_args.ReportArgs")
     def test_generate_file(self, report_args_mock: MagicMock) -> None:
@@ -64,22 +65,25 @@ class TestTestReportRunner(unittest.TestCase):
     def test_runner_update_test_run_data_local(self, report_args_mock: MagicMock,
                                                test_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
-        report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
+        report_args_mock.artifact_paths = {"opensearch": self.DATA_DIR}
         report_args_mock.test_run_id = 123
+        report_args_mock.base_path = self.DATA_DIR
         report_args_mock.test_type = "integ-test"
 
         test_run_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).update_test_run_data()
         self.assertEqual(test_run_dict.get("Command"), " ".join(
-            ["./test.sh", "integ-test", self.TEST_MANIFEST_PATH, "--paths", "opensearch=foo/bar"]))
+            ["./test.sh", "integ-test", self.TEST_MANIFEST_PATH, "--paths", f"opensearch={self.DATA_DIR}"]))
         self.assertEqual(test_run_dict.get("TestType"), "integ-test")
         self.assertEqual(test_run_dict.get("TestManifest"), self.TEST_MANIFEST_PATH)
         self.assertEqual(test_run_dict.get("DistributionManifest"),
-                         os.path.join("foo/bar", "dist", "opensearch", "manifest.yml"))
+                         os.path.join(self.DATA_DIR, "dist", "opensearch", "manifest.yml"))
         self.assertEqual(test_run_dict.get("TestID"), "123")
 
+    @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
     @patch("report_workflow.report_args.ReportArgs")
     @patch("manifests.test_manifest.TestManifest")
-    def test_runner_update_test_run_data_url(self, report_args_mock: MagicMock, test_manifest_mock: MagicMock) -> None:
+    def test_runner_update_test_run_data_url(self, report_args_mock: MagicMock, test_manifest_mock: MagicMock,
+                                             bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "https://foo/bar"}
         report_args_mock.test_run_id = 123
@@ -94,12 +98,14 @@ class TestTestReportRunner(unittest.TestCase):
                          "/".join(["https://foo/bar", "dist", "opensearch", "manifest.yml"]))
         self.assertEqual(test_run_dict.get("TestID"), "123")
 
+    @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
     @patch("yaml.safe_load")
     @patch("urllib.request.urlopen")
     @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
     def test_runner_component_entry_url(self, report_args_mock: MagicMock, validators_mock: MagicMock,
-                                        urlopen_mock: MagicMock, yaml_safe_load_mock: MagicMock) -> None:
+                                        urlopen_mock: MagicMock, yaml_safe_load_mock: MagicMock,
+                                        bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
         report_args_mock.test_run_id = 123
@@ -135,12 +141,14 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stderr"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/without-security/local-cluster-logs/id-1/stderr.txt")
 
+    @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
     @patch("yaml.safe_load")
     @patch("builtins.open", new_callable=mock_open)
     @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
     def test_runner_component_entry_local(self, report_args_mock: MagicMock, validators_mock: MagicMock,
-                                          mock_open: MagicMock, yaml_safe_load_mock: MagicMock) -> None:
+                                          mock_open: MagicMock, yaml_safe_load_mock: MagicMock,
+                                          bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
         report_args_mock.test_run_id = 123
@@ -164,11 +172,12 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[0]["test_stdout"], "https://ci.opensearch.org/ci"
                                                                                    "/dbc/mock/test-results/123/integ-test/geospatial/with-security/stdout.txt")
 
+    @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
     @patch("yaml.safe_load")
     @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
     def test_runner_component_entry_url_invalid(self, report_args_mock: MagicMock, validators_mock: MagicMock,
-                                                yaml_safe_load_mock: MagicMock) -> None:
+                                                yaml_safe_load_mock: MagicMock, bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
         report_args_mock.test_run_id = 123
@@ -190,12 +199,14 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/without-security/local-cluster-logs/id-1/stdout.txt")
 
+    @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
     @patch("yaml.safe_load")
     @patch("builtins.open", new_callable=mock_open)
     @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
     def test_runner_component_entry_local_invalid(self, report_args_mock: MagicMock, validators_mock: MagicMock,
-                                                  mock_open: MagicMock, yaml_safe_load_mock: MagicMock) -> None:
+                                                  mock_open: MagicMock, yaml_safe_load_mock: MagicMock,
+                                                  bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
         report_args_mock.test_run_id = 123
