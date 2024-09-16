@@ -312,23 +312,6 @@ Verify all issues labeled with this release have been resolved. Coordinate with 
 
 Get the Go / No-Go votes from project management committee (PMC) before staging the release artifacts for production publishing process,
 
-#### Promote Repos
-
-| Repo | OpenSearch (Sample Runs)                                                     | OpenSearch Dashboards (Sample Runs)                                           |
-| ---- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| YUM  | [yum-os](https://build.ci.opensearch.org/job/distribution-promote-repos/46/) | [yum-osd](https://build.ci.opensearch.org/job/distribution-promote-repos/48/) |
-| APT  | [apt-os](https://build.ci.opensearch.org/job/distribution-promote-repos/)     | [apt-osd](https://build.ci.opensearch.org/job/distribution-promote-repos/49/) |
-
-
-#### Promote Artifacts
-
-| Artifacts | OpenSearch (Sample Runs)                                                                                                                                                                   | OpenSearch Dashboards (Sample Runs)                                                                                                                                                           |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Windows   | [os-windows-zip-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/233/)                                                                                              | [osd-windows-zip-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/234/)                                                                                                |
-| Debian    | [os-deb-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/235/),  [os-deb-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/236/)            | [osd-deb-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/237/),    [osd-deb-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/238/)           |
-| TAR       | [os-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/243/),       [os-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/246/)       | [osd-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/245/), [osd-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/244/)               |
-| RPM       | [os-rpm-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/239/),             [os-rpm-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/240/) | [osd-rpm-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/241/),         [osd-rpm-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/242/)      |
-
 
 #### Release Notes
 
@@ -339,11 +322,33 @@ Coordinate with the plugin teams and create a consolidates release notes. Sample
 
 Release the artifacts to production distribution channels, update the website and inform the community of the release.
 
-#### Maven Promotion
-Promote OpenSearch to maven, trigger the `publish-to-maven workflow` (Ref [Release Workflows](#release-workflows)), sample [run](https://build.ci.opensearch.org/job/publish-to-maven/17/console).
+#### Central Release Promotion Workflow
 
-#### Docker Promotion
-Publish the images to docker and ECR, trigger the `docker promotion workflow` (Ref [Release Workflows](#release-workflows)), sample [run](https://build.ci.opensearch.org/job/docker-promotion/32/console).
+The [central release promotion workflow ](https://build.ci.opensearch.org/job/central-release-promotion/) consist of multiple child workflows such as:
+
+* *Promote Repos* :  Publishes DEBIAN and RPM repositories.
+
+| Repo | OpenSearch (Sample Runs)                                                     | OpenSearch Dashboards (Sample Runs)                                           |
+| ---- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| YUM  | [yum-os](https://build.ci.opensearch.org/job/distribution-promote-repos/46/) | [yum-osd](https://build.ci.opensearch.org/job/distribution-promote-repos/48/) |
+| APT  | [apt-os](https://build.ci.opensearch.org/job/distribution-promote-repos/)     | [apt-osd](https://build.ci.opensearch.org/job/distribution-promote-repos/49/) |
+
+
+* *Promote Artifacts*: Promotes below artifacts:
+
+| Artifacts | OpenSearch (Sample Runs)                                                                                                                                                                   | OpenSearch Dashboards (Sample Runs)                                                                                                                                                           |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Windows   | [os-windows-zip-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/233/)                                                                                              | [osd-windows-zip-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/234/)                                                                                                |
+| Debian    | [os-deb-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/235/),  [os-deb-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/236/)            | [osd-deb-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/237/),    [osd-deb-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/238/)           |
+| TAR       | [os-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/243/),       [os-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/246/)       | [osd-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/245/), [osd-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/244/)               |
+| RPM       | [os-rpm-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/239/),             [os-rpm-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/240/) | [osd-rpm-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/241/),         [osd-rpm-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/242/)      |
+
+* *Maven Promotion* : Promote OpenSearch to maven central, trigger the `publish-to-maven workflow` (Ref [Release Workflows](#release-workflows)), sample [run](https://build.ci.opensearch.org/job/publish-to-maven/17/console).
+
+* *Docker Promotion* : Publish the images to docker and ECR, trigger the `docker promotion workflow` (Ref [Release Workflows](#release-workflows)), sample [run](https://build.ci.opensearch.org/job/docker-promotion/32/console).
+
+* *Distribution Validation* : Use the validation workflow (Ref [Release Workflows](#release-workflows)) to validate the published artifacts, sample [validation workflow run](https://build.ci.opensearch.org/job/distribution-validation/3/console).
+
 
 #### Collaboration with the Project Management Team
 
@@ -360,10 +365,6 @@ Coordinate with the documentation website team to ensure the changes are in plac
 ##### Advertise on Social Media
 
 Coordinate with the project management team to ensure the social media advertisement is completed.
-
-#### Release Validation
-
-Use the validation workflow (Ref [Release Workflows](#release-workflows)) to validate the published artifacts, sample [validation workflow run](https://build.ci.opensearch.org/job/distribution-validation/3/console).
 
 ### Release Checklist
 
