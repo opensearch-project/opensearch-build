@@ -27,7 +27,7 @@ OpenSearch 2.17.0 includes the following experimental features. Experimental fea
 * Introduces a custom trace source that is based on the open telemetry schema and includes a redesigned overview page for traces and services.
 
 ## Release Details
-[OpenSearch and OpenSearch Dashboards 2.17.0](https://opensearch.org/versions/opensearch-2-16-0.html) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+[OpenSearch and OpenSearch Dashboards 2.17.0](https://opensearch.org/versions/opensearch-2-17-0.html) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.17/release-notes/opensearch.release-notes-2.17.0.md).
 
