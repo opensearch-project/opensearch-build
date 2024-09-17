@@ -141,14 +141,6 @@ Release blog is ready | :red_circle: |   |
 - [ ] Advertise on Social Media.
 - [ ]  Post on public slack and Github Release issue.
 
-### Post-Release activities
-- [ ] Release Tags.
-- [ ] Input Manifest Update.
-- [ ] OpenSearch Build Release notes.
-- [ ] Retrospective Issue.
-- [ ] Helm and Ansible Playbook release.
-- [ ] Upcoming Release Preparation.
-
 </p>
 </details>
 <br>
