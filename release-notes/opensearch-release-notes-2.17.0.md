@@ -346,9 +346,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * Fixed cypress tests. ([#1027](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1027))
-* [navigation]fix: remove the workspaceAvailability field to make alert visible within workspace ([#1028](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1028))
+* [Navigation] Fix: remove the workspaceAvailability field to make alert visible within workspace ([#1028](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1028))
 * Fix failed UT of AddAlertingMonitor.test.js ([#1040](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1040))
-* Issue #671 fix trigger name validation ([#794](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/794))
+* Issue #671 Fix trigger name validation ([#794](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/794))
 * Fix alerts card in all-use case overview page ([#1073](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1073))
 
 
@@ -500,7 +500,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### Opensearch Security Analytics Dashboards
 
 
-* [navigation] update nav category and workspaceAvailability ([#1093](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1093))
+* [Navigation] Update nav category and workspaceAvailability ([#1093](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1093))
 * Fix UI issues ([#1107](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1107))
 * Bug fixes PageHeader and SideNav ([#1123](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1123))
 * Added check for multi data source support when rendering threat alerts card in all use case workspace ([#1132](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1132))
