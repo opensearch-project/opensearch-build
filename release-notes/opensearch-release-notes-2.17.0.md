@@ -6,7 +6,7 @@ OpenSearch 2.17 includes new and updated features to help you build and optimize
 
 ### NEW AND UPDATED FEATURES
 
-* Remote Cluster State Publication, introduced as an experimental feature in OpenSearch 2.15 is now generally available.
+* Introduced as an experimental feature in OpenSearch 2.15, Remote Cluster State Publication is now generally available in 2.17.
 * To help users benefit from concurrent segment search for the right requests, OpenSearch 2.17 adds a new setting both at index and cluster level. These settings along with pluggable “decider” logic  will give more granular control on the requests that will be executed using concurrent search.
 * Adds support for encoding numeric term values as a Roaring bitmap. By encoding the values more efficiently, a search request can use a stored filter that matches over a million documents, with lower retrieval latency and less memory used.
 * Introduces Disk Optimized vector search feature which significantly reduces the operational costs for vector workloads.
