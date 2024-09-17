@@ -54,7 +54,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * [Look&Feel] Use smaller and compressed varients of buttons and form components ([#826](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/826))
-* header redesign ([#841](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/841))
+* Header redesign ([#841](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/841))
 * [Look&Feel] Consistency and density improvements ([#836](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/836))
 * Add Missing Value Imputation Options and Update Shingle Size Limit ([#851](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/851))
 * Add ignore rules comparing actual and expected values ([#859](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/859))
@@ -99,9 +99,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * [Feature] Traces/Services UI update ([#2078](https://github.com/opensearch-project/dashboards-observability/pull/2078))
 * [Page Header] New page header for applications and UI updates ([#2081](https://github.com/opensearch-project/dashboards-observability/pull/2081))
 * [Feature] Observability dashboards UI update ([#2090](https://github.com/opensearch-project/dashboards-observability/pull/2090))
-* [FEATURE] MDS support in Integrations for observability plugin ([#2051](https://github.com/opensearch-project/dashboards-observability/pull/2051))
+* [Feature] MDS support in Integrations for observability plugin ([#2051](https://github.com/opensearch-project/dashboards-observability/pull/2051))
 * [Feature] Logs UI update ([#2092](https://github.com/opensearch-project/dashboards-observability/pull/2092))
-* Feat: make createAssets API compatible with workspace ([#2101](https://github.com/opensearch-project/dashboards-observability/pull/2101))
+* [Feature] Make createAssets API compatible with workspace ([#2101](https://github.com/opensearch-project/dashboards-observability/pull/2101))
 * [Page Header] New page header for notebooks and UI updates ([#2099](https://github.com/opensearch-project/dashboards-observability/pull/2099), [#2103](https://github.com/opensearch-project/dashboards-observability/pull/2203))
 * [Feature] OverviewPage made with Content Management ([#2077](https://github.com/opensearch-project/dashboards-observability/pull/2077))
 
