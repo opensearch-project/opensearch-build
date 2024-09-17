@@ -6,15 +6,15 @@ OpenSearch 2.17 includes new and updated features to help you build and optimize
 
 ### NEW AND UPDATED FEATURES
 
-* Introduced as an experimental feature in OpenSearch 2.15, Remote Cluster State Publication is now generally available in 2.17.
-* To help users benefit from concurrent segment search for the right requests, OpenSearch 2.17 adds a new setting both at index and cluster level. These settings along with pluggable “decider” logic  will give more granular control on the requests that will be executed using concurrent search.
+* Introduced as an experimental feature in OpenSearch 2.15, remote cluster state publication is now generally available in 2.17.
+* To help users benefit from concurrent segment search for the right requests, OpenSearch 2.17 adds a new setting both at index and cluster level. These settings along with pluggable “decider” logic will give more granular control on the requests that will be executed using concurrent search.
 * Adds support for encoding numeric term values as a Roaring bitmap. By encoding the values more efficiently, a search request can use a stored filter that matches over a million documents, with lower retrieval latency and less memory used.
-* Introduces Disk Optimized vector search feature which significantly reduces the operational costs for vector workloads.
-* Vector search introduces Byte Vector support to its Faiss engine. Faiss Byte vector is a memory-efficient encoding technique that reduces memory requirements by up to 75% with a minimal drop in recall, making it suitable for large-scale workloads.
+* Introduces disk optimized vector search feature which significantly reduces the operational costs for vector workloads.
+* Vector search introduces byte vector support to its Faiss engine. Faiss Byte vector is a memory-efficient encoding technique that reduces memory requirements by up to 75% with a minimal drop in recall, making it suitable for large-scale workloads.
 * Introduces ML inference search processors, enabling users to run model predictions while conducting search queries.
 * Introduces batch asynchronous ingestion, allowing users to trigger batch inference jobs, monitor job status, and ingest results once batch processing is complete.
 * Flow Framework plugin now supports advanced user level security in 2.17. Users can now use backend roles to configure fine-grained access to individual workflows based on roles.
-* ML inference search processors has now enhanced search response processors by allowing users to specify running model prediction for all documents in one request or running model predict for each document.
+* ML inference search processors has now enhanced search response processors by allowing users to specify running model prediction for all documents in one request or running model prediction for each document.
 
 
 ### EXPERIMENTAL FEATURES
