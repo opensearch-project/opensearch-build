@@ -64,117 +64,12 @@ Plugin owners can follow the [Onboarding Process](ONBOARDING.md) to onboard thei
 
 ### Building and Testing an OpenSearch Distribution
 
-The distribution workflow builds a complete OpenSearch and OpenSearch Dashboards distribution from source. You can currently build 1.0, 1.1, 1.1-SNAPSHOT and 1.2 versions. This system performs a top-down [build](src/build_workflow) of all components required for a specific OpenSearch and OpenSearch Dashboards release, then [assembles](src/assemble_workflow/) a distribution. The input to the system is a manifest that defines the order in which components should be built. All manifests for our current releases are [here](manifests). 
-
-#### Building from Source
-
-```bash
-./build.sh manifests/1.3.0/opensearch-1.3.0.yml 
-```
-
-This builds OpenSearch 1.3.0 from source, placing the output into `./builds/opensearch`. 
-
-See [build workflow](src/build_workflow) for more information.
-
-#### Assembling a Distribution 
-
-```bash
-./assemble.sh builds/opensearch/manifest.yml
-```
-
-The assembling step takes output from the build step, installs plugins, and assembles a full distribution into the `dist` folder. 
-
-See [assemble workflow](src/assemble_workflow) for more information.
-
-#### Building Patches
-
-A patch release contains output from previous versions mixed with new source code. Manifests can mix such references. See [opensearch-1.3.1.yml](https://github.com/opensearch-project/opensearch-build/blob/opensearch-1.3.1/manifests/1.3.1/opensearch-1.3.1.yml) for an example.
-
-OpenSearch is often released with changes in `opensearch-min`, and no changes to plugins other than a version bump. This can be performed by a solo engineer following [a cookbook](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin). See also [opensearch-build#1375](https://github.com/opensearch-project/opensearch-build/issues/1375) which aims to automate incrementing versions for the next development iteration.
-
-#### Min Snapshots
-
-Snapshots for OpenSearch core/min can be downloaded and used in CI's, local development, etc using below links:
-
-Linux:
-```
-https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-linux-x64-latest.tar.gz
-```
-macOS:
-```
-https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-darwin-x64-latest.tar.gz
-```
-
-Windows:
-```
-https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-windows-x64-latest.zip
-```
-
-#### CI/CD Environment
-
-We build, assemble, and test our artifacts on docker containers. We provide docker files in [docker/ci](docker/ci) folder, and images on [staging docker hub repositories](https://hub.docker.com/r/opensearchstaging/ci-runner/). All Jenkins pipelines can be found in [jenkins](./jenkins/). Jenkins itself is in the process of being made public and its CDK open-sourced.
-
-See [jenkins](./jenkins) and [docker](./docker) for more information.
-
-#### Build Numbers
-
-The distribution URL and the build output manifest include a Jenkins auto-incremented build number. For example, the [manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/5905/linux/x64/rpm/dist/opensearch/manifest.yml) from [OpenSearch build 5905](https://build.ci.opensearch.org/job/distribution-build-opensearch/5905/) contains the following.
-
-```yml
-build:
-  name: OpenSearch
-  version: 2.2.0
-  platform: linux
-  architecture: x64
-  distribution: rpm
-  id: '5905'
-```
-
-#### Latest Distribution URL
-
-Use the `latest` keyword in the URL to obtain the latest build for a given version. For example `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/rpm/dist/opensearch/manifest.yml` redirects to [build 5905](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/5905/linux/x64/rpm/dist/opensearch/manifest.yml) at the time of writing this.
-
-The `latest` keyword is resolved to a specific build number by checking the `index.json` [file](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/index.json). This file has contents such as this.
-
-```
-{"latest":"5905"}
-```
-
-The file is updated when a distribution build job is completed for the given product and version (or is created when such distribution job succeeds for the first time). Since one distribution build job consists of multiple stages for different combinations of distribution type, platform and architecture, the `index.json` is only modified once all stages succeed. With this said, the `latest` URL only works when the distribution build job succeeds at least once for the given product and version.
-
-The resolution logic is implemented in the [CloudFront URL rewriter](https://github.com/opensearch-project/opensearch-ci/tree/main/resources/cf-url-rewriter). 
-The TTL (time to live) is set to `5 mins` which means that the `latest` URL may need up to 5 mins to get new contents after `index.json` is updated.
-
-All the artifacts accessible through the regular distribution URL can be accessed by the `latest` URL. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins. 
-
-For example, you can download the latest .tar.gz distribution build of OpenSearch 2.2.0 directly at `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.2.0-linux-x64.tar.gz`, without having to first download and parse the [complete build manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/manifest.yml).
-
-For plugin artifacts, you can also use the `latest` keyword to get the latest plugin artifacts with a known version. E.g. in order to get performance-analyzer x64 tarball artifacts for 2.1.0, you can obtain it with link `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip`, which will redirect you to `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/5757/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip`.
-
-For bundled artifacts, here are some examples for LINUX and Windows:
-* Linux Tar: `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.4.0-linux-x64.tar.gz`
-* Windows Zip: `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/windows/x64/zip/dist/opensearch/opensearch-2.4.0-windows-x64.zip`
+See [wiki](https://github.com/opensearch-project/opensearch-build/wiki/Building-an-OpenSearch-and-OpenSearch-Dashboards-Distribution)
 
 #### Testing the Distribution
 
-Tests the OpenSearch distribution, including integration, backwards-compatibility and performance tests.
+See [wiki](https://github.com/opensearch-project/opensearch-build/wiki/Testing-the-Distribution)
 
-```bash
-./test.sh <test-type> <test-manifest-path> <path>
-```
-
-See [src/test_workflow](./src/test_workflow) for more information.
-
-#### Checking Release Notes
-
-Workflow to check if the release notes exist or not and shows the latest commit for OpenSearch and Dashboard distributions.
-
-To run:
-```bash
-./release_notes.sh check manifests/2.2.0/opensearch-2.2.0.yml --date 2022-07-26
-```
-
-See [src/release_notes_workflow](./src/release_notes_workflow) for more information.
 #### Signing Artifacts
 
 For all types of signing within OpenSearch project we use `opensearch-signer-client` (in progress of being open-sourced) which is a wrapper around internal signing system and is only available for authenticated users. The input requires a path to the build manifest or directory containing all the artifacts or a single artifact. 
