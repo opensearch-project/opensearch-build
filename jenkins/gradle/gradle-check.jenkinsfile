@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.6.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.9.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -79,6 +79,13 @@ pipeline {
         BUILD_CAUSE = currentBuild.getBuildCauses()
     }
     stages {
+        stage('Check and abort stale runs') {
+            steps {
+                script {
+                    abortStaleJenkinsJobs(jobName: 'gradle-check', lookupTime: 3)
+                }
+            }
+        }
         stage('Run Gradle Check') {
             steps {
                 script {
