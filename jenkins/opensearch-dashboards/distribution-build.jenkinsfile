@@ -320,14 +320,8 @@ pipeline {
                                     echo "artifactUrl (linux, x64, rpm): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-                                    parallel([
-                                        'integ-test': {
-                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'rpm')
-                                        },
-                                        'rpm-validation': {
-                                            triggerRpmValidation(bundleManifestUrl)
-                                        }
-                                    ])
+
+                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'rpm')
                                 }
                             }
                             post {
@@ -672,14 +666,8 @@ pipeline {
                                     echo "artifactUrl (linux, arm64, rpm): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-                                    parallel([
-                                        'integ-test': {
-                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'rpm')
-                                        },
-                                        'rpm-validation': {
-                                            triggerRpmValidation(bundleManifestUrl)
-                                        }
-                                    ])
+
+                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch, 'linux', 'rpm')
                                 }
                             }
                             post {
@@ -1062,18 +1050,6 @@ def triggerBWCTests(String buildManifestUrl, String platform, String distributio
                     string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
                 ]
     }
-}
-
-def triggerRpmValidation(String bundleManifestUrl) {
-    echo "Triggering RPM validation for ${bundleManifestUrl}"
-    def rpmValidationResults =
-            build job: 'rpm-validation',
-            propagate: false,
-            wait: false,
-            parameters: [
-                string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
-            ]
 }
 
 def addMessageToNotificationQueue() {
