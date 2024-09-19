@@ -1,0 +1,30 @@
+lib = library(identifier: 'jenkins@6.9.1', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    agent {label 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'}
+    stages {
+        stage('Set Description') {
+            steps {
+                script {
+                    currentBuild.description = "My custom description here"
+                }
+            }
+        }
+        stage('Stop Old Builds') {
+            steps {
+                script {
+                    abortStaleJenkinsJobs(jobName: 'zsngri-gradle-test', lookupTime: '3')
+                }
+            }
+        }
+        stage('Do Something') {
+            steps {
+                echo 'sleeping 300 seconds'
+                sh 'sleep 300'
+            }
+        }
+    }
+}
