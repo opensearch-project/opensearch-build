@@ -79,13 +79,6 @@ pipeline {
         BUILD_CAUSE = currentBuild.getBuildCauses()
     }
     stages {
-        stage('Check and abort stale runs') {
-            steps {
-                script {
-                    abortStaleJenkinsJobs(jobName: 'gradle-check', lookupTime: 3)
-                }
-            }
-        }
         stage('Run Gradle Check') {
             steps {
                 script {
@@ -128,6 +121,8 @@ pipeline {
                                 currentBuild.description = """runner: ${agent_name}<br><a href="${pr_url}">PR #${pr_number}</a>: ${pr_title} with bwc.checkout.align=true"""
                                 bwc_checkout_align = "true"
                             }
+
+                            abortStaleJenkinsJobs(jobName: 'gradle-check', lookupTime: 3)
 
                             runGradleCheck(
                                 gitRepoUrl: "${pr_from_clone_url}",
