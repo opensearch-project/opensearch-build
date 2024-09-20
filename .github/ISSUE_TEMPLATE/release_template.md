@@ -98,15 +98,11 @@ Release blog is ready | :red_circle: |   |
 
 - [ ] [Release Labeled Issues](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-labeled-issues).
 - [ ] [Go or No-Go](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#go-or-no-go).
-- [ ] [Promote Repos](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#promote-repos).
-- [ ] [Promote artifacts](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#promote-artifacts).
 - [ ] [Release Notes](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-notes).
 
 ### [Release](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#main-release) - _Ends {__REPLACE_RELEASE-day}_
 
-- [ ] [Maven Promotion](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#maven-promotion).
-- [ ] [Docker Promotion](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#docker-promotion).
-- [ ] [Release Validation](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-validation).
+- [ ] [Central Promotion Workflow](https://github.com/opensearch-project/opensearch-build/wiki/Central-Release-Promotion-Workflow).
 - [ ] [Collaboration with the Project Management Team](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#collaboration-with-the-project-management-team).
 
 ### [Release Checklist](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-checklist).
@@ -144,14 +140,6 @@ Release blog is ready | :red_circle: |   |
 - [ ] Publish blog posts.
 - [ ] Advertise on Social Media.
 - [ ]  Post on public slack and Github Release issue.
-
-### Post-Release activities
-- [ ] Release Tags.
-- [ ] Input Manifest Update.
-- [ ] OpenSearch Build Release notes.
-- [ ] Retrospective Issue.
-- [ ] Helm and Ansible Playbook release.
-- [ ] Upcoming Release Preparation.
 
 </p>
 </details>
