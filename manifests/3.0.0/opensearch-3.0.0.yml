@@ -227,3 +227,9 @@ components:
     platforms:
       - linux
       - windows
+  - name: skills
+    repository: https://github.com/opensearch-project/skills.git
+    ref: main
+    platforms:
+      - linux
+      - windows
