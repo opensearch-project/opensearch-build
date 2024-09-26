@@ -13,7 +13,7 @@ components:
     ref: 1893d20797e30110e5877170e44d42275ce5951e
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 62b1cfa0a2df334590ca01724a5a02f070446dcf
+    ref: aa0d360eefe1883c5b6b1d570e3405f47ef1b2b3
     platforms:
       - linux
       - windows
@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 8d8868878967760804c6d61f542bf945bd5040c5
+    ref: 9e4844f112fdc05c719475aa52b093bed6ae2497
     platforms:
       - linux
       - windows
@@ -70,7 +70,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: cb60d200d80144b825698d1b3e1fe71b31861785
+    ref: df45059728f4ee0ee62bc1167df08ad4113cd7db
     working_directory: notifications
     platforms:
       - linux
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: cb60d200d80144b825698d1b3e1fe71b31861785
+    ref: df45059728f4ee0ee62bc1167df08ad4113cd7db
     working_directory: notifications
     platforms:
       - linux
@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 66c4284bf7cc275afce1137687de70bbb9f9eb72
+    ref: d7e9295503f1106047ba4cf126c5998a7eda2cb2
     platforms:
       - linux
       - windows
