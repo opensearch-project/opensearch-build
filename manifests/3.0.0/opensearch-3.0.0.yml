@@ -233,3 +233,8 @@ components:
     platforms:
       - linux
       - windows
+    depends_on:
+      - job-scheduler
+      - anomaly-detection
+      - sql
+      - ml-commons
