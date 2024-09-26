@@ -13,7 +13,7 @@ components:
     ref: 1893d20797e30110e5877170e44d42275ce5951e
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: aa0d360eefe1883c5b6b1d570e3405f47ef1b2b3
+    ref: 80e0945a1e7a7c1ee2725a9dcff1c5d4ac8d46f0
     platforms:
       - linux
       - windows
