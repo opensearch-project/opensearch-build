@@ -193,7 +193,7 @@ components:
       - windows
   - name: opensearch-system-templates
     repository: https://github.com/opensearch-project/opensearch-system-templates.git
-    ref: 09ed603b1ed72f6ca7c11f75e47523033e8e92de
+    ref: 3ffa8567a980d6a9f1f2c37d6ccf4d47804dd29b
     platforms:
       - linux
       - windows
