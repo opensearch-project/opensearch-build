@@ -24,9 +24,6 @@ pytest-cov = "~=2.10.0"
 jproperties = "~=2.1.1"
 retry = "~=0.9"
 sortedcontainers = "~=2.4.0"
-# TODO: pkg_resources is deprecated in Python 3.9 ever since Python 3.8 introduces importlib.metadata
-#       The latest version of cerberus is still using pkg_resources with this PR pending: https://github.com/pyeve/cerberus/pull/579
-#       You will see a new deprecation warning when running cerberus related code in this repository: 'DeprecationWarning: pkg_resources is deprecated as an API'
 cerberus = "~=1.3.5"
 psutil = "~=5.8"
 atomicwrites = "~=1.4.1"
