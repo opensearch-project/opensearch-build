@@ -39,6 +39,9 @@ mistune = "~=3.0.1"
 semver = ">=3,<4"
 pandas = "~=2.2.2"
 idna = "~=3.10"
+certifi = "~=2024.7.4"
+types-urllib3 = "~=1.26.25.14"
+charset-normalizer = "~=2.1.1"
 
 [dev-packages]
 
