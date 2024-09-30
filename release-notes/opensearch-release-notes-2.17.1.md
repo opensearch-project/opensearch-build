@@ -1,5 +1,13 @@
 # OpenSearch and OpenSearch Dashboards 2.17.1 Release Notes
 
+## Release Details
+
+[OpenSearch and OpenSearch Dashboards 2.17.1](https://opensearch.org/versions/opensearch-2-17-1.html) includes the following bug fixes, infrastructure and maintenance updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-2.17.1.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.17.1.md).
+
 
 ## BUG FIXES
 
