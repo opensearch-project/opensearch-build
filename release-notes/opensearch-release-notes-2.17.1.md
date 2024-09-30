@@ -45,28 +45,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## DOCUMENTATION
 
 
-### Opensearch Alerting Dashboards Plugin
-
-
-* Added 2.17.1 release notes. ([#1109](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1109))
-
-
 ### Opensearch ML Commons
 
 
 * Fix bedrock claude3 blueprint typo (#2962)[https://github.com/opensearch-project/ml-commons/pull/2962]
-
-
-### Opensearch Notifications
-
-
-* Add 2.17.1 release notes (#[969](https://github.com/opensearch-project/notifications/pull/969))
-
-
-### Opensearch Security Analytics
-
-
-* Added 2.17.1 release notes. ([#1331](https://github.com/opensearch-project/security-analytics/pull/1331))
 
 
 ## MAINTENANCE
@@ -81,7 +63,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### Opensearch Alerting Dashboards Plugin
 
 
-* Increment version to 2.17.1.0 ([#1108](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1108))
 * Updated workflows to use latest action of upload-artifacts ([#1089](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1089))
 
 
@@ -97,12 +78,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix flaky integ test reprovisioning before template update ([#880](https://github.com/opensearch-project/flow-framework/pull/880))
 
 
-### Opensearch ML Commons Dashboards
-
-
-* [AUTO] Increment version to 2.17.1.0 ([#376](https://github.com/opensearch-project/ml-commons-dashboards/pull/376))
-
-
 ### Opensearch Notifications
 
 
@@ -114,7 +89,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * Upgrade upload artifacts ([#1305](https://github.com/opensearch-project/security-analytics/pull/1305))
-* Incremented version to 2.17.1 ([#1304](https://github.com/opensearch-project/security-analytics/pull/1304))
 
 
 ### Opensearch Security Dashboards Plugin
