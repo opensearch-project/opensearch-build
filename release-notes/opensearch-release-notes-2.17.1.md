@@ -4,9 +4,9 @@
 
 [OpenSearch and OpenSearch Dashboards 2.17.1](https://opensearch.org/versions/opensearch-2-17-1.html) includes the following bug fixes, infrastructure and maintenance updates.
 
-OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-2.17.1.md).
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.17/release-notes/opensearch.release-notes-2.17.1.md).
 
-OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.17.1.md).
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.17/release-notes/opensearch-dashboards.release-notes-2.17.1.md).
 
 
 ## BUG FIXES
@@ -18,21 +18,21 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Bump BWC Version to 2.18 and Fix Bugs ([#1311](https://github.com/opensearch-project/anomaly-detection/pull/1311))
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
-* add bedrock batch job post process function; enhance remote job status parsing (#2955)[https://github.com/opensearch-project/ml-commons/pull/2955]
-* fix ML task index mapping (#2949)[https://github.com/opensearch-project/ml-commons/pull/2949]
-* fix full\_response false and no output mapping exceptions (#2944)[https://github.com/opensearch-project/ml-commons/pull/2944]
-* fix get batch task bug (#2937)[https://github.com/opensearch-project/ml-commons/pull/2937]
-* fix field mapping, add more error handling and remove checking jobId filed in batch job response (#2933)[https://github.com/opensearch-project/ml-commons/pull/2933]
+* Add bedrock batch job post process function; enhance remote job status parsing (#2955)[https://github.com/opensearch-project/ml-commons/pull/2955]
+* Fix ML task index mapping (#2949)[https://github.com/opensearch-project/ml-commons/pull/2949]
+* Fix full\_response false and no output mapping exceptions (#2944)[https://github.com/opensearch-project/ml-commons/pull/2944]
+* Fix get batch task bug (#2937)[https://github.com/opensearch-project/ml-commons/pull/2937]
+* Fix field mapping, add more error handling and remove checking jobId filed in batch job response (#2933)[https://github.com/opensearch-project/ml-commons/pull/2933]
 
 
 ### Opensearch Security Analytics
 
 
 * [Alerts in Correlations] Stash context for system index ([#1297](https://github.com/opensearch-project/security-analytics/pull/1297))
-* threat intel monitor bug fixes ([#1317](https://github.com/opensearch-project/security-analytics/pull/1317))
+* Threat intel monitor bug fixes ([#1317](https://github.com/opensearch-project/security-analytics/pull/1317))
 
 
 ### Opensearch k-NN
@@ -51,7 +51,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Added 2.17.1 release notes. ([#1109](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1109))
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
 * Fix bedrock claude3 blueprint typo (#2962)[https://github.com/opensearch-project/ml-commons/pull/2962]
@@ -113,7 +113,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### Opensearch Security Analytics
 
 
-* upgrade upload artifacts ([#1305](https://github.com/opensearch-project/security-analytics/pull/1305))
+* Upgrade upload artifacts ([#1305](https://github.com/opensearch-project/security-analytics/pull/1305))
 * Incremented version to 2.17.1 ([#1304](https://github.com/opensearch-project/security-analytics/pull/1304))
 
 
