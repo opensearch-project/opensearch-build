@@ -62,7 +62,7 @@ pipeline {
                     }
                     if (params.MANIFEST_LOCK_ACTION == 'MATCH_BUILD_MANIFEST' && (OPENSEARCH_RELEASE_CANDIDATE.isEmpty() || OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE.isEmpty())) {
                                 currentBuild.result = 'ABORTED'
-                                error('OPENSEARCH_RELEASE_CANDIDATE and/or OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE cannot be empty when MANIFEST_LOCK_ACTION is MATCH_BUILD_MANIFEST or UPDATE_TO_RECENT_COMMITS.')
+                                error('OPENSEARCH_RELEASE_CANDIDATE and/or OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE cannot be empty when MANIFEST_LOCK_ACTION is MATCH_BUILD_MANIFEST.')
                     }
                 }
             }

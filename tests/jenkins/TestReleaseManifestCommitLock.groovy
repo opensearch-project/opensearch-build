@@ -68,7 +68,7 @@ class TestReleaseManifestCommitLock extends BuildPipelineTest {
         runScript('jenkins/release-workflows/release-manifest-commit-lock.jenkinsfile')
         }
         def callStack = helper.getCallStack()
-        assertCallStack().contains('OPENSEARCH_RELEASE_CANDIDATE and/or OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE cannot be empty when MANIFEST_LOCK_ACTION is MATCH_BUILD_MANIFEST or UPDATE_TO_RECENT_COMMITS.')
+        assertCallStack().contains('OPENSEARCH_RELEASE_CANDIDATE and/or OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE cannot be empty when MANIFEST_LOCK_ACTION is MATCH_BUILD_MANIFEST.')
     }
 
     @Test
