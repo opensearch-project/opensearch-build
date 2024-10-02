@@ -60,9 +60,9 @@ pipeline {
                                 currentBuild.result = 'ABORTED'
                                 error('MANIFEST_LOCK_ACTION and/or RELEASE_VERSION cannot be empty!')
                     }
-                    if ((params.MANIFEST_LOCK_ACTION == 'MATCH_BUILD_MANIFEST' || params.MANIFEST_LOCK_ACTION == 'UPDATE_TO_RECENT_COMMITS') && (OPENSEARCH_RELEASE_CANDIDATE.isEmpty() || OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE.isEmpty())) {
+                    if (params.MANIFEST_LOCK_ACTION == 'MATCH_BUILD_MANIFEST' && (OPENSEARCH_RELEASE_CANDIDATE.isEmpty() || OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE.isEmpty())) {
                                 currentBuild.result = 'ABORTED'
-                                error('OPENSEARCH_RELEASE_CANDIDATE and/or OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE cannot be empty when MANIFEST_LOCK_ACTION is MATCH_BUILD_MANIFEST or UPDATE_TO_RECENT_COMMITS.')
+                                error('OPENSEARCH_RELEASE_CANDIDATE and/or OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE cannot be empty when MANIFEST_LOCK_ACTION is MATCH_BUILD_MANIFEST.')
                     }
                 }
             }
@@ -112,7 +112,7 @@ pipeline {
             }
             steps {
                 script {
-                    def updateManifest = { String productName, String releaseCandidate ->
+                    def updateManifest = { String productName ->
                         def existingManifest = readYaml file: "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml"
                         def selectedComponents = params.COMPONENTS.isEmpty() ? existingManifest.components : existingManifest.components.findAll { component ->
                             params.COMPONENTS.split(',').any { it.trim() == component.name }
@@ -136,8 +136,8 @@ pipeline {
                                 sed -i '1s/^/---\\n/' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
                         """
                     }
-                    updateManifest("opensearch", params.OPENSEARCH_RELEASE_CANDIDATE)
-                    updateManifest("opensearch-dashboards", params.OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE)
+                    updateManifest("opensearch")
+                    updateManifest("opensearch-dashboards")
                 }
             }
         }

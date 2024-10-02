@@ -34,12 +34,13 @@ class TestReleaseManifestCommitLock extends BuildPipelineTest {
 
         super.setUp()
         addParam('RELEASE_VERSION', '2.0.0')
-        addParam('OPENSEARCH_RELEASE_CANDIDATE', '3813')
-        addParam('OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE', '3050')
         addParam('COMPONENTS', 'OpenSearch')
 
         helper.registerAllowedMethod("withCredentials", [Map])
         def buildManifest = "tests/jenkins/data/opensearch-2.0.0.yml"
+        helper.registerAllowedMethod('error', [String], { String message ->
+        throw new Exception(message)
+        })
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             return new Yaml().load((buildManifest as File).text)
         })
@@ -49,11 +50,25 @@ class TestReleaseManifestCommitLock extends BuildPipelineTest {
     @Test
     public void testManifestCommitLock_matchBuildManifest() {
         addParam('MANIFEST_LOCK_ACTION', 'MATCH_BUILD_MANIFEST')
+        addParam('OPENSEARCH_RELEASE_CANDIDATE', '3813')
+        addParam('OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE', '3050')
         super.testPipeline('jenkins/release-workflows/release-manifest-commit-lock.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/release-workflows/testManifestCommitLock_matchBuildManifest')
         def callStack = helper.getCallStack()
         assertCallStack().contains('stage(Parameters Check, groovy.lang.Closure)')
         assertCallStack().contains('stage(MATCH_BUILD_MANIFEST, groovy.lang.Closure)')
+    }
+
+    @Test
+    public void testManifestCommitLock_matchBuildManifest_exception() {
+        addParam('MANIFEST_LOCK_ACTION', 'MATCH_BUILD_MANIFEST')
+        binding.setVariable('OPENSEARCH_RELEASE_CANDIDATE', '')
+        binding.setVariable('OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE', '')
+        Exception exception = assertThrows(Exception) {
+        runScript('jenkins/release-workflows/release-manifest-commit-lock.jenkinsfile')
+        }
+        def callStack = helper.getCallStack()
+        assertCallStack().contains('OPENSEARCH_RELEASE_CANDIDATE and/or OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE cannot be empty when MANIFEST_LOCK_ACTION is MATCH_BUILD_MANIFEST.')
     }
 
     @Test
@@ -81,6 +96,8 @@ class TestReleaseManifestCommitLock extends BuildPipelineTest {
 
     @Test
     public void testManifestCommitLock_createPullRequest() {
+        addParam('OPENSEARCH_RELEASE_CANDIDATE', '3813')
+        addParam('OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE', '3050')
         super.testPipeline('jenkins/release-workflows/release-manifest-commit-lock.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/release-workflows/testManifestCommitLock_createPullRequest')
         assertThat(getShellCommands('git'), hasItem("\n                                git remote set-url origin \"https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/opensearch-build\"\n                                git config user.email \"opensearch-infra@amazon.com\"\n                                git config user.name \"opensearch-ci\"\n                                git checkout -b manifest-lock\n                            "))
@@ -106,6 +123,8 @@ class TestReleaseManifestCommitLock extends BuildPipelineTest {
     @Test
     public void testMatchBuildManifest() {   
         addParam('MANIFEST_LOCK_ACTION', 'MATCH_BUILD_MANIFEST')
+        addParam('OPENSEARCH_RELEASE_CANDIDATE', '3813')
+        addParam('OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE', '3050')
         def buildManifest = "tests/jenkins/data/opensearch-2.0.0-build.yml"
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             return new Yaml().load((buildManifest as File).text)
