@@ -283,8 +283,6 @@ OpenSearch Dashboards <a href="https://github.com/opensearch-project/OpenSearch-
 <li>Switch jwt library from org.apache.cxf.rs.security.jose to com.nimbusds.jose.jwk (<a href="https://github.com/opensearch-project/security/pull/3595">#3595</a>)</li>
 </ul>
 
-https://github.com/opensearch-project/security/pull/3595
-
 <h3>Opensearch k-NN</h3>
 
 <ul>
