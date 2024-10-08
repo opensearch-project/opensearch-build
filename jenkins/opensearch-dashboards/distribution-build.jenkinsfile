@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.9.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@7.0.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -89,11 +89,6 @@ pipeline {
         booleanParam(
             name: 'UPDATE_LATEST_URL',
             description: 'Update latest url so /latest/ is pointed to this build',
-            defaultValue: true
-        )
-        booleanParam(
-            name: 'PUBLISH_NOTIFICATION',
-            description: 'Publish the status of this build job or not.',
             defaultValue: true
         )
         booleanParam(
@@ -231,7 +226,6 @@ pipeline {
                         }
                         always {
                             script {
-                                addMessageToNotificationQueue()
                                 if (params.CONTINUE_ON_ERROR) {
                                     markStageUnstableIfPluginsFailedToBuild()
                                 }
@@ -345,7 +339,6 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -456,7 +449,6 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -506,7 +498,6 @@ pipeline {
                             post {
                                 always {
                                     script {
-                                        addMessageToNotificationQueue()
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
@@ -577,7 +568,6 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -627,7 +617,6 @@ pipeline {
                             post {
                                 always {
                                     script {
-                                        addMessageToNotificationQueue()
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
@@ -691,7 +680,6 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -802,7 +790,6 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -875,7 +862,6 @@ pipeline {
                         }
                         always {
                             script {
-                                addMessageToNotificationQueue()
                                 if (params.CONTINUE_ON_ERROR) {
                                     markStageUnstableIfPluginsFailedToBuild()
                                 }
@@ -942,10 +928,9 @@ pipeline {
                         componentCategory: "OpenSearch Dashboards"
                     )
                     if (params.UPDATE_GITHUB_ISSUE) {
-                        UpdateBuildFailureIssues(
-                            failureMessages: buildMessage(search: 'Error building'),
-                            passMessages: buildMessage(search: 'Successfully built'),
-                            inputManifestPath: "manifests/$INPUT_MANIFEST"
+                        updateBuildFailureIssues(
+                            inputManifestPath: "manifests/$INPUT_MANIFEST",
+                            distributionBuildNumber: "${BUILD_NUMBER}"
                         )
                     }
                     postCleanup()
@@ -955,39 +940,6 @@ pipeline {
         success {
             node(AGENT_LINUX_X64) {
                 script {
-                    List<String> stages = []
-                    if (params.BUILD_PLATFORM.contains('linux')) {
-                        if (params.BUILD_DISTRIBUTION.contains('tar')) {
-                            stages = [
-                                'build-and-test-linux-x64-tar',
-                                'assemble-archive-and-test-linux-arm64-tar',
-                            ]
-                        }
-                        if (params.BUILD_DISTRIBUTION.contains('rpm')) {
-                            stages.add('assemble-archive-and-test-linux-x64-rpm')
-                            stages.add('assemble-archive-and-test-linux-arm64-rpm')
-                        }
-                        if (params.BUILD_DISTRIBUTION.contains('deb')) {
-                            stages.add('assemble-archive-and-test-linux-x64-deb')
-                            stages.add('assemble-archive-and-test-linux-arm64-deb')
-                        }
-                    }
-                    if (params.BUILD_PLATFORM.contains('windows')) {
-                        if (params.BUILD_DISTRIBUTION.contains('zip')) {
-                            stages.add('build-and-test-windows-x64-zip')
-                        }
-                    }
-                    if (params.PUBLISH_NOTIFICATION) {
-                        def stashed = lib.jenkins.Messages.new(this).get(stages)
-
-                        publishNotification(
-                            icon: ':white_check_mark:',
-                            message: 'Successful Build',
-                            extra: stashed,
-                            credentialsId: 'jenkins-build-notice-webhook',
-                            manifest: "${INPUT_MANIFEST}"
-                        )
-                    }
                     postCleanup()
                 }
             }
@@ -1050,10 +1002,6 @@ def triggerBWCTests(String buildManifestUrl, String platform, String distributio
                     string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
                 ]
     }
-}
-
-def addMessageToNotificationQueue() {
-    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]))
 }
 
 def verifyParameterPlatformDistribution(String paramName, String allowedValue) {
