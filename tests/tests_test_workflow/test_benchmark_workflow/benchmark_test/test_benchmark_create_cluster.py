@@ -28,6 +28,7 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
             self.args.insecure = False
             self.args.single_node = True
             self.args.min_distribution = False
+            self.args.enable_instance_storage = False
         self.manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST) if use_manifest else None
         self.stack_name = "stack"
         self.security = True
@@ -51,6 +52,7 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
         self.assertTrue("adminPassword=admin" in self.benchmark_create_cluster.params)
         self.assertTrue("singleNodeCluster=true" in self.benchmark_create_cluster.params)
         self.assertTrue("isInternal=true" in self.benchmark_create_cluster.params)
+        self.assertTrue("useInstanceBasedStorage=false" in self.benchmark_create_cluster.params)
         self.assertTrue("distributionUrl=https://artifacts.opensearch.org/bundles/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/opensearch-1.0.0-linux-x64.tar.gz" in self.benchmark_create_cluster.params)
         self.assertTrue(isinstance(self.manifest, BundleManifest))
         with patch("subprocess.check_call") as mock_check_call:
@@ -67,6 +69,8 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
     def test_create_single_node_insecure(self, mock_wait_for_processing: Optional[Mock]) -> None:
         self.args.insecure = True
         self.args.data_instance_type = 'r5.4xlarge'
+        self.args.enable_instance_storage = True
+
         TestBenchmarkCreateCluster.setUp(self, self.args)
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-007-x64": {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call") as mock_check_call:
@@ -80,6 +84,7 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
         self.assertTrue("securityDisabled=true" in self.benchmark_create_cluster.params)
         self.assertTrue("dataInstanceType=r5.4xlarge" in self.benchmark_create_cluster.params)
         self.assertTrue("customRoleArn=arn:aws:iam::12344567890:role/customRole" in self.benchmark_create_cluster.params)
+        self.assertTrue("useInstanceBasedStorage=true" in self.benchmark_create_cluster.params)
 
     @patch("test_workflow.benchmark_test.benchmark_create_cluster.BenchmarkCreateCluster.wait_for_processing")
     def test_create_multi_node(self, mock_wait_for_processing: Optional[Mock]) -> None:

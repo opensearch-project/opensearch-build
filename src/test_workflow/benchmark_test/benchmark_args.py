@@ -57,6 +57,7 @@ class BenchmarkArgs:
     results_file: str
     show_in_results: str
     command: str
+    enable_instance_storage: bool
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle or compare two tests")
@@ -143,6 +144,8 @@ class BenchmarkArgs:
                                          help="Show more verbose output.")
         execute_test_parser.add_argument("--ml-node-storage", dest="ml_node_storage",
                                          help="User provided ml-node ebs block storage size defaults to 100Gb")
+        execute_test_parser.add_argument("--enable-instance-storage", dest="enable_instance_storage", action="store_true",
+                                         help="Use instance based SSD storage instead of EBS for data nodes", default=False)
 
         # command to run comparison
         compare_parser = subparsers.add_parser("compare", parents=[parent_parser],
@@ -184,6 +187,7 @@ class BenchmarkArgs:
             self.jvm_sys_props = args.jvm_sys_props if args.jvm_sys_props else None
             self.data_node_storage = args.data_node_storage if args.data_node_storage else None
             self.ml_node_storage = args.ml_node_storage if args.ml_node_storage else None
+            self.enable_instance_storage = args.enable_instance_storage
             self.enable_remote_store = args.enable_remote_store
             self.data_instance_type = args.data_instance_type if args.data_instance_type else None
             self.workload = args.workload
