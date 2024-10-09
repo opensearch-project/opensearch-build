@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.8.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@7.0.0', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -97,6 +97,11 @@ pipeline {
             description: 'Data node ebs block storage size, empty value defaults to 100Gb',
             trim: true
         )
+        booleanParam(
+            defaultValue: false,
+            name: 'USE_INSTANCE_BASED_SSD_STORAGE',
+            description: 'Use instance based SSD storage instead of EBS for data nodes',
+        )
         string(
             name: 'ML_NODE_STORAGE',
             description: 'ML node ebs block storage size, empty value defaults to 100Gb',
@@ -173,6 +178,7 @@ pipeline {
                     [key: 'DATA_INSTANCE_TYPE', value: '$.DATA_INSTANCE_TYPE'],
                     [key: 'DATA_NODE_STORAGE', value: '$.DATA_NODE_STORAGE'],
                     [key: 'ML_NODE_STORAGE', value: '$.ML_NODE_STORAGE'],
+                    [key: 'USE_INSTANCE_BASED_SSD_STORAGE', value: '$.USE_INSTANCE_BASED_SSD_STORAGE'],
                     [key: 'JVM_SYS_PROPS', value: '$.JVM_SYS_PROPS'],
                     [key: 'ADDITIONAL_CONFIG', value: '$.ADDITIONAL_CONFIG'],
                     [key: 'USE_50_PERCENT_HEAP', value: '$.USE_50_PERCENT_HEAP'],
@@ -253,6 +259,7 @@ pipeline {
                         additionalConfig: ADDITIONAL_CONFIG,
                         dataStorageSize: DATA_NODE_STORAGE,
                         mlStorageSize: ML_NODE_STORAGE,
+                        enableInstanceStorage: USE_INSTANCE_BASED_SSD_STORAGE,
                         jvmSysProps: JVM_SYS_PROPS,
                         userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
                         suffix: "${BUILD_NUMBER}",
