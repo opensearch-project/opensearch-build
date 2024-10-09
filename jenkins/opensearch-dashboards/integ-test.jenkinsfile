@@ -66,11 +66,6 @@ pipeline {
             description: 'The build manifest URL OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.9.0/8172/linux/x64/tar/builds/opensearch/manifest.yml".',
             trim: true
         )
-        booleanParam(
-            name: 'UPDATE_GITHUB_ISSUES',
-            description: 'If true results will create / update / close github issues',
-            defaultValue: false
-        )
         string(
             name: 'RC_NUMBER',
             description: 'The RC build count. Default is 0 which means its not an RC build.',
@@ -292,32 +287,8 @@ pipeline {
                                                         localPath: "${WORKSPACE}/${distribution}",
                                                         switchUserNonRoot: "${switch_user_non_root}"
                                                     )
-                                                    if (params.UPDATE_GITHUB_ISSUES) {
-                                                        updateGitHubIssueLabels(
-                                                            repoUrl: buildManifestObj.getRepo("${local_component}"),
-                                                            issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version}",
-                                                            label: "${platform}:${distribution}:${architecture}",
-                                                            action: "remove"
-                                                            )
-                                                    }
                                                 }
                                             } catch (e) {
-                                                echo "Error running integtest for component ${local_component}, creating Github issue"
-                                                String issueBodyMessage = "The integration test failed at distribution level for component ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/${JOB_NAME}/${version}/${buildId}/${platform}/${architecture}/${distribution}/test-results/${BUILD_NUMBER}/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._"
-                                                if (params.UPDATE_GITHUB_ISSUES) {
-                                                    createGithubIssue(
-                                                        repoUrl: buildManifestObj.getRepo("${local_component}"),
-                                                        issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version}",
-                                                        issueBody: issueBodyMessage,
-                                                        label: "autocut,v${version}"
-                                                    )
-                                                    updateGitHubIssueLabels(
-                                                        repoUrl: buildManifestObj.getRepo("${local_component}"),
-                                                        issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version}",
-                                                        label: "integ-test-failure,${platform}:${distribution}:${architecture}",
-                                                        action: "add"
-                                                        )
-                                                }
                                                 throw new Exception("Error running integtest for component ${local_component}", e)
                                             } finally {
                                                 echo "Completed running integtest for component ${local_component}"
@@ -388,36 +359,10 @@ pipeline {
             }
         }
     }
-
     post {
-        success {
+        always {
             node(AGENT_LABEL) {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Integration Tests Successful',
-                        extra: stashed,
-                        credentialsId: 'jenkins-integ-test-webhook',
-                        manifest: TEST_MANIFEST,
-                    )
-
-                    postCleanup()
-                }
-            }
-        }
-        failure {
-            node(AGENT_LABEL) {
-                script  {
-                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Integration Tests',
-                        extra: stashed,
-                        credentialsId: 'jenkins-integ-test-webhook',
-                        manifest: TEST_MANIFEST,
-                    )
-
                     postCleanup()
                 }
             }
