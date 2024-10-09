@@ -14,7 +14,7 @@ lib = library(identifier: 'jenkins@7.0.0', retriever: modernSCM([
 
 
 pipeline {
-    agent { label 'Jenkins-Agent-Ubuntu2004-X64-M58xlarge-Single-Host' }
+    agent { label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host' }
     options {
         timeout(time: 1, unit: 'HOURS')
         buildDiscarder(logRotator(daysToKeepStr: '90'))
