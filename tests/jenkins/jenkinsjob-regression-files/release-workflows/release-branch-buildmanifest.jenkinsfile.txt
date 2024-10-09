@@ -3,7 +3,7 @@
       release-branch.library({identifier=jenkins@6.3.3, retriever=null})
       release-branch.pipeline(groovy.lang.Closure)
          release-branch.timeout({time=1, unit=HOURS})
-         release-branch.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+         release-branch.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
          release-branch.stage(Create Release Branch, groovy.lang.Closure)
             release-branch.script(groovy.lang.Closure)
                release-branch.usernamePassword({credentialsId=jenkins-github-bot-token, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
