@@ -35,8 +35,8 @@ def agent_nodes_docker = [
 
 def agent_nodes = [
     "windows_x64": "Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host",
-    "linux_x64": "Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host",
-    "linux_arm64": "Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host",
+    "linux_x64": "Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host",
+    "linux_arm64": "Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host",
 ]
 
 pipeline {

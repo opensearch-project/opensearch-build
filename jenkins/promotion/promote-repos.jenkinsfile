@@ -50,7 +50,7 @@ pipeline {
         stage('promote repo') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+                    label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
                     image docker_images["${DISTRIBUTION_REPO_TYPE}"]
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true

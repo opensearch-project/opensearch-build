@@ -3,7 +3,7 @@
       promote-docker-ecr.library({identifier=jenkins@1.0.4, retriever=null})
       promote-docker-ecr.pipeline(groovy.lang.Closure)
          promote-docker-ecr.timeout({time=1, unit=HOURS})
-         promote-docker-ecr.echo(Executing on agent [docker:[alwaysPull:false, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+         promote-docker-ecr.echo(Executing on agent [docker:[alwaysPull:false, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
          promote-docker-ecr.stage(Parameters Check, groovy.lang.Closure)
             promote-docker-ecr.script(groovy.lang.Closure)
          promote-docker-ecr.stage(image-promote-to-prod, groovy.lang.Closure)

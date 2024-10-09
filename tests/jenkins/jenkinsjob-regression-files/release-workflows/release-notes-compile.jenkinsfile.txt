@@ -3,7 +3,7 @@
       release-notes-check.library({identifier=jenkins@1.0.4, retriever=null})
       release-notes-check.pipeline(groovy.lang.Closure)
          release-notes-check.timeout({time=2, unit=HOURS})
-         release-notes-check.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+         release-notes-check.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
          release-notes-check.stage(Parameters Check, groovy.lang.Closure)
             release-notes-check.script(groovy.lang.Closure)
          release-notes-check.echo(Skipping stage Check release notes)

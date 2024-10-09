@@ -18,8 +18,8 @@ pipeline {
     }
     agent none
     environment {
-        AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
-        AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host'
+        AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
+        AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host'
         AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
         IMAGE_LINUX_RPM = 'opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1' // required for rpm to create digest sha256 correctly with rpm 4.12+, still define here for 1.x version as 2.x+ moved to rockylinux8, later almalinux8, already
         IMAGE_LINUX_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2' // required for deb to create pkg using debmake/debuild/debhelper
@@ -156,7 +156,7 @@ pipeline {
                 stage('Trigger-min-snapshot-build') {
                     agent {
                         docker {
-                            label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+                            label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
                             image 'docker/library/alpine:3'
                             registryUrl 'https://public.ecr.aws/'
                             alwaysPull true

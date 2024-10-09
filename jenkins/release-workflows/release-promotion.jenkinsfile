@@ -18,7 +18,7 @@ pipeline {
     }
     agent none
     environment {
-        AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+        AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
     }
     parameters {
         string(
