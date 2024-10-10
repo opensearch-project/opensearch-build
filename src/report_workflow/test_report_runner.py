@@ -49,6 +49,9 @@ class TestReportRunner:
             else os.path.join(self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml")
         self.test_components = self.test_manifest.components
         self.bundle_manifest = BundleManifest.from_urlpath(self.dist_manifest)
+        self.bundle_components_list = []
+        for component in self.bundle_manifest.components.select(focus=self.args.components):
+            self.bundle_components_list.append(component.name)
 
     def update_data(self) -> dict:
         self.test_report_data["name"] = self.product_name
@@ -60,6 +63,9 @@ class TestReportRunner:
         self.test_report_data["rc"] = self.release_candidate
         self.test_report_data["test-run"] = self.update_test_run_data()
         for component in self.test_components.select(focus=self.args.components):
+            if component.name not in self.bundle_components_list:
+                logging.info(f"Skipping {component.name} as it's not included in the bundle manifest.")
+                continue
             if self.test_manifest.components[component.name].__to_dict__().get(self.test_type) is not None:
                 component_ci_group = getattr(component, self.test_type.replace("-", "_")).get("ci-groups", None)
                 if component_ci_group:
