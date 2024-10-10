@@ -65,3 +65,12 @@ components:
     bwc-test:
       test-configs:
         - with-security
+
+  - name: opensearch-system-templates
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.application_templates.enabled: true
+        cluster.application_templates.enabled: true

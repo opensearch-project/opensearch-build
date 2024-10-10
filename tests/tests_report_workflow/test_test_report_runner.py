@@ -61,6 +61,27 @@ class TestTestReportRunner(unittest.TestCase):
             self.assertTrue(os.path.isfile(output_path))
 
     @patch("report_workflow.report_args.ReportArgs")
+    def test_update_data_skip_component(self, report_args_mock: MagicMock) -> None:
+        report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
+        report_args_mock.artifact_paths = {"opensearch": self.DATA_DIR}
+        report_args_mock.test_run_id = 123
+        report_args_mock.base_path = self.DATA_DIR
+        report_args_mock.test_type = "integ-test"
+        report_args_mock.release_candidate = "100"
+
+        test_report_runner = TestReportRunner(report_args_mock, self.TEST_MANIFEST)
+        test_report_runner_data = test_report_runner.update_data()
+
+        self.assertFalse("opensearch-system-templates" in test_report_runner.bundle_components_list)
+        self.assertEqual(len(test_report_runner_data["components"]), 6)
+
+        for i in range(len(self.TEST_MANIFEST.components.__to_dict__())):
+            if self.TEST_MANIFEST.components.__to_dict__()[i]["name"] == "opensearch-system-templates":
+                self.assertEqual(i, len(self.TEST_MANIFEST.components) - 1)
+            else:
+                self.assertEqual(self.TEST_MANIFEST.components.__to_dict__()[i]["name"], test_report_runner_data["components"][i]["name"])
+
+    @patch("report_workflow.report_args.ReportArgs")
     @patch("manifests.test_manifest.TestManifest")
     def test_runner_update_test_run_data_local(self, report_args_mock: MagicMock,
                                                test_manifest_mock: MagicMock) -> None:
