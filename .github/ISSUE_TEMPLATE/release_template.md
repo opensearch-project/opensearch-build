@@ -62,11 +62,9 @@ Release blog is ready | :red_circle: |   |
 - [ ] [Component Release Issue](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#component-release-issues).
 - [ ] [Release Campaigns](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-campaigns).
 
-### [Release Branch and Version Increment](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-branch-readiness) - _Ends __REPLACE_RELEASE-minus-4-days__
+### [Version Increment](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#version-increment) - _Ends __REPLACE_RELEASE-minus-10-days__
 
-- [ ] [Core Release Branch](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#core).
 - [ ] [Core Version Increment](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#core-version-increment).
-- [ ] [Components Release Branch](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#components).
 - [ ] [Components Version Increment](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#components-version-increment).
 
 ### [Feature Freeze](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#code-complete-and-feature-freeze) - _Ends __REPLACE_RELEASE-minus-12-days__
@@ -78,8 +76,10 @@ Release blog is ready | :red_circle: |   |
 - [ ] Mark this as done once the [Code Complete](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#code-complete-and-feature-freeze) is reviewed.
 - [ ] Create/Verify pull requests to add each component to relase input [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml).
 
-### [Release Candidate Creation and Testing](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-candidate-creation-and-testing) - _Ends __REPLACE_RELEASE-minus-6-days___
+### [Release Branch, Release Candidate Creation and Testing](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-candidate-creation-and-testing) - _Ends __REPLACE_RELEASE-minus-6-days___
 
+- [ ] [Core Release Branch](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#core).
+- [ ] [Components Release Branch](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#components).
 - [ ] [Generate Release Candidate](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-candidate).
 - [ ] [Integ Test TAR](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#integ-test-tar).
 - [ ] [Integ Test RPM](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#integ-test-rpm).
