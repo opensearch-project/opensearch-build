@@ -14,7 +14,14 @@ lib = library(identifier: 'jenkins@6.9.2', retriever: modernSCM([
 
 
 pipeline {
-    agent { label 'Jenkins-Agent-Ubuntu2004-X64-M58xlarge-Single-Host' }
+    agent {
+        docker {
+            label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1'
+            registryUrl 'https://public.ecr.aws/'
+            alwaysPull true
+        }
+    }
     options {
         timeout(time: 1, unit: 'HOURS')
         buildDiscarder(logRotator(daysToKeepStr: '180'))
