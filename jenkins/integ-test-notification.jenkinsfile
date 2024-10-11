@@ -28,6 +28,8 @@ pipeline {
     }
     triggers {
         parameterizedCron('''
+            H */6 * * * %INPUT_MANIFEST=2.1000.1000/opensearch-dashboards-2.1000.1000.yml
+            H */6 * * * %INPUT_MANIFEST=2.1000.1000/opensearch-2.1000.1000.yml
             H */6 * * * %INPUT_MANIFEST=2.17.2/opensearch-2.17.2.yml
             H */6 * * * %INPUT_MANIFEST=2.18.0/opensearch-2.18.0.yml
             H */6 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml
