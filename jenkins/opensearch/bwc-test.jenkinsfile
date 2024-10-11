@@ -126,34 +126,9 @@ pipeline {
     }
 
     post {
-        success {
+        always {
             node(AGENT_LABEL) {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['bwc-test'])
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'BWC Tests Successful',
-                        extra: stashed,
-                        credentialsId: 'jenkins-integ-test-webhook',
-                        manifest: TEST_MANIFEST,
-                    )
-
-                    postCleanup()
-                }
-            }
-        }
-        failure {
-            node(AGENT_LABEL) {
-                script  {
-                    def stashed = lib.jenkins.Messages.new(this).get(['bwc-test'])
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed BWC Tests',
-                        extra: stashed,
-                        credentialsId: 'jenkins-integ-test-webhook',
-                        manifest: TEST_MANIFEST,
-                    )
-
                     postCleanup()
                 }
             }

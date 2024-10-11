@@ -134,17 +134,9 @@ pipeline {
         }
     }
     post {
-        failure {
+        always {
             node(AGENT_X64) {
                 script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed checking for build to trigger',
-                        credentialsId: 'jenkins-build-notice-webhook',
-                        manifest: "${INPUT_MANIFEST}",
-                        target_job_name: "${TARGET_JOB_NAME}"
-                    )
-
                     postCleanup()
                 }
             }
