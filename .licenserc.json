@@ -30,6 +30,7 @@
     ".gz",
     ".toml",
     ".ini",
-    "gradle/wrapper"
+    "gradle/wrapper",
+    "index.html"
   ]
 }

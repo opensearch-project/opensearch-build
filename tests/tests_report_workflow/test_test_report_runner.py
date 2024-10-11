@@ -133,7 +133,7 @@ class TestTestReportRunner(unittest.TestCase):
                                                                                    "2.15.0/9971/windows/x64/zip/test-results/8303/integ-test/geospatial/without-security/stderr.txt")
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0], "https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip/"
                                                                                          "test-results/8303/integ-test/geospatial/without-security/local-cluster-logs/id-1/stdout.txt")
-        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stderr"][0], "https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip"
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stderr"][0], "https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip/"
                                                                                          "test-results/8303/integ-test/geospatial/without-security/local-cluster-logs/id-1/stderr.txt")
         self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "No Failed Test")
 
