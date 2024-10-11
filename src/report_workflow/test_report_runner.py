@@ -192,11 +192,11 @@ def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, compon
 
     for ids in cluster_ids:
         if base_path.startswith("https://"):
-            os_stdout.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, f"local-cluster-logs/{ids}/stdout.txt"]))
-            os_stderr.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, f"local-cluster-logs/{ids}/stderr.txt"]))
+            os_stdout.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"]))
+            os_stderr.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"]))
         else:
-            os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, f"local-cluster-logs/{ids}/stdout.txt"))
-            os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, f"local-cluster-logs/{ids}/stderr.txt"))
+            os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"))
+            os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"))
 
     return [os_stdout, os_stderr]
 
