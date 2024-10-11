@@ -14,6 +14,7 @@ from urllib.error import HTTPError
 
 import validators
 import yaml
+from bs4 import BeautifulSoup
 
 from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
@@ -122,6 +123,7 @@ class TestReportRunner:
             config_dict["test_stderr"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
             config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
             config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
+            config_dict["failed_test"] = get_failed_tests(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)
             component["configs"].append(config_dict)
         return component
 
@@ -197,6 +199,50 @@ def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, compon
             os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, f"local-cluster-logs/{ids}/stderr.txt"))
 
     return [os_stdout, os_stderr]
+
+
+def get_failed_tests(base_path: str, test_number: str, test_type: str, component_name: str, config: str,
+                     product_name: str) -> typing.List[list]:
+    failed_test: list = []
+    result_path: str = ''
+    result_content: str = ''
+
+    if product_name == 'opensearch':
+        if base_path.startswith("https://"):
+            result_path = "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "opensearch-integ-test", "index.html"])
+        else:
+            result_path = os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "opensearch-integ-test", "index.html")
+    else:
+        logging.info("Not supporting OpenSearch-Dashboards Cypress Test Result Yet.")
+        failed_test.append("Test Result Not Available")
+        return failed_test
+
+    try:
+        if validators.url(result_path):
+            with urllib.request.urlopen(result_path) as f:
+                result_content = f.read().decode("utf-8")
+        else:
+            with open(result_path, "r", encoding='utf8') as f:
+                result_content = f.read()
+    except (FileNotFoundError, HTTPError):
+        logging.info(f"Component test results for {component_name} for {config} is missing or the base path is incorrect.")
+        failed_test.append("Test Result Not Available")
+        return failed_test
+
+    if result_content:
+        if ("infoBox success" in result_content) and ("<h2>Failed tests</h2>" not in result_content):
+            failed_test.append("No Failed Test")
+        else:
+            soup = BeautifulSoup(result_content, "html.parser")
+            target_div = soup.find("div", {"id": "tab0"})
+            target_a_hash = [a for li in target_div.find_all("li") for a in li.find_all("a", href=True) if "#" in a["href"]]
+            for a in target_a_hash:
+                failed_test.append(a["href"].replace("classes/", ""))
+    else:
+        logging.info(f"Component test results for {component_name} for {config} is empty in {result_path}.")
+        failed_test.append("Test Result Not Available")
+
+    return failed_test
 
 
 TestReportRunner.__test__ = False  # type:ignore

@@ -44,6 +44,8 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
                   - URL or local path to the OpenSearch cluster logs
                 cluster_stderr:
                   - URL or local path to the OpenSearch cluster error logs
+                failed test:
+                  - ClassName#TestName for failed test case
     """
 
     VERSIONS = {
@@ -90,7 +92,8 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
                                 "test_stdout": {"type": "string"},
                                 "test_stderr": {"type": "string"},
                                 "cluster_stdout": {"type": "list"},
-                                "cluster_stderr": {"type": "list"}
+                                "cluster_stderr": {"type": "list"},
+                                "failed_test": {"type": "list"}
                             }
                         },
                     },
@@ -188,6 +191,7 @@ class TestComponent(Component):
                 self.test_stderr = data["test_stderr"]
                 self.cluster_stdout = data["cluster_stdout"]
                 self.cluster_stderr = data["cluster_stderr"]
+                self.failed_test = data["failed_test"]
 
             def __to_dict__(self) -> dict:
                 return {
@@ -197,7 +201,8 @@ class TestComponent(Component):
                     "test_stdout": self.test_stdout,
                     "test_stderr": self.test_stderr,
                     "cluster_stdout": self.cluster_stdout,
-                    "cluster_stderr": self.cluster_stderr
+                    "cluster_stderr": self.cluster_stderr,
+                    "failed_test": self.failed_test
                 }
 
 
