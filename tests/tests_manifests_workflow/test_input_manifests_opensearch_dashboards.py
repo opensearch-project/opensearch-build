@@ -32,9 +32,10 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
     @patch("os.chdir")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_integTest_notification_cron")
     @patch("manifests.manifest.Manifest.to_file")
     @patch("manifests_workflow.input_manifests_opensearch_dashboards.ComponentOpenSearchDashboardsMin")
-    def test_update(self, mock_component_opensearch_dashboards_min: MagicMock, mock_manifest_to_file: MagicMock,
+    def test_update(self, mock_component_opensearch_dashboards_min: MagicMock, mock_manifest_to_file: MagicMock, mock_add_to_integTest_notification_cron: MagicMock,
                     mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
                     mock_os_chdir: MagicMock, mock_os_makedirs: MagicMock) -> None:
         mock_component_opensearch_dashboards_min.return_value = MagicMock(name="OpenSearch-Dashboards")
@@ -57,15 +58,19 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
         mock_add_to_cron.assert_has_calls([
             call('2.1000.1000')
         ])
+        mock_add_to_integTest_notification_cron.assert_has_calls([
+            call('2.1000.1000')
+        ])
         mock_add_to_versionincrement_workflow.assert_has_calls([
             call('2.1000.1000')
         ])
 
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_integTest_notification_cron")
     @patch("manifests.manifest.Manifest.to_file")
     @patch("manifests_workflow.input_manifests_opensearch_dashboards.ComponentOpenSearchDashboardsMin")
-    def test_update_outdated_branch(self, mock_component_opensearch_dashboards_min: MagicMock, mock_manifest_to_file: MagicMock,
+    def test_update_outdated_branch(self, mock_component_opensearch_dashboards_min: MagicMock, mock_manifest_to_file: MagicMock, mock_add_to_integTest_notification_cron: MagicMock,
                                     mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock) -> None:
         mock_component_opensearch_dashboards_min.return_value = MagicMock(name="OpenSearch-Dashboards")
         mock_component_opensearch_dashboards_min.branches.return_value = ["1.2"]
@@ -75,4 +80,5 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
         manifests.update()
         self.assertEqual(mock_manifest_to_file.call_count, 0)
         self.assertEqual(mock_add_to_cron.call_count, 0)
+        self.assertEqual(mock_add_to_integTest_notification_cron.call_count, 0)
         self.assertEqual(mock_add_to_versionincrement_workflow.call_count, 0)

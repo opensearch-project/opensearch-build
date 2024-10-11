@@ -213,6 +213,12 @@ class TestInputManifests(unittest.TestCase):
             os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "jenkins", "check-for-build.jenkinsfile"))
         )
 
+    def test_cron_integTest_notification_jenkinsfilee(self) -> None:
+        self.assertEqual(
+            InputManifests.cron_integTest_notification_jenkinsfile(),
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "jenkins", "integ-test-notification.jenkinsfile"))
+        )
+
     @patch("builtins.open", new_callable=mock_open)
     def test_add_to_cron(self, mock_open: MagicMock) -> None:
         mock_open().read.return_value = "parameterizedCron '''\n"
@@ -224,6 +230,17 @@ class TestInputManifests(unittest.TestCase):
             "parameterizedCron '''\n            H 1 * * * %INPUT_MANIFEST=0.1.2/test-0.1.2.yml;"
             "TARGET_JOB_NAME=distribution-build-test;BUILD_PLATFORM=linux;BUILD_DISTRIBUTION=tar;"
             "TEST_MANIFEST=0.1.2/test-0.1.2-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar\n"
+        )
+
+    @patch("builtins.open", new_callable=mock_open)
+    def test_add_to_integTest_notification_cron(self, mock_open: MagicMock) -> None:
+        mock_open().read.return_value = "parameterizedCron('''\n"
+        input_manifests = InputManifests("test")
+        input_manifests.add_to_integTest_notification_cron('0.1.2')
+        mock_open.assert_has_calls([call(InputManifests.cron_integTest_notification_jenkinsfile(), 'w')])
+        mock_open.assert_has_calls([call(InputManifests.cron_integTest_notification_jenkinsfile(), 'r')])
+        mock_open().write.assert_called_once_with(
+            "parameterizedCron('''\n            H */6 * * * %INPUT_MANIFEST=0.1.2/test-0.1.2.yml\n"
         )
 
     def test_os_versionincrement_workflow(self) -> None:
