@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@7.0.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@7.1.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -24,13 +24,15 @@ pipeline {
     }
     options {
         timeout(time: 1, unit: 'HOURS')
-        buildDiscarder(logRotator(daysToKeepStr: '90'))
+        buildDiscarder(logRotator(daysToKeepStr: '30'))
     }
     triggers {
         parameterizedCron('''
             H */6 * * * %INPUT_MANIFEST=2.17.2/opensearch-2.17.2.yml
             H */6 * * * %INPUT_MANIFEST=2.18.0/opensearch-2.18.0.yml
             H */6 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml
+            H */6 * * * %INPUT_MANIFEST=2.18.0/opensearch-dashboards-2.18.0.yml
+            H */6 * * * %INPUT_MANIFEST=3.0.0/opensearch-dashboards-3.0.0.yml
         ''')
     }
     parameters {
