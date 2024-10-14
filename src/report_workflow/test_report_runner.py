@@ -236,7 +236,7 @@ def get_failed_tests(base_path: str, test_number: str, test_type: str, component
         return failed_test
 
     if result_content:
-        if ("infoBox success" in result_content) and ("<h2>Failed tests</h2>" not in result_content):
+        if ("<h2>Failed tests</h2>" not in result_content):
             failed_test.append("No Failed Test")
         else:
             soup = BeautifulSoup(result_content, "html.parser")
