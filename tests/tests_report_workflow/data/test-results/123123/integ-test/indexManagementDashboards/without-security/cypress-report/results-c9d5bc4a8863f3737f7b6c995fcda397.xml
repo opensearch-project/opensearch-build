@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.0000" tests="1" failures="1">
+  <testsuite name="Root Suite" timestamp="2024-09-05T20:57:56" tests="0" file="cypress/integration/plugins/index-management-dashboards-plugin/template_components.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Component templates" timestamp="2024-09-05T20:57:56" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="can be searched / sorted / paginated" timestamp="2024-09-05T20:57:58" tests="1" time="0.0000" failures="1">
+    <testcase name="Component templates can be searched / sorted / paginated &quot;before each&quot; hook for &quot;successfully&quot;" time="0.0000" classname="&quot;before each&quot; hook for &quot;successfully&quot;">
+      <failure message="Timed out retrying after 60000ms: Expected to find content: &apos;Rows per page&apos; but never did.
+
+Because this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Component templates`" type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 60000ms: Expected to find content: 'Rows per page' but never did.
+
+Because this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `Component templates`
+    at Context.eval (http://localhost:5601/__cypress/tests?p=cypress/integration/plugins/index-management-dashboards-plugin/template_components.js:194:8)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

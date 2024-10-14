@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.0000" tests="5" failures="1">
+  <testsuite name="Root Suite" timestamp="2024-09-05T20:56:44" tests="0" file="cypress/integration/plugins/index-management-dashboards-plugin/split_index.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Split Index" timestamp="2024-09-05T20:56:44" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="can be created and updated" timestamp="2024-09-05T20:56:44" tests="5" time="0.0000" failures="1">
+    <testcase name="Split Index can be created and updated &quot;before each&quot; hook for &quot;Create an index successfully&quot;" time="0.0000" classname="&quot;before each&quot; hook for &quot;Create an index successfully&quot;">
+      <failure message="Timed out retrying after 60000ms: Expected to find content: &apos;Rows per page&apos; but never did.
+
+Because this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `can be created and updated`" type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 60000ms: Expected to find content: 'Rows per page' but never did.
+
+Because this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `can be created and updated`
+    at Context.eval (http://localhost:5601/__cypress/tests?p=cypress/integration/plugins/index-management-dashboards-plugin/split_index.js:173:10)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -120,18 +120,14 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_dict.get("TestID"), "123")
 
     @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
-    @patch("yaml.safe_load")
     @patch("report_workflow.report_args.ReportArgs")
     def test_runner_component_entry_url(self, report_args_mock: MagicMock,
-                                        yaml_safe_load_mock: MagicMock,
                                         bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.15.0/9971/windows/x64/zip"}
         report_args_mock.test_run_id = 8303
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip"
         report_args_mock.test_type = "integ-test"
-
-        yaml_safe_load_mock.return_value = {"test_result": "PASS"}
 
         test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("geospatial")
         self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "PASS")
@@ -147,6 +143,7 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stderr"][0], "https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip/"
                                                                                          "test-results/8303/integ-test/geospatial/with-security/local-cluster-logs/id-0/stderr.txt")
         self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "No Failed Test")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["status"], "PASS")
         self.assertEqual(test_run_component_dict.get("configs")[1]["name"], "without-security")
         self.assertEqual(test_run_component_dict.get("configs")[1]["test_stdout"], "https://ci.opensearch.org/ci/dbc/integ-test/"
                                                                                    "2.15.0/9971/windows/x64/zip/test-results/8303/integ-test/geospatial/without-security/stdout.txt")
@@ -159,10 +156,8 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "No Failed Test")
 
     @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
-    @patch("yaml.safe_load")
     @patch("report_workflow.report_args.ReportArgs")
     def test_runner_component_entry_url_failed_test(self, report_args_mock: MagicMock,
-                                                    yaml_safe_load_mock: MagicMock,
                                                     bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.15.0/9971/windows/x64/zip"}
@@ -170,14 +165,12 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip"
         report_args_mock.test_type = "integ-test"
 
-        yaml_safe_load_mock.return_value = {"test_result": "FAIL"}
-
         test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("index-management")
         self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "FAIL")
         self.assertEqual(test_run_component_dict.get("configs")[0]["name"], "with-security")
-        self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "org.opensearch.indexmanagement.indexstatemanagement.action.CloseActionIT.html#test already closed index")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "org.opensearch.indexmanagement.indexstatemanagement.action.CloseActionIT#test already closed index")
         self.assertEqual(test_run_component_dict.get("configs")[1]["name"], "without-security")
-        self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "org.opensearch.indexmanagement.IndexManagementIndicesIT.html#test update management index history "
+        self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "org.opensearch.indexmanagement.IndexManagementIndicesIT#test update management index history "
                                                                                       "mappings with new schema version")
 
     @patch("report_workflow.report_args.ReportArgs")
@@ -195,6 +188,8 @@ class TestTestReportRunner(unittest.TestCase):
                          os.path.join(self.DATA_DIR, "test-results", "123", "integ-test", "geospatial", "with-security", "geospatial.yml"))
         self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][0],
                          os.path.join(self.DATA_DIR, "test-results", "123", "integ-test", "geospatial", "with-security", "local-cluster-logs", "id-0", "stdout.txt"))
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stderr"][0],
+                         os.path.join(self.DATA_DIR, "test-results", "123", "integ-test", "geospatial", "with-security", "local-cluster-logs", "id-0", "stderr.txt"))
         self.assertEqual(test_run_component_dict.get("configs")[0]["test_stdout"],
                          os.path.join(self.DATA_DIR, "test-results", "123", "integ-test", "geospatial", "with-security", "stdout.txt"))
         self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "No Failed Test")
@@ -204,6 +199,8 @@ class TestTestReportRunner(unittest.TestCase):
                          os.path.join(self.DATA_DIR, "test-results", "123", "integ-test", "geospatial", "without-security", "geospatial.yml"))
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0],
                          os.path.join(self.DATA_DIR, "test-results", "123", "integ-test", "geospatial", "without-security", "local-cluster-logs", "id-1", "stdout.txt"))
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stderr"][0],
+                         os.path.join(self.DATA_DIR, "test-results", "123", "integ-test", "geospatial", "without-security", "local-cluster-logs", "id-1", "stderr.txt"))
         self.assertEqual(test_run_component_dict.get("configs")[1]["test_stdout"],
                          os.path.join(self.DATA_DIR, "test-results", "123", "integ-test", "geospatial", "without-security", "stdout.txt"))
         self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "No Failed Test")
@@ -219,9 +216,9 @@ class TestTestReportRunner(unittest.TestCase):
         test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("index-management")
         self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "FAIL")
         self.assertEqual(test_run_component_dict.get("configs")[0]["name"], "with-security")
-        self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "org.opensearch.indexmanagement.indexstatemanagement.action.CloseActionIT.html#test already closed index")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "org.opensearch.indexmanagement.indexstatemanagement.action.CloseActionIT#test already closed index")
         self.assertEqual(test_run_component_dict.get("configs")[1]["name"], "without-security")
-        self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "org.opensearch.indexmanagement.IndexManagementIndicesIT.html#test update management index history "
+        self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "org.opensearch.indexmanagement.IndexManagementIndicesIT#test update management index history "
                                                                                       "mappings with new schema version")
 
     @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
