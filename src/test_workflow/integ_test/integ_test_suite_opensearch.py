@@ -141,7 +141,7 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
 
     @property
     def additional_test_report_dirs(self) -> list[str]:
-        return ["integrationTest", "integTestRemote"]
+        return ["integTest", "integrationTest", "integTestRemote"]
 
     @property
     def test_artifact_files(self) -> dict:
