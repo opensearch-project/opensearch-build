@@ -296,4 +296,4 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
             self.work_dir,
             MagicMock()
         )
-        self.assertEqual(integ_test_suite.additional_test_report_dirs, ["integrationTest", "integTestRemote"])
+        self.assertEqual(integ_test_suite.additional_test_report_dirs, ["integTest", "integrationTest", "integTestRemote"])
