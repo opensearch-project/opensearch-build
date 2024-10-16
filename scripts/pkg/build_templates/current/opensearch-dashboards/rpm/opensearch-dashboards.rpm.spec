@@ -123,7 +123,6 @@ exit 0
 %license %{product_dir}/LICENSE.txt
 %{product_dir}/package.json
 %{product_dir}/manifest.yml
-%{product_dir}/.i18nrc.json
 
 # Config dirs/files
 %dir %{config_dir}
