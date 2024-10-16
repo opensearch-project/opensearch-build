@@ -228,8 +228,8 @@ function runOpensearchDashboards {
     # available for the container this process will run in.
 
     exec "$@" \
-        --cpu.cgroup.path.override=/ \
-        --cpuacct.cgroup.path.override=/ \
+        --ops.cGroupOverrides.cpuPath=/ \
+        --ops.cGroupOverrides.cpuAcctPath=/ \
         "${longopts[@]}"
 }
 
