@@ -264,7 +264,7 @@ def get_failed_tests(product_name: str, test_result: str, test_result_files: lis
             class_name = "DefaultClassName"
             for testsuite in soup.find_all("testsuite"):
                 if testsuite["name"] == "Root Suite":
-                    class_name = testsuite["file"].replace("cypress/", "").replace(".js", "")
+                    class_name = os.path.basename(testsuite["file"])
                 testsuite_failures = int(testsuite["failures"])
                 if testsuite_failures > 0:
                     for testcase in testsuite.find_all("testcase"):
