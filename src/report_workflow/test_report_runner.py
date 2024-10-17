@@ -114,14 +114,22 @@ class TestReportRunner:
                 if validators.url(component_yml_ref):
                     with urllib.request.urlopen(component_yml_ref) as f:
                         component_yml = yaml.safe_load(f.read().decode("utf-8"))
-                        test_result = component_yml["test_result"]
                 else:
                     with open(component_yml_ref, "r", encoding='utf8') as f:
                         component_yml = yaml.safe_load(f)
-                        test_result = component_yml["test_result"]
+
+                test_result = component_yml["test_result"]
+
+                # Issues with windows where certain path separator are encoded as `%5C`
+                if self.name == "opensearch":
+                    test_result_files = [f.replace("%5C", "/") for f in component_yml["test_result_files"] if f.endswith("index.html")]
+                else:
+                    test_result_files = [f.replace("%5C", "/") for f in component_yml["test_result_files"] if f.endswith(".xml")]
+
             except (FileNotFoundError, HTTPError):
                 logging.info(f"Component yml file for {component_name} for {config} is missing or the base path is incorrect.")
                 test_result = "Not Available"
+                test_result_files = []
                 component_yml_ref = "URL not available"
             config_dict["yml"] = component_yml_ref
             config_dict["status"] = test_result
@@ -129,7 +137,7 @@ class TestReportRunner:
             config_dict["test_stderr"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
             config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
             config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
-            config_dict["failed_test"] = get_failed_tests(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)
+            config_dict["failed_test"] = get_failed_tests(self.name, test_result, test_result_files)
             component["configs"].append(config_dict)
         return component
 
@@ -207,48 +215,63 @@ def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, compon
     return [os_stdout, os_stderr]
 
 
-def get_failed_tests(base_path: str, test_number: str, test_type: str, component_name: str, config: str,
-                     product_name: str) -> typing.List[list]:
-    failed_test: list = []
-    result_path: str = ''
-    result_content: str = ''
+def get_failed_tests(product_name: str, test_result: str, test_result_files: list) -> typing.List[list]:
+    failed_test_list: list = []
+    result_path_list: list = []
 
-    if product_name == 'opensearch':
-        if base_path.startswith("https://"):
-            result_path = "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "opensearch-integ-test", "index.html"])
-        else:
-            result_path = os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "opensearch-integ-test", "index.html")
+    if test_result == "PASS":
+        failed_test_list.append("No Failed Test")
+        return failed_test_list
+
+    if test_result == "Not Available":
+        failed_test_list.append("Test Result Not Available")
+        return failed_test_list
+
+    if test_result_files:
+        result_path_list = test_result_files
     else:
-        logging.info("Not supporting OpenSearch-Dashboards Cypress Test Result Yet.")
-        failed_test.append("Test Result Not Available")
-        return failed_test
+        failed_test_list.append("Test Result Files List Not Available")
+        return failed_test_list
 
-    try:
-        if validators.url(result_path):
-            with urllib.request.urlopen(result_path) as f:
-                result_content = f.read().decode("utf-8")
-        else:
-            with open(result_path, "r", encoding='utf8') as f:
-                result_content = f.read()
-    except (FileNotFoundError, HTTPError):
-        logging.info(f"Component test results for {component_name} for {config} is missing or the base path is incorrect.")
-        failed_test.append("Test Result Not Available")
-        return failed_test
+    for result_path in result_path_list:
+        logging.info(f"Processing {result_path}")
+        result_content: str = ''
+        try:
+            if validators.url(result_path):
+                with urllib.request.urlopen(result_path) as f:
+                    result_content = f.read().decode("utf-8")
+            else:
+                with open(result_path, "r", encoding='utf8') as f:
+                    result_content = f.read()
+        except (FileNotFoundError, HTTPError):
+            logging.info(f"Test Result File Not Available {result_path}")
+            failed_test_list.append("Test Result File Not Available")
+            return failed_test_list
 
-    if result_content:
-        if ("<h2>Failed tests</h2>" not in result_content):
-            failed_test.append("No Failed Test")
-        else:
+        if not result_content:
+            logging.info(f"Test Result File Has No Content {result_path}")
+            failed_test_list.append("Test Result File Has No Content")
+            return failed_test_list
+
+        if product_name == 'opensearch':
             soup = BeautifulSoup(result_content, "html.parser")
             target_div = soup.find("div", {"id": "tab0"})
             target_a_hash = [a for li in target_div.find_all("li") for a in li.find_all("a", href=True) if "#" in a["href"]]
             for a in target_a_hash:
-                failed_test.append(a["href"].replace("classes/", ""))
-    else:
-        logging.info(f"Component test results for {component_name} for {config} is empty in {result_path}.")
-        failed_test.append("Test Result Not Available")
+                failed_test_list.append(a["href"].replace("classes/", "").replace(".html", ""))
+        else:
+            soup = BeautifulSoup(result_content, "xml")
+            class_name = "DefaultClassName"
+            for testsuite in soup.find_all("testsuite"):
+                if testsuite["name"] == "Root Suite":
+                    class_name = testsuite["file"].replace("cypress/", "").replace(".js", "")
+                testsuite_failures = int(testsuite["failures"])
+                if testsuite_failures > 0:
+                    for testcase in testsuite.find_all("testcase"):
+                        if testcase.find("failure"):
+                            failed_test_list.append(f"{class_name}#{testcase['name']}")
 
-    return failed_test
+    return failed_test_list
 
 
 TestReportRunner.__test__ = False  # type:ignore
