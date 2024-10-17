@@ -132,12 +132,12 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
         test_report_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS).component_entry("alertingDashboards")
         self.assertEqual(test_report_component_dict.get("configs")[0]["status"], "FAIL")
         self.assertEqual(test_report_component_dict.get("configs")[0]["name"], "with-security")
-        self.assertEqual(test_report_component_dict.get("configs")[0]["failed_test"][0], "integration/plugins/alerting-dashboards-plugin/acknowledge_alerts_modal_spec#AcknowledgeAlertsModal "
+        self.assertEqual(test_report_component_dict.get("configs")[0]["failed_test"][0], "acknowledge_alerts_modal_spec.js#AcknowledgeAlertsModal "
                                                                                          "\"before all\" hook for \"Acknowledge button disabled when more than 1 trigger selected\"")
 
         self.assertEqual(test_report_component_dict.get("configs")[1]["status"], "FAIL")
         self.assertEqual(test_report_component_dict.get("configs")[1]["name"], "without-security")
-        self.assertEqual(test_report_component_dict.get("configs")[1]["failed_test"][1], "integration/plugins/alerting-dashboards-plugin/alert_spec#Alerts can be in 'Active' state "
+        self.assertEqual(test_report_component_dict.get("configs")[1]["failed_test"][1], "alert_spec.js#Alerts can be in 'Active' state "
                                                                                          "\"before each\" hook for \"after the monitor starts running\"")
 
     @patch("report_workflow.report_args.ReportArgs")
@@ -181,10 +181,10 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
         test_report_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS).component_entry("indexManagementDashboards")
         self.assertEqual(test_report_component_dict.get("configs")[0]["status"], "FAIL")
         self.assertEqual(test_report_component_dict.get("configs")[0]["name"], "with-security")
-        self.assertEqual(test_report_component_dict.get("configs")[0]["failed_test"][0], "integration/plugins/index-management-dashboards-plugin/aliases#Aliases can be "
+        self.assertEqual(test_report_component_dict.get("configs")[0]["failed_test"][0], "aliases.js#Aliases can be "
                                                                                          "searched / sorted / paginated \"before each\" hook for \"successfully\"")
 
         self.assertEqual(test_report_component_dict.get("configs")[1]["status"], "FAIL")
         self.assertEqual(test_report_component_dict.get("configs")[1]["name"], "without-security")
-        self.assertEqual(test_report_component_dict.get("configs")[1]["failed_test"][1], "integration/plugins/index-management-dashboards-plugin/create_index#Create Index "
+        self.assertEqual(test_report_component_dict.get("configs")[1]["failed_test"][1], "create_index.js#Create Index "
                                                                                          "can be created and updated \"before each\" hook for \"Create a index successfully\"")
