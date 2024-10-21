@@ -280,6 +280,7 @@ OpenSearch Dashboards <a href="https://github.com/opensearch-project/OpenSearch-
 <li>Extracts demo configuration setup into a java tool, adds support for Bundled JDK for this tool and updates DEVELOPER_GUIDE.md (<a href="https://github.com/opensearch-project/security/pull/3845">#3845</a>)</li>
 <li>SAML permissions changes in DynamicConfigModelV7 (<a href="https://github.com/opensearch-project/security/pull/3853">#3853</a>)</li>
 <li>Add do not fail on forbidden test cases around the stats API (<a href="https://github.com/opensearch-project/security/pull/3825">#3825</a>) (<a href="https://github.com/opensearch-project/security/pull/3828">#3828</a>)</li>
+<li>Switch jwt library from org.apache.cxf.rs.security.jose to com.nimbusds.jose.jwk (<a href="https://github.com/opensearch-project/security/pull/3595">#3595</a>)</li>
 </ul>
 
 <h3>Opensearch k-NN</h3>
