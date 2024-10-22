@@ -54,6 +54,7 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Failed to start the workflow. Input manifest was not provided or not found in manifests/${params.INPUT_MANIFEST}.")
                     }
+                    currentBuild.description = INPUT_MANIFEST
                     updateIntegTestFailureIssues(
                         inputManifestPath: "manifests/${INPUT_MANIFEST}",
                         distributionBuildNumber: "${DISTRIBUTION_NUMBER}"
