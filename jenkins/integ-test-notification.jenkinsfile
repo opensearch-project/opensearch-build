@@ -28,9 +28,6 @@ pipeline {
     }
     triggers {
         parameterizedCron('''
-            H */6 * * * %INPUT_MANIFEST=2.1000.1000/opensearch-dashboards-2.1000.1000.yml
-            H */6 * * * %INPUT_MANIFEST=2.1000.1000/opensearch-2.1000.1000.yml
-            H */6 * * * %INPUT_MANIFEST=2.17.2/opensearch-2.17.2.yml
             H */6 * * * %INPUT_MANIFEST=2.18.0/opensearch-2.18.0.yml
             H */6 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml
             H */6 * * * %INPUT_MANIFEST=2.18.0/opensearch-dashboards-2.18.0.yml
@@ -43,6 +40,11 @@ pipeline {
             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
             trim: true
         )
+        string(
+            name: 'DISTRIBUTION_NUMBER',
+            description: 'Ditribution number of OpenSearch/OpenSearch-Dashboards builds that was used to run the integration test. eg:10345',
+            trim: true
+        )
     }
     stages {
         stage('Update integ tests failure issues') {
@@ -53,7 +55,8 @@ pipeline {
                         error("Failed to start the workflow. Input manifest was not provided or not found in manifests/${params.INPUT_MANIFEST}.")
                     }
                     updateIntegTestFailureIssues(
-                        inputManifestPath: "manifests/${INPUT_MANIFEST}"
+                        inputManifestPath: "manifests/${INPUT_MANIFEST}",
+                        distributionBuildNumber: "${DISTRIBUTION_NUMBER}"
                     )
                 }
             }
