@@ -193,21 +193,23 @@ pipeline {
                     }
                     steps {
                         script {
-                            echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
-                            sh("scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`")
-                            buildManifest(
-                                componentName: "OpenSearch",
-                                inputManifest: "manifests/${INPUT_MANIFEST}",
-                                platform: 'windows',
-                                architecture: 'x64',
-                                distribution: 'zip',
-                                snapshot: true
-                            )
-                            echo("Uploading windows x64 zip min snapshots to S3")
-                            uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
-                                distribution: 'zip'
-                            )
+                            retry(3) {
+                                echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
+                                sh("scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`")
+                                buildManifest(
+                                    componentName: "OpenSearch",
+                                    inputManifest: "manifests/${INPUT_MANIFEST}",
+                                    platform: 'windows',
+                                    architecture: 'x64',
+                                    distribution: 'zip',
+                                    snapshot: true
+                                )
+                                echo("Uploading windows x64 zip min snapshots to S3")
+                                uploadMinSnapshotsToS3(
+                                    fileActions: [createSha512Checksums()],
+                                    distribution: 'zip'
+                                )
+                            }
                         }
                     }
                     post {
