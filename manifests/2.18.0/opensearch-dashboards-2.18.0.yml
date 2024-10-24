@@ -55,6 +55,3 @@ components:
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
     ref: 98fa5324900ffa365a24b027cf17f1f87c1beae4
-  - name: flowFrameworkDashboards
-    repository: https://github.com/opensearch-project/dashboards-flow-framework.git
-    ref: c037914ffa2b0c4617f8e20df0c29f02c1aa3a8e
