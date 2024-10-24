@@ -780,27 +780,29 @@ pipeline {
                     }
                     steps {
                         script {
-                            echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
-                            sh("scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`")
-                            def buildManifestObj = buildAssembleUpload(
-                                componentName: "${COMPONENT_NAME}",
-                                inputManifest: "manifests/${INPUT_MANIFEST}",
-                                platform: 'windows',
-                                architecture: 'x64',
-                                distribution: 'zip',
-                                continueOnError: params.CONTINUE_ON_ERROR,
-                                incremental: params.INCREMENTAL,
-                                previousBuildId: params.PREVIOUS_BUILD_ID
-                            )
-                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
-                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
-                            env.ARTIFACT_URL_LINUX_WINDOWS_X64_ZIP = artifactUrl
-                            env.INDEX_FILE_PATH_X64_ZIP = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
+                            retry(3) {
+                                echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
+                                sh("scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`")
+                                def buildManifestObj = buildAssembleUpload(
+                                    componentName: "${COMPONENT_NAME}",
+                                    inputManifest: "manifests/${INPUT_MANIFEST}",
+                                    platform: 'windows',
+                                    architecture: 'x64',
+                                    distribution: 'zip',
+                                    continueOnError: params.CONTINUE_ON_ERROR,
+                                    incremental: params.INCREMENTAL,
+                                    previousBuildId: params.PREVIOUS_BUILD_ID
+                                )
+                                String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                                env.ARTIFACT_URL_LINUX_WINDOWS_X64_ZIP = artifactUrl
+                                env.INDEX_FILE_PATH_X64_ZIP = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
 
-                            echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
-                            echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
+                                echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
+                                echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
 
-                            triggerIntegrationTests(buildManifestUrl, 'windows', 'zip')
+                                triggerIntegrationTests(buildManifestUrl, 'windows', 'zip')
+                            }
                         }
                     }
                     post {
