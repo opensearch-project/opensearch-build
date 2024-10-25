@@ -363,6 +363,14 @@ pipeline {
         always {
             node(AGENT_LABEL) {
                 script {
+                    def triggerIntegTestNotification =
+                            build job: 'integ-test-notification',
+                            propagate: false,
+                            wait: false,
+                            parameters: [
+                                string(name: 'INPUT_MANIFEST', value: "${env.version}/opensearch-dashboards-${env.version}.yml"),
+                                string(name: 'DISTRIBUTION_NUMBER', value: "${env.buildId}")
+                            ]
                     postCleanup()
                 }
             }
