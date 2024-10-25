@@ -25,7 +25,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 000b08465f5e6581654151922bc3cedc1d7c48d4
+    ref: 6bdaf0b20dea94265c09525f8f170c9ff4ff450e
     platforms:
       - linux
       - windows
@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 38945628b9dde357ee96781ad86fd06586523383
+    ref: d85c87fdecafa423c04c370086b219f934c61b25
     platforms:
       - linux
       - windows
@@ -105,7 +105,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 4b9602b639231f94bb6f04d13af94e56b03632c1
+    ref: 34ad0d16b24c0ef97f7d5fb8f85d14fbad33d400
     platforms:
       - linux
       - windows
@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: a1f7ec31022319b361a5fb1dd7337a0b214a6d40
+    ref: d64c7aed7c697a6b5cdeda339917b68a9b55695a
     platforms:
       - linux
       - windows
