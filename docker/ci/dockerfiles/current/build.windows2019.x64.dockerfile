@@ -29,6 +29,8 @@ RUN bash.exe -c "curl https://ci.opensearch.org > /dev/null 2>&1 || echo add cer
 
 RUN bash.exe -c "curl https://artifacts.opensearch.org > /dev/null 2>&1 || echo add certificates"
 
+ENV HOME="C:/Users/ContainerAdministrator"
+
 WORKDIR "C:/Users/ContainerAdministrator"
 
 CMD ["powershell.exe"]
