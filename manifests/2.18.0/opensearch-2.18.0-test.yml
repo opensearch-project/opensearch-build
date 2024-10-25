@@ -148,3 +148,4 @@ components:
         - without-security
       additional-cluster-configs:
         cluster.application_templates.enabled: true
+        opensearch.experimental.feature.application_templates.enabled: true
