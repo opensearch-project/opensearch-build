@@ -97,6 +97,9 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         assertThat(getCommandExecutions('echo', 'Testing'), hasItem('Testing components: [ml-commons, anomaly-detection, neural-search, security-analytics, security, k-NN, notifications]'))
         assertCallStack().contains('curl -sSL https://ci.opensearch.org/ci/dbc/integ-test/3.0.0/9010/linux/x64/tar/test-results/234/integ-test/test-report.yml --output test-results-os-234/test-report.yml')
         assertCallStack().contains('{distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch/detail/distribution-build-opensearch/9010/pipeline, jobName=dummy_job, testReportManifestYml=test-results-os-234/test-report.yml}')
+        assertCallStack().contains('integ-test.build({job=integ-test-notification, propagate=false, wait=false, parameters=[null, null]})')
+        assertCallStack().contains('integ-test.string({name=INPUT_MANIFEST, value=3.0.0/opensearch-3.0.0.yml})')
+        assertCallStack().contains('integ-test.string({name=DISTRIBUTION_NUMBER, value=9010})')
     }
 
     @Test

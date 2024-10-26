@@ -484,5 +484,8 @@
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
          integ-test.node(Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, groovy.lang.Closure)
             integ-test.script(groovy.lang.Closure)
+               integ-test.string({name=INPUT_MANIFEST, value=3.0.0/opensearch-dashboards-3.0.0.yml})
+               integ-test.string({name=DISTRIBUTION_NUMBER, value=215})
+               integ-test.build({job=integ-test-notification, propagate=false, wait=false, parameters=[null, null]})
                integ-test.postCleanup()
                   postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
