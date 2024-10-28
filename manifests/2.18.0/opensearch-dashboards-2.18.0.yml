@@ -18,7 +18,7 @@ components:
     ref: 815b864a155ec0be58b6ea217d98711942108dd5
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: d3d0a0e35f05c04a54ee0b1858ec167520a5efdb
+    ref: 680774d6dcbb3b45ad84b2d57f14a5115bd45a09
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     ref: 97539d2efa0f1935689bc41fc3b681ee9655601f
@@ -36,7 +36,7 @@ components:
     ref: 5e9facb669f74f5aa0585dae5670276c1f65494e
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
-    ref: a9c12e8403a16c22f11218cf89d5aec9825beca8
+    ref: b4ece9fadb90067fa426a7a107797e20c55a6de3
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
     ref: f85c1bcf51a7b26a73cb24a340d25126fae9ff4e
