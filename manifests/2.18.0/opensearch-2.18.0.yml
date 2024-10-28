@@ -25,7 +25,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 6bdaf0b20dea94265c09525f8f170c9ff4ff450e
+    ref: c22e76be87f997b2e4511274c0079c5d0c61bf86
     platforms:
       - linux
       - windows
@@ -105,7 +105,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 34ad0d16b24c0ef97f7d5fb8f85d14fbad33d400
+    ref: 6fc99250cf35352082961cd6754cfcec3490707d
     platforms:
       - linux
       - windows
