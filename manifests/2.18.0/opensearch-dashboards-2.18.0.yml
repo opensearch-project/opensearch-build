@@ -39,13 +39,13 @@ components:
     ref: b4ece9fadb90067fa426a7a107797e20c55a6de3
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
-    ref: f85c1bcf51a7b26a73cb24a340d25126fae9ff4e
+    ref: 84cef988b8b1c7285882bf4473630230aecf8f3b
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 4dfa34f5e4e939d8acfa0f151d20e604c23fe05b
+    ref: 02e0ac538e30a7f6a8e6ef2b64b7ec799dced09e
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: 4efa1a5aeaa8aa8877d41c876fb1c38a2f14f7b8
+    ref: 4ede2e1f6a5bf8c4ed2bcda7d4b09d5a2d7190c7
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: ef72c906638dfd613afeb5eb73ae56acfacc316d
