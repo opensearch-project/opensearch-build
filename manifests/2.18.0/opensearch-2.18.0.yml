@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: d27ee4eb710db4d5d0776065d79408d91fd4f315
+    ref: 99a9a81da366173b0c2b963b26ea92e15ef34547
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: e4531fe22dbbc82090acfac5c928c2f355873c73
@@ -25,7 +25,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: c22e76be87f997b2e4511274c0079c5d0c61bf86
+    ref: 6a7c785b9fb82c50cb4057cec0e8844836ca91b0
     platforms:
       - linux
       - windows
@@ -70,7 +70,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: a49dd36004c933e6fe53d28381172c9ed9b6e721
+    ref: d3df65c5a79d8bdc51ccc47bbd76edb5e6a651e2
     working_directory: notifications
     platforms:
       - linux
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: a49dd36004c933e6fe53d28381172c9ed9b6e721
+    ref: d3df65c5a79d8bdc51ccc47bbd76edb5e6a651e2
     working_directory: notifications
     platforms:
       - linux
@@ -162,7 +162,7 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: 2afbadd80892927a2acccd40561e3a9745e86806
+    ref: 5140c47982066f12ee15da4a3bfd7e41ac57ab13
     platforms:
       - linux
       - windows
