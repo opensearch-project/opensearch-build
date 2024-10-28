@@ -15,16 +15,16 @@ components:
     ref: '2.18'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 815b864a155ec0be58b6ea217d98711942108dd5
+    ref: aa36965b33b682007cb5fe25ad73d3196ca0d69e
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 680774d6dcbb3b45ad84b2d57f14a5115bd45a09
+    ref: ae7be9a0fb6045149689f6a99dc0c3536c5a61f3
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
-    ref: 97539d2efa0f1935689bc41fc3b681ee9655601f
+    ref: f106a7920607003522124b905493b305bfc08d3f
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: 1b41f0be0a0cfec7fc7540ef618cb6d5b48f3b60
+    ref: 595fcd246609cd8a2ffb26f54e9d3e65167ea8f5
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
     ref: 511840ae5ca900610d521aad311677445269055f
