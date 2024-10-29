@@ -9,7 +9,7 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 50a714fde5fa89077a759da9b61d8fa4d32db033
+    ref: da92f56d7f8c18f35651cb0414cc9d146b3d2046
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '2.18'
@@ -18,7 +18,7 @@ components:
     ref: aa36965b33b682007cb5fe25ad73d3196ca0d69e
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: ae7be9a0fb6045149689f6a99dc0c3536c5a61f3
+    ref: aa788230d8b563a4d5d267eb3112cf61bc015cd4
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     ref: f106a7920607003522124b905493b305bfc08d3f
@@ -42,10 +42,10 @@ components:
     ref: 84cef988b8b1c7285882bf4473630230aecf8f3b
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 02e0ac538e30a7f6a8e6ef2b64b7ec799dced09e
+    ref: ea3b1641bd076039e68b4d13000e40120351ade9
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: 4ede2e1f6a5bf8c4ed2bcda7d4b09d5a2d7190c7
+    ref: 270a8490561ef2c1ec4de6bc94a9d36f687a7437
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: ef72c906638dfd613afeb5eb73ae56acfacc316d
@@ -54,4 +54,4 @@ components:
     ref: 5662aa833c6452db970e8d5f036500385fb3892b
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
-    ref: f741f7eaa34e413e44ce8adcc02548902f3f5d5b
+    ref: 1e52b885d13bb6d756a0b365a961ac4aab461544

@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: d85c87fdecafa423c04c370086b219f934c61b25
+    ref: 9b75405bbfb3f434c3bf198c04616cbd79f01c94
     platforms:
       - linux
       - windows
@@ -148,7 +148,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: abb16798959ee7a99a94e03f60859b2516c78f07
+    ref: 37133c68c782af167b535f5e071273148f48a4f0
     platforms:
       - linux
       - windows
