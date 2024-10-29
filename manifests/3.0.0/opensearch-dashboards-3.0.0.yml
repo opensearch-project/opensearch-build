@@ -55,6 +55,7 @@ components:
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
     ref: main
-  - name: securityAnalyticsDashboards
-    repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: main
+  #   Commenting SA until https://github.com/opensearch-project/security-analytics-dashboards-plugin/issues/1185 is resolved
+  # - name: securityAnalyticsDashboards
+  #   repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
+  #   ref: main
