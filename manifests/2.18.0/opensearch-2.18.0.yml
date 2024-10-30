@@ -13,7 +13,7 @@ components:
     ref: 99a9a81da366173b0c2b963b26ea92e15ef34547
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: e4531fe22dbbc82090acfac5c928c2f355873c73
+    ref: 1b73238ada99a5533bc21941618fd8bfba417d93
     platforms:
       - linux
       - windows
@@ -130,7 +130,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: d4d463c17f1927e8adc6ebf49f5d7ca4f2f1f5f5
+    ref: 1dfe19e494da45b380d8e738848147ffc9c53e63
     platforms:
       - linux
       - windows
@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: d64c7aed7c697a6b5cdeda339917b68a9b55695a
+    ref: 2257af00c60145d964ba4ad4bfed9217ee9d8a1d
     platforms:
       - linux
       - windows
@@ -187,7 +187,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: 4ea8fe0b10a06960494a730ab62bfdf40176c908
+    ref: 105e912d5fcf31090f33496506cc3b9ee67e204a
     platforms:
       - linux
       - windows
