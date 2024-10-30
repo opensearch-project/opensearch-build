@@ -111,9 +111,22 @@ https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/op
 ```
 
 #### Latest Distributions Builds
+
+For bundled artifacts, here are some examples for Linux and Windows:
+Replace the version and architecture as per your needs.
+**OpenSearch:**
+* Linux Tar: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.4.0-linux-x64.tar.gz
+* Windows Zip: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/windows/x64/zip/dist/opensearch/opensearch-2.4.0-windows-x64.zip
+
+**OpenSearch-Dashboards:**
+* Linux Tar: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.14.0/latest/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-2.14.0-linux-x64.tar.gz
+* Windows Zip: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.14.0/latest/windows/x64/zip/dist/opensearch-dashboards/opensearch-dashboards-2.14.0-windows-x64.zip
   
 Use the `latest` keyword in the URL to obtain the latest nightly build for a given version. For example https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.12.0/latest/linux/x64/rpm/dist/opensearch/manifest.yml redirects to [build 9234](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.12.0/9234/linux/x64/rpm/dist/opensearch/manifest.yml) at the time of writing this.
-  
+
+<details><summary>See the details about "latest" in above URLs</summary>
+<p>
+
 The `latest` keyword is resolved to a specific build number by checking an `index.json` [file](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.12.0/index/linux/x64/tar/index.json). This file is maintained individually for each platform, architecture and distribution. The index.json file has contents similar to
 
 ```
@@ -126,12 +139,11 @@ The TTL (time to live) is set to `5 mins` which means that the `latest` url may 
 All the artifacts accessible through the regular distribution URL can be accessed by the `latest` URL. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins. 
   
 For example, you can download the latest .tar.gz distribution build of OpenSearch 2.12.0 directly at https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.12.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.12.0-linux-x64.tar.gz, without having to first download and parse the [complete build manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.12.0/latest/linux/x64/tar/dist/opensearch/manifest.yml).
+
+</p>
+</details> 
   
 For plugin artifacts, you can also use the `latest` keyword to get the latest plugin artifacts with a known version. E.g. in order to get performance-analyzer x64 tarball artifacts for 2.1.0, you can obtain it with link https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip, which will redirect you to https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/5757/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip.
-  
-For bundled artifacts, here are some examples for LINUX and Windows:
-* Linux Tar: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.4.0-linux-x64.tar.gz
-* Windows Zip: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/windows/x64/zip/dist/opensearch/opensearch-2.4.0-windows-x64.zip
 
 #### Docker images
 
