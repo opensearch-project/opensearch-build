@@ -27,7 +27,7 @@ class TestTestManifest(unittest.TestCase):
         self.assertEqual(component_as.bwc_test, {"test-configs": ["with-security"]})
         component_os = self.manifest.components["opensearch"]
         self.assertEqual(component_os.name, "opensearch")
-        self.assertEqual(component_os.smoke_test, {"test-spec": ["opensearch.yml"]})
+        self.assertEqual(component_os.smoke_test, {"test-spec": "opensearch.yml"})
 
     def test_component_with_working_directory(self) -> None:
         component = self.manifest.components["notifications"]

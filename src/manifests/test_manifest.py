@@ -37,8 +37,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                 - with-security
                 - without-security
             smoke-test:
-              test-spec:
-                - spec.yaml
+              test-spec: spec.yaml
     """
 
     SCHEMA = {
@@ -94,7 +93,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                     "smoke-test": {
                         "type": "dict",
                         "schema": {
-                            "test-spec": {"type": "list"},
+                            "test-spec": {"type": "string"},
                         },
                     },
                 },

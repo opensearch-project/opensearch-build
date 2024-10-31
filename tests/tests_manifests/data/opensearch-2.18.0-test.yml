@@ -8,8 +8,7 @@ ci:
 components:
   - name: opensearch
     smoke-test:
-      test-spec:
-        - opensearch.yml
+      test-spec: opensearch.yml
   - name: alerting
     integ-test:
       test-configs:
