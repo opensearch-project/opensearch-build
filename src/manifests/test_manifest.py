@@ -37,7 +37,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                 - with-security
                 - without-security
             smoke-test:
-              test-spec: spec.yaml
+              test-spec: spec.yml
     """
 
     SCHEMA = {
