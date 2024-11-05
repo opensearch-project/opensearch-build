@@ -213,6 +213,13 @@
 # Set the value of this setting to true to enable UI Metric collections
 # usageCollection.uiMetric.enabled: false
 
+# 2.18 New Experimental Dashboards Assistant Feature
+# Set the value to true to enable
+# assistant.alertInsight.enabled: false
+# assistant.smartAnomalyDetector.enabled: false
+# assistant.text2viz.enabled: false
+# queryEnhancements.queryAssist.summary.enabled: false
+
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver
