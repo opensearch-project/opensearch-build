@@ -175,7 +175,6 @@ opensearch_dashboards_vars=(
     assistant.smartAnomalyDetector.enabled
     assistant.text2viz.enabled
     queryEnhancements.queryAssist.summary.enabled
-
 )
 
 function setupSecurityDashboardsPlugin {
