@@ -17,6 +17,10 @@ pipeline {
         timeout(time: 30)
     }
     agent none  
+    environment {
+        TRIVY_DB_REPOSITORY = 'public.ecr.aws/aquasecurity/trivy-db'
+        TRIVY_JAVA_DB_REPOSITORY = 'public.ecr.aws/aquasecurity/trivy-java-db'
+    }
     parameters {
         string(
             name: 'IMAGE_FULL_NAME', 
