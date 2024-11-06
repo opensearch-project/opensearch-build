@@ -25,7 +25,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('6.6.1')
+                .defaultVersion('7.3.2')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -57,6 +57,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
         helper.registerAllowedMethod('s3Upload', [Map], {})
+        helper.registerAllowedMethod('fileExists', [String], { true })
     }
 
     @Test
@@ -105,6 +106,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
             // macos-x64-upload
             '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz}',
             '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512}', '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.build-manifest.yml, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.build-manifest.yml}'))
+        assertThat(getCommands('s3Upload', 'plugins'), hasItems('{bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/plugins/ingest-attachment-3.0.0-SNAPSHOT.zip/3.0.0-SNAPSHOT-SNAPSHOT/, workingDir=/tmp/workspace/tar/builds/opensearch/core-plugins/, includePathPattern=**/ingest-attachment-3.0.0-SNAPSHOT.zip*}'))
     }
 
     def getCommands(String methodName, String commandString) {
