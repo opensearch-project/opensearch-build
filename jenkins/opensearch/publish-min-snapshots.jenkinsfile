@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@7.3.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@7.3.3', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -74,7 +74,7 @@ pipeline {
                             )
                             echo("Uploading linux x64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
+                                fileActions: [createSha512Checksums(), createSignatureFiles()],
                                 distribution: 'tar'
                             )
                         }
@@ -107,7 +107,7 @@ pipeline {
                             )
                             echo("Uploading linux arm64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
+                                fileActions: [createSha512Checksums(), createSignatureFiles()],
                                 distribution: 'tar'
                             )
                         }
@@ -139,7 +139,7 @@ pipeline {
                             )
                             echo("Uploading darwin x64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
+                                fileActions: [createSha512Checksums(), createSignatureFiles()],
                                 distribution: 'tar'
                             )
                         }
@@ -171,7 +171,7 @@ pipeline {
                             )
                             echo("Uploading darwin arm64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
+                                fileActions: [createSha512Checksums(), createSignatureFiles()],
                                 distribution: 'tar'
                             )
                         }
@@ -206,7 +206,7 @@ pipeline {
                                 )
                                 echo("Uploading windows x64 zip min snapshots to S3")
                                 uploadMinSnapshotsToS3(
-                                    fileActions: [createSha512Checksums()],
+                                    fileActions: [createSha512Checksums(), createSignatureFiles()],
                                     distribution: 'zip'
                                 )
                             }
