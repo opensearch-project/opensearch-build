@@ -14,6 +14,7 @@ OpenSearch 2.18 includes a number of updates that help you build machine learnin
 * Grouping top N queries by similarity now supports field names and data types, allowing you to group queries at a finer level of detail so that you can better identify and analyze resource-intensive query patterns across query types.
 * Workspaces provide a new multi-tenant environment to increase team collaboration. Granular access controls let you manage or remove collaborators and control their access at the workspace level with role-based permissions.
 * A redesigned homepage and navigation structure provide a centralized toolkit for accessing and creating Workspaces, with a more cleanly organized navigation bar that adapts to the selected workspace and supports tailored workflows
+* Two new analyzers, [`phone` and `phone-search`](https://opensearch.org/docs/latest/analyzers/supported-analyzers/phone-analyzers/), have been added as an optional plugin to simplify the complex task of parsing global phone numbers.
 
 
 ### EXPERIMENTAL FEATURES
