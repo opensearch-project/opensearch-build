@@ -111,10 +111,6 @@ pipeline {
                             )
                             echo("Uploading linux arm64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
-<<<<<<< Updated upstream
-                                fileActions: [createSha512Checksums(), createSignatureFiles()],
-=======
->>>>>>> Stashed changes
                                 distribution: 'tar'
                             )
                         }
@@ -146,10 +142,6 @@ pipeline {
                             )
                             echo("Uploading darwin x64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
-<<<<<<< Updated upstream
-                                fileActions: [createSha512Checksums(), createSignatureFiles()],
-=======
->>>>>>> Stashed changes
                                 distribution: 'tar'
                             )
                         }
@@ -181,10 +173,6 @@ pipeline {
                             )
                             echo("Uploading darwin arm64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
-<<<<<<< Updated upstream
-                                fileActions: [createSha512Checksums(), createSignatureFiles()],
-=======
->>>>>>> Stashed changes
                                 distribution: 'tar'
                             )
                         }
@@ -219,10 +207,6 @@ pipeline {
                                 )
                                 echo("Uploading windows x64 zip min snapshots to S3")
                                 uploadMinSnapshotsToS3(
-<<<<<<< Updated upstream
-                                    fileActions: [createSha512Checksums(), createSignatureFiles()],
-=======
->>>>>>> Stashed changes
                                     distribution: 'zip'
                                 )
                             }
