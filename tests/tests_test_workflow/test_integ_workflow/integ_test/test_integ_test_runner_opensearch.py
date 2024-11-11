@@ -24,6 +24,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
         self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
+        self.args.ci_group = None
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()
