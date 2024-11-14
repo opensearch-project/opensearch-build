@@ -50,7 +50,9 @@ class SmokeTestClusterOpenSearch():
     def download_or_copy_bundle(self, work_dir: str) -> str:
         extension = "tar.gz" if self.dist == "tar" else self.dist
         artifact_name = f"{self.product}-{self.version}-{self.platform}-{self.arch}.{extension}"
-        src_path = os.path.join(self.path, "dist", f"{self.product}", f"{artifact_name}")
+        src_path = '/'.join([self.path.rstrip("/"), "dist", f"{self.product}", f"{artifact_name}"]) \
+            if self.path.startswith("https://") else os.path.join(self.path, "dist",
+                                                                  f"{self.product}", f"{artifact_name}")
         dest_path = os.path.join(work_dir, artifact_name)
 
         if src_path.startswith("https://"):
