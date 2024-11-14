@@ -1,3 +1,4 @@
+# yamllint disable-file
 openapi: 3.1.0
 info:
   title: OpenSearch API Specification
@@ -32157,7 +32158,7 @@ components:
         params:
           description: |-
             Specifies any named parameters that are passed into the script as variables. 
-            Use parameters instead of hard-coded values to decrease compilation time. 
+            Use parameters instead of hard-coded values to decrease compilation time.
           type: object
           additionalProperties: true
     _common___ScriptField:

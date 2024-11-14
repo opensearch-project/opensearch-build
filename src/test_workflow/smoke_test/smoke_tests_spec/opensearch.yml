@@ -1,5 +1,5 @@
+# yamllint disable
 ---
-schema-version: '1.0'
 info:
   title: OpenSearch Core smoke tests
   version: default
