@@ -201,7 +201,7 @@
 # Set the value of this setting to true to enable the ml commons dashboards
 # ml_commons_dashboards.enabled: false
 
-# 2.12 New experimental Assistant Dashboards Feature
+# 2.12 New Experimental Assistant Dashboards Feature
 # Set the value of this setting to true to enable the assistant dashboards
 # assistant.chat.enabled: false
 
@@ -212,6 +212,13 @@
 # 2.14 Enable Ui Metric Collectors in Usage Collector
 # Set the value of this setting to true to enable UI Metric collections
 # usageCollection.uiMetric.enabled: false
+
+# 2.18 New Experimental Settings
+# Set the value to true to enable
+# assistant.alertInsight.enabled: false
+# assistant.smartAnomalyDetector.enabled: false
+# assistant.text2viz.enabled: false
+# queryEnhancements.queryAssist.summary.enabled: false
 
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
