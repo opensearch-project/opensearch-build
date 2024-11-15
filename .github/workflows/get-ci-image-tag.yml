@@ -25,25 +25,33 @@ on:
       ci-image-version-linux:
         description: The ci image version for linux build
         value: ${{ jobs.Get-CI-Image-Tag.outputs.output-ci-image-version-linux }}
+      ci-image-start-options:
+        description: The ci image start options to set when starting the container
+        value: ${{ jobs.Get-CI-Image-Tag.outputs.output-ci-image-start-options }}
+      ci-image-start-command:
+        description: The ci image start commands to run after initialization
+        value: ${{ jobs.Get-CI-Image-Tag.outputs.output-ci-image-start-command }}
 
 jobs:
   Get-CI-Image-Tag:
     runs-on: ubuntu-latest
     outputs:
-      output-ci-image-version-linux: ${{ steps.step-ci-image-version-linux.outputs.ci-image-version-linux }}
+      output-ci-image-version-linux: ${{ steps.step-ci-image-setups.outputs.ci-image-version-linux }}
+      output-ci-image-start-command: ${{ steps.step-ci-image-setups.outputs.ci-image-start-command }}
+      output-ci-image-start-options: ${{ steps.step-ci-image-setups.outputs.ci-image-start-options }}
     steps:
       - name: Install crane
         uses: iarekylew00t/crane-installer@v1
         with:
           crane-release: v0.15.2
       - name: Checkout opensearch-build repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'opensearch-project/opensearch-build'
           ref: ${{ inputs.build_ref }}
           path: 'opensearch-build'
       - name: Get ci image version from opensearch-build repository scripts
-        id: step-ci-image-version-linux
+        id: step-ci-image-setups
         run: |
           PRODUCT=${{ inputs.product }}
           PLATFORM=${{ inputs.platform }}
@@ -54,6 +62,18 @@ jobs:
               else
                   PLATFORM="almalinux8"
               fi
+          fi
+
+          if [[ "$PLATFORM" = "al2" ]]; then
+              CI_IMAGE_CMD="cp -a /node_al2/* /node && /node/bin/node -v"
+              echo "ci-image-start-command=$CI_IMAGE_CMD" >> $GITHUB_OUTPUT
+              CI_IMAGE_OPTIONS="--user root -v /node:/node:rw,rshared -v /node:/__e/node20:ro,rshared"
+              echo "ci-image-start-options=$CI_IMAGE_OPTIONS" >> $GITHUB_OUTPUT
+          else
+              CI_IMAGE_CMD="echo pass"
+              echo "ci-image-start-command=$CI_IMAGE_CMD" >> $GITHUB_OUTPUT
+              CI_IMAGE_OPTIONS="--user root"
+              echo "ci-image-start-options=$CI_IMAGE_OPTIONS" >> $GITHUB_OUTPUT
           fi
           crane version
           echo $PRODUCT $PLATFORM

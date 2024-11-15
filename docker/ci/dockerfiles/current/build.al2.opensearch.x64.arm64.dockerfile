@@ -76,11 +76,21 @@ ENV GEM_HOME=$CONTAINER_USER_HOME/.gem
 ENV GEM_PATH=$GEM_HOME
 ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 
+# Installing openssl1.1.1
+# Support requests >= 2.28.1 version
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib
+RUN yum install -y curl libcurl-devel libfaketime perl-core pcre-devel && yum remove -y openssl-devel && yum clean all && \
+    mkdir -p /tmp/openssl && cd /tmp/openssl && \
+    curl -sSL -o- https://www.openssl.org/source/openssl-1.1.1g.tar.gz | tar -xz --strip-components 1 && \
+    ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make && make install && \
+    echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib" > /etc/profile.d/openssl.sh && openssl version
+
 # Install Python binary
 RUN curl https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz | tar xzvf - && \
     cd Python-3.9.7 && \
-    ./configure --enable-optimizations && \
-    make altinstall
+    env LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib ./configure --enable-optimizations --with-openssl=/usr --prefix=/usr/local && \
+    make altinstall && cd ../ && rm -rf Python-3.9.7.tgz Python-3.9.7 && \
+    cp -v /etc/ssl/certs/ca-bundle.crt /etc/ssl/cert.pem
 
 # Setup Python links
 RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
@@ -113,6 +123,21 @@ RUN git clone -b v0.3.27 --single-branch https://github.com/xianyi/OpenBLAS.git 
     make PREFIX=/usr/local install
 ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
 RUN pip3 install cmake==3.26.4
+
+# NodeJS Unofficial Builds
+# https://github.com/opensearch-project/opensearch-build/issues/5178
+# https://github.com/actions/runner/issues/2906
+# https://github.com/actions/runner/issues/3475
+# GitHub enforce nodejs 20 official build in runner 2.317.0 of their actions and CentOS7/AL2 would fail due to having older glibc versions
+# Until https://github.com/actions/runner/pull/3128 is merged or AL2 is deprecated (2025/06) this is a quick fix with unofficial builds support glibc 2.17
+# With changes done similar to this PR (https://github.com/opensearch-project/job-scheduler/pull/702) alongside the image here
+# Only linux x64 is supported in unofficial build until https://github.com/nodejs/unofficial-builds/pull/91 is merged
+RUN if [ `uname -m` = "x86_64" ]; then \
+        curl -SL https://unofficial-builds.nodejs.org/download/release/v20.10.0/node-v20.10.0-linux-x64-glibc-217.tar.xz -o /node20.tar.xz; \
+        mkdir /node_al2; \
+        tar -xf /node20.tar.xz --strip-components 1 -C /node_al2; \
+        rm -v /node20.tar.xz; \
+    fi
 
 # Change User
 USER $CONTAINER_USER
