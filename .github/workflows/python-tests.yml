@@ -6,6 +6,8 @@ on: [push, pull_request]
 jobs:
   Get-CI-Image-Tag:
     uses: ./.github/workflows/get-ci-image-tag.yml
+    with:
+      product: opensearch
 
   python-tests:
     strategy:
@@ -17,7 +19,7 @@ jobs:
     env:
       PYTHON_VERSION: 3.9
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v3
         with:
@@ -46,17 +48,17 @@ jobs:
   python-tests-linux:
     needs: Get-CI-Image-Tag
     runs-on: ubuntu-latest
-    env:
-      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     container:
       # using the same image which is used by opensearch-build team to build the OpenSearch Distribution
       # this image tag is subject to change as more dependencies and updates will arrive over time
       image: ${{ needs.Get-CI-Image-Tag.outputs.ci-image-version-linux }}
       # need to switch to root so that github actions can install runner binary on container without permission issues.
-      options: --user root
+      options: ${{ needs.Get-CI-Image-Tag.outputs.ci-image-start-options }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Run start commands
+        run: ${{ needs.Get-CI-Image-Tag.outputs.ci-image-start-command }}
+      - uses: actions/checkout@v4
       - name: Install Pipenv and Dependencies
         run: |
           pipenv install
