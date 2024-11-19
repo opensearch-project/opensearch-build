@@ -17,21 +17,24 @@ class TestTestManifest(unittest.TestCase):
     def setUp(self) -> None:
         self.maxDiff = None
         self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
-        self.manifest_filename = os.path.join(self.data_path, "opensearch-test-1.1.0.yml")
+        self.manifest_filename = os.path.join(self.data_path, "opensearch-2.18.0-test.yml")
         self.manifest = TestManifest.from_path(self.manifest_filename)
 
     def test_component(self) -> None:
-        component = self.manifest.components["index-management"]
-        self.assertEqual(component.name, "index-management")
-        self.assertEqual(component.integ_test, {"test-configs": ["with-security", "without-security"]})
-        self.assertEqual(component.bwc_test, {"test-configs": ["with-security", "without-security"]})
+        component_as = self.manifest.components["asynchronous-search"]
+        self.assertEqual(component_as.name, "asynchronous-search")
+        self.assertEqual(component_as.integ_test, {"test-configs": ["with-security", "without-security"]})
+        self.assertEqual(component_as.bwc_test, {"test-configs": ["with-security"]})
+        component_os = self.manifest.components["opensearch"]
+        self.assertEqual(component_os.name, "opensearch")
+        self.assertEqual(component_os.smoke_test, {"test-spec": "opensearch.yml"})
 
     def test_component_with_working_directory(self) -> None:
-        component = self.manifest.components["dashboards-reports"]
-        self.assertEqual(component.name, "dashboards-reports")
-        self.assertEqual(component.working_directory, "reports-scheduler")
-        self.assertEqual(component.integ_test, {"test-configs": ["without-security"]})
-        self.assertEqual(component.bwc_test, {"test-configs": ["without-security"]})
+        component = self.manifest.components["notifications"]
+        self.assertEqual(component.name, "notifications")
+        self.assertEqual(component.working_directory, "notifications")
+        self.assertEqual(component.integ_test, {"test-configs": ["with-security", "without-security"]})
+        self.assertEqual(component.bwc_test, {"test-configs": ["with-security"]})
 
     def test_to_dict(self) -> None:
         data = self.manifest.to_dict()

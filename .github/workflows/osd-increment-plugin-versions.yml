@@ -46,10 +46,9 @@ jobs:
           - '1.3'
           - 2.x
           - main
-          - '2.15'
-          - '2.16'
           - '2.17'
           - '2.18'
+          - '2.19'
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@v3

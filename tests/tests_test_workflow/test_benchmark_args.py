@@ -38,6 +38,7 @@ class TestBenchmarkArgs(unittest.TestCase):
         self.assertFalse(test_args.single_node)
         self.assertFalse(test_args.min_distribution)
         self.assertFalse(test_args.enable_remote_store)
+        self.assertFalse(test_args.enable_instance_storage)
 
     @patch("argparse._sys.argv",
            [ARGS_PY, "execute-test", "--bundle-manifest", TEST_DIST_MANIFEST_PATH, "--config", TEST_CONFIG_PATH, "--workload", "test",
@@ -53,11 +54,12 @@ class TestBenchmarkArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv",
            [ARGS_PY, "execute-test", "--bundle-manifest", TEST_DIST_MANIFEST_PATH, "--config", TEST_CONFIG_PATH, "--workload", "test",
-            "--data-node-storage", "200", "--ml-node-storage", "100"])
+            "--data-node-storage", "200", "--ml-node-storage", "100", "--enable-instance-storage"])
     def test_benchmark_with_optional_node_storage_parameters(self) -> None:
         test_args = BenchmarkArgs()
         self.assertEqual(test_args.data_node_storage, "200")
         self.assertEqual(test_args.ml_node_storage, "100")
+        self.assertTrue(test_args.enable_instance_storage)
 
     @patch("argparse._sys.argv", [ARGS_PY, "execute-test", "--bundle-manifest", TEST_DIST_MANIFEST_PATH, "--config", TEST_CONFIG_PATH, "--workload", "test",
                                   "--additional-config", 'opensearch.experimental.feature.replication_type.enabled:true','key:value',  # noqa: E231

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.0000" tests="0" failures="1">
+  <testsuite name="Root Suite" timestamp="2024-09-05T20:37:57" tests="0" file="cypress/integration/plugins/index-management-dashboards-plugin/transforms_spec.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Transforms" timestamp="2024-09-05T20:37:57" tests="0" time="0.0000" failures="1">
+    <testcase name="Transforms can be created &quot;before all&quot; hook for &quot;successfully&quot;" time="0.0000" classname="&quot;before all&quot; hook for &quot;successfully&quot;">
+      <failure message="`cy.request()` failed on:
+
+https://localhost:9200/.opendistro-ism*?expand_wildcards=all
+
+The response we received from your web server was:
+
+  &gt; 403: Forbidden
+
+This was considered a failure because the status code was not `2xx` or `3xx`.
+
+If you do not want status codes to cause failures pass the option: `failOnStatusCode: false`
+
+Because this error occurred during a `before all` hook we are skipping the remaining tests in the current suite: `Transforms`
+    at http://localhost:5601/__cypress/runner/cypress_runner.js:160667:80
+    at tryCatcher (http://localhost:5601/__cypress/runner/cypress_runner.js:13022:23)
+    at Promise._settlePromiseFromHandler (http://localhost:5601/__cypress/runner/cypress_runner.js:10957:31)
+    at Promise._settlePromise (http://localhost:5601/__cypress/runner/cypress_runner.js:11014:18)
+    at Promise._settlePromise0 (http://localhost:5601/__cypress/runner/cypress_runner.js:11059:10)
+    at Promise._settlePromises (http://localhost:5601/__cypress/runner/cypress_runner.js:11139:18)
+    at _drainQueueStep (http://localhost:5601/__cypress/runner/cypress_runner.js:7729:12)
+    at _drainQueue (http://localhost:5601/__cypress/runner/cypress_runner.js:7722:9)
+    at Async.../../node_modules/bluebird/js/release/async.js.Async._drainQueues (http://localhost:5601/__cypress/runner/cypress_runner.js:7738:5)
+    at Async.drainQueues (http://localhost:5601/__cypress/runner/cypress_runner.js:7608:14)
+From Your Spec Code:
+    at Context.eval (http://localhost:5601/__cypress/tests?p=cypress/support/index.js:4480:6)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

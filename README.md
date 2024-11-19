@@ -2,7 +2,6 @@
 
 [![python](https://github.com/opensearch-project/opensearch-build/actions/workflows/python-tests.yml/badge.svg)](https://github.com/opensearch-project/opensearch-build/actions/workflows/python-tests.yml)
 [![groovy](https://github.com/opensearch-project/opensearch-build/actions/workflows/groovy-tests.yml/badge.svg)](https://github.com/opensearch-project/opensearch-build/actions/workflows/groovy-tests.yml)
-[![manifests](https://github.com/opensearch-project/opensearch-build/actions/workflows/manifests.yml/badge.svg)](https://github.com/opensearch-project/opensearch-build/actions/workflows/manifests.yml)
 [![codecov](https://codecov.io/gh/opensearch-project/opensearch-build/branch/main/graph/badge.svg?token=03S5XZ80UI)](https://codecov.io/gh/opensearch-project/opensearch-build)
 
 - [Releasing OpenSearch](#releasing-opensearch)
@@ -10,15 +9,7 @@
   - [Release labels](#release-labels)
 - [Onboarding a New Plugin](#onboarding-a-new-plugin)
 - [Building and Testing an OpenSearch Distribution](#building-and-testing-an-opensearch-distribution)
-  - [Building from Source](#building-from-source)
-  - [Assembling a Distribution](#assembling-a-distribution)
-  - [Building Patches](#building-patches)
-  - [Min snapshots](#min-snapshots)
-  - [CI/CD Environment](#cicd-environment)
-  - [Build Numbers](#build-numbers)
-  - [Latest Distribution URL](#latest-distribution-url)
   - [Testing the Distribution](#testing-the-distribution)
-  - [Checking Release Notes](#checking-release-notes)
   - [Signing Artifacts](#signing-artifacts)
     - [PGP](#pgp)
     - [Windows](#windows)

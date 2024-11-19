@@ -16,6 +16,7 @@
     "tests/tests_test_workflow/test_integ_workflow/integ_test/data/artifacts/",
     "tests/tests_sign_workflow/data/signature/",
     "tests/tests_assemble_workflow/data/artifacts/",
+    "tests/tests_report_workflow/data/test-results/",
     ".png",
     "settings.gradle",
     ".git",
@@ -30,6 +31,7 @@
     ".gz",
     ".toml",
     ".ini",
-    "gradle/wrapper"
+    "gradle/wrapper",
+    "index.html"
   ]
 }

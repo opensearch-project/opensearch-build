@@ -11,7 +11,12 @@
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # Install Scoop as Administrator User here
-iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+# Scoop version >= 0.5.0 has error with Select-CurrentVersion function
+# They have not fix the issue and will error out on Windows ltsc2019
+# https://github.com/ScoopInstaller/Scoop/issues/6180
+# A temp solution is to hardcode the scoop version to 0.4.2
+# iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+iex "& {$(irm https://raw.githubusercontent.com/peterzhuamazon/scoop-Install/refs/heads/stable/install.ps1)} -RunAsAdmin"
 
 # Disable "current" alias directory as it is not preserved after AMI creation
 # Use static path in environment variable
@@ -84,7 +89,7 @@ regedit /s $zlibRegFilePath
 # Temurin jdk does not have all the versions supported on scoop, especially version 14, 20, and above
 # As of now we will mix temurin and openjdk as temurin for production has support policies for fixes and patches
 # We need to make sure we do not mis-install temurin and openjdk with the same version or the distribution build code will have issues
-$jdkVersionList = "temurin8-jdk JAVA8_HOME", "temurin11-jdk JAVA11_HOME", "openjdk14 JAVA14_HOME", "temurin17-jdk JAVA17_HOME", "temurin19-jdk JAVA19_HOME", "openjdk20 JAVA20_HOME", "temurin21-jdk JAVA21_HOME"
+$jdkVersionList = "temurin8-jdk JAVA8_HOME", "temurin11-jdk JAVA11_HOME", "openjdk14 JAVA14_HOME", "temurin17-jdk JAVA17_HOME", "temurin19-jdk JAVA19_HOME", "openjdk20 JAVA20_HOME", "temurin21-jdk JAVA21_HOME", "temurin23-jdk JAVA23_HOME"
 Foreach ($jdkVersion in $jdkVersionList)
 {
     $jdkVersion

@@ -140,7 +140,17 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             return 0
 
     @property
+    def additional_test_report_dirs(self) -> list[str]:
+        return ["integTest", "integrationTest", "integTestRemote"]
+
+    @property
     def test_artifact_files(self) -> dict:
-        return {
-            "opensearch-integ-test": os.path.join(self.repo_work_dir, "build", "reports", "tests", "integTest")
-        }
+        default_report_path = os.path.join(self.repo_work_dir, "build", "reports", "tests", "integTest")
+        if os.path.exists(default_report_path):
+            return {"opensearch-integ-test": default_report_path}
+        for root, dirs, files in os.walk(self.repo_work_dir):
+            for test_report_dir in self.additional_test_report_dirs:
+                potential_path = os.path.join(root, "build", "reports", "tests", test_report_dir)
+                if os.path.exists(potential_path):
+                    return {"opensearch-integ-test": potential_path}
+        return {"opensearch-integ-test": default_report_path}

@@ -36,6 +36,8 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
               test-configs:
                 - with-security
                 - without-security
+            smoke-test:
+              test-spec: spec.yml
     """
 
     SCHEMA = {
@@ -86,6 +88,12 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                         "schema": {
                             "build-dependencies": {"type": "list"},
                             "test-configs": {"type": "list", "allowed": ["with-security", "without-security", "with-less-security"]},
+                        },
+                    },
+                    "smoke-test": {
+                        "type": "dict",
+                        "schema": {
+                            "test-spec": {"type": "string"},
                         },
                     },
                 },
@@ -160,6 +168,7 @@ class TestComponent(Component):
         self.working_directory = data.get("working-directory", None)
         self.integ_test = data.get("integ-test", None)
         self.bwc_test = data.get("bwc-test", None)
+        self.smoke_test = data.get("smoke-test", None)
         self.topology = TestComponentTopology(self.integ_test.get("topology", None)) if self.integ_test is not None else TestComponentTopology(None)
         self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
 
@@ -168,7 +177,8 @@ class TestComponent(Component):
             "name": self.name,
             "working-directory": self.working_directory,
             "integ-test": self.integ_test,
-            "bwc-test": self.bwc_test
+            "bwc-test": self.bwc_test,
+            "smoke-test": self.smoke_test
         }
 
 

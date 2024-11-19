@@ -15,7 +15,7 @@ lib = library(identifier: 'jenkins@1.5.0', retriever: modernSCM([
 pipeline {
     agent {
         docker {
-            label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+            label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
             image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3'
             registryUrl 'https://public.ecr.aws/'
             alwaysPull true

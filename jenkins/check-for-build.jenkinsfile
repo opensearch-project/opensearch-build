@@ -19,16 +19,16 @@ pipeline {
     }
     agent none
     environment {
-        AGENT_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+        AGENT_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
     }
     triggers {
         parameterizedCron '''
-            H 1 * * * %INPUT_MANIFEST=2.17.2/opensearch-2.17.2.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=2.17.2/opensearch-2.17.2-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-            H 1 * * * %INPUT_MANIFEST=2.18.0/opensearch-2.18.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=2.18.0/opensearch-2.18.0-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-            H 1 * * * %INPUT_MANIFEST=2.18.0/opensearch-dashboards-2.18.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=2.18.0/opensearch-dashboards-2.18.0-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-            H 1 * * * %INPUT_MANIFEST=1.3.20/opensearch-1.3.20.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=1.3.20/opensearch-1.3.20-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-            H 1 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
-            H 1 * * * %INPUT_MANIFEST=3.0.0/opensearch-dashboards-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
+            H 1 * * * %INPUT_MANIFEST=2.18.1/opensearch-2.18.1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=2.18.1/opensearch-2.18.1-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
+            H 1 * * * %INPUT_MANIFEST=1.3.20/opensearch-dashboards-1.3.20.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=1.3.20/opensearch-dashboards-1.3.20-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
+            H 1 * * * %INPUT_MANIFEST=2.19.0/opensearch-2.19.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=2.19.0/opensearch-2.19.0-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
+            H 4 * * * %INPUT_MANIFEST=1.3.20/opensearch-1.3.20.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=1.3.20/opensearch-1.3.20-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
+            H 4 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
+            H 4 * * * %INPUT_MANIFEST=3.0.0/opensearch-dashboards-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
         '''
     }
     parameters {
@@ -134,17 +134,9 @@ pipeline {
         }
     }
     post {
-        failure {
+        always {
             node(AGENT_X64) {
                 script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed checking for build to trigger',
-                        credentialsId: 'jenkins-build-notice-webhook',
-                        manifest: "${INPUT_MANIFEST}",
-                        target_job_name: "${TARGET_JOB_NAME}"
-                    )
-
                     postCleanup()
                 }
             }

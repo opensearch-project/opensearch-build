@@ -3,7 +3,7 @@
       release-manifest-commit-lock.library({identifier=jenkins@6.4.0, retriever=null})
       release-manifest-commit-lock.pipeline(groovy.lang.Closure)
          release-manifest-commit-lock.timeout({time=2, unit=HOURS})
-         release-manifest-commit-lock.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+         release-manifest-commit-lock.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
          release-manifest-commit-lock.stage(Parameters Check, groovy.lang.Closure)
             release-manifest-commit-lock.script(groovy.lang.Closure)
          release-manifest-commit-lock.stage(MATCH_BUILD_MANIFEST, groovy.lang.Closure)

@@ -11,7 +11,7 @@
             bwc-test.script(groovy.lang.Closure)
                bwc-test.fileExists(manifests/tests/jenkins/data/opensearch-1.3.0-test.yml)
          bwc-test.stage(detect docker image + args, groovy.lang.Closure)
-            bwc-test.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+            bwc-test.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
             bwc-test.script(groovy.lang.Closure)
                bwc-test.detectTestDockerAgent()
                   detectTestDockerAgent.legacySCM(groovy.lang.Closure)
@@ -63,21 +63,5 @@
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
          bwc-test.node(Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, groovy.lang.Closure)
             bwc-test.script(groovy.lang.Closure)
-               Messages.asBoolean()
-               Messages.get([bwc-test])
-                  bwc-test.unstash({name=messages-bwc-test})
-                  bwc-test.findFiles({excludes=, glob=messages/*})
-                  bwc-test.dir(messages, groovy.lang.Closure)
-                     bwc-test.deleteDir()
-               bwc-test.publishNotification({icon=:white_check_mark:, message=BWC Tests Successful, extra=, credentialsId=jenkins-integ-test-webhook, manifest=tests/jenkins/data/opensearch-1.3.0-test.yml})
-                  publishNotification.string({credentialsId=jenkins-integ-test-webhook, variable=WEBHOOK_URL})
-                  publishNotification.withCredentials([WEBHOOK_URL], groovy.lang.Closure)
-                     publishNotification.sh(curl -XPOST --header "Content-Type: application/json" --data '{"result_text":":white_check_mark:
-JOB_NAME=dummy_job
-BUILD_NUMBER=[717]
-MESSAGE=BWC Tests Successful
-BUILD_URL: htth://BUILD_URL_dummy.com
-MANIFEST: tests/jenkins/data/opensearch-1.3.0-test.yml
-"}' "WEBHOOK_URL")
                bwc-test.postCleanup()
                   postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

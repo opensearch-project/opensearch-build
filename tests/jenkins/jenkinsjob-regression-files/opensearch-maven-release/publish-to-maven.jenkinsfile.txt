@@ -3,7 +3,7 @@
       publish-to-maven.library({identifier=jenkins@1.5.0, retriever=null})
       publish-to-maven.pipeline(groovy.lang.Closure)
          publish-to-maven.credentials(jenkins-artifact-bucket-name)
-         publish-to-maven.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+         publish-to-maven.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
          publish-to-maven.stage(sign-stage-and-release, groovy.lang.Closure)
             publish-to-maven.script(groovy.lang.Closure)
                publish-to-maven.echo(Downloading from S3.)

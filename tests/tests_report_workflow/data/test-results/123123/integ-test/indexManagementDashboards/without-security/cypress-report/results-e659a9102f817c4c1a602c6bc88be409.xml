@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.0000" tests="2" failures="1">
+  <testsuite name="Root Suite" timestamp="2024-09-05T20:49:28" tests="0" file="cypress/integration/plugins/index-management-dashboards-plugin/refresh_index.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Refresh Index" timestamp="2024-09-05T20:49:28" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="can be refreshed" timestamp="2024-09-05T20:49:29" tests="2" time="0.0000" failures="1">
+    <testcase name="Refresh Index can be refreshed &quot;before each&quot; hook for &quot;Refresh all indexes successfully&quot;" time="0.0000" classname="&quot;before each&quot; hook for &quot;Refresh all indexes successfully&quot;">
+      <failure message="Timed out retrying after 60000ms: Expected to find content: &apos;Rows per page&apos; but never did.
+
+Because this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `can be refreshed`" type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 60000ms: Expected to find content: 'Rows per page' but never did.
+
+Because this error occurred during a `before each` hook we are skipping the remaining tests in the current suite: `can be refreshed`
+    at Context.eval (http://localhost:5601/__cypress/tests?p=cypress/integration/plugins/index-management-dashboards-plugin/refresh_index.js:176:10)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

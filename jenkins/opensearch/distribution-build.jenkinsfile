@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.9.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@7.2.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -18,8 +18,8 @@ pipeline {
     }
     agent none
     environment {
-        AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
-        AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host'
+        AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
+        AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host'
         AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
         IMAGE_LINUX_RPM = 'opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1' // required for rpm to create digest sha256 correctly with rpm 4.12+, still define here for 1.x version as 2.x+ moved to rockylinux8, later almalinux8, already
         IMAGE_LINUX_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2' // required for deb to create pkg using debmake/debuild/debhelper
@@ -91,11 +91,6 @@ pipeline {
             defaultValue: true
         )
         booleanParam(
-            name: 'PUBLISH_NOTIFICATION',
-            description: 'Publish the status of this build job or not.',
-            defaultValue: true
-        )
-        booleanParam(
             name: 'UPDATE_GITHUB_ISSUE',
             description: 'To create/close/update a github issue for all component or not.',
             defaultValue: true
@@ -161,7 +156,7 @@ pipeline {
                 stage('Trigger-min-snapshot-build') {
                     agent {
                         docker {
-                            label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+                            label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
                             image 'docker/library/alpine:3'
                             registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
@@ -249,10 +244,6 @@ pipeline {
                         }
                         always {
                             script {
-                                lib.jenkins.Messages.new(this).add(
-                                    "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                )
                                 if (params.CONTINUE_ON_ERROR) {
                                     markStageUnstableIfPluginsFailedToBuild()
                                 }
@@ -363,10 +354,6 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
                                         postCleanup()
                                     }
                                 }
@@ -476,11 +463,6 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
-
                                         postCleanup()
                                     }
                                 }
@@ -551,10 +533,6 @@ pipeline {
                         }
                         always {
                             script {
-                                lib.jenkins.Messages.new(this).add(
-                                    "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                )
                                 if (params.CONTINUE_ON_ERROR) {
                                     markStageUnstableIfPluginsFailedToBuild()
                                 }
@@ -665,10 +643,6 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
                                         postCleanup()
                                     }
                                 }
@@ -779,10 +753,6 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
                                         postCleanup()
                                     }
                                 }
@@ -810,27 +780,29 @@ pipeline {
                     }
                     steps {
                         script {
-                            echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
-                            sh("scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`")
-                            def buildManifestObj = buildAssembleUpload(
-                                componentName: "${COMPONENT_NAME}",
-                                inputManifest: "manifests/${INPUT_MANIFEST}",
-                                platform: 'windows',
-                                architecture: 'x64',
-                                distribution: 'zip',
-                                continueOnError: params.CONTINUE_ON_ERROR,
-                                incremental: params.INCREMENTAL,
-                                previousBuildId: params.PREVIOUS_BUILD_ID
-                            )
-                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
-                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
-                            env.ARTIFACT_URL_LINUX_WINDOWS_X64_ZIP = artifactUrl
-                            env.INDEX_FILE_PATH_X64_ZIP = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
+                            retry(3) {
+                                echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
+                                sh("scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`")
+                                def buildManifestObj = buildAssembleUpload(
+                                    componentName: "${COMPONENT_NAME}",
+                                    inputManifest: "manifests/${INPUT_MANIFEST}",
+                                    platform: 'windows',
+                                    architecture: 'x64',
+                                    distribution: 'zip',
+                                    continueOnError: params.CONTINUE_ON_ERROR,
+                                    incremental: params.INCREMENTAL,
+                                    previousBuildId: params.PREVIOUS_BUILD_ID
+                                )
+                                String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                                env.ARTIFACT_URL_LINUX_WINDOWS_X64_ZIP = artifactUrl
+                                env.INDEX_FILE_PATH_X64_ZIP = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
 
-                            echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
-                            echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
+                                echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
+                                echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
 
-                            triggerIntegrationTests(buildManifestUrl, 'windows', 'zip')
+                                triggerIntegrationTests(buildManifestUrl, 'windows', 'zip')
+                            }
                         }
                     }
                     post {
@@ -854,10 +826,6 @@ pipeline {
                         }
                         always {
                             script {
-                                lib.jenkins.Messages.new(this).add(
-                                    "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                )
                                 if (params.CONTINUE_ON_ERROR) {
                                     markStageUnstableIfPluginsFailedToBuild()
                                 }
@@ -921,10 +889,9 @@ pipeline {
                         componentCategory: "OpenSearch"
                     )
                     if (params.UPDATE_GITHUB_ISSUE) {
-                        UpdateBuildFailureIssues(
-                            failureMessages: buildMessage(search: 'Error building'),
-                            passMessages: buildMessage(search: 'Successfully built'),
-                            inputManifestPath: "manifests/$INPUT_MANIFEST"
+                        updateBuildFailureIssues(
+                            inputManifestPath: "manifests/$INPUT_MANIFEST",
+                            distributionBuildNumber: "${BUILD_NUMBER}"
                         )
                     }
                     postCleanup()
@@ -935,32 +902,6 @@ pipeline {
         success {
             node(AGENT_LINUX_X64) {
                 script {
-                    List<String> stages = []
-                    if (params.BUILD_PLATFORM.contains('linux')) {
-                        stages = [
-                            'build-and-test-linux-x64-tar',
-                            'assemble-archive-and-test-linux-x64-rpm',
-                            'assemble-archive-and-test-linux-x64-deb',
-                            'build-and-test-linux-arm64-tar',
-                            'assemble-archive-and-test-linux-arm64-rpm',
-                            'assemble-archive-and-test-linux-arm64-deb',
-                        ]
-                    }
-                    if (params.BUILD_PLATFORM.contains('windows')) {
-                        stages.add('build-and-test-windows-x64-zip')
-                    }
-
-                    if (params.PUBLISH_NOTIFICATION) {
-                        def stashed = lib.jenkins.Messages.new(this).get(stages)
-
-                        publishNotification(
-                            icon: ':white_check_mark:',
-                            message: 'Successful Build',
-                            extra: stashed,
-                            credentialsId: 'jenkins-build-notice-webhook',
-                            manifest: "${INPUT_MANIFEST}"
-                        )
-                    }
                     postCleanup()
                 }
             }
@@ -969,14 +910,6 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
-                    if (params.PUBLISH_NOTIFICATION) {
-                        publishNotification(
-                            icon: ':warning:',
-                            message: buildMessage(search: 'Error building'),
-                            credentialsId: 'jenkins-build-notice-webhook',
-                            manifest: "${INPUT_MANIFEST}"
-                        )
-                    }
                     postCleanup()
                 }
             }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.0000" tests="3" failures="3">
+  <testsuite name="Root Suite" timestamp="2024-09-05T20:52:02" tests="0" file="cypress/integration/plugins/index-management-dashboards-plugin/rollover.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Rollover" timestamp="2024-09-05T20:52:02" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="rollover" timestamp="2024-09-05T20:52:02" tests="3" time="0.0000" failures="3">
+    <testcase name="Rollover rollover rollover data stream successfully" time="0.0000" classname="rollover data stream successfully">
+      <failure message="Timed out retrying after 60000ms: Expected to find content: &apos;Configure source&apos; but never did." type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 60000ms: Expected to find content: 'Configure source' but never did.
+    at Context.eval (http://localhost:5601/__cypress/tests?p=cypress/integration/plugins/index-management-dashboards-plugin/rollover.js:205:10)]]></failure>
+    </testcase>
+    <testcase name="Rollover rollover rollover valid alias successfully" time="0.0000" classname="rollover valid alias successfully">
+      <failure message="Timed out retrying after 60000ms: Expected to find content: &apos;Configure new rollover index&apos; but never did." type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 60000ms: Expected to find content: 'Configure new rollover index' but never did.
+    at Context.eval (http://localhost:5601/__cypress/tests?p=cypress/integration/plugins/index-management-dashboards-plugin/rollover.js:217:10)]]></failure>
+    </testcase>
+    <testcase name="Rollover rollover rollover invalid alias successfully" time="0.0000" classname="rollover invalid alias successfully">
+      <failure message="Timed out retrying after 60000ms: Expected to find content: &apos;Configure new rollover index&apos; but never did." type="AssertionError"><![CDATA[AssertionError: Timed out retrying after 60000ms: Expected to find content: 'Configure new rollover index' but never did.
+    at Context.eval (http://localhost:5601/__cypress/tests?p=cypress/integration/plugins/index-management-dashboards-plugin/rollover.js:229:10)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

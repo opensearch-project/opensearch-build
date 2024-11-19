@@ -244,3 +244,56 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
 
         assert(mock_test_result_data.return_value in integ_test_suite.result_data)
         self.assertEqual(integ_test_suite.additional_cluster_config, None)
+
+    @patch("os.path.exists", return_value=True)
+    @patch("os.walk", return_value=[(os.path.join("/some", "path"), ["build"], ["integTest", "integrationTest", "integTestRemote"])])
+    def test_test_artifact_files_default(self, *mocks: Any) -> None:
+        dependency_installer = MagicMock()
+        test_config, component = self.__get_test_config_and_bundle_component("job-scheduler")
+        integ_test_suite = IntegTestSuiteOpenSearch(
+            dependency_installer,
+            component,
+            test_config,
+            self.bundle_manifest,
+            self.build_manifest,
+            self.work_dir,
+            MagicMock()
+        )
+        integ_test_suite.repo_work_dir = os.path.join("/some", "path")
+        expected_path = {
+            "opensearch-integ-test": os.path.join("/some", "path", "build", "reports", "tests", "integTest")
+        }
+        result = integ_test_suite.test_artifact_files
+        self.assertEqual(result, expected_path)
+
+    @patch("os.path.exists", return_value=False)
+    @patch("os.walk", return_value=[])
+    def test_test_artifact_files_no_default_path(self, *mocks: Any) -> None:
+        dependency_installer = MagicMock()
+        test_config, component = self.__get_test_config_and_bundle_component("job-scheduler")
+        integ_test_suite = IntegTestSuiteOpenSearch(
+            dependency_installer,
+            component,
+            test_config,
+            self.bundle_manifest,
+            self.build_manifest,
+            self.work_dir,
+            MagicMock()
+        )
+        integ_test_suite.repo_work_dir = os.path.join("/some", "path")
+        default_path = os.path.join(integ_test_suite.repo_work_dir, "build", "reports", "tests", "integTest")
+        expected_path = {"opensearch-integ-test": default_path}
+        result = integ_test_suite.test_artifact_files
+        self.assertEqual(result, expected_path)
+
+    def test_test_report_dirs(self, *mocks: Any) -> None:
+        integ_test_suite = IntegTestSuiteOpenSearch(
+            MagicMock(),
+            MagicMock(),
+            MagicMock(),
+            self.bundle_manifest,
+            self.build_manifest,
+            self.work_dir,
+            MagicMock()
+        )
+        self.assertEqual(integ_test_suite.additional_test_report_dirs, ["integTest", "integrationTest", "integTestRemote"])
