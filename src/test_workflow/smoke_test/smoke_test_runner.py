@@ -72,7 +72,10 @@ class SmokeTestRunner(abc.ABC):
                 else:
                     time.sleep(10)
             try:
-                results_data = self.start_test(work_dir.path)
+                if test_cluster.__check_cluster_ready__():
+                    results_data = self.start_test(work_dir.path)
+                else:
+                    logging.info("Cluster is not ready after 10 attempts.")
             finally:
                 logging.info("Terminating and uninstalling the cluster.")
                 test_cluster.__uninstall__()

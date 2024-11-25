@@ -72,7 +72,7 @@ class TestSmokeTestRunnerMethods(unittest.TestCase):
         mock_cluster_instance = mock_cluster.return_value
         mock_cluster_instance.__start_cluster__ = MagicMock()
         mock_cluster_status = MagicMock()
-        mock_cluster_status.side_effect = [False, True]  # Fails first check, passes second
+        mock_cluster_status.side_effect = [False, True, True]  # Fails first check, passes second
         mock_cluster_instance.__check_cluster_ready__ = mock_cluster_status
         mock_cluster_instance.__uninstall__ = MagicMock()
 
@@ -81,7 +81,7 @@ class TestSmokeTestRunnerMethods(unittest.TestCase):
 
         # Assert cluster start, ready check, and uninstall were called
         mock_cluster_instance.__start_cluster__.assert_called_once_with("/mock/temp/path")
-        self.assertEqual(mock_cluster_instance.__check_cluster_ready__.call_count, 2)  # Attempted twice
+        self.assertEqual(mock_cluster_instance.__check_cluster_ready__.call_count, 3)  # Attempted twice
         mock_cluster_instance.__uninstall__.assert_called_once()
 
         # Assert result returned from start_test
