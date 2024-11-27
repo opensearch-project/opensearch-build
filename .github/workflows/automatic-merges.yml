@@ -33,6 +33,7 @@ jobs:
           allowed-authors: |
             dependabot
             opensearch-trigger-bot
+            opensearch-ci-bot
             peterzhuamazon
             gaiksaya
             rishabh6788
