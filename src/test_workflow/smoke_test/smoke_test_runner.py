@@ -65,14 +65,15 @@ class SmokeTestRunner(abc.ABC):
             logging.info("Initiating smoke tests.")
             test_cluster = SmokeTestClusterOpenSearch(self.args, os.path.join(work_dir.path), self.test_recorder)
             test_cluster.__start_cluster__(os.path.join(work_dir.path))
+            is_cluster_ready = False
             for i in range(10):
                 logging.info(f"Attempt {i} of 10 to check cluster.")
                 if test_cluster.__check_cluster_ready__():
+                    is_cluster_ready = True
                     break
-                else:
-                    time.sleep(10)
+                time.sleep(10)
             try:
-                if test_cluster.__check_cluster_ready__():
+                if is_cluster_ready:
                     results_data = self.start_test(work_dir.path)
                 else:
                     logging.info("Cluster is not ready after 10 attempts.")
