@@ -23,6 +23,7 @@ class TestArgs:
     logging_level: int
     test_manifest_path: str
     paths: dict
+    ci_group: str
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
@@ -36,6 +37,7 @@ class TestArgs:
         parser.add_argument(
             "-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level"
         )
+        parser.add_argument("--ci-group", type=str, default=None, help="ci group number.")
         args = parser.parse_args()
         self.test_run_id = args.test_run_id or uuid.uuid4().hex
         self.components = args.components
@@ -44,6 +46,7 @@ class TestArgs:
         self.test_manifest_path = args.test_manifest_path
         self.paths = args.paths
         self.base_path = args.base_path
+        self.ci_group = args.ci_group
 
 
 TestArgs.__test__ = False  # type:ignore

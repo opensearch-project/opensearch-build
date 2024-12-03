@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@7.3.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@8.0.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -230,73 +230,94 @@ pipeline {
                         // Must use local variable due to groovy for loop and closure scope
                         // Or the stage will be fixed to the last item in return when new stages are triggered here
                         // https://web.archive.org/web/20181121065904/http://blog.freeside.co/2013/03/29/groovy-gotcha-for-loops-and-closure-scope/
-                        def local_component = component.trim()
-                        def local_component_index = componentList.indexOf(local_component)
-                        def wait_seconds = local_component_index * 20
 
-                        echo "Adding Component: ${local_component}"
-                        componentTests["Run Integtest ${local_component}"] = {
-                            // Using scripted pipelines to trigger dynamic parallel stages
-                            timeout(time: 6, unit: 'HOURS') {
+                        // Changes to run OpenSearch-Dashboards ci-groups in parallel.
+                        // There are total 9 ci-groups
+                        if (component == "OpenSearch-Dashboards") {
+                          for (int i = 1; i <= 9; i++) {
+                            def local_component = 'OpenSearch-Dashboards'
+                            def wait_seconds = i * 20
+                            def ciNum = i.toString()
+
+                            echo "Adding Component: ${local_component}-ci-group-${ciNum}"
+
+                            componentTests["Run Integtest ${local_component}-ci-group-${ciNum}"] = {
+                              timeout(time: 3, unit: 'HOURS') {
                                 node(AGENT_LABEL) {
-                                    docker.withRegistry('https://public.ecr.aws/') {
-                                        docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
-                                            try {
-                                                stage("${local_component}") {
-                                                    // Jenkins tend to not clean up workspace at times even though ws clean is called
-                                                    // Since docker is mounted on the agent node directly so it can communicated with the agent
-                                                    // This sometimes causes the workspace to retain last run test-results and ends with build failures
-                                                    // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
-                                                    sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
-                                                    unstash "integtest-opensearch-dashboards-$BUILD_NUMBER"
-                                                    if (env.platform == 'windows') {
-                                                        echo "On Windows Platform, unstash repository and download the artifacts"
-                                                        echo "Downloading from S3: ${artifactPathOpenSearch}"
-                                                        downloadFromS3(
-                                                            assumedRoleName: 'opensearch-bundle',
-                                                            roleAccountNumberCred: 'jenkins-aws-account-public',
-                                                            downloadPath: "${artifactPathOpenSearch}/",
-                                                            bucketName: "${ARTIFACT_BUCKET_NAME}",
-                                                            localPath: "${WORKSPACE}/artifacts",
-                                                            force: true
-                                                          )
-                                                        sh("cp -a $WORKSPACE/artifacts/${artifactPathOpenSearch} $WORKSPACE")
+                                  docker.withRegistry('https://public.ecr.aws/') {
+                                    docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                      try {
+                                        stage("${local_component}-ci-group-${ciNum}") {
+                                          sh("echo ${local_component}-ci-group-${ciNum} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
+                                          runIntegTestScriptForOSD(
+                                            localComponent: "${local_component}",
+                                            switchUserNonRoot: "${switch_user_non_root}",
+                                            ciGroup: "${ciNum}",
+                                            artifactPathOpenSearch: "${artifactPathOpenSearch}",
+                                            artifactPath: "${artifactPath}",
+                                            artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
+                                            distribution: "${distribution}",
+                                            buildManifest: "${BUILD_MANIFEST}",
+                                            testManifest: "${TEST_MANIFEST}"
+                                          )
+                                        }
+                                      } catch (e) {
+                                        throw new Exception("Error running integtest for component ${local_component}-ci-group-${ciNum}", e)
+                                      } finally {
+                                        echo "Completed running integtest for component ${local_component}-ci-group-${ciNum}"
+                                        uploadTestResults(
+                                          buildManifestFileName: BUILD_MANIFEST,
+                                          jobName: JOB_NAME
+                                        )
+                                        postCleanup()
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        } else {
+                            def local_component = component.trim()
+                            def local_component_index = componentList.indexOf(local_component)
+                            def wait_seconds = local_component_index * 20
 
-                                                        echo "Downloading from S3: ${artifactPath}"
-                                                        downloadFromS3(
-                                                            assumedRoleName: 'opensearch-bundle',
-                                                            roleAccountNumberCred: 'jenkins-aws-account-public',
-                                                            downloadPath: "${artifactPath}/",
-                                                            bucketName: "${ARTIFACT_BUCKET_NAME}",
-                                                            localPath: "${WORKSPACE}/artifacts",
-                                                            force: true
-                                                          )
-                                                        sh("cp -a $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
-                                                        sh("rm -rf $WORKSPACE/artifacts")
+                            echo "Adding Component: ${local_component}"
+                            componentTests["Run Integtest ${local_component}"] = {
+                                // Using scripted pipelines to trigger dynamic parallel stages
+                                timeout(time: 6, unit: 'HOURS') {
+                                    node(AGENT_LABEL) {
+                                        docker.withRegistry('https://public.ecr.aws/') {
+                                            docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                                try {
+                                                    stage("${local_component}") {
+                                                        // Jenkins tend to not clean up workspace at times even though ws clean is called
+                                                        // Since docker is mounted on the agent node directly so it can communicated with the agent
+                                                        // This sometimes causes the workspace to retain last run test-results and ends with build failures
+                                                        // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
+                                                        sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
+                                                        runIntegTestScriptForOSD(
+                                                            localComponent: local_component,
+                                                            switchUserNonRoot: switch_user_non_root,
+                                                            ciGroup: "",
+                                                            artifactPathOpenSearch: "${artifactPathOpenSearch}",
+                                                            artifactPath: "${artifactPath}",
+                                                            artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
+                                                            distribution: "${distribution}",
+                                                            buildManifest: "${BUILD_MANIFEST}",
+                                                            testManifest: "${TEST_MANIFEST}"
+                                                        )
                                                     }
-                                                    else {
-                                                        echo "Not on Windows, unstash repository+artifacts"
-                                                    }
-
-                                                    sh("rm -rf test-results")
-                                                    runIntegTestScript(
-                                                        jobName: "$BUILD_JOB_NAME",
-                                                        componentName: "${local_component}",
-                                                        buildManifest: "$BUILD_MANIFEST",
-                                                        testManifest: "manifests/${TEST_MANIFEST}",
-                                                        localPath: "${WORKSPACE}/${distribution}",
-                                                        switchUserNonRoot: "${switch_user_non_root}"
+                                                } catch (e) {
+                                                    throw new Exception("Error running integtest for component ${local_component}", e)
+                                                } finally {
+                                                    echo "Completed running integtest for component ${local_component}"
+                                                    uploadTestResults(
+                                                        buildManifestFileName: BUILD_MANIFEST,
+                                                        jobName: JOB_NAME
                                                     )
+                                                    postCleanup()
                                                 }
-                                            } catch (e) {
-                                                throw new Exception("Error running integtest for component ${local_component}", e)
-                                            } finally {
-                                                echo "Completed running integtest for component ${local_component}"
-                                                uploadTestResults(
-                                                    buildManifestFileName: BUILD_MANIFEST,
-                                                    jobName: JOB_NAME
-                                                )
-                                                postCleanup()
                                             }
                                         }
                                     }

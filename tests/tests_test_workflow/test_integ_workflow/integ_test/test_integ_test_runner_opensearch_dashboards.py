@@ -25,6 +25,7 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
         self.args.paths = {"opensearch-dashboards": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
+        self.args.ci_group = None
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()
@@ -100,6 +101,7 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
         self.args.paths = {"opensearch-dashboards": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
+        self.args.ci_group = '1'
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = {'test-configs': ['with-security'], 'ci-groups': 3}
@@ -149,8 +151,6 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
         results = runner.run()
 
         self.assertEqual(results["sql-ci-group-1"], mock_test_results)
-        self.assertEqual(results["sql-ci-group-2"], mock_test_results)
-        self.assertEqual(results["sql-ci-group-3"], mock_test_results)
 
         mock_suite_object.result_data.__iter__.assert_called()
         mock_test_recorder_object.test_results_logs.generate_component_yml.assert_called()
@@ -167,4 +167,4 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
             mock_path,
             mock_test_recorder_object
         )
-        mock_suite.assert_has_calls([expected_call, expected_call, expected_call], any_order=True)
+        mock_suite.assert_has_calls([expected_call])
