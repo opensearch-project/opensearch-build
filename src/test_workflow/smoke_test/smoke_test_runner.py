@@ -38,22 +38,27 @@ class SmokeTestRunner(abc.ABC):
         os.makedirs(self.tests_dir, exist_ok=True)
         self.test_recorder = TestRecorder(self.args.test_run_id, "smoke-test", self.tests_dir, args.base_path)
         self.save_log = self.test_recorder.test_results_logs
+        self.version = ""
 
     def start_test(self, work_dir: Path) -> Any:
         pass
 
-    def extract_paths_from_yaml(self, component: str) -> Any:
-        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_tests_spec", f"{component}.yml")
-        if os.path.exists(file_path):
-            logging.info(f"Component spec for {component} is found.")
-            with open(file_path, 'r') as file:
-                data = yaml.safe_load(file)  # Load the YAML content
-        # Extract paths
-            paths = data.get('paths', {})
-            return paths
-        else:
-            logging.error("No spec found.")
-            sys.exit(1)
+    def extract_paths_from_yaml(self, component: str, version: str) -> Any:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        paths = [
+            os.path.join(base_path, "smoke_tests_spec", f"{version.split('.')[0]}.x", f"{component}.yml"),
+            os.path.join(base_path, "smoke_tests_spec", "default", f"{component}.yml")
+        ]
+        for file_path in paths:
+            if os.path.exists(file_path):
+                logging.info(f"Component spec for {component} with path {file_path} is found.")
+                with open(file_path, 'r') as file:
+                    data = yaml.safe_load(file)  # Load the YAML content
+                # Extract paths
+                paths = data.get('paths', {})
+                return paths
+        logging.error("No spec found.")
+        sys.exit(1)
 
     def convert_parameter_json(self, data: list) -> str:
         return "\n".join(json.dumps(item) for item in data) + "\n" if data else ""
@@ -64,6 +69,7 @@ class SmokeTestRunner(abc.ABC):
 
             logging.info("Initiating smoke tests.")
             test_cluster = SmokeTestClusterOpenSearch(self.args, os.path.join(work_dir.path), self.test_recorder)
+            self.version = test_cluster.cluster_version()
             test_cluster.__start_cluster__(os.path.join(work_dir.path))
             is_cluster_ready = False
             for i in range(10):

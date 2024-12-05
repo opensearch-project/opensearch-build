@@ -45,11 +45,11 @@ class TestSmokeTestRunnerMethods(unittest.TestCase):
         component_name = "test_component"
 
         # Run extract_paths_from_yaml and check output
-        result = runner.extract_paths_from_yaml(component_name)
+        result = runner.extract_paths_from_yaml(component_name, "2.19.0")
         expected_output = {"/_cat/plugins": {"get": {"parameters": []}}}  # type: Any
 
         self.assertEqual(result, expected_output)
-        mock_open_file.assert_called_once_with(os.path.join("/dummy-path", "smoke_tests_spec", f"{component_name}.yml"), 'r')
+        mock_open_file.assert_called_once_with(os.path.join("/dummy-path", "smoke_tests_spec", "2.x", f"{component_name}.yml"), 'r')
 
     @patch("test_workflow.smoke_test.smoke_test_runner.TestRecorder")
     def test_convert_parameter_json(self, mock_recorder: Mock) -> None:

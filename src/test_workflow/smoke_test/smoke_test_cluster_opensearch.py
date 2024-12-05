@@ -47,6 +47,9 @@ class SmokeTestClusterOpenSearch():
         self.dist = self.bundle_manifest.build.distribution
         self.distribution = Distributions.get_distribution(self.product, self.dist, self.version, work_dir)
 
+    def cluster_version(self) -> str:
+        return self.version
+
     def download_or_copy_bundle(self, work_dir: str) -> str:
         extension = "tar.gz" if self.dist == "tar" else self.dist
         artifact_name = f"{self.product}-{self.version}-{self.platform}-{self.arch}.{extension}"
@@ -87,11 +90,11 @@ class SmokeTestClusterOpenSearch():
         logging.info(f"Pinging {url}")
         try:
             request = requests.get(url, verify=False, auth=("admin", "myStrongPassword123!"))
-            logging.info(f"Request is {request.text}")
+            logging.info(f"Cluster response is {request.text}")
             return 200 <= request.status_code < 300
         except requests.RequestException as e:
             logging.info(f"Request is {request.text}")
-            print(f"Request failed: {e}")
+            print(f"Cluster check fails: {e}")
             return False
 
     def __uninstall__(self) -> None:
