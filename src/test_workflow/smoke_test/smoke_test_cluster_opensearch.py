@@ -68,7 +68,7 @@ class SmokeTestClusterOpenSearch():
             # Only copy if it's a file
             if os.path.isfile(src_path):
                 shutil.copy2(src_path, dest_path)
-                print(f"Copied {src_path} to {dest_path}")
+                logging.info(f"Copied {src_path} to {dest_path}")
         return artifact_name
 
     # Reason we don't re-use test-suite from integ-test is that it's too specific and not generic and lightweight.
@@ -94,7 +94,7 @@ class SmokeTestClusterOpenSearch():
             return 200 <= request.status_code < 300
         except requests.RequestException as e:
             logging.info(f"Request is {request.text}")
-            print(f"Cluster check fails: {e}")
+            logging.info(f"Cluster check fails: {e}")
             return False
 
     def __uninstall__(self) -> None:
