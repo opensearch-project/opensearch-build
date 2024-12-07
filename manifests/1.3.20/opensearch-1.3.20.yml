@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 6c40db04510f4d8f47f77e23605c2dcfb085bc4b
+    ref: 9e04292bd003dc77f94751d0949d902fbae65e40
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -34,7 +34,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 3d7b2db63913b131630f6309bbe0842df998304c
+    ref: 4b61633630ec2ed8e86c81c64e8a249ede8cbb09
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -43,7 +43,7 @@ components:
       - windows
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: af5c0966d8c96877b36c19a2208b29d8ae8a6a6d
+    ref: 46338a4d116ea823607ac5143a11ed27eefe9d3b
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
@@ -62,7 +62,7 @@ components:
       - linux
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: ff82f714e706fb4d511d41931664cd51b08ac877
+    ref: fa2cd3cf26f2696377ac3ae5e94844191d3d0a12
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
@@ -73,7 +73,7 @@ components:
       - common-utils
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: 06f01f1d9284b1898a020836caa7dfb25e91bf75
+    ref: 8f4ff5b72ed9d3816f40aa60eeb8656a198e083b
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -139,7 +139,7 @@ components:
       - windows
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 9aa4f082769b40afade53fad288175984a2b3bf2
+    ref: 6116c33d66b06ecdac8d170a318686d42592b1cc
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: plugin
