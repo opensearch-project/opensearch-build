@@ -9,7 +9,7 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 10c0baeaeb151bab1c4e46bc56a415f9a6f6bead
+    ref: cde43100e4a6b955b420c3de55f0b57844631537
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '1.3'
@@ -24,16 +24,16 @@ components:
     ref: a89953d5b96753d5bad4ba51cc48230fdaf51836
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 751af63ae9684b9a02461a4251e493c4a224e0ca
+    ref: 41e7b755dc94f009f649311f038915bae853d2b7
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin
     ref: 6e5944d6ebca021d6325db86ae37d9d179d9cf89
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 030351a1dc53dd8ecc4dd75ae5660a4f1a82b6d3
+    ref: 8435372f106aed24d28fd68efd385bef794597d2
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: 80b308c48f10d4d027e412ea98cc321ca4c03b0a
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: 16680f56dedaa0918566249495d50d32023fd342
+    ref: e11eddb32387e0e47678e4d2869f4dd3555e0634
