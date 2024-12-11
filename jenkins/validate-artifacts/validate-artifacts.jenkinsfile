@@ -205,7 +205,7 @@ pipeline {
                             }
                             validateDistributions["${local_distribution}-${local_architecture}"] = {
                                 // Using scripted pipelines to trigger dynamic parallel stages
-                                timeout(time: 30) {
+                                timeout(time: 1, unit: 'HOURS') {
                                     if ("${local_distribution}" == "docker"){
                                         node(agent_nodes_docker["$local_architecture"]) {
                                             try {
