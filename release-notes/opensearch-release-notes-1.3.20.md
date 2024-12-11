@@ -68,7 +68,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Remove dco and update artifact action to v4 ([#1735](https://github.com/opensearch-project/alerting/pull/1735))
 
 
-### Opensearch Alerting Dashboards Plugin
+### Opensearch Dashboards Alerting
 
 
 * [CVE-2024-4068] Fix. ([#1061](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1061))
