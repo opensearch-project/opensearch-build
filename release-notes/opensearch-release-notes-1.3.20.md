@@ -90,7 +90,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * CVE-2024-7254 & CVE-2024-47554 fix ([#3251](https://github.com/opensearch-project/ml-commons/pull/3251))
 
 
-### Opensearch Query Workbench
+### Opensearch Dashboards Query Workbench
 
 
 * Fix CVE-2024-4067 issue ([#423](https://github.com/opensearch-project/dashboards-query-workbench/pull/423))
