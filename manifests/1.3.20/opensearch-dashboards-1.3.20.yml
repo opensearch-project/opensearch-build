@@ -24,16 +24,16 @@ components:
     ref: a89953d5b96753d5bad4ba51cc48230fdaf51836
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 41e7b755dc94f009f649311f038915bae853d2b7
+    ref: 289a85c28a4937fc19d8a2f35b047c3d43305678
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin
-    ref: 6e5944d6ebca021d6325db86ae37d9d179d9cf89
+    ref: bd71de5a4a452b2bd510e26abe47317a7e3be98a
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
     ref: 8435372f106aed24d28fd68efd385bef794597d2
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: 80b308c48f10d4d027e412ea98cc321ca4c03b0a
+    ref: 23e7872126a023d86bbfd6bb5527086dd820a1be
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: e11eddb32387e0e47678e4d2869f4dd3555e0634

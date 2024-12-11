@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 9e04292bd003dc77f94751d0949d902fbae65e40
+    ref: 31afd17a1b5a22338307e1f4a78092887c1490e3
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -54,7 +54,7 @@ components:
       - common-utils
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: c1c079f6a42ddf4534ebeb757707d4cc7df4b762
+    ref: b23f0c17cc8380af5522a1081ff23ad90cbda3dd
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
