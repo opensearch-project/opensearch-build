@@ -52,7 +52,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Added 1.3.20 release notes. ([#1742](https://github.com/opensearch-project/alerting/pull/1742))
 
 
-### Opensearch Alerting Dashboards Plugin
+### Opensearch Dashboards Alerting
 
 
 * [1.3.20] Added release notes. ([#1171](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1171))
