@@ -11,7 +11,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## ENHANCEMENTS
 
 
-### Opensearch Anomaly Detection Dashboards
+### Opensearch DashboardsAnomaly Detection
 
 
 * Dependency updates: axios, follow-redirects, micromatch ([#951](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/951))
