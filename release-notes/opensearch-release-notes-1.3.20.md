@@ -119,15 +119,5 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Backport CVE fixes to 1.3 branch ([#2152](https://github.com/opensearch-project/security-dashboards-plugin/pull/2152))
 
 
-## NON-COMPLIANT
-
-
-## VERSION 1.3.20.0 RELEASE NOTES
-
-
-### Opensearch Query Workbench
-
-
-* Compatible with OpenSearch and OpenSearch Dashboards Version 1.3.20
 
 
