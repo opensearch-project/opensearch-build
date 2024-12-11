@@ -113,7 +113,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Bump spring-framework dependency to 2.9.13 ([#4947](https://github.com/opensearch-project/security/pull/4947))
 
 
-### Opensearch Security Dashboards Plugin
+### Opensearch Dashboards Security
 
 
 * Backport CVE fixes to 1.3 branch ([#2152](https://github.com/opensearch-project/security-dashboards-plugin/pull/2152))
