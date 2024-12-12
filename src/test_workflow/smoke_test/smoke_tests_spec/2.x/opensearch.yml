@@ -1,0 +1,30 @@
+# yamllint disable
+---
+info:
+  title: OpenSearch Core smoke tests
+  version: 2.x
+name: opensearch
+paths:
+  /:
+    GET:
+      parameters: []
+  /_bulk:
+    POST:
+      header: {
+        "Content-Type": "application/x-ndjson"
+      }
+      parameters: [
+        { "delete": { "_index": "movies", "_id": "tt2229499" } },
+        { "index": { "_index": "movies", "_id": "tt1979320" } },
+        { "title": "Rush", "year": 2013 },
+        { "create": { "_index": "movies", "_id": "tt1392214" } },
+        { "title": "Prisoners", "year": 2013 },
+        { "update": { "_index": "movies", "_id": "tt0816711" } },
+        { "doc" : { "title": "World War Z" } }
+      ]
+  /_cat/indices:
+     GET:
+       parameters: []
+  /_cat/plugins:
+    GET:
+      parameters: []

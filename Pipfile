@@ -9,7 +9,7 @@ types-PyYAML = "~=6.0.1"
 # TODO: The 'requests' package stays on 2.28 until we deprecate CentOS7.
 #       As newer version requires openssl1.1.1 where CentOS7 only provides openssl1.1.0.
 #       https://github.com/opensearch-project/opensearch-build/issues/3554
-requests = "<=2.28.1"
+requests = "==2.31.0"
 types-requests = "~=2.25"
 pre-commit = "~=2.15.0"
 isort = "~=5.9"
@@ -44,6 +44,7 @@ types-urllib3 = "~=1.26.25.14"
 charset-normalizer = "~=2.1.1"
 beautifulsoup4 = "~=4.12.3"
 lxml = "~=5.3.0"
+openapi-core = "~=0.19.4"
 
 [dev-packages]
 
