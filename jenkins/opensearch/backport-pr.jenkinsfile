@@ -1,0 +1,65 @@
+pipeline{
+    agent any
+    environment{
+        GITHUB_TOKEN = credentials('github-token')
+        REPO_URL = 'https://github.com/opensearch-project/opensearch-build.git'
+        REPO_DIR = 'opensearch-build'
+    }
+    stages{
+        stage('Determine PR type'){
+           steps{
+               echo 'Determining if the PR is Stalled or Backport..'
+               script{
+                   def prType = determinePRType()
+                   if(prType == 'stalled'){
+                       echo 'Processing stalled PR..'
+                       processStalledPR()
+                   }
+                   else if(prType == 'backport'){
+                       echo 'Processing Backport PR...'
+                       processBackportPR()
+                   }
+                   else{
+                   echo 'PR does not match criteria. Exiting Pipeline.'
+                   }
+               }
+           }
+        }
+    }
+   post{
+       success{
+           echo 'Pipeline completed successfully'
+       }
+       failure{
+           echo 'Pipeline failed. Check logs for details'
+       }
+   }
+}
+
+def determinePRType(token, repoURL, prId){
+    def result = sh(script: """
+        curl -s -H "Authorization: Bearer ${token}" -H "Accept: application/vnd.github.v3+json" \
+        ${repoURL}/pulls/${prId} | jq '.labels | map(.name)'
+    """, returnStdout: true).trim()
+    if(result.contains('stalled')){
+        return 'stalled'
+    }else if (result.contains('backport')){
+        return 'backport'
+    }else{
+        return null
+    }
+}
+
+def processStalledPR(){
+    echo 'Rebasing stalled PR branch onto target branch...'
+    sh """
+    scripts/pr-management/StalledPRs.py --repo $REPO_REPO_URL --token $GITHUB_TOKEN
+    """
+}
+
+def processBackportPR(){
+     echo 'Resolving backport PR conflicts...'
+     sh """
+     scripts/pr-management/BackportPRs.py --repo $REPO_URL --token $GITHUB_TOKEN
+     """
+}
