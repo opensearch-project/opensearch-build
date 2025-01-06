@@ -33,6 +33,7 @@ Meetings are 45 minutes and structured as follows:
     1. [ansible-playbook](https://github.com/opensearch-project/ansible-playbook)
     1. [opensearch-cluster-cdk](https://github.com/opensearch-project/opensearch-cluster-cdk)
     1. [opensearch-devops](https://github.com/opensearch-project/opensearch-devops)
+    1. [automation-app](https://github.com/opensearch-project/automation-app)
 4. Member Requests: Opportunity for any meeting member to ask for consideration of an issue or pull request.
 5. Untriaged Items: Review any [issues](https://github.com/orgs/opensearch-project/projects/208/views/2) that might have had the 'untriaged' label removed but require additional triage discussion.
 6. Open Discussion: Allow for members of the meeting to surface any topics without issues filed or pull request created.
