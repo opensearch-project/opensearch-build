@@ -106,7 +106,6 @@ pipeline {
                     currentBuild.description = "$TEST_MANIFEST, $version, $architecture, $platform, $buildId, $distribution"
 
                     // Stash the current working directory files, aka opensearch-build repo
-                    // Unstash later in each triggered stage to run integTest
                     stash includes: '**', name: "smoketest-opensearch-$BUILD_NUMBER"
 
                     timeout(time: 1, unit: 'HOURS') {
