@@ -104,7 +104,7 @@ pipeline {
                                 try {
                                     stage("Smoke_tests") {
                                         checkout scm
-                                        sleep 20
+                                        sleep 10
                                         downloadBuildManifest(
                                             url: BUILD_MANIFEST_URL,
                                             path: BUILD_MANIFEST
