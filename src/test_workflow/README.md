@@ -2,6 +2,7 @@
   - [Test.sh Options](#testsh-options)
   - [Integration Tests](#integration-tests)
   - [Backwards Compatibility Tests](#backwards-compatibility-tests)
+  - [Smoke Tests](#smoke-tests)
   - [Performance Tests](#performance-tests)
     - [Identifying Regressions in Performance Tests](#identifying-regressions-in-performance-tests)
       - [Identifying Regressions in Nightly Performance Tests](#identifying-regressions-in-nightly-performance-tests)
@@ -15,6 +16,7 @@
     - [integTest job](#integtest-job)
     - [bwcTest job](#bwctest-job)
     - [perfTest job](#perftest-job)
+    - [smokeTest job](#smoketest-job)
 - [Manifest Files](#manifest-files)
 - [Dependency Management](#dependency-management)
 - [S3 Permission Model](#s3-permission-model)
@@ -28,15 +30,15 @@ Testing is run via `./test.sh`.
 
 The following options are available.
 
-| name                   | description                                                                                                           |
-|------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| test-type              | Run tests of a test suite. [integ-test, bwc-test, perf-test, benchmark-test execute-test, benchmark-test compare]     |
-| test-manifest-path     | Specify a test manifest path.                                                                                         |
-| --paths                | Location of manifest(s).                                                                                              |
-| --test-run-id          | Unique identifier for a test run.                                                                                     |
-| --component [name ...] | Test a subset of specific components.                                                                                 |
-| --keep                 | Do not delete the temporary working directory on both success or error.                                               |
-| -v, --verbose          | Show more verbose output.                                                                                             |
+| name                   | description                                                                                                                   |
+|------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| test-type              | Run tests of a test suite. [integ-test, bwc-test, smoke-test, perf-test, benchmark-test execute-test, benchmark-test compare] |
+| test-manifest-path     | Specify a test manifest path.                                                                                                 |
+| --paths                | Location of manifest(s).                                                                                                      |
+| --test-run-id          | Unique identifier for a test run.                                                                                             |
+| --component [name ...] | Test a subset of specific components.                                                                                         |
+| --keep                 | Do not delete the temporary working directory on both success or error.                                                       |
+| -v, --verbose          | Show more verbose output.                                                                                                     |
 
 ### Integration Tests
 
@@ -121,6 +123,25 @@ This feature for BWC testing is supported for distribution versions starting `v1
 On CI level for plugins, security certificates need to be manually imported when spinning up the test cluster as security plugin is included in the distribution bundle. When upgrading the version within the test cluster, `nextNodeToNextVersion` is used for a single node upgrade and `goToNextVersion` is for a full restart upgrade.
 
 See [anomaly-detection#766](https://github.com/opensearch-project/anomaly-detection/pull/766) or [observability#1366](https://github.com/opensearch-project/observability/pull/1366) for more information.
+
+### Smoke Tests
+Run Smoke tests invoking `run_smoke_test.py` in each component from a distribution manifest.
+
+Smoke tests 
+Usage:
+```aiignore
+./test.sh smoke-test <test-manifest-path> <target>
+```
+
+For example, building and assembling the artifacts locally and run smoke tests:
+```aiignore
+./test.sh smoke-test  manifests/2.19.0/opensearch-2.19.0-test.yml --paths opensearch=/workspace/opensearch-build/tar
+```
+
+To run smoke tests against existing build from CI:
+```aiignore
+./test.sh smoke-test  manifests/2.19.0/opensearch-2.19.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.0/10545/linux/x64/tar/
+```
 
 ### Performance Tests
 
