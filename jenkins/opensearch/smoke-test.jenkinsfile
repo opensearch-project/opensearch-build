@@ -96,39 +96,36 @@ pipeline {
             agent { label AGENT_LABEL }
             steps {
                 script {
-                    downloadBuildManifest(
-                        url: BUILD_MANIFEST_URL,
-                        path: BUILD_MANIFEST
-                    )
-
-                    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
-                    def testManifestObj = lib.jenkins.TestManifest.new(readYaml(file: "manifests/${TEST_MANIFEST}"))
                     currentBuild.description = "$TEST_MANIFEST, $version, $architecture, $platform, $buildId, $distribution"
 
-                    // Stash the current working directory files, aka opensearch-build repo
-                    stash includes: '**', name: "smoketest-opensearch-$BUILD_NUMBER"
-
                     timeout(time: 1, unit: 'HOURS') {
-                        node(AGENT_LABEL) {
-                            docker.withRegistry('https://public.ecr.aws/') {
-                                docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
-                                    try {
-                                        stage("Smoke_tests") {
-                                            unstash "smoketest-opensearch-$BUILD_NUMBER"
-                                            sh('rm -rf test-results')
-                                            runSmokeTestScript(
-                                                jobName: "$BUILD_JOB_NAME",
-                                                buildManifest: "$BUILD_MANIFEST",
-                                                testManifest: "manifests/${TEST_MANIFEST}",
-                                                buildId: "${buildId}"
-                                            )
-                                        }
-                                    } catch (e) {
-                                        throw new Exception("Error running Smoke test", e)
-                                    } finally {
-                                        echo "Completed running smoke tests."
-                                        postCleanup()
+                        docker.withRegistry('https://public.ecr.aws/') {
+                            docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                try {
+                                    stage("Smoke_tests") {
+                                        checkout scm
+                                        sleep 20
+                                        downloadBuildManifest(
+                                            url: BUILD_MANIFEST_URL,
+                                            path: BUILD_MANIFEST
+                                        )
+
+                                        def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
+                                        def testManifestObj = lib.jenkins.TestManifest.new(readYaml(file: "manifests/${TEST_MANIFEST}"))
+
+                                        sh('rm -rf test-results')
+                                        runSmokeTestScript(
+                                            jobName: "$BUILD_JOB_NAME",
+                                            buildManifest: "$BUILD_MANIFEST",
+                                            testManifest: "manifests/${TEST_MANIFEST}",
+                                            buildId: "${buildId}"
+                                        )
                                     }
+                                } catch (e) {
+                                    throw new Exception("Error running Smoke test", e)
+                                } finally {
+                                    echo "Completed running smoke tests."
+                                    postCleanup()
                                 }
                             }
                         }

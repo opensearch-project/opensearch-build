@@ -36,7 +36,7 @@ class TestSmokeTest extends BuildPipelineTest {
         def jobName = "dummy_job"
         def testManifest = "tests/jenkins/data/opensearch-2.19.0-test.yml"
         def buildManifest = "tests/jenkins/data/opensearch-2.19.0-build.yml"
-        def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.0/10545/linux/x64/tar/dist/opensearch/opensearch-2.19.0-linux-x64.tar.gz"
+        def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.0/10545/linux/x64/tar/builds/opensearch/manifest.yml"
         def agentLabel = "Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host"
 
         binding.setVariable('env', ['BUILD_NUMBER': '234', 'PUBLIC_ARTIFACT_URL': 'DUMMY_PUBLIC_ARTIFACT_URL', 'JOB_NAME': 'dummy_job', 'DOCKER_AGENT':[image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']])
