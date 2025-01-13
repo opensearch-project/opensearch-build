@@ -244,3 +244,10 @@ components:
     platforms:
       - linux
       - windows
+  - name: query-insights
+    repository: https://github.com/opensearch-project/query-insights.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+
