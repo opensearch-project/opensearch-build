@@ -23,7 +23,7 @@ USER 0
 RUN yum clean all && \
     amazon-linux-extras install epel -y && \
     yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq pigz
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq pigz 
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
@@ -100,19 +100,28 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Upgrade gcc
-RUN yum install -y gcc10* && \
-    mv -v /usr/bin/gcc /usr/bin/gcc7-gcc && \
-    mv -v /usr/bin/g++ /usr/bin/gcc7-g++ && \
-    mv -v /usr/bin/gfortran /usr/bin/gcc7-gfortran && \
-    update-alternatives --install /usr/bin/gcc gcc $(which gcc10-gcc) 1 && \
-    update-alternatives --install /usr/bin/g++ g++ $(which gcc10-g++) 1 && \
-    update-alternatives --install /usr/bin/gfortran gfortran $(which gcc10-gfortran) 1
+RUN curl -SL https://mirrors.ocf.berkeley.edu/gnu/gcc/gcc-12.4.0/gcc-12.4.0.tar.gz -o gcc12.tgz && \
+    tar -xzf gcc12.tgz && cd gcc-12.4.0 && \
+    ./contrib/download_prerequisites && \
+    mkdir build && cd build && \
+    ../configure --enable-languages=all --prefix=/usr --disable-multilib --disable-bootstrap && \
+    make && make install && gcc --version && g++ --version && gfortran --version && \
+    cd  ../../ && rm -rf gcc12.tgz gcc-12.4.0
+
+# Upgrade binutils
+RUN yum install -y texinfo && curl -SLO https://sourceware.org/pub/binutils/snapshots/binutils-2.42.90.tar.xz && \
+    tar -xf binutils-2.42.90.tar.xz && cd binutils-2.42.90 && \
+    mkdir build && cd build && \
+    ../configure --prefix=/usr && \
+    make && make install && ld --version && \
+    cd ../../ && rm -rf binutils-2.42.90.tar.xz binutils-2.42.90
+
 ENV FC=gfortran
 ENV CXX=g++
 
 # Add k-NN Library dependencies
 RUN yum repolist && yum install lapack -y
-RUN git clone -b v0.3.27 --single-branch https://github.com/xianyi/OpenBLAS.git && \
+RUN git clone -b v0.3.27 --single-branch https://github.com/OpenMathLib/OpenBLAS.git && \
     cd OpenBLAS && \
     if [ "$(uname -m)" = "x86_64" ]; then \
         echo "Machine is x86_64. Adding DYNAMIC_ARCH=1 to openblas make command."; \
@@ -120,7 +129,8 @@ RUN git clone -b v0.3.27 --single-branch https://github.com/xianyi/OpenBLAS.git 
     else \
         make USE_OPENMP=1 FC=gfortran; \
     fi && \
-    make PREFIX=/usr/local install
+    make PREFIX=/usr/local install && \
+    cd ../ && rm -rf OpenBLAS
 ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
 RUN pip3 install cmake==3.26.4
 
@@ -144,6 +154,6 @@ USER $CONTAINER_USER
 WORKDIR $CONTAINER_USER_HOME
 
 # Install fpm for opensearch dashboards core
-RUN gem install dotenv -v 2.8.1 && gem install public_suffix -v 5.1.1 && gem install fpm -v 1.14.2
+RUN gem install dotenv -v 2.8.1 && gem install public_suffix -v 5.1.1 && gem install rchardet -v 1.8.0 && gem install fpm -v 1.14.2
 ENV PATH=$CONTAINER_USER_HOME/.gem/gems/fpm-1.14.2/bin:$PATH
 RUN fpm -v
