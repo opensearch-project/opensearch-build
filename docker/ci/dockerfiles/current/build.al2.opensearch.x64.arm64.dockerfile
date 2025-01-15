@@ -23,7 +23,7 @@ USER 0
 RUN yum clean all && \
     amazon-linux-extras install epel -y && \
     yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq pigz 
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq pigz
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
@@ -120,7 +120,7 @@ ENV FC=gfortran
 ENV CXX=g++
 
 # Add k-NN Library dependencies
-RUN yum repolist && yum install lapack -y
+RUN yum repolist && yum install lapack -y && yum clean all && rm -rf /var/cache/yum/*
 RUN git clone -b v0.3.27 --single-branch https://github.com/OpenMathLib/OpenBLAS.git && \
     cd OpenBLAS && \
     if [ "$(uname -m)" = "x86_64" ]; then \
