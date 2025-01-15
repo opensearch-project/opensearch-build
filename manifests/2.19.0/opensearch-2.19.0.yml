@@ -17,6 +17,12 @@ components:
     platforms:
       - linux
       - windows
+  - name: opensearch-remote-metadata-sdk
+    repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
     ref: 2.x
@@ -174,6 +180,7 @@ components:
       - windows
     depends_on:
       - common-utils
+      - opensearch-remote-metadata-sdk
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
     ref: 2.x

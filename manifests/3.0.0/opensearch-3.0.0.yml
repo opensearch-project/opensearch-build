@@ -23,6 +23,15 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
+  - name: opensearch-remote-metadata-sdk
+    repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:publish
+      - gradle:properties:version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
     ref: main
@@ -221,6 +230,7 @@ components:
       - windows
     depends_on:
       - common-utils
+      - opensearch-remote-metadata-sdk
   - name: opensearch-system-templates
     repository: https://github.com/opensearch-project/opensearch-system-templates.git
     ref: main

@@ -1,0 +1,154 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+lib = library(identifier: 'jenkins@8.1.1', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+def docker_images = [
+    'tar': 'opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1',
+    'rpm': 'opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1',
+    'deb': 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-systemd-base-integtest-v3',
+    'zip': 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1',
+]
+
+def docker_args = [
+    'tar': '-u 1000 --cpus 4 -m 16g',
+    'rpm': '--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --cpus 4 -m 16g',
+    'deb': '--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --cpus 4 -m 16g',
+    'zip': '-u ContainerAdministrator',
+]
+
+def agent_nodes = [
+    'linux_x64': 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host',
+    'linux_arm64': 'Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host',
+    'windows_x64': 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host',
+]
+
+pipeline {
+    options {
+        timeout(time: 2, unit: 'HOURS')
+    }
+    agent none
+    environment {
+        BUILD_MANIFEST = 'build-manifest.yml'
+        BUILD_JOB_NAME = 'distribution-build-opensearch'
+        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
+    }
+    parameters {
+        string(
+            name: 'TEST_MANIFEST',
+            description: 'Test manifest under the manifests folder, e.g. 2.19.0/opensearch-2.19.0-test.yml.',
+            trim: true
+        )
+        string(
+            name: 'BUILD_MANIFEST_URL',
+            description: 'The build manifest URL for OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.0/10545/linux/x64/tar/builds/opensearch/manifest.yml".',
+            trim: true
+        )
+    }
+    stages {
+        stage('verify-parameters') {
+            agent { label agent_nodes['linux_x64'] }
+            steps {
+                script {
+                    if (TEST_MANIFEST == '' || !fileExists("manifests/${TEST_MANIFEST}")) {
+                        currentBuild.result = 'ABORTED'
+                        error("Smoke Tests failed to start. Test manifest was not provided or not found in manifests/${TEST_MANIFEST}.")
+                    }
+
+                    if (BUILD_MANIFEST_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error('Smoke Tests failed to start. Build manifest url was not provided.')
+                    }
+                    downloadBuildManifest(
+                        url: BUILD_MANIFEST_URL,
+                        path: BUILD_MANIFEST
+                    )
+
+                    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
+                    env.architecture = buildManifestObj.getArtifactArchitecture()
+                    env.buildId = buildManifestObj.getArtifactBuildId()
+                    env.distribution = buildManifestObj.getDistribution()
+                    env.version = buildManifestObj.build.version
+                    env.platform = buildManifestObj.build.platform
+                    env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
+                    env.AGENT_LABEL = agent_nodes["${env.platform}_${architecture}"]
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+        stage('smoke-test') {
+            options {
+                timeout(time: 1, unit: 'HOURS')
+            }
+            agent {
+                docker {
+                    label AGENT_LABEL
+                    image docker_images[env.distribution]
+                    args docker_args[env.distribution]
+                    registryUrl 'https://public.ecr.aws/'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    currentBuild.description = "$TEST_MANIFEST, $version, $architecture, $platform, $buildId, $distribution"
+                    String switch_user_non_root = (distribution.equals('rpm') || distribution.equals('deb')) ? 'true' : 'false'
+                    echo "switch_user_non_root: ${switch_user_non_root}"
+
+                    try {
+                        checkout scm
+                        sleep 10
+                        downloadBuildManifest(
+                            url: BUILD_MANIFEST_URL,
+                            path: BUILD_MANIFEST
+                        )
+
+                        def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
+                        def testManifestObj = lib.jenkins.TestManifest.new(readYaml(file: "manifests/${TEST_MANIFEST}"))
+
+                        sh('rm -rf test-results')
+                        runSmokeTestScript(
+                            jobName: "$BUILD_JOB_NAME",
+                            buildManifest: "$BUILD_MANIFEST",
+                            testManifest: "manifests/${TEST_MANIFEST}",
+                            buildId: "${buildId}",
+                            switchUserNonRoot: "${switch_user_non_root}"
+                        )
+                    } catch (e) {
+                        throw new Exception("Error running Smoke test", e)
+                    } finally {
+                        echo "Completed running smoke tests."
+                        postCleanup()
+                    }
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+    }
+    post {
+        always {
+            node(AGENT_LABEL) {
+                script {
+                    postCleanup()
+                }
+            }
+        }
+    }
+}
