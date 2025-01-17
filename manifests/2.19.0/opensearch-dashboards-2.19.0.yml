@@ -60,4 +60,4 @@ components:
     ref: 2.x
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
-    ref: main # TODO: change this to 2.x when cut
+    ref: 2.x
