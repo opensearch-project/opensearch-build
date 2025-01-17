@@ -17,6 +17,12 @@ components:
     platforms:
       - linux
       - windows
+  - name: opensearch-learning-to-rank-base
+    repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
     ref: 2.x
