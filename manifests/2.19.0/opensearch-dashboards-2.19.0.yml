@@ -58,3 +58,6 @@ components:
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
     ref: 2.x
+  - name: queryInsightsDashboards
+    repository: https://github.com/opensearch-project/query-insights-dashboards.git
+    ref: 2.x
