@@ -85,6 +85,7 @@ components:
   - name: opensearch-learning-to-rank-base
     integ-test:
       test-configs:
+        - with-security
         - without-security
   - name: neural-search
     integ-test:
