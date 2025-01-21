@@ -13,8 +13,8 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-latest # arm64
-          - macos-latest-large # x64
+          - macos-14 # arm64
+          - macos-13 # x64
           - windows-latest
     runs-on: ${{ matrix.os }}
     env:
