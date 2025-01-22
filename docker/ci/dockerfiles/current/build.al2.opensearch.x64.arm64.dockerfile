@@ -67,8 +67,8 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
 SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
-# Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && yum install -y rpm-build createrepo && yum clean all
+# Install ruby / rpm / fpm / openssl / gcc / binutils related dependencies
+RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && yum install -y rpm-build createrepo texinfo && yum clean all
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.6.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
@@ -100,8 +100,10 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Upgrade gcc
-RUN curl -SL https://mirrors.ocf.berkeley.edu/gnu/gcc/gcc-12.4.0/gcc-12.4.0.tar.gz -o gcc12.tgz && \
+RUN curl -SL https://ci.opensearch.org/ci/dbc/tools/gcc/gcc-12.4.0.tar.gz -o gcc12.tgz && \
     tar -xzf gcc12.tgz && cd gcc-12.4.0 && \
+    sed -i 's@base_url=.*@base_url=https://ci.opensearch.org/ci/dbc/tools/gcc/@g' ./contrib/download_prerequisites && \
+    cat ./contrib/download_prerequisites | grep "base_url=" && \
     ./contrib/download_prerequisites && \
     mkdir build && cd build && \
     ../configure --enable-languages=all --prefix=/usr --disable-multilib --disable-bootstrap && \
@@ -109,7 +111,7 @@ RUN curl -SL https://mirrors.ocf.berkeley.edu/gnu/gcc/gcc-12.4.0/gcc-12.4.0.tar.
     cd  ../../ && rm -rf gcc12.tgz gcc-12.4.0
 
 # Upgrade binutils
-RUN yum install -y texinfo && curl -SLO https://sourceware.org/pub/binutils/snapshots/binutils-2.42.90.tar.xz && \
+RUN curl -SLO https://ci.opensearch.org/ci/dbc/tools/gcc/binutils-2.42.90.tar.xz && \
     tar -xf binutils-2.42.90.tar.xz && cd binutils-2.42.90 && \
     mkdir build && cd build && \
     ../configure --prefix=/usr && \
