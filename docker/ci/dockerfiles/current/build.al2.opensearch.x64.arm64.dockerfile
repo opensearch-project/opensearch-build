@@ -143,13 +143,16 @@ RUN pip3 install cmake==3.26.4
 # GitHub enforce nodejs 20 official build in runner 2.317.0 of their actions and CentOS7/AL2 would fail due to having older glibc versions
 # Until https://github.com/actions/runner/pull/3128 is merged or AL2 is deprecated (2025/06) this is a quick fix with unofficial builds support glibc 2.17
 # With changes done similar to this PR (https://github.com/opensearch-project/job-scheduler/pull/702) alongside the image here
-# Only linux x64 is supported in unofficial build until https://github.com/nodejs/unofficial-builds/pull/91 is merged
+# Only linux x64 glibc217 is supported in unofficial build until https://github.com/nodejs/unofficial-builds/pull/91 is merged for pre-compiled arm64 binaries
+# The linux arm64 glibc226 tarball here is directly compiled from the source code on AL2 host for the time being
 RUN if [ `uname -m` = "x86_64" ]; then \
-        curl -SL https://unofficial-builds.nodejs.org/download/release/v20.10.0/node-v20.10.0-linux-x64-glibc-217.tar.xz -o /node20.tar.xz; \
-        mkdir /node_al2; \
-        tar -xf /node20.tar.xz --strip-components 1 -C /node_al2; \
-        rm -v /node20.tar.xz; \
-    fi
+        curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-x64-glibc-217.tar.xz -o /node20.tar.xz; \
+    else; \
+        curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-arm64-glibc-226.tar.xz -o /node20.tar.xz; \
+    fi; \
+    mkdir /node_al2 && \
+    tar -xf /node20.tar.xz --strip-components 1 -C /node_al2 && \
+    rm -v /node20.tar.xz
 
 # Change User
 USER $CONTAINER_USER
