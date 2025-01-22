@@ -13,8 +13,8 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-14 # arm64
-          - macos-13 # x64
+          - macos-14  # arm64
+          - macos-13  # x64
           - windows-latest
     runs-on: ${{ matrix.os }}
     env:
@@ -51,8 +51,8 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-24.04-arm # arm64-preview
-          - ubuntu-latest # x64
+          - ubuntu-24.04-arm  # arm64-preview
+          - ubuntu-latest  # x64
     runs-on: ${{ matrix.os }}
     container:
       # using the same image which is used by opensearch-build team to build the OpenSearch Distribution
