@@ -103,7 +103,6 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
 RUN curl -SL https://ci.opensearch.org/ci/dbc/tools/gcc/gcc-12.4.0.tar.gz -o gcc12.tgz && \
     tar -xzf gcc12.tgz && cd gcc-12.4.0 && \
     sed -i 's@base_url=.*@base_url=https://ci.opensearch.org/ci/dbc/tools/gcc/@g' ./contrib/download_prerequisites && \
-    cat ./contrib/download_prerequisites | grep "base_url=" && \
     ./contrib/download_prerequisites && \
     mkdir build && cd build && \
     ../configure --enable-languages=all --prefix=/usr --disable-multilib --disable-bootstrap && \
