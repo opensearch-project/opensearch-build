@@ -147,7 +147,7 @@ RUN pip3 install cmake==3.26.4
 # The linux arm64 glibc226 tarball here is directly compiled from the source code on AL2 host for the time being
 RUN if [ `uname -m` = "x86_64" ]; then \
         curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-x64-glibc-217.tar.xz -o /node20.tar.xz; \
-    else; \
+    else \
         curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-arm64-glibc-226.tar.xz -o /node20.tar.xz; \
     fi; \
     mkdir /node_al2 && \
