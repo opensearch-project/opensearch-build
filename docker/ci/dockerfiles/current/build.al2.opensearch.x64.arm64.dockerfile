@@ -67,8 +67,8 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
 SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
-# Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && yum install -y rpm-build createrepo && yum clean all
+# Install ruby / rpm / fpm / openssl / gcc / binutils related dependencies
+RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && yum install -y rpm-build createrepo texinfo && yum clean all
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.6.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
@@ -100,19 +100,29 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Upgrade gcc
-RUN yum install -y gcc10* && \
-    mv -v /usr/bin/gcc /usr/bin/gcc7-gcc && \
-    mv -v /usr/bin/g++ /usr/bin/gcc7-g++ && \
-    mv -v /usr/bin/gfortran /usr/bin/gcc7-gfortran && \
-    update-alternatives --install /usr/bin/gcc gcc $(which gcc10-gcc) 1 && \
-    update-alternatives --install /usr/bin/g++ g++ $(which gcc10-g++) 1 && \
-    update-alternatives --install /usr/bin/gfortran gfortran $(which gcc10-gfortran) 1
+RUN curl -SL https://ci.opensearch.org/ci/dbc/tools/gcc/gcc-12.4.0.tar.gz -o gcc12.tgz && \
+    tar -xzf gcc12.tgz && cd gcc-12.4.0 && \
+    sed -i 's@base_url=.*@base_url=https://ci.opensearch.org/ci/dbc/tools/gcc/@g' ./contrib/download_prerequisites && \
+    ./contrib/download_prerequisites && \
+    mkdir build && cd build && \
+    ../configure --enable-languages=all --prefix=/usr --disable-multilib --disable-bootstrap && \
+    make && make install && gcc --version && g++ --version && gfortran --version && \
+    cd  ../../ && rm -rf gcc12.tgz gcc-12.4.0
+
+# Upgrade binutils
+RUN curl -SLO https://ci.opensearch.org/ci/dbc/tools/gcc/binutils-2.42.90.tar.xz && \
+    tar -xf binutils-2.42.90.tar.xz && cd binutils-2.42.90 && \
+    mkdir build && cd build && \
+    ../configure --prefix=/usr && \
+    make && make install && ld --version && \
+    cd ../../ && rm -rf binutils-2.42.90.tar.xz binutils-2.42.90
+
 ENV FC=gfortran
 ENV CXX=g++
 
 # Add k-NN Library dependencies
-RUN yum repolist && yum install lapack -y
-RUN git clone -b v0.3.27 --single-branch https://github.com/xianyi/OpenBLAS.git && \
+RUN yum repolist && yum install lapack -y && yum clean all && rm -rf /var/cache/yum/*
+RUN git clone -b v0.3.27 --single-branch https://github.com/OpenMathLib/OpenBLAS.git && \
     cd OpenBLAS && \
     if [ "$(uname -m)" = "x86_64" ]; then \
         echo "Machine is x86_64. Adding DYNAMIC_ARCH=1 to openblas make command."; \
@@ -120,7 +130,8 @@ RUN git clone -b v0.3.27 --single-branch https://github.com/xianyi/OpenBLAS.git 
     else \
         make USE_OPENMP=1 FC=gfortran; \
     fi && \
-    make PREFIX=/usr/local install
+    make PREFIX=/usr/local install && \
+    cd ../ && rm -rf OpenBLAS
 ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
 RUN pip3 install cmake==3.26.4
 
@@ -131,19 +142,22 @@ RUN pip3 install cmake==3.26.4
 # GitHub enforce nodejs 20 official build in runner 2.317.0 of their actions and CentOS7/AL2 would fail due to having older glibc versions
 # Until https://github.com/actions/runner/pull/3128 is merged or AL2 is deprecated (2025/06) this is a quick fix with unofficial builds support glibc 2.17
 # With changes done similar to this PR (https://github.com/opensearch-project/job-scheduler/pull/702) alongside the image here
-# Only linux x64 is supported in unofficial build until https://github.com/nodejs/unofficial-builds/pull/91 is merged
+# Only linux x64 glibc217 is supported in unofficial build until https://github.com/nodejs/unofficial-builds/pull/91 is merged for pre-compiled arm64 binaries
+# The linux arm64 glibc226 tarball here is directly compiled from the source code on AL2 host for the time being
 RUN if [ `uname -m` = "x86_64" ]; then \
-        curl -SL https://unofficial-builds.nodejs.org/download/release/v20.10.0/node-v20.10.0-linux-x64-glibc-217.tar.xz -o /node20.tar.xz; \
-        mkdir /node_al2; \
-        tar -xf /node20.tar.xz --strip-components 1 -C /node_al2; \
-        rm -v /node20.tar.xz; \
-    fi
+        curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-x64-glibc-217.tar.xz -o /node20.tar.xz; \
+    else \
+        curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-arm64-glibc-226.tar.xz -o /node20.tar.xz; \
+    fi; \
+    mkdir /node_al2 && \
+    tar -xf /node20.tar.xz --strip-components 1 -C /node_al2 && \
+    rm -v /node20.tar.xz
 
 # Change User
 USER $CONTAINER_USER
 WORKDIR $CONTAINER_USER_HOME
 
 # Install fpm for opensearch dashboards core
-RUN gem install dotenv -v 2.8.1 && gem install public_suffix -v 5.1.1 && gem install fpm -v 1.14.2
+RUN gem install dotenv -v 2.8.1 && gem install public_suffix -v 5.1.1 && gem install rchardet -v 1.8.0 && gem install fpm -v 1.14.2
 ENV PATH=$CONTAINER_USER_HOME/.gem/gems/fpm-1.14.2/bin:$PATH
 RUN fpm -v

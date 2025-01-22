@@ -102,6 +102,6 @@ USER $CONTAINER_USER
 WORKDIR $CONTAINER_USER_HOME
 
 # Install fpm for opensearch dashboards core
-RUN gem install dotenv -v 2.8.1 && gem install public_suffix -v 5.1.1 && gem install fpm -v 1.14.2
+RUN gem install dotenv -v 2.8.1 && gem install public_suffix -v 5.1.1 && gem install rchardet -v 1.8.0&& gem install fpm -v 1.14.2
 ENV PATH=$CONTAINER_USER_HOME/.gem/gems/fpm-1.14.2/bin:$PATH
 RUN fpm -v
