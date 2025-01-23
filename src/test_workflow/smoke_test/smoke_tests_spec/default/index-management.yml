@@ -1,0 +1,74 @@
+# yamllint disable
+---
+info:
+  title: OpenSearch Core smoke tests
+  version: default
+name: index-management
+paths:
+  /_plugins/_ism/policies/policy_1:
+    PUT:
+      parameters: [
+        {
+          "policy": {
+            "description": "ingesting logs",
+            "default_state": "ingest",
+            "states": [
+              {
+                "name": "ingest",
+                "actions": [
+                  {
+                    "rollover": {
+                      "min_doc_count": 5
+                    }
+                  }
+                ],
+                "transitions": [
+                  {
+                    "state_name": "search"
+                  }
+                ]
+              },
+              {
+                "name": "search",
+                "actions": [ ],
+                "transitions": [
+                  {
+                    "state_name": "delete",
+                    "conditions": {
+                      "min_index_age": "5m"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "delete",
+                "actions": [
+                  {
+                    "delete": { }
+                  }
+                ],
+                "transitions": [ ]
+              }
+            ]
+          }
+        }
+      ]
+  /_plugins/_ism/policies:
+    GET:
+      parameters: []
+  /ism-index:
+    PUT:
+      parameters: []
+  /_plugins/_ism/add/ism-index:
+    POST:
+      parameters: [
+        {
+          "policy_id": "policy_1"
+        }
+      ]
+  /_plugins/_ism/explain/ism-index:
+    GET:
+      parameters: []
+  /_plugins/_ism/remove/ism-index:
+    POST:
+      parameters: []

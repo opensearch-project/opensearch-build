@@ -28,3 +28,12 @@ paths:
   /_cat/plugins:
     GET:
       parameters: []
+  /_search:
+    GET:
+      parameters: [
+        {
+          "query": {
+            "match_all": { }
+          }
+        }
+      ]
