@@ -12,127 +12,49 @@ components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
     ref: main
-    checks:
-      - gradle:publish
-      - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: main
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:publish
-      - gradle:properties:version
+  - name: opensearch-learning-to-rank-base
+    repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
+    ref: main
+    platforms:
+      - linux
+      - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
     ref: main
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:publish
-      - gradle:properties:version
-  - name: ml-commons
-    repository: https://github.com/opensearch-project/ml-commons.git
-    ref: main
-    platforms:
-      - linux
-      - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
-    depends_on:
-      - common-utils
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
     ref: main
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-  - name: opensearch-reports
-    repository: https://github.com/opensearch-project/reporting.git
-    ref: main
-    platforms:
-      - linux
-      - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-    depends_on:
-      - common-utils
-      - job-scheduler
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: main
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-  - name: performance-analyzer
-    repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: main
-    platforms:
-      - linux
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-  - name: opensearch-observability
-    repository: https://github.com/opensearch-project/observability.git
-    ref: main
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-    depends_on:
-      - common-utils
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: main
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-  - name: neural-search
-    repository: https://github.com/opensearch-project/neural-search.git
-    ref: main
-    platforms:
-      - linux
-      - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-    depends_on:
-      - ml-commons
-      - k-NN
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
     ref: main
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
     depends_on:
-      - job-scheduler
-  - name: anomaly-detection
-    repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: main
-    platforms:
-      - linux
-      - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-    depends_on:
-      - common-utils
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
@@ -140,55 +62,66 @@ components:
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
     depends_on:
       - common-utils
-  - name: notifications-core
-    repository: https://github.com/opensearch-project/notifications.git
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
     ref: main
     platforms:
       - linux
       - windows
+    depends_on:
+      - common-utils
+  - name: neural-search
+    repository: https://github.com/opensearch-project/neural-search.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - ml-commons
+      - k-NN
+  - name: notifications-core
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: main
     working_directory: notifications
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: opensearch-notifications-core
+    platforms:
+      - linux
+      - windows
     depends_on:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
     ref: main
+    working_directory: notifications
     platforms:
       - linux
       - windows
-    working_directory: notifications
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: notifications
     depends_on:
       - common-utils
-  - name: alerting
-    repository: https://github.com/opensearch-project/alerting.git
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability.git
     ref: main
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: alerting
     depends_on:
       - common-utils
+  - name: opensearch-reports
+    repository: https://github.com/opensearch-project/reporting.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: main
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: opensearch-sql-plugin
     depends_on:
       - ml-commons
   - name: asynchronous-search
@@ -197,9 +130,23 @@ components:
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
+    depends_on:
+      - common-utils
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: main
+    platforms:
+      - linux
+      - windows
     depends_on:
       - common-utils
   - name: security-analytics
@@ -208,21 +155,30 @@ components:
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
     depends_on:
       - common-utils
+      - alerting
+      - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
     ref: main
     platforms:
       - linux
       - windows
-    checks:
-      - gradle:properties:version
     depends_on:
       - common-utils
       - job-scheduler
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: main
+    platforms:
+      - linux
+  - name: custom-codecs
+    repository: https://github.com/opensearch-project/custom-codecs.git
+    ref: main
+    platforms:
+      - linux
+      - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
     ref: main
@@ -232,12 +188,6 @@ components:
     depends_on:
       - common-utils
       - opensearch-remote-metadata-sdk
-  - name: opensearch-system-templates
-    repository: https://github.com/opensearch-project/opensearch-system-templates.git
-    ref: main
-    platforms:
-      - linux
-      - windows
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
     ref: main
@@ -249,14 +199,14 @@ components:
       - anomaly-detection
       - sql
       - ml-commons
-  - name: user-behavior-insights
-    repository: https://github.com/opensearch-project/user-behavior-insights.git
+  - name: query-insights
+    repository: https://github.com/opensearch-project/query-insights.git
     ref: main
     platforms:
       - linux
       - windows
-  - name: query-insights
-    repository: https://github.com/opensearch-project/query-insights.git
+  - name: opensearch-system-templates
+    repository: https://github.com/opensearch-project/opensearch-system-templates.git
     ref: main
     platforms:
       - linux
