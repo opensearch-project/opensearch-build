@@ -78,7 +78,7 @@ pipeline {
         )
         string(
             name: 'RC_NUMBER',
-            description: '<Required> The RC build count. Default is 0 which means its not a Release Candidate..',
+            description: '<Required> The RC build count. Default is 0 which means its not a Release Candidate.',
             defaultValue: '0'
         )
         choice(
