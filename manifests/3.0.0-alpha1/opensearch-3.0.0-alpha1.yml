@@ -3,6 +3,7 @@ schema-version: '1.1'
 build:
   name: OpenSearch
   version: 3.0.0
+  qualifier: alpha1
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1
