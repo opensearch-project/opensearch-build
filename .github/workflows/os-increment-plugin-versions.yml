@@ -50,12 +50,11 @@ jobs:
           - {repo: skills}
           - {repo: query-insights}
           - {repo: opensearch-system-templates}
+          - {repo: opensearch-remote-metadata-sdk}
+          - {repo: opensearch-learning-to-rank-base}
         branch:
-          - 1.x
-          - '1.3'
           - 2.x
           - main
-          - '2.17'
           - '2.18'
           - '2.19'
         exclude:
