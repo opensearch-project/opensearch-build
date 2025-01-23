@@ -100,22 +100,38 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Upgrade gcc
-RUN curl -SL https://ci.opensearch.org/ci/dbc/tools/gcc/gcc-12.4.0.tar.gz -o gcc12.tgz && \
-    tar -xzf gcc12.tgz && cd gcc-12.4.0 && \
-    sed -i 's@base_url=.*@base_url=https://ci.opensearch.org/ci/dbc/tools/gcc/@g' ./contrib/download_prerequisites && \
-    ./contrib/download_prerequisites && \
-    mkdir build && cd build && \
-    ../configure --enable-languages=all --prefix=/usr --disable-multilib --disable-bootstrap && \
-    make && make install && gcc --version && g++ --version && gfortran --version && \
-    cd  ../../ && rm -rf gcc12.tgz gcc-12.4.0
+# Only x64 requires gcc 12+ for k-NN avx512_spr fp16 feature
+# https://github.com/opensearch-project/opensearch-build/issues/5226
+# Due to cross-compilation being too slow on arm64, it will stay on gcc 10 for the time being
+RUN if [ `uname -m` = "x86_64" ]; then \
+        curl -SL https://ci.opensearch.org/ci/dbc/tools/gcc/gcc-12.4.0.tar.gz -o gcc12.tgz && \
+        tar -xzf gcc12.tgz && cd gcc-12.4.0 && \
+        sed -i 's@base_url=.*@base_url=https://ci.opensearch.org/ci/dbc/tools/gcc/@g' ./contrib/download_prerequisites && \
+        ./contrib/download_prerequisites && \
+        mkdir build && cd build && \
+        ../configure --enable-languages=all --prefix=/usr --disable-multilib --disable-bootstrap && \
+        make && make install && gcc --version && g++ --version && gfortran --version && \
+        cd  ../../ && rm -rf gcc12.tgz gcc-12.4.0; \
+    else \
+        yum install -y gcc10* && \
+        mv -v /usr/bin/gcc /usr/bin/gcc7-gcc && \
+        mv -v /usr/bin/g++ /usr/bin/gcc7-g++ && \
+        mv -v /usr/bin/gfortran /usr/bin/gcc7-gfortran && \
+        update-alternatives --install /usr/bin/gcc gcc $(which gcc10-gcc) 1 && \
+        update-alternatives --install /usr/bin/g++ g++ $(which gcc10-g++) 1 && \
+        update-alternatives --install /usr/bin/gfortran gfortran $(which gcc10-gfortran) 1; \
+    fi
 
 # Upgrade binutils
-RUN curl -SLO https://ci.opensearch.org/ci/dbc/tools/gcc/binutils-2.42.90.tar.xz && \
-    tar -xf binutils-2.42.90.tar.xz && cd binutils-2.42.90 && \
-    mkdir build && cd build && \
-    ../configure --prefix=/usr && \
-    make && make install && ld --version && \
-    cd ../../ && rm -rf binutils-2.42.90.tar.xz binutils-2.42.90
+# This is only required if gcc upgrade to 12 or above
+RUN if [ `uname -m` = "x86_64" ]; then \
+        curl -SLO https://ci.opensearch.org/ci/dbc/tools/gcc/binutils-2.42.90.tar.xz && \
+        tar -xf binutils-2.42.90.tar.xz && cd binutils-2.42.90 && \
+        mkdir build && cd build && \
+        ../configure --prefix=/usr && \
+        make && make install && ld --version && \
+        cd ../../ && rm -rf binutils-2.42.90.tar.xz binutils-2.42.90; \
+    fi
 
 ENV FC=gfortran
 ENV CXX=g++
