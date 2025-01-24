@@ -136,11 +136,13 @@ The component release issues are auto created by the workflows part of the build
 
 <details><summary>Manual release issue creation process</summary>
 <p>
+
 Inside the template [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md), replace the fields `RELEASE_VERSION`, `RELEASE_BRANCH_X`, `RELEASE_BRANCH` and `RELEASE_ISSUE` to desired release values before creating the release issues across the component/plugin repos. Once the fields are replaced, use the  `meta` and `gh` cli to create the issues. Find the list of components/plugins from the [opensearch-plugins](https://github.com/opensearch-project/opensearch-plugins) repo (for [OpenSearch](https://github.com/opensearch-project/opensearch-plugins/tree/main/plugins), for [OpenSearch Dashboards](https://github.com/opensearch-project/opensearch-plugins/tree/main/dashboards-plugins)) and use the `meta` cli to create the release issues. For more details check the [create-an-issue-in-all-plugin-repos](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-an-issue-in-all-plugin-repos) section.
 
 ```
 meta exec "gh issue create --label v2.8.0 --title 'Release version 2.8.0' --body-file /tmp/opensearch-build/.github/ISSUE_TEMPLATE/component_release_template.md"
 ```
+
 </p>
 </details> 
 
@@ -282,7 +284,7 @@ Following is the generated build number after triggering the [Distribution Build
 <details><summary>What if?</summary>
 <p>
 
-- What if I forgot to choose `build_docker_with_build_number_tag` while building RC?
+- What if I forgot to choose `build_docker_with_build_number_tag` while building RC? </br>
   If the docker image was build regulary overriding the default `major.minor.patch` tag, you can simply copy the image to `major.minor.patch.build_id` tag using [docker-copy](https://build.ci.opensearch.org/job/docker-copy/) workflow.
   | Docker Freeze | copy |
   |----------|----------|
@@ -310,10 +312,10 @@ Failing integration tests create GitHub issues with all the details included in 
 <details><summary>What if?</summary>
 <p>
 
-- What if I missed one of the integration test parameter while triggering RC?
+- What if I missed one of the integration test parameter while triggering RC? </br>
   Integration test workflows can be triggered and run independently irrespective of build workflows. Feel free to trigger the respective workflow. The results of the integration tests for per component can be viewed in pipeline view as well as on the [metrics portal](https://metrics.opensearch.org/_dashboards/app/dashboards#/view/21aad140-49f6-11ef-bbdd-39a9b324a5aa?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-90d,to:now))&_a=(description:'OpenSearch%20Release%20Build%20and%20Integration%20Test%20Results',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),query:(language:kuery,query:''),timeRestore:!t,title:'OpenSearch%20Release%20Build%20and%20Integration%20Test%20Results',viewMode:view)).
 
-- What is I want to re-run the integration test? Is there a limit to how many times the workflow can be triggered?
+- What is I want to re-run the integration test? Is there a limit to how many times the workflow can be triggered? </br>
   There is no limit as such. The tests for the given component(s) can be run any number of times. However, please be mindful of the resources consumption used to run these tests. For flaky integration test, please create an issue in the respective component repository for it to be addressed.
 
 </p>
@@ -404,7 +406,7 @@ See child workflows details below:
 <details><summary>What if?</summary>
 <p>
 
-- What if the workflow fails?
+- What if the workflow fails? </br>
   If the workflow fails before Maven publication stage, it is safe to re-run the workflow (Please 2PR on this as well). Central promotion workflow is a combination of child workflows which can be run independently as well. See [source code](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/release-workflows/release-promotion.jenkinsfile)
 
 </p>
@@ -445,7 +447,7 @@ As a post action of the above [distribution-release-tag-creation](https://build.
 <details><summary>What if?</summary>
 <p>
 
-- What if the subsequent workflow (release-manifest-commit-lock) fails and pull request is not created?
+- What if the subsequent workflow (release-manifest-commit-lock) fails and pull request is not created? </br>
   If the release tags are created but subsequent or post action workflow fails, please debug and fix the issue if possible. The [release-manifest-commit-lock](https://build.ci.opensearch.org/job/release-manifest-commit-lock/) can also be run independently with MANIFEST_LOCK_ACTION set to `UPDATE_TO_TAGS`. If the workflow is unable to create PR due to other issues, please create the pull request manually.
 
 </p>
