@@ -125,12 +125,14 @@ RUN if [ `uname -m` = "x86_64" ]; then \
 # Upgrade binutils
 # This is only required if gcc upgrade to 12 or above
 RUN if [ `uname -m` = "x86_64" ]; then \
+        yum install -y texinfo && \
         curl -SLO https://ci.opensearch.org/ci/dbc/tools/gcc/binutils-2.42.90.tar.xz && \
         tar -xf binutils-2.42.90.tar.xz && cd binutils-2.42.90 && \
         mkdir build && cd build && \
         ../configure --prefix=/usr && \
         make && make install && ld --version && \
-        cd ../../ && rm -rf binutils-2.42.90.tar.xz binutils-2.42.90; \
+        cd ../../ && rm -rf binutils-2.42.90.tar.xz binutils-2.42.90 && \
+        yum remove -y texinfo; \
     fi
 
 ENV FC=gfortran
