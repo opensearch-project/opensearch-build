@@ -30,7 +30,7 @@ If including changes in this release, increment the version on `{{RELEASE_VERSIO
 ### Preparation
 
 - [ ] Assign this issue to a release owner.
-- [ ] Finalize scope and feature set and update [the Public Roadmap](https://github.com/orgs/opensearch-project/projects/1).
+- [ ] Finalize scope and feature set and update [the Public Roadmap](https://github.com/orgs/opensearch-project/projects/206).
 - [ ] All the tasks in this issue have been reviewed by the release owner.
 - [ ] Create, update, triage and label all features and issues targeted for this release with `v{{RELEASE_VERSION}}`.
 - [ ] Finalize the code and create the the release branch `{{RELEASE_BRANCH}}` from the `{{RELEASE_VERSION_X}}` branch.

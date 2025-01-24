@@ -133,21 +133,23 @@ This section is not required for a patch release.
 
 The component release issues are auto created by the workflows part of the build repo [OpenSearch components](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/os-release-issues.yml), [OpenSearch Dashboards components](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/osd-release-issues.yml). These workflows create the release issues based on the template [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md) and links back the global release issue part of the build. Sample [component release issue](https://github.com/opensearch-project/job-scheduler/issues/642) created for 2.16.0 release. The release manager must verify that each component release issue has an assigned owner, as this is one of the entry criteria for the release.
 
-#### Issue Creation Process Overview
-
-Inside the template [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md), replace the fields `RELEASE_VERSION`, `RELEASE_BRANCH_X`, `RELEASE_BRANCH` and `RELEASE_ISSUE` to desired release values before creating the release issues across the component/plugin repos. Once the fields are replaced, use the  `meta` and `gh` cli to create the issues. Find the list of components/plugins from the [opensearch-plugins](https://github.com/opensearch-project/opensearch-plugins) repo (for [OpenSearch](https://github.com/opensearch-project/opensearch-plugins/tree/main/plugins), for [OpenSearch Dashboards](https://github.com/opensearch-project/opensearch-plugins/tree/main/dashboards-plugins)) and use the `meta` cli to create the release issues.  For more details check the [create-an-issue-in-all-plugin-repos](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-an-issue-in-all-plugin-repos) section.
+<details><summary>Manual release issue creation process</summary>
+<p>
+Inside the template [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md), replace the fields `RELEASE_VERSION`, `RELEASE_BRANCH_X`, `RELEASE_BRANCH` and `RELEASE_ISSUE` to desired release values before creating the release issues across the component/plugin repos. Once the fields are replaced, use the  `meta` and `gh` cli to create the issues. Find the list of components/plugins from the [opensearch-plugins](https://github.com/opensearch-project/opensearch-plugins) repo (for [OpenSearch](https://github.com/opensearch-project/opensearch-plugins/tree/main/plugins), for [OpenSearch Dashboards](https://github.com/opensearch-project/opensearch-plugins/tree/main/dashboards-plugins)) and use the `meta` cli to create the release issues. For more details check the [create-an-issue-in-all-plugin-repos](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-an-issue-in-all-plugin-repos) section.
 
 ```
 meta exec "gh issue create --label v2.8.0 --title 'Release version 2.8.0' --body-file /tmp/opensearch-build/.github/ISSUE_TEMPLATE/component_release_template.md"
 ```
+</p>
+</details> 
 
 ### Release Campaigns
 
-If exists any release specific issues/campaigns, link it back to the release issue. Sample linked [issues/campaigns](https://github.com/opensearch-project/opensearch-build/issues/3434#issuecomment-1552138916)
+If any release specific issues/campaigns exists, link it back to the release issue. Sample linked [issues/campaigns](https://github.com/opensearch-project/opensearch-build/issues/3434#issuecomment-1552138916)
 
 ## Release Branch Readiness
 
-The `Release Branch Readiness date` is determined as the release date minus 4 days.
+The `Release Branch Readiness date` is determined as the release date minus 6 days. However, after receiving some feedback from the maintainers as to avoid multiple backports of the Pull Requests, it is recommended to create release branch (if one does not exist) on the day of first Release Candidate generation. The release branch creation (if one does not exist) is [automated](#other-release-related-workflows).
 
 ### Release Branch
 
@@ -155,11 +157,11 @@ This release branch creation is not applicable for patch release.
 
 #### Core
 
-This step requires both OpenSearch and OpenSearch Dashboards to create a release branch that will be used for the release.
+This step requires both OpenSearch and OpenSearch Dashboards to create a release branch that will be used for the release. If not created already, [release-branch-creation workflow](https://build.ci.opensearch.org/view/Release/job/release-branch-creation/) will create one based of `major.x` branch. 
 
 #### Components
 
-This step requires that every team participating in a release has their release branch created for the corresponding release by the date listed on this step. The [Distribution Build](#distribution-build) workflow will also start using the release branch to create release candidate instead of `.x` branches.
+This step requires that every team participating in a release has their release branch created for the corresponding release by the date listed on this step. If not created already, [release-branch-creation workflow](https://build.ci.opensearch.org/view/Release/job/release-branch-creation/) will create one based of `major.x` branch. The [Distribution Build](#distribution-build) workflow will also start using the release branch to create release candidate instead of `major.x` branches.
 
 
 ### Version Increment
@@ -171,7 +173,7 @@ Versions are incremented as soon as development starts on a given version to avo
 
 #### Core Version Increment
 
-To ensure the version incrementation process is handled correctly, it is important to follow to increment the version of the release branch. Currently, the version incrementation is being done manually by an individual from the core repositories. Sample OpenSearch Version Increment [PR](https://github.com/opensearch-project/OpenSearch/pull/7864/) for the release branch.
+To ensure the version incrementation process is handled correctly, it is important to increment the version of the release branch. Currently, the version incrementation is being done manually by an individual from the core repositories. Sample OpenSearch Version Increment [PR](https://github.com/opensearch-project/OpenSearch/pull/7864/).
 
 
 #### Components Version Increment
@@ -183,7 +185,7 @@ The objective is to merge these pull requests in order to synchronize all the co
 
 ## Code Complete and Feature Freeze
 
-Coordinate with the Core and component teams to ensure that the code for this particular release version is fully prepared and that the corresponding branch has been included in the release version [Input Manifest](#input-manifest). Update Jenkins workflows that execute daily snapshot builds for both OpenSearch and OpenSearch Dashboards (Ref [Increase the build frequency](#increase-the-build-frequency)). Submit pull requests to incorporate each component into the respective version level [Input Manifest](#input-manifest) along with the necessary checks. Sample [PR](https://github.com/opensearch-project/opensearch-build/pull/3501/files). The `Feature Freeze date` and the `Code Complete date` is determined as the release date minus 4 days.
+Coordinate with the Core and component teams to ensure that the code for this particular release version is fully prepared and that the corresponding branch has been included in the release version [Input Manifest](#input-manifest). Update Jenkins workflows that execute daily snapshot builds for both OpenSearch and OpenSearch Dashboards (Ref [Increase the build frequency](#increase-the-build-frequency)). For new components on-boarding to the distribution, please submit pull requests to incorporate the component into the [Input Manifest](#input-manifest) along with the necessary checks. Sample [PR](https://github.com/opensearch-project/opensearch-build/pull/3501/files). The `Feature Freeze date` and the `Code Complete date` is determined as the release date minus 14 days.
 
 ## Release Candidate Creation and Testing
 
@@ -197,27 +199,50 @@ Ensure the proper inputs are used to initiate the distribution. For instance, he
 
 ![Alt Text](https://github.com/opensearch-project/opensearch-build/blob/main/assests/distribution_build_os.png)
 
-**COMPONENT_NAME**: To trigger a specific component, this includes standalone OpenSearch or specific plugin.</br>
+<details><summary>Parameters info</summary>
+<p>
 
-**INPUT_MANIFEST**: The release input manifest that drives the workflow.</br>
+**COMPONENT_NAME**: \<Optional\> To trigger a specific component, this includes standalone OpenSearch or specific plugin.</br>
 
-**TEST_MANIFEST**: The release test input manifest that is used for the integ tests.</br>
+**INPUT_MANIFEST**: \<Required\> The release input manifest that drives the workflow.</br>
 
-**INTEG_TEST_JOB_NAME**: The integ test job name. Default already added to this input `integ-test` for OpenSearch and `integ-test-opensearch-dashboards` for OpenSearch Dashboards.</br>
+**TEST_MANIFEST**: \<Optional\> The release test input manifest that is used for the integ tests.</br>
 
-**BUILD_PLATFORM**: The input used to build for a specific platform, followed by its own distributions within the `platform`.</br>
+**INTEG_TEST_JOB_NAME**: \<Optional\> The integ test job name. Default already added to this input `integ-test` for OpenSearch and `integ-test-opensearch-dashboards` for OpenSearch Dashboards.</br>
 
-**BUILD_DISTRIBUTION**: Input to build selected distribution related artifacts, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar).</br>
+**BWC_TEST_JOB_NAME**: \<Optional\> The BWC test job name. Default already added to this input `bwc-test` for OpenSearch and `bwc-test-opensearch-dashboards` for OpenSearch Dashboards.</br>
+
+**BUILD_PLATFORM**: \<Required\> Platforms to build. Example linux, windows.</br>
+
+**BUILD_DISTRIBUTION**: \<Required\> Distribution to build. Choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions separated by space. In order to build Docker distribution (option specified later), tar needs to be built.</br>
+
+**TEST_PLATFORM**: \<Optional\> Platforms to tests. Choices include 'linux', 'windows'. Can combine multiple platforms with space in between. </br>
+
+**TEST_DISTRIBUTION**: \<Optional\> Distributions to tests. Choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between. </br>
+
+**RC_NUMBER**: \<Required\> The RC build count. Default is 0 which means its not a Release Candidate. </br>
 
 **BUILD_DOCKER**: Input with a dropdown that has 3 options `build_docker`, `build_docker_with_build_number_tag`, `do_not_build_docker`, the release manager has to take a call with right inputs.</br>
 
-**UPDATE_LATEST_URL**: To update the `/latest` CFN URL, Visit [latest-distribution-url](https://github.com/opensearch-project/opensearch-build#latest-distribution-url) for more details.</br>
+**UPDATE_LATEST_URL**: To update the `/latest` CFN URL, Visit [latest-distribution-url](https://github.com/opensearch-project/opensearch-build/wiki/Building-an-OpenSearch-and-OpenSearch-Dashboards-Distribution#latest-distributions-buildsl) for more details.</br>
+
+**UPDATE_GITHUB_ISSUE**: To create/close/update a github issue for all component or not.</br>
+
+**CONTINUE_ON_ERROR**: Continues to build the distribution even if one of the non-core or non-essential plugins fails to build.</br>
+
+**INCREMENTAL**: Builds the distribution incrementally when a previous build is provided.</br>
+
+**PREVIOUS_BUILD_ID**: \<Required_if_incremental_is_enabled\> Previous Ditribution Build ID to download the artifacts from.</br>
+</p>
+</details>
+
+In case of failure, go to the workflow run on [Jenkins](https://build.ci.opensearch.org/view/Build/). For easy debugging and visibility, click on `Open Blue Ocean` from the left panel. This should show exactly which stage failed indicated by :x . For stages marked with as `Unstable` (:warning), it indicates that some components failed to build but a distribution was built with the successfully built components. Click on any unstable stage and then click on `./build.sh ...` to see more logs. 
 
 ##### Order of Execution
 
 Following is the order of execution of the distribution build to address the components dependencies.
 
-Note: The execution order specified is necessary only for versions up to `1.3.x`. For `2.x` and above Maven dependencies are published through each component repository using the GH workflow. For more details check the [META issue](https://github.com/opensearch-project/opensearch-build/issues/3185).
+Note: The execution order specified is necessary only for versions up to `1.3.x`. For `2.x` and above the snapshots Maven dependencies are published through each component repository using the GH workflow. For more details check the [META issue](https://github.com/opensearch-project/opensearch-build/issues/3185).
 
 ###### OpenSearch
 ```
@@ -237,9 +262,15 @@ All components (which are ready after completion of version increment)
 
 ### Release Candidate
 
-Now once all the version increment PRs are completed and all the components are part of the input manifest, now it's time to generate the RC. Use the [Distribution Build](#distribution-build) to generate the release candidate. Use the following section as the reference to generate the RC, validate it and broadcast it for a given release. The process of `Release Candidate Generation and Testing` should commence at least 6 days prior to the release date.
+Once all the version increment PRs are merged and all the components are part of the input manifest, now it is time to generate the Release Candidate (RC). Use the [Distribution Build](#distribution-build) to generate the release candidate. Use the following section as the reference to generate the RC, validate it and broadcast it for a given release. The process of `Release Candidate Generation and Testing` should commence at least 6 days prior to the release date.
 
-#### Sample Build details
+#### What sets Release Candidate different than regular builds?
+Well, in terms of build, nothing. However, while triggering the build please be careful to take care of the following [workflow-triggers](#workflow-trigger) along with the other parameters.
+
+**RC_NUMBER**: Starts with `1` and keeps on incrementing as we build more RCs through out the release process. 
+**BUILD_DOCKER**: Select `build_docker_with_build_number_tag`. This ensures that [check-for-build.jenkinsfile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile) won't re-build periodically and override the docker image, the RC docker is created with build number. Example: [opensearchstaging/opensearch:2.18.0.10454](https://hub.docker.com/layers/opensearchstaging/opensearch/2.18.0.10454/images/sha256-7755492728968e6f7afbd20014f3e13d0d765a8690e4bc80cb2403460999b0cc)
+**INCREMENTAL**: Recommend to disable it for first RC and let it build from scratch. Moving forward, it can be enabled for future builds. 
+**PREVIOUS_BUILD_ID**: Build number of previous Release Candidate. Applicable only when **INCREMENTAL** parameter is enabled.
 
 Following is the generated build number after triggering the [Distribution Build](#distribution-build) workflow. The distribution build number denotes the RC, now with the example below the finalized RC’s are `OS: 7848`, `OSD: 6126`.
 
@@ -247,29 +278,45 @@ Following is the generated build number after triggering the [Distribution Build
 |----------|----------|
 | [build_7848](https://build.ci.opensearch.org/job/distribution-build-opensearch/7848/console) | [build_6126](https://build.ci.opensearch.org/job/distribution-build-opensearch-dashboards/6126/) |
 
-#### Docker Build and Scan
+<details><summary>What if?</summary>
+<p>
 
-Following are the details for the docker image build and scan. The docker images are built using the TAR artifact generated as part of the [Distribution Build](#distribution-build) (From the above example `OS: 7848`, `OSD: 6126`). The [Distribution Build](#distribution-build) workflow with input `BUILD_DOCKER` (Ref [Workflow Trigger](#workflow-trigger)) triggers the [docker-build] workflow as downstream.
+- What if I forgot to choose `build_docker_with_build_number_tag` while building RC?
+  If the docker image was build regulary overriding the default `major.minor.patch` tag, you can simply copy the image to `major.minor.patch.build_id` tag using [docker-copy](https://build.ci.opensearch.org/job/docker-copy/) workflow.
+  | Docker Freeze | copy |
+  |----------|----------|
+  | OpenSearch  | [docker-copy](https://build.ci.opensearch.org/job/docker-copy/466/console)  | 
+  | OpenSearch Dashboards  | [docker-copy](https://build.ci.opensearch.org/job/docker-copy/467/console)  |
+
+</p>
+</details>
+
+#### Docker Scan
+
+Following are the details for the docker image build and scan. The docker images are built using the TAR artifact generated as part of the [Distribution Build](#distribution-build) (From the above example `OS: 7848`, `OSD: 6126`). The [Distribution Build](#distribution-build) workflow with input `BUILD_DOCKER` or `build_docker_with_build_number_tag` (Ref [Workflow Trigger](#workflow-trigger)) triggers the [docker-build](https://build.ci.opensearch.org/job/docker-build/) workflow as downstream which also triggers [docker-scan](https://build.ci.opensearch.org/job/docker-scan/). Docker scan is responsible for parsing the docker image for possible vulnerabilities. It uses [trivy](https://github.com/aquasecurity/trivy) to scan the docker images.
 
 | Docker | build | scan |
 |----------|----------|----------|
 | OpenSearch  | [Build](https://build.ci.opensearch.org/job/docker-build/3371/)  | [Scan](https://build.ci.opensearch.org/job/docker-scan/1558/artifact/scan_docker_image.txt)   |
 | OpenSearch Dashboards  | [Build](https://build.ci.opensearch.org/job/docker-build/3370/)  | [Scan](https://build.ci.opensearch.org/job/docker-scan/1557/artifact/scan_docker_image.txt)   |
 
+#### Integration Tests
 
-##### Docker RC Freeze
+For more details on running integration tests, refer [wiki](https://github.com/opensearch-project/opensearch-build/wiki/Testing-the-Distribution#integration-tests). As one of the exit criteria, it is important to have all the integration tests passing for all the platforms. See [build-workflow](#build-workflows) for details on integration test workflow for OpenSearch and OpenSearch Dashboards. As a part of build-workflow if the parameters (TEST_MANIFEST, INTEG_TEST_JOB_NAME, TEST_PLATFORM, TEST_DISTRIBUTION) are provided during the release candidate build, integration tests will be triggered for all distributions. 
 
-This to ensure that [check-for-build.jenkinsfile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile) won't re-build periodically and override the docker, the RC docker is created with build number. This step can be skipped if the input `BUILD_DOCKER: build_docker_with_build_number_tag` (Ref [Workflow Trigger](#workflow-trigger) used in the [Distribution Build](#distribution-build)).
+Failing integration tests create GitHub issues with all the details included in the respective repository. [Sample issue](https://github.com/opensearch-project/security-analytics/issues/1451)
 
-| Docker Freeze | copy |
-|----------|----------|
-| OpenSearch  | [docker-copy](https://build.ci.opensearch.org/job/docker-copy/466/console)  | 
-| OpenSearch Dashboards  | [docker-copy](https://build.ci.opensearch.org/job/docker-copy/467/console)  | 
+<details><summary>What if?</summary>
+<p>
 
-#### Benchmark Tests
+- What if I missed one of the integration test parameter while triggering RC?
+  Integration test workflows can be triggered and run independently irrespective of build workflows. Feel free to trigger the respective workflow. The results of the integration tests for per component can be viewed in pipeline view as well as on the [metrics portal](https://metrics.opensearch.org/_dashboards/app/dashboards#/view/21aad140-49f6-11ef-bbdd-39a9b324a5aa?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-90d,to:now))&_a=(description:'OpenSearch%20Release%20Build%20and%20Integration%20Test%20Results',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,useMargins:!t),query:(language:kuery,query:''),timeRestore:!t,title:'OpenSearch%20Release%20Build%20and%20Integration%20Test%20Results',viewMode:view)).
 
-For running the benchmark tests, use the `benchmark-test` job part of the [Build Workflows](#build-workflows). For more details in running the benchmark tests refer [Benchmarking Tests](https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow#benchmarking-tests) section part of the [test workflow](https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow). This job offers multiple options to test the performance of a specific version cluster using various metrics. The benchmark performance results can be accessed via the [OpenSearch Performance Benchmarks dashboard](https://opensearch.org/benchmarks). Sample benchmark tests for [2.9.0 release](https://github.com/opensearch-project/opensearch-build/issues/3616#issuecomment-1642764515).
+- What is I want to re-run the integration test? Is there a limit to how many times the workflow can be triggered?
+  There is no limit as such. The tests for the given component(s) can be run any number of times. However, please be mindful of the resources consumption used to run these tests. For flaky integration test, please create an issue in the respective component repository for it to be addressed.
 
+</p>
+</details>
 
 #### Backwards Compatibility Tests
 
@@ -282,29 +329,24 @@ On board the components/plugins to the test [Test Manifest](#test-manifest) with
         - with-security
 ```
 
-#### Windows Integration Test
-
-Currently, the windows integration tests for a release is manual. The manually tested windows zip is being evaluated and approved by the plugin teams for sign off. In order to test the windows distribution, two instances need to be created: one with security features enabled and another without security. Afterward, API calls should be tested by launching the OpenSearch and Dashboard processes through direct execution of the `.bat` file.
-
 #### Broadcast and Communication
 
-Broadcast the release candidate in OpenSearch public slack workspace and the release GitHub issue using format [sample broadcast message](https://github.com/opensearch-project/opensearch-build/issues/3434#issuecomment-1571201919) to gather votes.
+Broadcast the release candidate in OpenSearch public slack workspace (releases channel) and the GitHub release issue using format [sample broadcast message](https://github.com/opensearch-project/opensearch-build/issues/3434#issuecomment-1571201919) to gather votes.
 
 As a release manager, it is essential to ensure the successful completion of all the above mentioned jobs. In the event of failures during integration tests or scans, the release manager should collaborate with the component teams and initiate a re-run to ensure that all jobs are executed successfully.
 
 Post all the job related failures in the `Release issue`, Sample [post](https://github.com/opensearch-project/opensearch-build/issues/3331#issuecomment-1550461519).
 
-Note: Sometimes the integ-test jobs are flaky and might not pass due to several reasons with the component code, in that case coordinate with the respective component team and get a manual sign off. Sample [manual sign off](https://github.com/opensearch-project/opensearch-build/issues/3331#issuecomment-1552191673).
-All the failed logs are in s3 accessed through the cloudfront. Sample [link](https://github.com/opensearch-project/opensearch-build/issues/3331#issuecomment-1552148546).
-
-
 #### Release Candidate Lock
 
-Stop builds for this version of OpenSearch and/or OpenSearch Dashboards in order to avoid accidental commits going in unknowingly. Restart only if necessary, else manually run the build workflow and declare new release candidate.
+Stop builds for this version of OpenSearch and/or OpenSearch Dashboards in order to avoid accidental commits going in unknowingly. This is done by locking the commits in the [input manifest](#input-manifest). Use [release-manifest-commit-lock workflow](https://build.ci.opensearch.org/job/release-manifest-commit-lock/) with appropriate action.
 
 #### Stop Periodic Auto Builds
 Once the RC is finalized, in order to exclude the release from running periodically, at this point it is necessary for the release manager to lock the input manifest and update the `check-for-build.jenkins` to remove it from the scheduled execution, sample [PR](https://github.com/opensearch-project/opensearch-build/pull/3523/files).
 
+#### Benchmark Tests
+
+For running the benchmark tests, use the `benchmark-test` job part of the [Build Workflows](#build-workflows). For more details in running the benchmark tests refer [Benchmarking Tests](https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow#benchmarking-tests) section part of the [test workflow](https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow). This job offers multiple options to test the performance of a specific version cluster using various metrics. The benchmark performance results can be accessed via the [OpenSearch Performance Benchmarks dashboard](https://opensearch.org/benchmarks). Sample benchmark tests for [2.9.0 release](https://github.com/opensearch-project/opensearch-build/issues/3616#issuecomment-1642764515).
 
 ## Release
 
