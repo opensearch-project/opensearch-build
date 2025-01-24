@@ -165,7 +165,7 @@ RUN pip3 install cmake==3.26.4
 RUN if [ `uname -m` = "x86_64" ]; then \
         curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-x64-glibc-217.tar.xz -o /node20.tar.xz; \
     else \
-        curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-arm64-glibc-226.tar.xz -o /node20.tar.xz; \
+        curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-arm64-glibc-226-libstdc++-6.0.24.tar.xz -o /node20.tar.xz; \
     fi; \
     mkdir /node_al2 && \
     tar -xf /node20.tar.xz --strip-components 1 -C /node_al2 && \
