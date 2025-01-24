@@ -28,61 +28,61 @@ pipeline {
     parameters {
         string(
             name: 'COMPONENT_NAME',
-            description: 'If this field contains one or more component names (e.g. OpenSearch common-utils ...), will build with "--component <COMPONENT_NAME> ...", else build everything in the INPUT_MANIFEST.',
+            description: '<Optional> If this field contains one or more component names (e.g. OpenSearch common-utils ...), will build with "--component <COMPONENT_NAME> ...", else build everything in the INPUT_MANIFEST.',
             trim: true
         )
         string(
             name: 'INPUT_MANIFEST',
-            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            description: '<Required> Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
             trim: true
         )
         string(
             name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
+            description: '<Optional> Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
             trim: true
         )
         string(
             name: 'INTEG_TEST_JOB_NAME',
-            description: 'Name of integration test job that will be triggered, e.g. Playground/integ-test. A non-null empty value here will skip integration tests.',
+            description: '<Optional> Name of integration test job that will be triggered, e.g. Playground/integ-test. A non-null empty value here will skip integration tests.',
             defaultValue: 'integ-test',
             trim: true
         )
         string(
             name: 'BWC_TEST_JOB_NAME',
-            description: 'Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test.  A non-null empty value here will skip BWC tests.',
+            description: '<Optional> Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test.  A non-null empty value here will skip BWC tests.',
             defaultValue: 'bwc-test',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
+            description: "<Required> Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms separated by space (docker is only available on linux)",
             defaultValue: 'linux windows',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
             name: 'BUILD_DISTRIBUTION',
-            description: "Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            description: "<Required> Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions separated by space (docker is only available on tar)",
             defaultValue: 'tar rpm deb zip',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'TEST_PLATFORM',
-            description: "Test selected platform, choices include 'linux', 'windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
+            description: "<Optional> Test selected platform, choices include 'linux', 'windows'. Can combine multiple platforms separated by space",
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
             name: 'TEST_DISTRIBUTION',
-            description: "Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            description: "<Optional> Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions separated by space",
             trim: true
         )
         string(
             name: 'RC_NUMBER',
-            description: 'The RC build count. Default is 0 which means its not an RC build.',
+            description: '<Required> The RC build count. Default is 0 which means its not a Release Candidate.',
             defaultValue: '0'
         )
         choice(
             name: 'BUILD_DOCKER',
-            description: 'Build docker image or not with options.',
+            description: '<Required> Build docker image or not with options.',
             choices: ['build_docker', 'build_docker_with_build_number_tag', 'do_not_build_docker'],
         )
         booleanParam(

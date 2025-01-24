@@ -220,6 +220,8 @@ Ensure the proper inputs are used to initiate the distribution. For instance, he
 
 **TEST_DISTRIBUTION**: \<Optional\> Distributions to tests. Choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between. </br>
 
+**RC_NUMBER**: \<Required\> The RC build count. Default is 0 which means its not a Release Candidate. </br>
+
 **BUILD_DOCKER**: Input with a dropdown that has 3 options `build_docker`, `build_docker_with_build_number_tag`, `do_not_build_docker`, the release manager has to take a call with right inputs.</br>
 
 **UPDATE_LATEST_URL**: To update the `/latest` CFN URL, Visit [latest-distribution-url](https://github.com/opensearch-project/opensearch-build/wiki/Building-an-OpenSearch-and-OpenSearch-Dashboards-Distribution#latest-distributions-buildsl) for more details.</br>
