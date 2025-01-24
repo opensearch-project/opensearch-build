@@ -74,6 +74,7 @@ These are the issues created by automation with the distribution build and integ
 
 
 #### Release Workflows
+See the [source code](https://github.com/opensearch-project/opensearch-build/tree/main/jenkins/release-workflows) for most of the release workflows. Others can be found in [jenkins](https://github.com/opensearch-project/opensearch-build/tree/main/jenkins) directory. All workflows are sourced from `main` branch.
 
 | Workflow                                                                                 | Description         |
 | ---------------------------------------------------------------------------------------- | ------------------- |
@@ -360,12 +361,12 @@ Verify all issues labeled with this release have been resolved. Coordinate with 
 
 #### Go or No-Go
 
-Get the Go / No-Go votes from project management committee (PMC) before staging the release artifacts for production publishing process,
-
+Get the Go / No-Go votes from project management committee (PMC) before publishing the release artifacts.
 
 #### Release Notes
 
-Coordinate with the plugin teams and create a consolidates release notes. Sample [PR](https://github.com/opensearch-project/opensearch-build/pull/3532). Release manager can check if a plugin team has created a release notes or not using the [release notes tracker tool](https://github.com/opensearch-project/opensearch-build/tree/main/src/release_notes_workflow). Sample [run](https://build.ci.opensearch.org/job/release-notes-tracker/).
+Coordinate with the plugin teams and create consolidated release notes. This step is also automated using [release-notes-tracker workflow](https://build.ci.opensearch.org/job/release-notes-tracker). Select `compile` option from the action dropdown. Sample [PR](https://github.com/opensearch-project/opensearch-build/pull/5204) created by the workflow run. Please ensure to add `Release highlights` to the consolidated release notes by pushing commits to the same PR.
+Release manager can check if component team(s) has created release notes or not using the same [workflow](https://build.ci.opensearch.org/job/release-notes-tracker) with action as `check`. Release manager can choose to post the result of this check as a [comment](https://github.com/opensearch-project/opensearch-build/issues/5004#issuecomment-2438740377) on the GitHub issue. 
 
 
 ### Main Release
@@ -374,17 +375,18 @@ Release the artifacts to production distribution channels, update the website an
 
 #### Central Release Promotion Workflow
 
-The [central release promotion workflow ](https://build.ci.opensearch.org/job/central-release-promotion/) consist of multiple child workflows such as:
+The [central release promotion workflow ](https://build.ci.opensearch.org/job/central-release-promotion/) as the name suggest is responsible for releasing the OpenSearch and OpenSearch Dashboards artifacts to all the platforms. It consists of multiple child workflows that are run as a separate stage. See the promotion workflow run for [2.17.0 release](https://build.ci.opensearch.org/blue/organizations/jenkins/central-release-promotion/detail/central-release-promotion/13/pipeline). _Please note that this workflow should always be run with 2PR._
+See child workflows details below:
 
 * *Promote Repos* :  Publishes DEBIAN and RPM repositories.
 
 | Repo | OpenSearch (Sample Runs)                                                     | OpenSearch Dashboards (Sample Runs)                                           |
 | ---- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | YUM  | [yum-os](https://build.ci.opensearch.org/job/distribution-promote-repos/46/) | [yum-osd](https://build.ci.opensearch.org/job/distribution-promote-repos/48/) |
-| APT  | [apt-os](https://build.ci.opensearch.org/job/distribution-promote-repos/)     | [apt-osd](https://build.ci.opensearch.org/job/distribution-promote-repos/49/) |
+| APT  | [apt-os](https://build.ci.opensearch.org/job/distribution-promote-repos/47/)     | [apt-osd](https://build.ci.opensearch.org/job/distribution-promote-repos/49/) |
 
 
-* *Promote Artifacts*: Promotes below artifacts:
+* *Promote Artifacts*: Promotes downloadable artifacts:
 
 | Artifacts | OpenSearch (Sample Runs)                                                                                                                                                                   | OpenSearch Dashboards (Sample Runs)                                                                                                                                                           |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -393,12 +395,20 @@ The [central release promotion workflow ](https://build.ci.opensearch.org/job/ce
 | TAR       | [os-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/243/),       [os-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/246/)       | [osd-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/245/), [osd-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/244/)               |
 | RPM       | [os-rpm-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/239/),             [os-rpm-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/240/) | [osd-rpm-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/241/),         [osd-rpm-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/242/)      |
 
-* *Maven Promotion* : Promote OpenSearch to maven central, trigger the `publish-to-maven workflow` (Ref [Release Workflows](#release-workflows)), sample [run](https://build.ci.opensearch.org/job/publish-to-maven/17/console).
+* *Maven Promotion* : Promotes OpenSearch to maven central. Sample [run](https://build.ci.opensearch.org/job/publish-to-maven/17/console).
 
-* *Docker Promotion* : Publish the images to docker and ECR, trigger the `docker promotion workflow` (Ref [Release Workflows](#release-workflows)), sample [run](https://build.ci.opensearch.org/job/docker-promotion/32/console).
+* *Docker Promotion* : Publishes the images to dockerHub and ECR, Sample [run](https://build.ci.opensearch.org/job/docker-promotion/32/console).
 
-* *Distribution Validation* : Use the validation workflow (Ref [Release Workflows](#release-workflows)) to validate the published artifacts, sample [validation workflow run](https://build.ci.opensearch.org/job/distribution-validation/3/console).
+* *Distribution Validation* : Uses the validation workflow (Ref [Release Workflows](#release-workflows)) to validate the published artifacts, sample [validation workflow run](https://build.ci.opensearch.org/job/distribution-validation/3/console).
 
+<details><summary>What if?</summary>
+<p>
+
+- What if the workflow fails?
+  If the workflow fails before Maven publication stage, it is safe to re-run the workflow (Please 2PR on this as well). Central promotion workflow is a combination of child workflows which can be run independently as well. See [source code](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/release-workflows/release-promotion.jenkinsfile)
+
+</p>
+</details>
 
 #### Collaboration with the Project Management Team
 
@@ -410,7 +420,7 @@ Coordinate with the documentation website team to ensure the changes are in plac
 
 ##### Publish blog posts
 
-[Sample Blog Post](https://opensearch.org/blog/opensearch-2.8.0-released/)
+Release blog post are added in the [project-website repo](https://github.com/opensearch-project/project-website/pull/3437). [Sample Blog Post](https://opensearch.org/blog/opensearch-2.8.0-released/)
 
 ##### Advertise on Social Media
 
@@ -418,7 +428,7 @@ Coordinate with the project management team to ensure the social media advertise
 
 ### Release Checklist
 
-Please update the checklist either in the release issue body or as a new comment to the release issue. By following and updating the release checklist, we can ensure the success of the release. Sample release checklist for [2.9.0 release](https://github.com/opensearch-project/opensearch-build/issues/3616#issuecomment-1646312725).
+Please update the checklist by updating the release issue body. By following and updating the release checklist, we can ensure the success of the release without any misses.
 
 ## Post Release
 
@@ -426,23 +436,32 @@ Once the release is completed following are the activities that needs to be comp
 
 ### Release Tags
 
-Create release tags for each OpenSearch and Dashboard components. Sample [OpenSearch](https://build.ci.opensearch.org/job/distribution-release-tag-creation/78/), [OpenSearch Dashboards](https://build.ci.opensearch.org/job/distribution-release-tag-creation/77/) workflow runs.
+Create release tags for all OpenSearch and OpenSearch Dashboard components by running [distribution-release-tag-creation](https://build.ci.opensearch.org/job/distribution-release-tag-creation/) workflow with the right version.
 
 ### Input Manifest Update
 
-Replace `refs` in input manifest with tags. The `refs` can be identified from the bundle or build manifest, sample [PR](https://github.com/opensearch-project/opensearch-build/pull/3534) that updates the input manifest.
+As a post action of the above [distribution-release-tag-creation](https://build.ci.opensearch.org/job/distribution-release-tag-creation/) workflow, [release-manifest-commit-lock](https://build.ci.opensearch.org/job/release-manifest-commit-lock/) is triggered that creates an automated [Pull Request](https://github.com/opensearch-project/opensearch-build/pull/5206) to update `refs` in input manifest with tags.
+
+<details><summary>What if?</summary>
+<p>
+
+- What if the subsequent workflow (release-manifest-commit-lock) fails and pull request is not created?
+  If the release tags are created but subsequent or post action workflow fails, please debug and fix the issue if possible. The [release-manifest-commit-lock](https://build.ci.opensearch.org/job/release-manifest-commit-lock/) can also be run independently with MANIFEST_LOCK_ACTION set to `UPDATE_TO_TAGS`. If the workflow is unable to create PR due to other issues, please create the pull request manually.
+
+</p>
+</details>
 
 ### OpenSearch Build Release notes
 
-Generate distribution release notes for opensearch-build repository, sample [1.3.10](https://github.com/opensearch-project/opensearch-build/releases/tag/1.3.10) release details.
+Push or create a tag in [opensearch-build](https://github.com/opensearch-project/opensearch-build) repo with the release version. This will trigger the [release workflow](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/publish-release.yml) that creates a release on GitHub along with release notes for opensearch-build.
 
 ### Retrospective Issue
 
-Create an issue for a retrospective, solicit feedback, and publish a summary. Sample [retro issue](https://github.com/opensearch-project/opensearch-build/issues/3535).
+After each release, [releases.yml](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/releases.yml) automatically creates a retrospective issue for feedback collection. The Release Manager organizes a review meeting when sufficient discussion points accumulate. The process concludes with documented action items and owners, as demonstrated in the 2.17.0 release [retrospective](https://github.com/opensearch-project/opensearch-build/issues/4909) and [retro board](https://github.com/orgs/opensearch-project/projects/205/views/16?filterQuery=category%3A%22v2.17.0+Retro%22+).
 
 ### Helm and Ansible Playbook release
 
-Update and release the [Helm chart](https://github.com/opensearch-project/helm-charts) and [ansible playbook](https://github.com/opensearch-project/ansible-playbook) with the new OpenSearch and Dashboard version. Sample helm chart [PR](https://github.com/opensearch-project/helm-charts/pull/431/files) and ansible [PR](https://github.com/opensearch-project/ansible-playbook/pull/131).
+Update and release the [Helm chart](https://github.com/opensearch-project/helm-charts) and [ansible playbook](https://github.com/opensearch-project/ansible-playbook) with the new OpenSearch and OpenSearch Dashboards version. Sample helm chart [PR](https://github.com/opensearch-project/helm-charts/pull/431/files) and ansible [PR](https://github.com/opensearch-project/ansible-playbook/pull/131).
 
 ### Upcoming Release Preparation
 
@@ -464,10 +483,8 @@ Kindly review the following information provided below regarding the release dat
 Release Branch and Version Increment:  <REPLACE_RELEASE-minus-14-days>
 Feature freeze: <REPLACE_RELEASE-minus-12-days>
 Code Complete: <REPLACE_RELEASE-minus-10-days>
-RC creation and : <REPLACE_RELEASE-minus-6-days>
-Pre Release: <REPLACE_RELEASE-minus-1-days>
+First Release Candidate creation: <REPLACE_RELEASE-minus-6-days>
 Release date: <RELEASE_DATE>
-Post Release: <RELEASE_DATE>
 ```
 
 ### Release Readiness
@@ -483,14 +500,14 @@ OpenSearch Dashboards: https://github.com/pulls?q=is%3Aopen+is%3Apr+org%3Aopense
 
 ### Release Candidate Announcement
 
-Refer the [sample rc announcement](https://github.com/opensearch-project/opensearch-build/issues/3331#issuecomment-1549876307) from past `1.3.10` release.
+Refer the GitHub issue comment for [Release Candidate announcement](https://github.com/opensearch-project/opensearch-build/issues/3331#issuecomment-1549876307) from past `1.3.10` release.
 
 ### Release Complete
 
 ```
-OpenSearch 2.8.0 version has been released to public :tada:!
+OpenSearch <RELEASE_VERSION> version has been released to public :tada:!
 
-Thanks everyone for the help to bring <RELEASE_VERSION> release out.
+Thanks everyone for the help to release OpenSearch and OpenSearch Dashboards <RELEASE_VERSION>.
 Component repo owners please create a github release based on the tags of <RELEASE_VERSION.0>.
 Presenting the retrospective <RELEASE_RETRO_ISSUE_LINK> for the release. Please feel free to provide your valuable feedback for further improvements in the upcoming release.
 ```
