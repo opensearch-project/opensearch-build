@@ -26,17 +26,6 @@ pipeline {
         timeout(time: 1, unit: 'HOURS')
         buildDiscarder(logRotator(daysToKeepStr: '30'))
     }
-    triggers {
-        parameterizedCron('''
-            H */6 * * * %INPUT_MANIFEST=1.3.21/opensearch-1.3.21.yml
-            H */6 * * * %INPUT_MANIFEST=2.19.0/opensearch-dashboards-2.19.0.yml
-            H */6 * * * %INPUT_MANIFEST=2.18.1/opensearch-2.18.1.yml
-            H */6 * * * %INPUT_MANIFEST=1.3.20/opensearch-dashboards-1.3.20.yml
-            H */6 * * * %INPUT_MANIFEST=2.19.0/opensearch-2.19.0.yml
-            H */6 * * * %INPUT_MANIFEST=2.18.0/opensearch-2.18.0.yml
-            H */6 * * * %INPUT_MANIFEST=2.18.0/opensearch-dashboards-2.18.0.yml
-        ''')
-    }
     parameters {
         string(
             name: 'INPUT_MANIFEST',

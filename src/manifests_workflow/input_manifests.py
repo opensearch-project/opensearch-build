@@ -52,10 +52,6 @@ class InputManifests(Manifests):
         return os.path.join(self.jenkins_path(), "check-for-build.jenkinsfile")
 
     @classmethod
-    def cron_integTest_notification_jenkinsfile(self) -> str:
-        return os.path.join(self.jenkins_path(), "integ-test-notification.jenkinsfile")
-
-    @classmethod
     def os_versionincrement_workflow(self) -> str:
         return os.path.join(self.workflows_path(), "os-increment-plugin-versions.yml")
 
@@ -124,7 +120,6 @@ class InputManifests(Manifests):
             for new_version_entry in new_versions:
                 self.write_manifest(new_version_entry, branch_versions[new_version_entry], known_versions)
                 self.add_to_cron(new_version_entry)
-                self.add_to_integTest_notification_cron(new_version_entry)
                 self.add_to_versionincrement_workflow(new_version_entry)
                 known_versions.append(new_version_entry)
 
@@ -216,24 +211,6 @@ class InputManifests(Manifests):
             f.write(data)
 
         logging.info(f"Wrote {jenkinsfile}")
-
-    def add_to_integTest_notification_cron(self, version: str) -> None:
-        logging.info(f"Adding new version to integ test notification cron: {version}")
-        integTestJenkinsfile = self.cron_integTest_notification_jenkinsfile()
-        with open(integTestJenkinsfile, "r") as f:
-            data = f.read()
-
-        cron_entry = f"H */6 * * * %INPUT_MANIFEST={version}/{self.prefix}-{version}.yml\n"
-
-        if cron_entry in data:
-            raise ValueError(f"{integTestJenkinsfile} already contains an entry for {self.prefix} {version}")
-
-        data = data.replace("parameterizedCron('''\n", f"parameterizedCron('''\n{' ' * 12}{cron_entry}")
-
-        with open(integTestJenkinsfile, "w") as f:
-            f.write(data)
-
-        logging.info(f"Wrote {integTestJenkinsfile}")
 
     def add_to_versionincrement_workflow(self, version: str) -> None:
         versionincrement_workflow_files = [self.os_versionincrement_workflow(), self.osd_versionincrement_workflow()]
