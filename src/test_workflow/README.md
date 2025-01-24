@@ -317,7 +317,7 @@ The development is tracked by meta issue [#126](https://github.com/opensearch-pr
 
 #### smokeTest job
 
-It is a Jenkins job designed to run smoke tests on bundle artifacts. It retrieves the bundle artifacts using the provided manifest URL parameter and spins up a cluster with all plugins installed. The cluster is deployed using the default configuration without any customizations. Smoke tests for all components are executed sequentially, and the results are returned at the end.  
+It is a Jenkins job designed to run smoke tests on distribution artifacts. It retrieves the distribution artifacts using the provided manifest URL parameter and spins up a cluster with all plugins installed. The cluster is deployed using the default configuration without any customization. Smoke tests for all components are executed sequentially, and the results are returned at the end.  
 
 See the smoke test [configuration file](../../jenkins/opensearch/smoke-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/smoke-test/)
 
