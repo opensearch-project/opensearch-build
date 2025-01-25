@@ -1,7 +1,6 @@
-# yamllint disable
 ---
 info:
-  title: OpenSearch Core smoke tests
+  title: OpenSearch Index-Management plugin smoke tests
   version: default
 name: index-management
 paths:
@@ -9,45 +8,45 @@ paths:
     PUT:
       parameters: [
         {
-          "policy": {
-            "description": "ingesting logs",
-            "default_state": "ingest",
-            "states": [
+          'policy': {
+            'description': 'ingesting logs',
+            'default_state': 'ingest',
+            'states': [
               {
-                "name": "ingest",
-                "actions": [
+                'name': 'ingest',
+                'actions': [
                   {
-                    "rollover": {
-                      "min_doc_count": 5
+                    'rollover': {
+                      'min_doc_count': 5
                     }
                   }
                 ],
-                "transitions": [
+                'transitions': [
                   {
-                    "state_name": "search"
+                    'state_name': 'search'
                   }
                 ]
               },
               {
-                "name": "search",
-                "actions": [ ],
-                "transitions": [
+                'name': 'search',
+                'actions': [],
+                'transitions': [
                   {
-                    "state_name": "delete",
-                    "conditions": {
-                      "min_index_age": "5m"
+                    'state_name': 'delete',
+                    'conditions': {
+                      'min_index_age': '5m'
                     }
                   }
                 ]
               },
               {
-                "name": "delete",
-                "actions": [
+                'name': 'delete',
+                'actions': [
                   {
-                    "delete": { }
+                    'delete': {}
                   }
                 ],
-                "transitions": [ ]
+                'transitions': []
               }
             ]
           }
@@ -63,7 +62,7 @@ paths:
     POST:
       parameters: [
         {
-          "policy_id": "policy_1"
+          'policy_id': 'policy_1'
         }
       ]
   /_plugins/_ism/explain/ism-index:
