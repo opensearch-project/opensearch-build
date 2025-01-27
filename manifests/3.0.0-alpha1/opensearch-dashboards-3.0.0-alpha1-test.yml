@@ -93,3 +93,8 @@ components:
         - without-security
       additional-cluster-configs:
         assistant.chat.enabled: true
+  - name: flowFrameworkDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
