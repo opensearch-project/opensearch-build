@@ -148,6 +148,9 @@ pipeline {
                     paramType.each { key, value ->
                         verifyParameterPlatformDistribution(key, value)
                     }
+
+                    def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${INPUT_MANIFEST}"))
+                    env.version = inputManifestObj.build.version
                 }
             }
         }
@@ -914,6 +917,9 @@ pipeline {
         success {
             node(AGENT_LINUX_X64) {
                 script {
+                    if (params.RC_NUMBER.toInteger() > 0) {
+                        triggerDistributionValidationWorkflow(env.version)
+                    }
                     postCleanup()
                 }
             }
@@ -967,6 +973,21 @@ def triggerBWCTests(String buildManifestUrl, String platform, String distributio
                     string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
                 ]
     }
+}
+
+def triggerDistributionValidationWorkflow(String version) {
+    def triggerValidationWorkflow =
+            build job: 'distribution-validation',
+            propagate: true,
+            wait: true,
+            parameters: [
+                string(name: 'VERSION', value: version),
+                string(name: 'OS_BUILD_NUMBER', value: BUILD_NUMBER),
+                string(name: 'OPTIONAL_ARGS', value: 'using-staging-artifact-only'),
+                string(name: 'DOCKER_SOURCE', value: 'dockerhub'),
+                string(name: 'PROJECTS', value: 'opensearch'),
+                string(name: 'ARTIFACT_TYPE', value: 'staging')
+            ]
 }
 
 def verifyParameterPlatformDistribution(String paramName, String allowedValue) {
