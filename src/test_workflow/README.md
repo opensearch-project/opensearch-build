@@ -2,6 +2,7 @@
   - [Test.sh Options](#testsh-options)
   - [Integration Tests](#integration-tests)
   - [Backwards Compatibility Tests](#backwards-compatibility-tests)
+  - [Smoke Tests](#smoke-tests)
   - [Performance Tests](#performance-tests)
     - [Identifying Regressions in Performance Tests](#identifying-regressions-in-performance-tests)
       - [Identifying Regressions in Nightly Performance Tests](#identifying-regressions-in-nightly-performance-tests)
@@ -15,6 +16,7 @@
     - [integTest job](#integtest-job)
     - [bwcTest job](#bwctest-job)
     - [perfTest job](#perftest-job)
+    - [smokeTest job](#smoketest-job)
 - [Manifest Files](#manifest-files)
 - [Dependency Management](#dependency-management)
 - [S3 Permission Model](#s3-permission-model)
@@ -28,15 +30,15 @@ Testing is run via `./test.sh`.
 
 The following options are available.
 
-| name                   | description                                                                                                           |
-|------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| test-type              | Run tests of a test suite. [integ-test, bwc-test, perf-test, benchmark-test execute-test, benchmark-test compare]     |
-| test-manifest-path     | Specify a test manifest path.                                                                                         |
-| --paths                | Location of manifest(s).                                                                                              |
-| --test-run-id          | Unique identifier for a test run.                                                                                     |
-| --component [name ...] | Test a subset of specific components.                                                                                 |
-| --keep                 | Do not delete the temporary working directory on both success or error.                                               |
-| -v, --verbose          | Show more verbose output.                                                                                             |
+| name                   | description                                                                                                                   |
+|------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| test-type              | Run tests of a test suite. [integ-test, bwc-test, smoke-test, perf-test, benchmark-test execute-test, benchmark-test compare] |
+| test-manifest-path     | Specify a test manifest path.                                                                                                 |
+| --paths                | Location of manifest(s).                                                                                                      |
+| --test-run-id          | Unique identifier for a test run.                                                                                             |
+| --component [name ...] | Test a subset of specific components.                                                                                         |
+| --keep                 | Do not delete the temporary working directory on both success or error.                                                       |
+| -v, --verbose          | Show more verbose output.                                                                                                     |
 
 ### Integration Tests
 
@@ -121,6 +123,29 @@ This feature for BWC testing is supported for distribution versions starting `v1
 On CI level for plugins, security certificates need to be manually imported when spinning up the test cluster as security plugin is included in the distribution bundle. When upgrading the version within the test cluster, `nextNodeToNextVersion` is used for a single node upgrade and `goToNextVersion` is for a full restart upgrade.
 
 See [anomaly-detection#766](https://github.com/opensearch-project/anomaly-detection/pull/766) or [observability#1366](https://github.com/opensearch-project/observability/pull/1366) for more information.
+
+### Smoke Tests
+Run Smoke tests invoking `run_smoke_test.py` in each component from a distribution manifest.
+
+The smoke tests are designed to verify basic functionality of a distribution bundle with all plugins installed.
+Each plugin being tested has its own test specification YAML file, located in the [OpenSearch Build repository](https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow/smoke_test/smoke_tests_spec), organized by major version. These test specification files list all testing API cases. The smoke test workflow executes each API case and compares the results with the API specifications from the [OpenSearch API Specification repository](https://github.com/opensearch-project/opensearch-api-specification) to perform basic validation and testing.
+ 
+Usage:
+To execute the smoke tests, use the following command:
+```bash
+./test.sh smoke-test <test-manifest-path> <target>
+```
+
+Examples
+Running smoke tests locally with artifacts built and assembled:
+```bash
+./test.sh smoke-test  manifests/2.19.0/opensearch-2.19.0-test.yml --paths opensearch=/workspace/opensearch-build/tar
+```
+
+Running smoke tests against an existing build from CI:
+```bash
+./test.sh smoke-test  manifests/2.19.0/opensearch-2.19.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.0/10545/linux/x64/tar/
+```
 
 ### Performance Tests
 
@@ -249,7 +274,7 @@ The development of `test-orchestration-pipeline` is tracked by meta issue [#123]
 
 It is a Jenkins job that runs integration tests on a build artifact. It reads the build artifact composition from the associated manifest files and spins up parallel, independent integrationTest runs for each component built inside the artifact. For instance, if the artifact is a full distribution, which has all OpenSearch plugins, the job will kick off integration test suite for each individual plugin. Each plugin integration tests would run against a dedicated single node cluster, which is created from the built artifact. Once all integration tests complete, this job publishes the test results to an S3 bucket.
 
-See the integration test [configuration file](jenkins/opensearch/integ-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/integ-test/)
+See the integration test [configuration file](../../jenkins/opensearch/integ-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/integ-test/)
 
 The development of `integTest` job is tracked by meta issue [#818](https://github.com/opensearch-project/opensearch-build/issues/818)
 
@@ -259,7 +284,7 @@ It is a Jenkins job that runs bwc tests on the current version and compatible bw
 
 When the bwc test is triggered for a particular component, the tests set up their own cluster and test the required functionalities in the upgrade paths, for the example above, a multi-node cluster starts with bwc versions of OpenSearch and AD installed on it, one or more nodes are upgraded to the current version of OpenSearch and AD installed on it and backwards compatibility is tested. The plugins would add tests for all bwc versions (similar to OpenSearch core) and they can be triggered from the bwcTest job.
 
-See the bwc test [configuration file](jenkins/opensearch/bwc-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/bwc-test/)
+See the bwc test [configuration file](../../jenkins/opensearch/bwc-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/bwc-test/)
 
 The development of the bwc test automation is tracked by meta issue [#90](https://github.com/opensearch-project/opensearch-build/issues/90).
 
@@ -289,6 +314,14 @@ The result conversion of the perf-test is as follows-
 After the performance test completes, it will report back the test results as well as the test-id. The results here will be in JSON format where they are converted into a tabular HTML string using a template library which is json2html. They will be then written to a HTML file where the file-name’s format is in <test-id>.html. Along with generating a HTML file, a JSON file having the raw JSON data will also be generated whose filename’s format is in <test-id>.json. The reason for creating a JSON file is to give the user the option to view both the JSON data in tabular format in the HTML file and the raw JSON data in the JSON file. The .html as well as .json file generated, will be stored in the path given by the user during the test-suite flow as a command-line args. These will be then taken and published in the S3 bucket.   
 
 The development is tracked by meta issue [#126](https://github.com/opensearch-project/opensearch-build/issues/126)
+
+#### smokeTest job
+
+It is a Jenkins job designed to run smoke tests on distribution artifacts. It retrieves the distribution artifacts using the provided manifest URL parameter and spins up a cluster with all plugins installed. The cluster is deployed using the default configuration without any customization. Smoke tests for all components are executed sequentially, and the results are returned at the end.  
+
+See the smoke test [configuration file](../../jenkins/opensearch/smoke-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/smoke-test/)
+
+The development is tracked by meta issue [#5223](https://github.com/opensearch-project/opensearch-build/issues/5223)
 
 ## Manifest Files
 
