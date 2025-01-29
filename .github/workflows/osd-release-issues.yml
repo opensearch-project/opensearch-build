@@ -54,6 +54,7 @@ jobs:
           - {repo: security-dashboards-plugin}
           - {repo: dashboards-search-relevance}
           - {repo: opensearch-dashboards-functional-test}
+          - {repo: query-insights-dashboards}
         release_version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
       - name: GitHub App token
