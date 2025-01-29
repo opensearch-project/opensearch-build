@@ -55,19 +55,30 @@ paths:
   /_plugins/_ism/policies:
     GET:
       parameters: []
-  /ism-index:
+  /ism-index-000001:
     PUT:
-      parameters: []
-  /_plugins/_ism/add/ism-index:
+      parameters: [
+        {
+          "aliases": {
+            "rollover-alias": {
+              "is_write_index": true
+            }
+          }
+        }
+      ]
+  /_plugins/_ism/add/ism-index-000001:
     POST:
       parameters: [
         {
           'policy_id': 'policy_1'
         }
       ]
-  /_plugins/_ism/explain/ism-index:
+  /rollover-alias/_rollover:
+    POST:
+      parameters: []
+  /_plugins/_ism/explain/ism-index-000001:
     GET:
       parameters: []
-  /_plugins/_ism/remove/ism-index:
+  /_plugins/_ism/remove/ism-index-000001:
     POST:
       parameters: []
