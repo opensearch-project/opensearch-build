@@ -151,7 +151,10 @@ pipeline {
                     paramType.each { key, value ->
                         verifyParameterPlatformDistribution(key, value)
                     }
-
+                    if (params.RC_NUMBER.toInteger() > 0) {
+                        echo 'This is a release candidate build, enforcing build_docker_with_build_number_tag'
+                        BUILD_DOCKER = 'build_docker_with_build_number_tag'
+                    }
                     def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${INPUT_MANIFEST}"))
                     env.version = inputManifestObj.build.version
                 }
@@ -883,7 +886,7 @@ pipeline {
                         beforeAgent true
                         allOf {
                             expression {
-                                params.BUILD_DOCKER != 'do_not_build_docker'
+                                BUILD_DOCKER != 'do_not_build_docker'
                             }
                             expression {
                                 params.BUILD_PLATFORM.contains('linux')
