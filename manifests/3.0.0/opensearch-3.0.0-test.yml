@@ -158,3 +158,9 @@ components:
       additional-cluster-configs:
         opensearch.experimental.feature.application_templates.enabled: true
         cluster.application_templates.enabled: true
+
+  - name: query-insights
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
