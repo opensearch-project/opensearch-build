@@ -1,0 +1,20 @@
+---
+name: Link Checker
+on: [push, pull_request]
+
+permissions:
+  contents: read
+jobs:
+  linkchecker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: lychee Link Checker
+        id: lychee
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: --verbose --max-retries 5 --retry-wait-time 10 --accept=200,403,429 --exclude-path tests/ --exclude-path release-notes/ ./
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

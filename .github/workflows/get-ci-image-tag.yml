@@ -1,0 +1,82 @@
+---
+name: Get CI Image Tag
+on:
+  workflow_call:
+    inputs:
+      product:
+        required: false
+        type: string
+        default: 'opensearch'
+      platform:
+        required: false
+        type: string
+      build_ref:
+        required: false
+        type: string
+        default: 'main'
+      version:
+        required: false
+        type: string
+      type:
+        required: false
+        type: string
+        default: 'build'
+    outputs:
+      ci-image-version-linux:
+        description: The ci image version for linux build
+        value: ${{ jobs.Get-CI-Image-Tag.outputs.output-ci-image-version-linux }}
+      ci-image-start-options:
+        description: The ci image start options to set when starting the container
+        value: ${{ jobs.Get-CI-Image-Tag.outputs.output-ci-image-start-options }}
+      ci-image-start-command:
+        description: The ci image start commands to run after initialization
+        value: ${{ jobs.Get-CI-Image-Tag.outputs.output-ci-image-start-command }}
+
+jobs:
+  Get-CI-Image-Tag:
+    runs-on: ubuntu-latest
+    outputs:
+      output-ci-image-version-linux: ${{ steps.step-ci-image-setups.outputs.ci-image-version-linux }}
+      output-ci-image-start-command: ${{ steps.step-ci-image-setups.outputs.ci-image-start-command }}
+      output-ci-image-start-options: ${{ steps.step-ci-image-setups.outputs.ci-image-start-options }}
+    steps:
+      - name: Install crane
+        uses: iarekylew00t/crane-installer@v1
+        with:
+          crane-release: v0.15.2
+      - name: Checkout opensearch-build repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'opensearch-project/opensearch-build'
+          ref: ${{ inputs.build_ref }}
+          path: 'opensearch-build'
+      - name: Get ci image version from opensearch-build repository scripts
+        id: step-ci-image-setups
+        run: |
+          PRODUCT=${{ inputs.product }}
+          PLATFORM=${{ inputs.platform }}
+          TYPE=${{ inputs.type }}
+          if [[ -z "$PLATFORM" ]]; then
+              if [[ "$PRODUCT" = "opensearch" ]]; then
+                  PLATFORM="al2" # Temp measure before al2 deprecation on opensearch for k-NN
+              else
+                  PLATFORM="almalinux8"
+              fi
+          fi
+
+          if [[ "$PLATFORM" = "al2" ]]; then
+              CI_IMAGE_CMD="cp -a /node_al2/* /node && /node/bin/node -v"
+              echo "ci-image-start-command=$CI_IMAGE_CMD" >> $GITHUB_OUTPUT
+              CI_IMAGE_OPTIONS="--user root -v /node:/node:rw,rshared -v /node:/__e/node20:ro,rshared"
+              echo "ci-image-start-options=$CI_IMAGE_OPTIONS" >> $GITHUB_OUTPUT
+          else
+              CI_IMAGE_CMD="echo pass"
+              echo "ci-image-start-command=$CI_IMAGE_CMD" >> $GITHUB_OUTPUT
+              CI_IMAGE_OPTIONS="--user root"
+              echo "ci-image-start-options=$CI_IMAGE_OPTIONS" >> $GITHUB_OUTPUT
+          fi
+          crane version
+          echo $PRODUCT $PLATFORM
+          CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p $PLATFORM -u $PRODUCT -t $TYPE | head -1`
+          echo $CI_IMAGE_VERSION
+          echo "ci-image-version-linux=$CI_IMAGE_VERSION" >> $GITHUB_OUTPUT
