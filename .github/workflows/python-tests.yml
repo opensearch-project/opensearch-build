@@ -5,7 +5,7 @@ on: [push, pull_request]
 
 jobs:
   Get-CI-Image-Tag:
-    uses: ./.github/workflows/get-ci-image-tag.yml
+    uses: opensearch-project/opensearch-build/.github/workflows/get-ci-image-tag.yml@main
     with:
       product: opensearch
 
