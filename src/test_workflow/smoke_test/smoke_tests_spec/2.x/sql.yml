@@ -157,3 +157,20 @@ paths:
   /_plugins/_sql/stats:
     GET:
       parameters: []
+  /_plugins/_ppl:
+    POST:
+      parameters: [
+        {
+          'query': 'source=accounts | where age > 30 | fields firstname, lastname, balance'
+        }
+      ]
+  /_plugins/_ppl/_explain:
+    POST:
+      parameters: [
+        {
+          'query': 'source=accounts | fields firstname, lastname'
+        }
+      ]
+  /_plugins/_ppl/stats:
+    GET:
+      parameters: []
