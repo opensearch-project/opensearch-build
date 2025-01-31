@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: b006c0f426558b0cfb4cbd06377b301b2ac28520
+    ref: fb32cfb73969e6c69882b1645e797671dc99b8eb
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 320af3013653c1d823bcc842f894d313825778a6
@@ -43,13 +43,13 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: abae323c6204cfc725e124e0c9487f2d3024a08b
+    ref: ea05d9689c630133baa85be22cad9cf8ba36cf84
     platforms:
       - linux
       - windows
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 700d91658bbccb0fba6a5fb209f2d5b5f70e0422
+    ref: 48b03d659f19ed248e6e267aefc7d37bbac78c13
     platforms:
       - linux
       - windows
@@ -65,7 +65,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 6b6dd65d04d37e4259332b848eb412ceefbc3d59
+    ref: 6ba54cf9f911a53704ab973aa08111128c03d6d2
     platforms:
       - linux
       - windows
@@ -73,7 +73,7 @@ components:
       - common-utils
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 6e7b8ba50cb72d76c67e1c6cc5557f43eca6d726
+    ref: de154325f9a95b9515c80d63a5a06d11c3084a81
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 1c6537c2c65c35bafe10a65372c66969108f2c32
+    ref: 4577e0d7fb3eb2e9bb66bef4056e377483ba095a
     platforms:
       - linux
       - windows
@@ -174,7 +174,7 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: be22a59207ce976a89c6a1938ddbc23afd7b6b1d
+    ref: 28a3ffa6c4c089a506acf34a35b9552ac30ae1ce
     platforms:
       - linux
       - windows
@@ -189,7 +189,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: aed1c690b90e33925437bef102c03fae4fc6b84d
+    ref: 35d7f392cef60b2658bc75fd3edca30e9e736ad3
     platforms:
       - linux
       - windows
@@ -200,7 +200,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: 4c654e0630049ab6dfe2765712d6b474014a8243
+    ref: 48b691a6f290b85cc9d55df280edc8f0541965c4
     platforms:
       - linux
       - windows
