@@ -1,0 +1,84 @@
+---
+info:
+  title: OpenSearch Index-Management plugin smoke tests
+  version: default
+name: index-management
+paths:
+  /_plugins/_ism/policies/policy_1:
+    PUT:
+      parameters: [
+        {
+          'policy': {
+            'description': 'ingesting logs',
+            'default_state': 'ingest',
+            'states': [
+              {
+                'name': 'ingest',
+                'actions': [
+                  {
+                    'rollover': {
+                      'min_doc_count': 5
+                    }
+                  }
+                ],
+                'transitions': [
+                  {
+                    'state_name': 'search'
+                  }
+                ]
+              },
+              {
+                'name': 'search',
+                'actions': [],
+                'transitions': [
+                  {
+                    'state_name': 'delete',
+                    'conditions': {
+                      'min_index_age': '5m'
+                    }
+                  }
+                ]
+              },
+              {
+                'name': 'delete',
+                'actions': [
+                  {
+                    'delete': {}
+                  }
+                ],
+                'transitions': []
+              }
+            ]
+          }
+        }
+      ]
+  /_plugins/_ism/policies:
+    GET:
+      parameters: []
+  /ism-index-000001:
+    PUT:
+      parameters: [
+        {
+          "aliases": {
+            "rollover-alias": {
+              "is_write_index": true
+            }
+          }
+        }
+      ]
+  /_plugins/_ism/add/ism-index-000001:
+    POST:
+      parameters: [
+        {
+          'policy_id': 'policy_1'
+        }
+      ]
+  /rollover-alias/_rollover:
+    POST:
+      parameters: []
+  /_plugins/_ism/explain/ism-index-000001:
+    GET:
+      parameters: []
+  /_plugins/_ism/remove/ism-index-000001:
+    POST:
+      parameters: []
