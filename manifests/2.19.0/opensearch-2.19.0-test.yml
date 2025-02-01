@@ -69,6 +69,7 @@ components:
       additional-cluster-configs:
         path.repo:
           - /tmp
+          - /testSnapshotFolder
     bwc-test:
       test-configs:
         - with-security
