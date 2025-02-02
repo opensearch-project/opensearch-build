@@ -19,7 +19,7 @@ components:
       - windows
   - name: opensearch-learning-to-rank-base
     repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
-    ref: 2f584bc0eea7e8fb42844a955f11325d5db0ba19
+    ref: 45ae58db4f9bfbd17726b8f9bd42f3902646ba60
     platforms:
       - linux
       - windows
@@ -37,7 +37,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: c50a90e04de363ad11954bbe87f562bb0b8c3e7b
+    ref: 1d4f54e14ef67778d8daa7c985aee9b88e39b921
     platforms:
       - linux
       - windows
