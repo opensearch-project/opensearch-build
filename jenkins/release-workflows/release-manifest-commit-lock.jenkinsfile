@@ -41,9 +41,9 @@ pipeline {
             trim: true
         )
         choice(
-                choices: ['MATCH_BUILD_MANIFEST', 'UPDATE_TO_RECENT_COMMITS', 'UPDATE_TO_TAGS'],
+                choices: ['MATCH_BUILD_MANIFEST', 'UPDATE_TO_RECENT_COMMITS', 'UPDATE_TO_TAGS', 'UPDATE_TO_RELEASE_BRANCH'],
                 name: 'MANIFEST_LOCK_ACTION',
-                description: 'The manifest lock action to choose.<br>MATCH_BUILD_MANIFEST: Will update the manifest with commit ID from release candidate build manifest.<br>UPDATE_TO_RECENT_COMMITS: Will update the manifest with component repo release branch head commit.<br>UPDATE_TO_TAGS: Will update the manifest with ref tags',
+                description: 'The manifest lock action to choose.<br>MATCH_BUILD_MANIFEST: Will update the manifest with commit ID from release candidate build manifest.<br>UPDATE_TO_RECENT_COMMITS: Will update the manifest with component repo release branch head commit.<br>UPDATE_TO_TAGS: Will update the manifest with ref tags.<br>UPDATE_TO_RELEASE_BRANCH: Will update the manifest ref with release branch',
         )
         string(
             name: 'COMPONENTS',
@@ -163,6 +163,35 @@ pipeline {
                                         if (newComponentRef) {
                                             existingComponent.ref = "tags/" + releaseTag
                                         }
+                            }
+                        }
+                        writeYaml file:  "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml", data: existingManifest, overwrite: true
+                        sh """
+                                yq eval -i '.' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
+                                sed -i '1s/^/---\\n/' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
+                        """
+                    }
+                    updateManifest("opensearch")
+                    updateManifest("opensearch-dashboards")
+                }
+            }
+        }
+        stage('UPDATE_TO_RELEASE_BRANCH') {
+            when {
+                expression { params.MANIFEST_LOCK_ACTION == 'UPDATE_TO_RELEASE_BRANCH' }
+            }
+            steps {
+                script {
+                    def updateManifest = { String productName ->
+                        def existingManifest = readYaml file: "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml"
+                        def selectedComponents = params.COMPONENTS.isEmpty() ? existingManifest.components : existingManifest.components.findAll { component ->
+                            params.COMPONENTS.split(',').any { it.trim() == component.name }
+                        }
+                        selectedComponents.each { componentName ->
+                            def existingComponent = existingManifest.components.find { it.name == componentName.name }
+                            if (existingComponent) {
+                                def branchRef = params.RELEASE_VERSION.toString().split('\\.')[0..1].join('.')
+                                existingComponent.ref = "${branchRef}"
                             }
                         }
                         writeYaml file:  "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml", data: existingManifest, overwrite: true
