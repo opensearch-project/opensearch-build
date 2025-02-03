@@ -1,0 +1,90 @@
+---
+info:
+  title: OpenSearch Security plugin smoke tests
+  version: 2.x
+name: security
+paths:
+  /_plugins/_security/api/account:
+    GET:
+      parameters: []
+  /_plugins/_security/api/actiongroups/:
+    GET:
+      parameters: []
+  /_plugins/_security/api/actiongroups/my-action-group:
+    PUT:
+      parameters: [
+        {
+          'allowed_actions': [
+            'indices:data/write/index*',
+            'indices:data/write/update*',
+            'indices:admin/mapping/put',
+            'indices:data/write/bulk*',
+            'read',
+            'write'
+          ]
+        }
+      ]
+  /_plugins/_security/api/internalusers/:
+    GET:
+      parameters: []
+  /_plugins/_security/api/roles/smoke-test-role:
+    PUT:
+      parameters: [
+        {
+          'cluster_permissions': [
+            'cluster_composite_ops',
+            'indices_monitor'
+          ],
+          'index_permissions': [
+            {
+              'index_patterns':
+                [
+                  'movies*'
+                ],
+              'dls': '',
+              'fls': [],
+              'masked_fields': [],
+              'allowed_actions':
+                [
+                  'read'
+                ]
+            }
+          ],
+          'tenant_permissions': [
+            {
+              'tenant_patterns': [
+                'human_resources'
+              ],
+              'allowed_actions':
+                [
+                  'kibana_all_read'
+                ]
+            }
+          ]
+        }
+      ]
+    GET:
+      parameters: []
+  /_plugins/_security/api/internalusers/smoke-test-user:
+    PUT:
+      parameters: [
+        {
+          'password':
+            'smoke-test-password',
+          'opendistro_security_roles':
+            [
+              'smoke-test-role'
+            ],
+          'backend_roles':
+            [
+              'role 1', 'role 2'
+            ],
+          'attributes':
+            {
+              'attribute1':
+                'value1',
+              'attribute2':
+                'value2'
+            }
+        }
+      ]

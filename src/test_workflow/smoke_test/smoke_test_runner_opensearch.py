@@ -72,8 +72,11 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
                             response = requests_method(request_url, verify=False, auth=("admin", "myStrongPassword123!"), headers=header, data=parameters_data)
                             logging.info(f"Response is {response.text}")
                             self.validate_response_swagger(response)
-                        except:
+                        except Exception as e:
                             status = 1
+                            logging.error(f"Unexpected Error type is {type(e)}")
+                            logging.error(e)
+                            logging.info("Response is not validated. Please check the response output text above.")
                         finally:
                             test_result = TestResult(component.name, ' '.join([api_requests, method]), status)  # type: ignore
                             test_results.append(test_result)
