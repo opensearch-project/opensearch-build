@@ -9,16 +9,16 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: b07a7c9b7423f8d6346cdf8a204310365c71a604
+    ref: fc11f17117518750c6b9d287509c838f7ebcbbdb
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '2.19'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 7ec3526414e1e0a7cccce2ca08e789b9153f0707
+    ref: 12b69cd1f502865d3078ce390b740b0a020942b0
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 2830ffee119da5bd440ca7f8451a8c0fe677f337
+    ref: 4fe3e819c30cce03dd1e727c021217d6e75767d9
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     ref: 791993b78ba0463347c48a3cf0c31bb6d1cb2c2b
@@ -30,7 +30,7 @@ components:
     ref: 71d366472f61aed89ee54cfcf141a61d20b94630
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin.git
-    ref: 8bca66de9954628bcfd039238d3ed7fefccbaf4a
+    ref: 23645aae210dcf340d76db351bfdfa2573781fd1
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
     ref: de7cc1080830640ebd8b3a948e506e08948c65f5

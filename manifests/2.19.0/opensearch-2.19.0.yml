@@ -19,7 +19,7 @@ components:
       - windows
   - name: opensearch-learning-to-rank-base
     repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
-    ref: 45ae58db4f9bfbd17726b8f9bd42f3902646ba60
+    ref: 89209e60ec9fc255b8ce1c6a777d66c6bce8dace
     platforms:
       - linux
       - windows
@@ -43,7 +43,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: ea05d9689c630133baa85be22cad9cf8ba36cf84
+    ref: 7ff769db5ed5f39cc0473bd0c81147c95abca8de
     platforms:
       - linux
       - windows
@@ -65,7 +65,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 6ba54cf9f911a53704ab973aa08111128c03d6d2
+    ref: 22f258b69f0ef961b33be1fe66ba03f09ce13937
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 328f901e51007e089274ac9db0ae2ad0b0f58482
+    ref: 76a8885b5ec955c07d76b5ffec5b6e628e906448
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 4577e0d7fb3eb2e9bb66bef4056e377483ba095a
+    ref: 27fda9b4d5c67146c75668ff3dbaf15ec9bbe48c
     platforms:
       - linux
       - windows
