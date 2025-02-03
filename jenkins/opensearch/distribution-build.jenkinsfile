@@ -27,62 +27,62 @@ pipeline {
     }
     parameters {
         string(
-            name: 'COMPONENT_NAME',
-            description: 'If this field contains one or more component names (e.g. OpenSearch common-utils ...), will build with "--component <COMPONENT_NAME> ...", else build everything in the INPUT_MANIFEST.',
+            name: 'INPUT_MANIFEST',
+            description: 'Required: Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
             trim: true
         )
         string(
-            name: 'INPUT_MANIFEST',
-            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            name: 'COMPONENT_NAME',
+            description: 'Optional: If this field contains one or more component names (e.g. OpenSearch common-utils ...), will build with "--component COMPONENT_NAME_HERE ...", else build everything in the INPUT_MANIFEST.',
             trim: true
         )
         string(
             name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
+            description: 'Optional: Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
             trim: true
         )
         string(
             name: 'INTEG_TEST_JOB_NAME',
-            description: 'Name of integration test job that will be triggered, e.g. Playground/integ-test. A non-null empty value here will skip integration tests.',
+            description: 'Optional: Name of integration test job that will be triggered, e.g. Playground/integ-test. A non-null empty value here will skip integration tests.',
             defaultValue: 'integ-test',
             trim: true
         )
         string(
             name: 'BWC_TEST_JOB_NAME',
-            description: 'Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test.  A non-null empty value here will skip BWC tests.',
+            description: 'Optional: Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test.  A non-null empty value here will skip BWC tests.',
             defaultValue: 'bwc-test',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
+            description: "Required: Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms separated by space (docker is only available on linux)",
             defaultValue: 'linux windows',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
             name: 'BUILD_DISTRIBUTION',
-            description: "Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            description: "Required: Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions separated by space (docker is only available on tar)",
             defaultValue: 'tar rpm deb zip',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'TEST_PLATFORM',
-            description: "Test selected platform, choices include 'linux', 'windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
+            description: "Optional: Test selected platform, choices include 'linux', 'windows'. Can combine multiple platforms separated by space",
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
             name: 'TEST_DISTRIBUTION',
-            description: "Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            description: "Optional: Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions separated by space",
             trim: true
         )
         string(
             name: 'RC_NUMBER',
-            description: 'The RC build count. Default is 0 which means its not an RC build.',
+            description: 'Required: The RC build count. Default is 0 which means its not a Release Candidate.',
             defaultValue: '0'
         )
         choice(
             name: 'BUILD_DOCKER',
-            description: 'Build docker image or not with options.',
+            description: 'Required: Build docker image or not with options.',
             choices: ['build_docker', 'build_docker_with_build_number_tag', 'do_not_build_docker'],
         )
         booleanParam(
@@ -124,6 +124,10 @@ pipeline {
             }
             steps {
                 script {
+                    if (INPUT_MANIFEST == '' || !fileExists("manifests/${INPUT_MANIFEST}")) {
+                        currentBuild.result = 'ABORTED'
+                        error("Input manifest was not provided or not found at manifests/${INPUT_MANIFEST}.")
+                    }
                     echo('Detect Docker Images and Related Parameters')
                     dockerAgent = detectDockerAgent()
                     env.javaVersionNumber = dockerAgent.javaVersion.replaceAll('[^0-9]', '') // Only get number
@@ -148,6 +152,12 @@ pipeline {
                     paramType.each { key, value ->
                         verifyParameterPlatformDistribution(key, value)
                     }
+                    if (params.RC_NUMBER.toInteger() > 0) {
+                        echo 'This is a release candidate build, enforcing build_docker_with_build_number_tag'
+                        BUILD_DOCKER = 'build_docker_with_build_number_tag'
+                    }
+                    def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${INPUT_MANIFEST}"))
+                    env.version = inputManifestObj.build.version
                 }
             }
         }
@@ -839,15 +849,15 @@ pipeline {
                         beforeAgent true
                         allOf {
                             expression {
-                                params.BUILD_DOCKER != 'do_not_build_docker'
+                                BUILD_DOCKER != 'do_not_build_docker'
                             }
                             expression {
-                                        params.BUILD_PLATFORM.contains('linux')
+                                params.BUILD_PLATFORM.contains('linux')
                             }
                         }
                     }
                     options {
-                        timeout(time: 90, unit: 'MINUTES')
+                        timeout(time: 150, unit: 'MINUTES')
                     }
                     agent {
                         docker {
@@ -914,6 +924,9 @@ pipeline {
         success {
             node(AGENT_LINUX_X64) {
                 script {
+                    if (params.RC_NUMBER.toInteger() > 0) {
+                        triggerDistributionValidationWorkflow(env.version)
+                    }
                     postCleanup()
                 }
             }
@@ -967,6 +980,21 @@ def triggerBWCTests(String buildManifestUrl, String platform, String distributio
                     string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
                 ]
     }
+}
+
+def triggerDistributionValidationWorkflow(String version) {
+    def triggerValidationWorkflow =
+            build job: 'distribution-validation',
+            propagate: true,
+            wait: true,
+            parameters: [
+                string(name: 'VERSION', value: version),
+                string(name: 'OS_BUILD_NUMBER', value: BUILD_NUMBER),
+                string(name: 'OPTIONAL_ARGS', value: 'using-staging-artifact-only'),
+                string(name: 'DOCKER_SOURCE', value: 'dockerhub'),
+                string(name: 'PROJECTS', value: 'opensearch'),
+                string(name: 'ARTIFACT_TYPE', value: 'staging')
+            ]
 }
 
 def verifyParameterPlatformDistribution(String paramName, String allowedValue) {

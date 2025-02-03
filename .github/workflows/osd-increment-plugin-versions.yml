@@ -41,14 +41,13 @@ jobs:
           - {repo: security-dashboards-plugin}
           - {repo: dashboards-search-relevance}
           - {repo: opensearch-dashboards-functional-test}
+          - {repo: query-insights-dashboards}
         branch:
-          - 1.x
-          - '1.3'
           - 2.x
           - main
-          - '2.17'
           - '2.18'
           - '2.19'
+          - '2.20'
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@v3

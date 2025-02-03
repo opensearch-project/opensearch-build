@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: main
+    ref: '3.0.0-before-alpha1'
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -250,6 +250,12 @@ components:
       - ml-commons
   - name: user-behavior-insights
     repository: https://github.com/opensearch-project/user-behavior-insights.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+  - name: query-insights
+    repository: https://github.com/opensearch-project/query-insights.git
     ref: main
     platforms:
       - linux

@@ -81,11 +81,13 @@ Release blog is ready | :red_circle: |   |
 - [ ] [Core Release Branch](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#core).
 - [ ] [Components Release Branch](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#components).
 - [ ] [Generate Release Candidate](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-candidate).
-- [ ] [Integ Test TAR](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#integ-test-tar).
-- [ ] [Integ Test RPM](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#integ-test-rpm).
-- [ ] [Docker Build and Scan](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#docker-build-and-scan).
+- [ ] [Docker Scan](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#docker-scan).
+- [ ] [Integ Test](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#integration-test).
+   - [ ] TAR
+   - [ ] RPM
+   - [ ] DEB
+   - [ ] Windows
 - [ ] [Backwards Compatibility Tests](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#backwards-compatibility-tests).
-- [ ] [Windows Integration Test](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#windows-integration-test).
 - [ ] [Broadcast and Communication](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#broadcast-and-communication).
 - [ ] [Release Candidate Lock](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-candidate-lock).
 - [ ] [Stop Release Candidate periodic auto builds](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#stop-periodic-auto-builds)

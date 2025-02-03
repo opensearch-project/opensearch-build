@@ -23,12 +23,9 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H 1 * * * %INPUT_MANIFEST=1.3.21/opensearch-1.3.21.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=1.3.21/opensearch-1.3.21-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-            H 1 * * * %INPUT_MANIFEST=2.19.0/opensearch-dashboards-2.19.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=2.19.0/opensearch-dashboards-2.19.0-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-            H 1 * * * %INPUT_MANIFEST=2.18.1/opensearch-2.18.1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=2.18.1/opensearch-2.18.1-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-            H 1 * * * %INPUT_MANIFEST=2.19.0/opensearch-2.19.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=2.19.0/opensearch-2.19.0-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-            H 4 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
-            H 4 * * * %INPUT_MANIFEST=3.0.0/opensearch-dashboards-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
+            H 1 * * * %INPUT_MANIFEST=2.20.0/opensearch-2.20.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=2.20.0/opensearch-2.20.0-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
+            H 4 * * * %INPUT_MANIFEST=3.0.0-alpha1/opensearch-3.0.0-alpha1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
+            H 4 * * * %INPUT_MANIFEST=3.0.0-alpha1/opensearch-dashboards-3.0.0-alpha1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
         '''
     }
     parameters {
