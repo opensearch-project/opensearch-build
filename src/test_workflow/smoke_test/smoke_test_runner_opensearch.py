@@ -28,13 +28,25 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
         super().__init__(args, test_manifest)
         logging.info("Entering Smoke test for OpenSearch Bundle.")
 
-        # TODO: Download the spec from https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml
-        spec_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_tests_spec", "opensearch-openapi.yaml")
-        self.spec_ = Spec.from_file_path(spec_file)
+        self.spec_url = "https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml"
+        self.spec_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_tests_spec", "opensearch-openapi.yaml")
+        self.download_spec(self.spec_url, self.spec_path)
+        self.spec_ = Spec.from_file_path(self.spec_path)
         self.mimetype = {
             "Content-Type": "application/json"
         }
-        # self.openapi = openapi_core.OpenAPI.from_file_path(spec_file)
+
+    def download_spec(self, url, local_path):
+        try:
+            response = requests.get(url, timeout = 10)
+            if response.status_code == 200:
+                with open(local_path, "wb") as file:
+                    file.write(response.content)
+                    logging.info(f"Downloaded latest spec from {url}")
+            else:
+                logging.info(f"Failed to fetch remote API spec, using local file: {local_path}")
+        except requests.RequestException:
+            logging.info(f"Could not reach {url}, using local file: {local_path}")
 
     def validate_request_swagger(self, request: Any) -> None:
         request = RequestsOpenAPIRequest(request)
