@@ -24,7 +24,7 @@ components:
     ref: 791993b78ba0463347c48a3cf0c31bb6d1cb2c2b
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: 2cf52af48d18f94a6890ee4bd166d4e9d741f5b4
+    ref: 436fd1fc0fe7f170861aceb31d0209087aa1aee2
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
     ref: 71d366472f61aed89ee54cfcf141a61d20b94630
@@ -57,7 +57,7 @@ components:
     ref: 69edda4781ebee6c1ca4877588d40271f159e862
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
-    ref: 8b95d4ac7c044346a0ea167fed21dd3635a26962
+    ref: e9196b81e62c45aa1461e2df40d5f43a6c5a5bc7
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
     ref: f6cc283a20e08891c2ab31aa8957eae2452bafd2
