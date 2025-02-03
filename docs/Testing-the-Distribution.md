@@ -21,7 +21,7 @@ Additional arguments:
 |------------------------|-------------------------------------------------------------------------|
 | test-type              | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
 | test-manifest-path     | Specify a test manifest path.                                           |
-| --paths                | Location of manifest(s).                                                |
+| --paths                | Specify paths for OpenSearch and OpenSearch Dashboards.                                                |
 | --test-run-id          | Unique identifier for a test run.                                       |
 | --component [name ...] | Test a subset of specific components.                                   |
 | --keep                 | Do not delete the temporary working directory on both success or error. |
