@@ -1,4 +1,3 @@
-# yamllint disable
 ---
 info:
   title: OpenSearch Core smoke tests
@@ -11,20 +10,77 @@ paths:
   /_bulk:
     POST:
       header: {
-        "Content-Type": "application/x-ndjson"
+        'Content-Type': 'application/x-ndjson'
       }
       parameters: [
-        { "delete": { "_index": "movies", "_id": "tt2229499" } },
-        { "index": { "_index": "movies", "_id": "tt1979320" } },
-        { "title": "Rush", "year": 2013 },
-        { "create": { "_index": "movies", "_id": "tt1392214" } },
-        { "title": "Prisoners", "year": 2013 },
-        { "update": { "_index": "movies", "_id": "tt0816711" } },
-        { "doc" : { "title": "World War Z" } }
+        {
+          'delete':
+            {
+              '_index':
+                'movies',
+              '_id':
+                'tt2229499'
+            }
+        },
+        {
+          'index':
+            {
+              '_index':
+                'movies',
+              '_id':
+                'tt1979320'
+            }
+        },
+        {
+          'title':
+            'Rush',
+          'year':
+            2013
+        },
+        {
+          'create':
+            {
+              '_index':
+                'movies',
+              '_id':
+                'tt1392214'
+            }
+        },
+        {
+          'title':
+            'Prisoners',
+          'year':
+            2013
+        },
+        {
+          'update':
+            {
+              '_index':
+                'movies',
+              '_id':
+                'tt0816711'
+            }
+        },
+        {
+          'doc':
+            {
+              'title':
+                'World War Z'
+            }
+        }
       ]
   /_cat/indices:
-     GET:
-       parameters: []
+    GET:
+      parameters: []
   /_cat/plugins:
     GET:
       parameters: []
+  /_search:
+    GET:
+      parameters: [
+        {
+          'query': {
+            'match_all': {}
+          }
+        }
+      ]

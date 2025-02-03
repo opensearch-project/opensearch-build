@@ -72,18 +72,11 @@ components:
     bwc-test:
       test-configs:
         - with-security
-    smoke-test:
-      test-spec: index-management.yml
   - name: k-NN
     integ-test:
       test-configs:
         - with-security
         - without-security
-      additional-cluster-configs:
-        path.repo:
-          - /tmp
-    smoke-test:
-      test-spec: k-NN.yml
   - name: ml-commons
     integ-test:
       test-configs:
@@ -125,8 +118,6 @@ components:
     integ-test:
       test-configs:
         - with-security
-    smoke-test:
-      test-spec: security.yml
   - name: security-analytics
     integ-test:
       test-configs:
@@ -143,8 +134,6 @@ components:
     bwc-test:
       test-configs:
         - with-security
-    smoke-test:
-      test-spec: sql.yml
   - name: custom-codecs
     integ-test:
       test-configs:

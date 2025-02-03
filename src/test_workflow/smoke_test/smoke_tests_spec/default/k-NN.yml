@@ -1,0 +1,91 @@
+---
+info:
+  title: OpenSearch k-NN plugin smoke tests
+  version: default
+name: k-NN
+paths:
+  /_plugins/_knn/stats:
+    GET:
+      parameters: []
+  /train-index:
+    PUT:
+      parameters: [
+        {
+          'settings': {
+            'number_of_shards': 3,
+            'number_of_replicas': 0
+          },
+          'mappings': {
+            'properties': {
+              'train-field': {
+                'type': 'knn_vector',
+                'dimension': 4
+              }
+            }
+          }
+        }
+      ]
+  /_bulk:
+    POST:
+      parameters: [
+        {
+          'index':
+            {
+              '_index':
+                'train-index',
+              '_id':
+                '1'
+            }
+        },
+        {
+          'train-field':
+            [
+              1.5, 5.5, 4.5, 6.4
+            ]
+        },
+        {
+          'index':
+            {
+              '_index':
+                'train-index',
+              '_id':
+                '2'
+            }
+        },
+        {
+          'train-field':
+            [
+              2.5, 3.5, 5.6, 6.7
+            ]
+        },
+        {
+          'index':
+            {
+              '_index':
+                'train-index',
+              '_id':
+                '3'
+            }
+        },
+        {
+          'train-field':
+            [
+              4.5, 5.5, 6.7, 3.7
+            ]
+        },
+        {
+          'index':
+            {
+              '_index':
+                'train-index',
+              '_id':
+                '4'
+            }
+        },
+        {
+          'train-field':
+            [
+              1.5, 5.5, 4.5, 6.4
+            ]
+        }
+      ]

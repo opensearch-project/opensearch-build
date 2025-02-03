@@ -28,6 +28,7 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
         super().__init__(args, test_manifest)
         logging.info("Entering Smoke test for OpenSearch Bundle.")
 
+        # Below URL is for the pre-release latest. In the future may consider use formal released spec.
         self.spec_url = "https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml"
         self.spec_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_tests_spec", "opensearch-openapi.yaml")
         self.download_spec(self.spec_url, self.spec_path)
@@ -84,8 +85,11 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
                             response = requests_method(request_url, verify=False, auth=("admin", "myStrongPassword123!"), headers=header, data=parameters_data)
                             logging.info(f"Response is {response.text}")
                             self.validate_response_swagger(response)
-                        except:
+                        except Exception as e:
                             status = 1
+                            logging.error(f"Unexpected Error type is {type(e)}")
+                            logging.error(e)
+                            logging.info("Response is not validated. Please check the response output text above.")
                         finally:
                             test_result = TestResult(component.name, ' '.join([api_requests, method]), status)  # type: ignore
                             test_results.append(test_result)

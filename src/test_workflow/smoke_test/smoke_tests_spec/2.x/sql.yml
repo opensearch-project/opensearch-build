@@ -1,0 +1,176 @@
+---
+info:
+  title: OpenSearch Sql plugin smoke tests
+  version: 2.x
+name: sql
+paths:
+  /_bulk:
+    POST:
+      parameters: [
+        {
+          'index':
+            {
+              '_index':
+                'accounts',
+              '_id':
+                1
+            }
+        },
+        {
+          'account_number':
+            1,
+          'firstname':
+            'Amber',
+          'address':
+            '880 Holmes Lane',
+          'balance':
+            39225,
+          'gender':
+            'M',
+          'city':
+            'Brogan',
+          'employer':
+            'Pyrami',
+          'state':
+            'IL',
+          'age':
+            32,
+          'email':
+            'amberduke@pyrami.com',
+          'lastname':
+            'Duke'
+        },
+        {
+          'index':
+            {
+              '_index':
+                'accounts',
+              '_id':
+                6
+            }
+        },
+        {
+          'account_number':
+            6,
+          'firstname':
+            'Hattie',
+          'address':
+            '671 Bristol Street',
+          'balance':
+            5686,
+          'gender':
+            'M',
+          'city':
+            'Dante',
+          'employer':
+            'Netagy',
+          'state':
+            'TN',
+          'age':
+            36,
+          'email':
+            'hattiebond@netagy.com',
+          'lastname':
+            'Bond'
+        },
+        {
+          'index':
+            {
+              '_index':
+                'accounts',
+              '_id':
+                13
+            }
+        },
+        {
+          'account_number':
+            13,
+          'firstname':
+            'Nanette',
+          'address':
+            '789 Madison Street',
+          'balance':
+            32838,
+          'gender':
+            'F',
+          'city':
+            'Nogal',
+          'employer':
+            'Quility',
+          'state':
+            'VA',
+          'age':
+            28,
+          'email':
+            'nanettebates@quility.com',
+          'lastname':
+            'Bates'
+        },
+        {
+          'index':
+            {
+              '_index':
+                'accounts',
+              '_id':
+                18
+            }
+        },
+        {
+          'account_number':
+            18,
+          'firstname':
+            'Dale',
+          'address':
+            '467 Hutchinson Court',
+          'balance':
+            4180,
+          'gender':
+            'M',
+          'city':
+            'Orick',
+          'employer':
+            null,
+          'state':
+            'MD',
+          'age':
+            33,
+          'email':
+            'daleadams@boink.com',
+          'lastname':
+            'Adams'
+        }
+      ]
+  /_plugins/_sql:
+    POST:
+      parameters: [
+        {
+          'query': 'SELECT * FROM accounts'
+        }
+      ]
+  /_plugins/_sql/_explain:
+    POST:
+      parameters: [
+        {
+          'query': 'SELECT firstname, lastname FROM accounts WHERE age > 20'
+        }
+      ]
+  /_plugins/_sql/stats:
+    GET:
+      parameters: []
+  /_plugins/_ppl:
+    POST:
+      parameters: [
+        {
+          'query': 'source=accounts | where age > 30 | fields firstname, lastname, balance'
+        }
+      ]
+  /_plugins/_ppl/_explain:
+    POST:
+      parameters: [
+        {
+          'query': 'source=accounts | fields firstname, lastname'
+        }
+      ]
+  /_plugins/_ppl/stats:
+    GET:
+      parameters: []

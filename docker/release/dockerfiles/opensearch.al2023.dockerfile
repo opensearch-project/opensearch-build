@@ -83,7 +83,13 @@ ENV JAVA_HOME=$OPENSEARCH_HOME/jdk
 ENV PATH=$PATH:$JAVA_HOME/bin:$OPENSEARCH_HOME/bin
 
 # Add k-NN lib directory to library loading path variable
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$OPENSEARCH_HOME/plugins/opensearch-knn/lib"
+ENV LD_LIBRARY_PATH="$OPENSEARCH_HOME/plugins/opensearch-knn/lib"
+
+# Replace libstdc++.so.6.0.29 with libstdc++.so.6.0.30 to support k-NN avx512_spr
+# https://github.com/opensearch-project/opensearch-build/issues/5226
+# https://github.com/opensearch-project/k-NN/issues/2484
+RUN curl -SLO https://ci.opensearch.org/ci/dbc/tools/gcc/libstdcpp.so.6.0.30.stripped.tar.gz && \
+    tar -xzf libstdcpp.so.6.0.30.stripped.tar.gz -C /lib64
 
 # Change user
 USER $UID
