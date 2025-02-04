@@ -43,7 +43,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 7ff769db5ed5f39cc0473bd0c81147c95abca8de
+    ref: f132d0645730471d3d073d74ad1138783b36c5c6
     platforms:
       - linux
       - windows
@@ -125,7 +125,7 @@ components:
       - ml-commons
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: e50fd4f27cf3cbb02601d7a260a35394db0c764d
+    ref: b1fcd68b122c4cc9ad949ea8e90f91a444b850c4
     platforms:
       - linux
       - windows
