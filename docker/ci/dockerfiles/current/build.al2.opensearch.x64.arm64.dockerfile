@@ -82,14 +82,14 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib
 RUN yum install -y curl libcurl-devel libfaketime perl-core pcre-devel && yum remove -y openssl-devel && yum clean all && \
     mkdir -p /tmp/openssl && cd /tmp/openssl && \
     curl -sSL -o- https://www.openssl.org/source/openssl-1.1.1g.tar.gz | tar -xz --strip-components 1 && \
-    ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make && make install && \
+    ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make -j$(nproc) && make install && \
     echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib" > /etc/profile.d/openssl.sh && openssl version
 
 # Install Python binary
 RUN curl https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz | tar xzvf - && \
     cd Python-3.9.7 && \
     env LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib ./configure --enable-optimizations --with-openssl=/usr --prefix=/usr/local && \
-    make altinstall && cd ../ && rm -rf Python-3.9.7.tgz Python-3.9.7 && \
+    make -j$(nproc) altinstall && cd ../ && rm -rf Python-3.9.7.tgz Python-3.9.7 && \
     cp -v /etc/ssl/certs/ca-bundle.crt /etc/ssl/cert.pem
 
 # Setup Python links
@@ -99,7 +99,7 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip3 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
-# Upgrade gcc
+# Upgrade gcc, while keep libstdc++.so to older 6.0.24 version for backward compatiblity
 # Only x64 requires gcc 12+ for k-NN avx512_spr fp16 feature
 # https://github.com/opensearch-project/opensearch-build/issues/5226
 # Due to cross-compilation being too slow on arm64, it will stay on gcc 10 for the time being
@@ -110,8 +110,11 @@ RUN if [ `uname -m` = "x86_64" ]; then \
         ./contrib/download_prerequisites && \
         mkdir build && cd build && \
         ../configure --enable-languages=all --prefix=/usr --disable-multilib --disable-bootstrap && \
-        make && make install && gcc --version && g++ --version && gfortran --version && \
-        cd  ../../ && rm -rf gcc12.tgz gcc-12.4.0; \
+        make -j$(nproc) && make install && gcc --version && g++ --version && gfortran --version && \
+        cd  ../../ && rm -rf gcc12.tgz gcc-12.4.0 && \
+        ln -sfn /lib64/libstdc++.so.6 /lib64/libstdc++.so && \
+        ln -sfn /lib64/libstdc++.so.6.0.24 /lib64/libstdc++.so.6 && \
+        rm -v /lib64/libstdc++.so.6.0.30* ; \
     else \
         yum install -y gcc10* && \
         mv -v /usr/bin/gcc /usr/bin/gcc7-gcc && \
@@ -130,7 +133,7 @@ RUN if [ `uname -m` = "x86_64" ]; then \
         tar -xf binutils-2.42.90.tar.xz && cd binutils-2.42.90 && \
         mkdir build && cd build && \
         ../configure --prefix=/usr && \
-        make && make install && ld --version && \
+        make -j$(nproc) && make install && ld --version && \
         cd ../../ && rm -rf binutils-2.42.90.tar.xz binutils-2.42.90 && \
         yum remove -y texinfo; \
     fi
@@ -144,9 +147,9 @@ RUN git clone -b v0.3.27 --single-branch https://github.com/OpenMathLib/OpenBLAS
     cd OpenBLAS && \
     if [ "$(uname -m)" = "x86_64" ]; then \
         echo "Machine is x86_64. Adding DYNAMIC_ARCH=1 to openblas make command."; \
-        make USE_OPENMP=1 FC=gfortran DYNAMIC_ARCH=1; \
+        make -j$(nproc) USE_OPENMP=1 FC=gfortran DYNAMIC_ARCH=1; \
     else \
-        make USE_OPENMP=1 FC=gfortran; \
+        make -j$(nproc) USE_OPENMP=1 FC=gfortran; \
     fi && \
     make PREFIX=/usr/local install && \
     cd ../ && rm -rf OpenBLAS
