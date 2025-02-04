@@ -104,7 +104,7 @@ Release blog is ready | :red_circle: |   |
 
 ### [Release](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#main-release) - _Ends {__REPLACE_RELEASE-day}_
 
-- [ ] [Central Promotion Workflow](https://github.com/opensearch-project/opensearch-build/wiki/Central-Release-Promotion-Workflow).
+- [ ] [Central Promotion Workflow](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#central-release-promotion-workflow).
 - [ ] [Collaboration with the Project Management Team](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#collaboration-with-the-project-management-team).
 
 ### [Release Checklist](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-checklist).
