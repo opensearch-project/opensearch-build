@@ -37,9 +37,9 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
             "Content-Type": "application/json"
         }
 
-    def download_spec(self, url, local_path):
+    def download_spec(self, url: str, local_path: str) -> None:
         try:
-            response = requests.get(url, timeout = 10)
+            response = requests.get(url, timeout=10)
             if response.status_code == 200:
                 with open(local_path, "wb") as file:
                     file.write(response.content)

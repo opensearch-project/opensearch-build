@@ -7,9 +7,8 @@
 
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, Mock, call, patch, mock_open
+from unittest.mock import MagicMock, Mock, call, mock_open, patch
 
-import os
 import requests
 from openapi_core.exceptions import OpenAPIError
 from requests.models import Response
@@ -96,9 +95,10 @@ class TestSmokeTestRunnerOpenSearch(unittest.TestCase):
         with self.assertRaises(OpenAPIError):
             runner.validate_response_swagger(response)
 
+    @patch("test_workflow.smoke_test.smoke_test_runner.TestRecorder")
     @patch("requests.get")
     @patch("builtins.open", new_callable=mock_open)
-    def test_download_spec_success(self, mock_file, mock_get):
+    def test_download_spec_success(self, mock_file: Mock, mock_get: Mock, mock_test_recorder: Mock) -> None:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.content = "Mock OpenSearch API Spec Yaml content"
@@ -114,26 +114,28 @@ class TestSmokeTestRunnerOpenSearch(unittest.TestCase):
         mock_file.assert_any_call(runner.spec_path, "wb")
         mock_file().write.assert_called_once_with("Mock OpenSearch API Spec Yaml content")
 
+    @patch("test_workflow.smoke_test.smoke_test_runner.TestRecorder")
     @patch("requests.get")
     @patch("builtins.open", new_callable=mock_open)
-    def test_download_spec_fail_local(self, mock_file, mock_get):
+    def test_download_spec_fail_local(self, mock_file: Mock, mock_get: Mock, mock_test_recorder: Mock) -> None:
         # Mock request failure
         mock_get.side_effect = requests.RequestException
 
-        runner = SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
+        SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
 
         mock_get.assert_called_once()
 
         mock_file().write.assert_not_called()
 
+    @patch("test_workflow.smoke_test.smoke_test_runner.TestRecorder")
     @patch("requests.get")
     @patch("builtins.open", new_callable=mock_open)
-    def test_download_spec_https_fail(self, mock_file, mock_get):
+    def test_download_spec_https_fail(self, mock_file: Mock, mock_get: Mock, mock_test_recorder: Mock) -> None:
         mock_response = MagicMock()
         mock_response.status_code = 404
         mock_get.return_value = mock_response
 
-        runner = SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
+        SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
 
         mock_get.assert_called_once()
 
