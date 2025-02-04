@@ -18,7 +18,7 @@ components:
     ref: 12b69cd1f502865d3078ce390b740b0a020942b0
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 4fe3e819c30cce03dd1e727c021217d6e75767d9
+    ref: 2ed456cceea1b5a80b3419777fdc04452a3870f9
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     ref: 791993b78ba0463347c48a3cf0c31bb6d1cb2c2b
