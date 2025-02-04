@@ -99,7 +99,7 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip3 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
-# Upgrade gcc, while keep libstdc++.so to older 6.0.24 version for backward compatiblity
+# Upgrade gcc, while keep libstdc++.so to older 6.0.24 version for backward compatibility
 # Only x64 requires gcc 12+ for k-NN avx512_spr fp16 feature
 # https://github.com/opensearch-project/opensearch-build/issues/5226
 # Due to cross-compilation being too slow on arm64, it will stay on gcc 10 for the time being
