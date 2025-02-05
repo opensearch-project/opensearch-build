@@ -4,7 +4,7 @@
 # The OpenSearch Contributors require contributions made to
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
-
+import os.path
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, mock_open, patch
@@ -95,10 +95,11 @@ class TestSmokeTestRunnerOpenSearch(unittest.TestCase):
         with self.assertRaises(OpenAPIError):
             runner.validate_response_swagger(response)
 
+    @patch("test_workflow.smoke_test.smoke_test_runner_opensearch.Spec")
     @patch("test_workflow.smoke_test.smoke_test_runner.TestRecorder")
     @patch("requests.get")
     @patch("builtins.open", new_callable=mock_open)
-    def test_download_spec_success(self, mock_file: Mock, mock_get: Mock, mock_test_recorder: Mock) -> None:
+    def test_download_spec_success(self, mock_file: Mock, mock_get: Mock, mock_test_recorder: Mock, mock_spec: Mock) -> None:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.content = "Mock OpenSearch API Spec Yaml content"
@@ -111,32 +112,40 @@ class TestSmokeTestRunnerOpenSearch(unittest.TestCase):
             timeout=10
         )
 
-        mock_file.assert_any_call(runner.spec_path, "wb")
+        mock_file.assert_any_call(runner.spec_download_path, "wb")
         mock_file().write.assert_called_once_with("Mock OpenSearch API Spec Yaml content")
 
+        self.assertTrue(runner.spec_path.endswith(os.path.join("smoke_tests_spec", "opensearch-openapi.yaml")))
+
+    @patch("test_workflow.smoke_test.smoke_test_runner_opensearch.Spec")
     @patch("test_workflow.smoke_test.smoke_test_runner.TestRecorder")
     @patch("requests.get")
     @patch("builtins.open", new_callable=mock_open)
-    def test_download_spec_fail_local(self, mock_file: Mock, mock_get: Mock, mock_test_recorder: Mock) -> None:
+    def test_download_spec_fail_local(self, mock_file: Mock, mock_get: Mock, mock_test_recorder: Mock, mock_spec: Mock) -> None:
         # Mock request failure
         mock_get.side_effect = requests.RequestException
 
-        SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
+        runner = SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
 
         mock_get.assert_called_once()
 
         mock_file().write.assert_not_called()
 
+        self.assertTrue(runner.spec_path.endswith(os.path.join("smoke_tests_spec", "opensearch-openapi-local.yaml")))
+
+    @patch("test_workflow.smoke_test.smoke_test_runner_opensearch.Spec")
     @patch("test_workflow.smoke_test.smoke_test_runner.TestRecorder")
     @patch("requests.get")
     @patch("builtins.open", new_callable=mock_open)
-    def test_download_spec_https_fail(self, mock_file: Mock, mock_get: Mock, mock_test_recorder: Mock) -> None:
+    def test_download_spec_https_fail(self, mock_file: Mock, mock_get: Mock, mock_test_recorder: Mock, mock_spec: Mock) -> None:
         mock_response = MagicMock()
         mock_response.status_code = 404
         mock_get.return_value = mock_response
 
-        SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
+        runner = SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
 
         mock_get.assert_called_once()
 
         mock_file().write.assert_not_called()
+
+        self.assertTrue(runner.spec_path.endswith(os.path.join("smoke_tests_spec", "opensearch-openapi-local.yaml")))
