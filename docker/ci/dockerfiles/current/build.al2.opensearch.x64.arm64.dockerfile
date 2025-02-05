@@ -111,10 +111,10 @@ RUN if [ `uname -m` = "x86_64" ]; then \
         mkdir build && cd build && \
         ../configure --enable-languages=all --prefix=/usr --disable-multilib --disable-bootstrap && \
         make -j$(nproc) && make install && gcc --version && g++ --version && gfortran --version && \
-        cd  ../../ && rm -rf gcc12.tgz gcc-12.4.0 && \
-        ln -sfn /lib64/libstdc++.so.6 /lib64/libstdc++.so && \
-        ln -sfn /lib64/libstdc++.so.6.0.24 /lib64/libstdc++.so.6 && \
-        rm -v /lib64/libstdc++.so.6.0.30* ; \
+        cd  ../../ && rm -rf gcc12.tgz gcc-12.4.0 && cd /lib64/ && \
+        ln -sfn libstdc++.so.6 libstdc++.so && \
+        ln -sfn libstdc++.so.6.0.24 libstdc++.so.6 && \
+        rm -v libstdc++.so.6.0.30* ; \
     else \
         yum install -y gcc10* && \
         mv -v /usr/bin/gcc /usr/bin/gcc7-gcc && \
