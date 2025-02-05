@@ -121,6 +121,19 @@ class TestReleaseManifestCommitLock extends BuildPipelineTest {
     }
 
     @Test
+    public void testUpdateToReleaseBranch() {
+        addParam('MANIFEST_LOCK_ACTION', 'UPDATE_TO_RELEASE_BRANCH')
+        super.testPipeline('jenkins/release-workflows/release-manifest-commit-lock.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/release-workflows/testUpdateToReleaseBranch')
+        assertCallStack().contains('release-manifest-commit-lock.readYaml({file=manifests/2.0.0/opensearch-dashboards-2.0.0.yml})')
+        assertCallStack().contains("release-manifest-commit-lock.writeYaml({file=manifests/2.0.0/opensearch-2.0.0.yml, data={schema-version=1.0, build={name=OpenSearch, version=2.0.0, qualifier=alpha1}, ci={image={name=opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2, args=-e JAVA_HOME=/opt/java/openjdk-17}}, components=[{name=OpenSearch, ref=2.0, repository=https://github.com/opensearch-project/OpenSearch.git, checks=[gradle:publish, gradle:properties:version]}, {name=common-utils, repository=https://github.com/opensearch-project/common-utils.git, ref=2.0, checks=[gradle:publish, gradle:properties:version]}, {name=job-scheduler, repository=https://github.com/opensearch-project/job-scheduler.git, ref=2.0, checks=[gradle:properties:version, gradle:dependencies:opensearch.version]}]}, overwrite=true})")
+        assertCallStack().contains("release-manifest-commit-lock.readYaml({file=manifests/2.0.0/opensearch-2.0.0.yml})")
+        assertCallStack().contains("release-manifest-commit-lock.echo(Skipping stage MATCH_BUILD_MANIFEST)")
+        assertCallStack().contains("release-manifest-commit-lock.echo(Skipping stage UPDATE_TO_RECENT_COMMITS)")
+        assertCallStack().contains("release-manifest-commit-lock.echo(Skipping stage UPDATE_TO_TAGS)")
+    }
+
+    @Test
     public void testMatchBuildManifest() {   
         addParam('MANIFEST_LOCK_ACTION', 'MATCH_BUILD_MANIFEST')
         addParam('OPENSEARCH_RELEASE_CANDIDATE', '3813')
