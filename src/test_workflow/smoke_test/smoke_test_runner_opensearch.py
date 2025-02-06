@@ -28,13 +28,30 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
         super().__init__(args, test_manifest)
         logging.info("Entering Smoke test for OpenSearch Bundle.")
 
-        # TODO: Download the spec from https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml
-        spec_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_tests_spec", "opensearch-openapi.yaml")
-        self.spec_ = Spec.from_file_path(spec_file)
+        # Below URL is for the pre-release latest. In the future may consider use formal released spec when available.
+        self.spec_url = "https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml"
+        self.spec_local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_tests_spec", "opensearch-openapi-local.yaml")
+        self.spec_download_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_tests_spec", "opensearch-openapi.yaml")
+        self.spec_path = self.download_spec(self.spec_url, self.spec_local_path, self.spec_download_path)
+        self.spec_ = Spec.from_file_path(self.spec_path)
         self.mimetype = {
             "Content-Type": "application/json"
         }
-        # self.openapi = openapi_core.OpenAPI.from_file_path(spec_file)
+
+    def download_spec(self, url: str, local_path: str, download_path: str) -> str:
+        try:
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                with open(download_path, "wb") as file:
+                    file.write(response.content)
+                    logging.info(f"Downloaded latest spec from {url}")
+                    return download_path
+            else:
+                logging.info(f"Failed to fetch remote API spec, using local file: {local_path}")
+                return local_path
+        except requests.RequestException:
+            logging.info(f"Could not reach {url}, using local file: {local_path}")
+            return local_path
 
     def validate_request_swagger(self, request: Any) -> None:
         request = RequestsOpenAPIRequest(request)
