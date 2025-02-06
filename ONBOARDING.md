@@ -47,11 +47,11 @@ Add the new plugin to the [opensearch-plugins meta](https://github.com/opensearc
 
     1. It supports two test configs - `with-security` and `without-security`, which runs test with security plugin enabled and disabled respectively. Choose one or both depending on what your plugin integration tests support.
 
-4. For smoke testing, The test-workflow runs smoke tests defined in the [smoke_tests_spec](src/test_workflow/smoke_test/smoke_tests_spec) directory for each major OpenSearch version. The smoke tests are executed based on the API specification provided in the [OpenSearch API Specification](https://github.com/opensearch-project/opensearch-api-specification) repository.
+4. For smoke testing, The test-workflow runs smoke tests defined in the [smoke_tests_spec](src/test_workflow/smoke_test/smoke_tests_spec) directory across all OpenSearch versions and the respective test specification files are organized by major version. The smoke tests are executed based on the API specification provided in the [OpenSearch API Specification](https://github.com/opensearch-project/opensearch-api-specification) repository.
 
-    1. The smoke test framework currently supports testing the OpenSearch distribution and its plugins. It ensures that core OpenSearch functionalities and plugin-specific APIs behave as expected before release.
+    1. The smoke test framework currently supports testing the OpenSearch distribution and its plugins. It ensures that core OpenSearch functionalities and plugin-specific APIs behave as expected when bundled into a distribution before release.
 
-    2. You will need to add a distinct YAML file for your plugin in the appropriate major version directory under [smoke_tests_spec](src/test_workflow/smoke_test/smoke_tests_spec) and reference the file name in the test manifest for the corresponding component.
+    2. You will need to add a distinct YAML file for your plugin in the appropriate major version directory under [smoke_tests_spec](src/test_workflow/smoke_test/smoke_tests_spec) and reference the file name in the test manifest for the corresponding component. e.g. [security.yml](https://github.com/opensearch-project/opensearch-build/blob/main/src/test_workflow/smoke_test/smoke_tests_spec/default/security.yml)
 
     3. In the YAML file, specify the API path, HTTP method, request body as parameter and heading if `Content-Type` differs from the default `application/json`. Refer to an example test definition [here](src/test_workflow/smoke_test/smoke_tests_spec/2.x/opensearch.yml) for guidance. 
 
