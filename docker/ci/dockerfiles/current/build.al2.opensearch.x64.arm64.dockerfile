@@ -103,12 +103,6 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
 # Only x64 requires gcc 12+ for k-NN avx512_spr fp16 feature
 # https://github.com/opensearch-project/opensearch-build/issues/5226
 # Due to cross-compilation being too slow on arm64, it will stay on gcc 10 for the time being
-# nmslib needs gcc 10 while faiss needs gcc 12+
-# https://github.com/opensearch-project/k-NN/issues/2484#issuecomment-2640950082
-RUN yum install -y gcc10* && \
-    mv -v /usr/bin/gcc /usr/bin/gcc7-gcc && \
-    mv -v /usr/bin/g++ /usr/bin/gcc7-g++ && \
-    mv -v /usr/bin/gfortran /usr/bin/gcc7-gfortran
 RUN if [ `uname -m` = "x86_64" ]; then \
         curl -SL https://ci.opensearch.org/ci/dbc/tools/gcc/gcc-12.4.0.tar.gz -o gcc12.tgz && \
         tar -xzf gcc12.tgz && cd gcc-12.4.0 && \
@@ -121,7 +115,16 @@ RUN if [ `uname -m` = "x86_64" ]; then \
         ln -sfn libstdc++.so.6 libstdc++.so && \
         ln -sfn libstdc++.so.6.0.24 libstdc++.so.6 && \
         rm -v libstdc++.so.6.0.30* ; \
-    else \
+    fi
+
+# nmslib needs gcc 10 while faiss needs gcc 12+
+# https://github.com/opensearch-project/k-NN/issues/2484#issuecomment-2640950082
+# Must install after gcc12 is compiled to avoid conflicts between gcc 7 10 12
+RUN yum install -y gcc10* && \
+    if [ `uname -m` != "x86_64" ]; then \
+        mv -v /usr/bin/gcc /usr/bin/gcc7-gcc && \
+        mv -v /usr/bin/g++ /usr/bin/gcc7-g++ && \
+        mv -v /usr/bin/gfortran /usr/bin/gcc7-gfortran && \
         update-alternatives --install /usr/bin/gcc gcc $(which gcc10-gcc) 1 && \
         update-alternatives --install /usr/bin/g++ g++ $(which gcc10-g++) 1 && \
         update-alternatives --install /usr/bin/gfortran gfortran $(which gcc10-gfortran) 1; \
