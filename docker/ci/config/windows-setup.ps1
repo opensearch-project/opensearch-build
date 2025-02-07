@@ -46,6 +46,9 @@ git config --system pack.window 0
 git config --system pack.threads 1
 git config --system core.compression 0
 git config --system protocol.version 1
+git config --system http.schannelCheckRevoke false
+git config --system http.sslBackend openssl
+git config --system http.sslVerify true
 git config --system --list
 # Rename system32 find.exe in case it gets conflicted with POSIX find
 bash.exe -c "mv -v 'C:\\Windows\\System32\\find.exe' 'C:\\Windows\\System32\\find_windows.exe'"
