@@ -115,8 +115,13 @@ RUN if [ `uname -m` = "x86_64" ]; then \
         ln -sfn libstdc++.so.6 libstdc++.so && \
         ln -sfn libstdc++.so.6.0.24 libstdc++.so.6 && \
         rm -v libstdc++.so.6.0.30* ; \
-    else \
-        yum install -y gcc10* && \
+    fi
+
+# nmslib needs gcc 10 while faiss needs gcc 12+
+# https://github.com/opensearch-project/k-NN/issues/2484#issuecomment-2640950082
+# Must install after gcc12 is compiled to avoid conflicts between gcc 7 10 12
+RUN yum install -y gcc10* && \
+    if [ `uname -m` != "x86_64" ]; then \
         mv -v /usr/bin/gcc /usr/bin/gcc7-gcc && \
         mv -v /usr/bin/g++ /usr/bin/gcc7-g++ && \
         mv -v /usr/bin/gfortran /usr/bin/gcc7-gfortran && \
