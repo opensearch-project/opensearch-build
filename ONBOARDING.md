@@ -53,7 +53,7 @@ Add the new plugin to the [opensearch-plugins meta](https://github.com/opensearc
 
     2. You will need to add a distinct YAML file for your plugin in the appropriate major version directory under [smoke_tests_spec](src/test_workflow/smoke_test/smoke_tests_spec) and reference the file name in the test manifest for the corresponding component. e.g. [security.yml](https://github.com/opensearch-project/opensearch-build/blob/main/src/test_workflow/smoke_test/smoke_tests_spec/default/security.yml)
 
-    3. In the YAML file, specify the API path, HTTP method, request body as parameter and heading if `Content-Type` differs from the default `application/json`. Refer to an example test definition [here](src/test_workflow/smoke_test/smoke_tests_spec/2.x/opensearch.yml) for guidance. 
+    3. In the YAML file, specify the API path, HTTP method, request body as parameter and heading if `Content-Type` differs from the default `application/json`. Refer to an example test definition [here](src/test_workflow/smoke_test/smoke_tests_spec/2.x/opensearch.yml) for guidance. Before adding APIs to the smoke tests, ensure they are already onboarded to the OpenSearch API Specification repository. For onboarding procedures, refer to the [OpenSearch API Specification Developer Guide](https://github.com/opensearch-project/opensearch-api-specification/blob/main/DEVELOPER_GUIDE.md). 
 
 ## Standalone Component Onboarding
 
