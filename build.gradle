@@ -44,6 +44,7 @@ configurations.all {
         force group: 'com.google.errorprone', name: 'error_prone_annotations', version: '2.18.0'
         force group: 'org.checkerframework', name: 'checker-qual', version: '3.33.0'
         force group: 'com.google.j2objc', name: 'j2objc-annotations', version: '2.8'
+        force group: 'com.github.ben-manes.caffeine', name:'caffeine', version: '2.9.3'
         force group: 'org.jenkins-ci.plugins', name: 'durable-task', version: '547.vd1ea_007d100c'
     }
 }
@@ -72,7 +73,7 @@ sharedLibrary {
         dependency('io.jenkins.plugins', 'pipeline-groovy-lib', '613.v9c41a_160233f')
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '2.26.1')
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '456.vd8a_957db_5b_e9') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
-        dependency('org.jenkins-ci.plugins', 'script-security', '1229.v4880b_b_e905a_6')
+        dependency('org.jenkins-ci.plugins', 'script-security', '1369.v9b_98a_4e95b_2d')
         dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
         dependency('org.jenkins-ci.plugins', 'git-client', '3.11.1')
         dependency('org.apache.sshd', 'sshd-core', '2.12.1')
