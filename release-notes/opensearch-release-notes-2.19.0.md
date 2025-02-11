@@ -1153,7 +1153,7 @@ fix(deps): update dependency org.scala-lang:scala-library to v2.13.9 ([#496](htt
 ### Opensearch Security Analytics
 
 
-* optimize sigma aggregation rule based detectors execution workflow ([#1418](https://github.com/opensearch-project/security-analytics/pull/1418))
+* Optimize sigma aggregation rule based detectors execution workflow ([#1418](https://github.com/opensearch-project/security-analytics/pull/1418))
 * Adding various OCSF 1.1 fields to log type static mappings ([#1403](https://github.com/opensearch-project/security-analytics/pull/1403))
 
 
