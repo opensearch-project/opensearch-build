@@ -1160,6 +1160,6 @@ fix(deps): update dependency org.scala-lang:scala-library to v2.13.9 ([#496](htt
 ### Opensearch Security Analytics Dashboards
 
 
-* show selected rules on edit; options should only include enabled rules on edit ([#1231](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1231))
+* Show selected rules on edit; options should only include enabled rules on edit ([#1231](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1231))
 * Remove threat intel checkbox detector creation ([#1232](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1232))
 * Updating Preview Message functionality while setting notifications in detector alerts ([#1241](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1241))
