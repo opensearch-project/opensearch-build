@@ -181,3 +181,28 @@ class TestSmokeTestClusterOpenSearch(unittest.TestCase):
 
         # Verify termination
         mock_process_handler.terminate.assert_called_once()
+
+    @patch("test_workflow.smoke_test.smoke_test_cluster_opensearch.Distributions.get_distribution")
+    @patch("test_workflow.smoke_test.smoke_test_cluster_opensearch.BundleManifest.from_urlpath")
+    @patch("test_workflow.smoke_test.smoke_test_cluster_opensearch.BuildManifest.from_urlpath")
+    @patch("test_workflow.smoke_test.smoke_test_cluster_opensearch.TestManifest.from_path")
+    @patch("test_workflow.smoke_test.smoke_test_cluster_opensearch.Process")
+    def test_save_local_cluster_logs(self, mock_process: Mock, mock_test_manifest: Mock,
+                                     mock_build_manifest: Mock, mock_bundle_manifest: Mock,
+                                     mock_distribution: Mock) -> None:
+        args = MagicMock()
+        test_recorder = MagicMock()
+        mock_process_handler = mock_process.return_value
+
+        # Simulate process handler outputs
+        mock_process_handler.stdout_data = "mock_stdout_data"
+        mock_process_handler.stderr_data = "mock_stderr_data"
+
+        cluster = SmokeTestClusterOpenSearch(args, "/mock/work_dir", test_recorder)
+        cluster.__save_local_cluster_logs__()
+
+        test_recorder._generate_std_files.assert_called_once_with(
+            "mock_stdout_data",
+            "mock_stderr_data",
+            os.path.join(test_recorder.location, "local-cluster-logs")
+        )
