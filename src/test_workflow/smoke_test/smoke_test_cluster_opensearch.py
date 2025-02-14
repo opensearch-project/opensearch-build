@@ -34,6 +34,7 @@ class SmokeTestClusterOpenSearch():
     ) -> None:
         self.args = args
         self.work_dir = work_dir
+        self.test_recorder = test_recorder
         self.process_handler = Process()
         self.test_manifest = TestManifest.from_path(args.test_manifest_path)
         self.product = self.test_manifest.name.lower().replace(" ", "-")
@@ -45,8 +46,6 @@ class SmokeTestClusterOpenSearch():
         self.arch = self.bundle_manifest.build.architecture
         self.dist = self.bundle_manifest.build.distribution
         self.distribution = Distributions.get_distribution(self.product, self.dist, self.version, work_dir)
-
-        self.test_recorder = test_recorder
 
     def cluster_version(self) -> str:
         return self.version
