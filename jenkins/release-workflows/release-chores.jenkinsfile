@@ -19,7 +19,7 @@ pipeline {
     agent {
         docker {
             label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
-            image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3'
+            image 'opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1'
             registryUrl 'https://public.ecr.aws/'
             alwaysPull true
         }
