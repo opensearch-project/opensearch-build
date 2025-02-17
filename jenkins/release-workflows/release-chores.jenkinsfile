@@ -40,7 +40,7 @@ pipeline {
         stage('Parameter check') {
             steps {
                 script {
-                    if (!(RELEASE_VERSION && RELEASE_CHORE)) {
+                    if (!(params.RELEASE_VERSION && params.RELEASE_CHORE)) {
                         error('Required parameters are missing. Please provide the mandatory arguments RELEASE_VERSION and RELEASE_CHORE')
                     }
                 }
