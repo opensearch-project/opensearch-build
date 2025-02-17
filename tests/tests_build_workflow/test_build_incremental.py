@@ -61,7 +61,7 @@ class TestBuildIncremental(unittest.TestCase):
     @patch("manifests.input_manifest.InputManifest.stable")
     def test_no_commits_diffi_with_qualifier(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
         mock_path_exists.return_value = True
-        input_manifest_data = {'schema-version': '1.1', 'build': {'name': 'OpenSearch', 'version': '3.0.0-alpha1'},
+        input_manifest_data = {'schema-version': '1.1', 'build': {'name': 'OpenSearch', 'version': '3.0.0', 'qualifier': 'alpha1'},
                                'components': [{'name': 'OpenSearch',
                                                'repository': 'https://github.com/opensearch-project/OpenSearch.git',
                                                'ref': '91a93dacb84eae4f09decbabe54771585d42b570',
