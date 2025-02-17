@@ -1,0 +1,213 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch
+  version: 3.0.0
+  qualifier: alpha1
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1
+    args: -e JAVA_HOME=/opt/java/openjdk-23
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: main
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+  - name: opensearch-learning-to-rank-base
+    repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+  - name: opensearch-remote-metadata-sdk
+    repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+  - name: geospatial
+    repository: https://github.com/opensearch-project/geospatial.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - job-scheduler
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: neural-search
+    repository: https://github.com/opensearch-project/neural-search.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - ml-commons
+      - k-NN
+  - name: notifications-core
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: main
+    working_directory: notifications
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: notifications
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: main
+    working_directory: notifications
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: opensearch-reports
+    repository: https://github.com/opensearch-project/reporting.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - ml-commons
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: security-analytics
+    repository: https://github.com/opensearch-project/security-analytics.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - alerting
+      - job-scheduler
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: main
+    platforms:
+      - linux
+  - name: custom-codecs
+    repository: https://github.com/opensearch-project/custom-codecs.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+  - name: flow-framework
+    repository: https://github.com/opensearch-project/flow-framework.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - opensearch-remote-metadata-sdk
+  - name: skills
+    repository: https://github.com/opensearch-project/skills.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - job-scheduler
+      - anomaly-detection
+      - sql
+      - ml-commons
+  - name: query-insights
+    repository: https://github.com/opensearch-project/query-insights.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+  - name: opensearch-system-templates
+    repository: https://github.com/opensearch-project/opensearch-system-templates.git
+    ref: main
+    platforms:
+      - linux
+      - windows

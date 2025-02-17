@@ -28,7 +28,12 @@ class BuildIncremental:
             return [input_manifest.build.name.replace(" ", "-")]
         previous_build_manifest = BuildManifest.from_path(build_manifest_path)
         stable_input_manifest = input_manifest.stable()
-        if previous_build_manifest.build.version != stable_input_manifest.build.version:
+        stable_input_manifest_version = (
+            stable_input_manifest.build.version
+            if not stable_input_manifest.build.qualifier
+            else f"{stable_input_manifest.build.version}-{stable_input_manifest.build.qualifier}"
+        )
+        if previous_build_manifest.build.version != stable_input_manifest_version:
             logging.info("The version of previous build manifest doesn't match the current input manifest. Rebuilding Core.")
             return [input_manifest.build.name.replace(" ", "-")]
         components = []
