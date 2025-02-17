@@ -27,11 +27,11 @@ class TestReleaseChores extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('refactor-classes')
+                .defaultVersion('8.2.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
-                .retriever(gitSource('https://github.com/gaiksaya/opensearch-build-libraries.git'))
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
             )
 

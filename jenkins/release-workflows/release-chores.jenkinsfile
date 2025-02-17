@@ -7,9 +7,9 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@refactor-classes', retriever: modernSCM([
+lib = library(identifier: 'jenkins@8.2.0', retriever: modernSCM([
     $class: 'GitSCMSource',
-    remote: 'https://github.com/gaiksaya/opensearch-build-libraries.git',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
 pipeline {
