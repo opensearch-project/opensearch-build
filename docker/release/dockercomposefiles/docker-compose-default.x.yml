@@ -1,5 +1,4 @@
 ---
-version: '3'
 services:
   opensearch-node1:
     image: opensearchproject/opensearch:latest
