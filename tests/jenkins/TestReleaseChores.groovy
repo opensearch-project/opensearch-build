@@ -10,10 +10,8 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
-import org.yaml.snakeyaml.Yaml
 
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
-import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
 import static org.hamcrest.MatcherAssert.assertThat
 
