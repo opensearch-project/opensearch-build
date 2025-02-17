@@ -46,7 +46,7 @@ pipeline {
                 }
             }
         }
-        stage('Add RC details comment') {
+        stage('Add RC details and Docker Scan comment') {
             when {
                 expression { params.RELEASE_CHORE == 'add_rc_details_comment' }
             }
