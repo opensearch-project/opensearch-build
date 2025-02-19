@@ -30,7 +30,7 @@ Code coverage has not decreased (all new code has tests) | :red_circle: |   |
 Release notes are ready and available for all components | :red_circle: |   |
 Roadmap is up-to-date (information is available to create release highlights) | :red_circle: |   |
 Release ticket is cut, and there's a forum post announcing the start of the window | :red_circle: |   |
-[Any necessary security reviews](##Security-Reviews) are complete | :red_circle: |   |
+[Any necessary security reviews](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#security-reviews) are complete | :red_circle: |   |
 
 ### OpenSearch {{ env.VERSION }} [exit criteria](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#exit-criteria-to-close-release-window) status:
 Criteria | Status | Description  | Comments
