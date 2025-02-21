@@ -73,11 +73,11 @@ components:
         - without-security
 
   - name: opensearch-learning-to-rank-base
-      integ-test:
-        test-configs:
-          - with-security
-          - without-security
-          
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
   - name: ml-commons
     integ-test:
       test-configs:
