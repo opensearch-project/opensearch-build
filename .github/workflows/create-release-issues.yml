@@ -1,0 +1,91 @@
+---
+name: create-release-issues
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        description: 'Release version'
+        type: string
+      repos:
+        required: true
+        description: 'List of components repositories'
+        type: string
+
+jobs:
+  build-repo-issue-check:
+    outputs:
+      build_repo_issue_exists: ${{ steps.check_if_build_repo_issue_exists.outputs.issues }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.6.0
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 22958780
+      - name: Checkout Build repo
+        uses: actions/checkout@v3
+      - name: Check if build repo release issue exists
+        id: check_if_build_repo_issue_exists
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'find-issues'
+          repo: opensearch-project/opensearch-build
+          token: ${{ secrets.TOKS_TOKS }}
+          issue-state: 'open'
+          title-includes: '[RELEASE] Release version ${{ inputs.version }}'
+
+
+  component-release-issue:
+    needs: build-repo-issue-check
+    if: needs.build-repo-issue-check.outputs.build_repo_issue_exists != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repos: ${{ fromJson(inputs.repos) }}
+    steps:
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.6.0
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 22958780
+      - name: Check if plugin repo release issue exists
+        id: check_if_plugin_repo_issue_exists
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'find-issues'
+          repo: opensearch-project/${{ matrix.repos }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title-includes: '[RELEASE] Release version ${{ inputs.version }}'
+      - name: Checkout Build repo
+        uses: actions/checkout@v3
+      - name: Replace Placeholders
+        if: steps.check_if_plugin_repo_issue_exists.outputs.issues == '[]'
+        run: |
+          # Read the file contents and replace the placeholders
+          file_path=".github/ISSUE_TEMPLATE/component_release_template.md"
+          RELEASE_VERSION="${{ inputs.version }}"
+          RELEASE_BRANCH=$(echo ${{ inputs.version }} | cut -d. -f1-2)
+          BUILD_REPO_ISSUE_OUTPUT=$(cat <<EOF
+          ${{ needs.build-repo-issue-check.outputs.build_repo_issue_exists.outputs.issues }}
+          EOF
+          )
+          RELEASE_ISSUE_NUMBER=$(echo $BUILD_REPO_ISSUE_OUTPUT | jq -r '.[0].number')
+          RELEASE_ISSUE="https://github.com/opensearch-project/opensearch-build/issues/${RELEASE_ISSUE_NUMBER}"
+          RELEASE_VERSION_X=$(echo "${{ inputs.version }}" | awk -F'.' '{print $1}').x
+          sed -e "s|{{RELEASE_VERSION}}|${RELEASE_VERSION}|g" -e "s|{{RELEASE_ISSUE}}|${RELEASE_ISSUE}|g" -e "s|{{RELEASE_BRANCH}}|${RELEASE_BRANCH}|g" -e "s|{{RELEASE_VERSION_X}}|${RELEASE_VERSION_X}|g" "$file_path" > "$file_path.tmp" && mv "$file_path.tmp" "$file_path"
+      - name: Create component release issue from file
+        if: steps.check_if_plugin_repo_issue_exists.outputs.issues == '[]'
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: '[RELEASE] Release version ${{ inputs.version }}'
+          content-filepath: ../opensearch-build/.github/ISSUE_TEMPLATE/component_release_template.md
+          labels: v${{ inputs.version }}
+          token: ${{ steps.github_app_token.outputs.token }}
+          repository: opensearch-project/${{ matrix.repos }}
