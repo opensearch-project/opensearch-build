@@ -23,6 +23,17 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
+  - name: opensearch-learning-to-rank-base
+    repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base
+    ref: main
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+    depends_on:
+      - common-utils
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
     ref: main
