@@ -68,7 +68,7 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-if command -v yq > /dev/null; then
+if ! command -v yq > /dev/null; then
     echo "Error: yq not found, please install v4 version of yq"
     exit 1
 fi
@@ -95,12 +95,14 @@ elif [ "$DISTRIBUTION" = "deb" ] || [ "$DISTRIBUTION" = "rpm" ]; then
         cp -va ../../../scripts/pkg/build_templates/current/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
     else
         cp -va ../../../scripts/pkg/build_templates/current/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
-        OS_REF=`yq -e '.components[] | select(.name == "OpenSearch2") | .ref' ../../../manifests/$VERSION/opensearch-$VERSION.yml`
+        OS_REF=`yq -e '.components[] | select(.name == "OpenSearch") | .ref' ../../../manifests/$VERSION/opensearch-$VERSION.yml`
         curl -SL "https://raw.githubusercontent.com/opensearch-project/OpenSearch/$OS_REF/distribution/packages/src/common/env/opensearch" -o "$OUTPUT/../etc/sysconfig/opensearch"
         curl -SL "https://raw.githubusercontent.com/opensearch-project/OpenSearch/$OS_REF/distribution/packages/src/common/systemd/opensearch.service" -o "$OUTPUT/../usr/lib/systemd/system/opensearch.service"
         # k-NN lib setups
-        echo >> "$OUTPUT/../etc/sysconfig/opensearch"
-        echo "# k-NN Lib Path" >> "$OUTPUT/../etc/sysconfig/opensearch"
+        echo -e "\n\n################################" >> "$OUTPUT/../etc/sysconfig/opensearch"
+        echo -e "# Plugin properties" >> "$OUTPUT/../etc/sysconfig/opensearch"
+        echo -e "################################" >> "$OUTPUT/../etc/sysconfig/opensearch"
+        echo -e "\n# k-NN Lib Path" >> "$OUTPUT/../etc/sysconfig/opensearch"
         echo "LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/share/opensearch/plugins/opensearch-knn/lib" >> "$OUTPUT/../etc/sysconfig/opensearch"
     fi
 elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
