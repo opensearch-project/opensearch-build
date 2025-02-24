@@ -27,8 +27,8 @@ pipeline {
             H 1 * * * %INPUT_MANIFEST=2.20.0/opensearch-2.20.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
             H 3 * * * %INPUT_MANIFEST=3.0.0-alpha1/opensearch-3.0.0-alpha1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
             H 3 * * * %INPUT_MANIFEST=3.0.0-alpha1/opensearch-dashboards-3.0.0-alpha1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
-            H 6 * * * %INPUT_MANIFEST=3.0.0-beta1/opensearch-3.0.0-beta1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
-            H 6 * * * %INPUT_MANIFEST=3.0.0-beta1/opensearch-dashboards-3.0.0-beta1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
+            H 6 * * * %INPUT_MANIFEST=3.0.0-beta1/opensearch-3.0.0-beta1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;UPDATE_GITHUB_ISSUE=false
+            H 6 * * * %INPUT_MANIFEST=3.0.0-beta1/opensearch-dashboards-3.0.0-beta1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;UPDATE_GITHUB_ISSUE=false
         '''
     }
     parameters {
