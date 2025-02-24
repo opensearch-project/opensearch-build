@@ -35,7 +35,7 @@ jobs:
         with:
           actions: 'find-issues'
           repo: opensearch-project/opensearch-build
-          token: ${{ secrets.TOKS_TOKS }}
+          token: ${{ steps.github_app_token.outputs.token }}
           issue-state: 'open'
           title-includes: '[RELEASE] Release version ${{ inputs.version }}'
 
@@ -62,7 +62,7 @@ jobs:
         with:
           actions: 'find-issues'
           repo: opensearch-project/${{ matrix.repos }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.github_app_token.outputs.token }}
           title-includes: '[RELEASE] Release version ${{ inputs.version }}'
       - name: Checkout Build repo
         uses: actions/checkout@v3
