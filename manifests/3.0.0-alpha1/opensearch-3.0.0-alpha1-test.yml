@@ -9,6 +9,10 @@ components:
   - name: opensearch
     smoke-test:
       test-spec: opensearch.yml
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
   - name: alerting
     integ-test:
       test-configs:
