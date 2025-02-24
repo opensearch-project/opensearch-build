@@ -2,6 +2,7 @@
 name: create-release-issues
 
 on:
+  workflow_dispatch:
   workflow_call:
     inputs:
       version:
