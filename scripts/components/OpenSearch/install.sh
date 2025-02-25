@@ -68,6 +68,11 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+if ! command -v yq > /dev/null; then
+    echo "Error: yq not found, please install v4 version of yq"
+    exit 1
+fi
+
 [ -z "$SNAPSHOT" ] && SNAPSHOT="false"
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
@@ -82,12 +87,23 @@ cd $DIR
 MAJOR_VERSION=`echo $VERSION | cut -d. -f1`
 if [ "$DISTRIBUTION" = "tar" ]; then
     cp -v ../../../scripts/startup/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
-elif [ "$DISTRIBUTION" = "deb" -o "$DISTRIBUTION" = "rpm" ]; then
+elif [ "$DISTRIBUTION" = "deb" ] || [ "$DISTRIBUTION" = "rpm" ]; then
     cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
     if [ "$MAJOR_VERSION" = "1" ]; then
         cp -va ../../../scripts/pkg/build_templates/legacy/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
+    elif [ "$MAJOR_VERSION" = "2" ]; then
+        cp -va ../../../scripts/pkg/build_templates/current/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
     else
         cp -va ../../../scripts/pkg/build_templates/current/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
+        OS_REF=`yq -e '.components[] | select(.name == "OpenSearch") | .ref' ../../../manifests/$VERSION/opensearch-$VERSION.yml`
+        curl -SfL "https://raw.githubusercontent.com/opensearch-project/OpenSearch/$OS_REF/distribution/packages/src/common/env/opensearch" -o "$OUTPUT/../etc/sysconfig/opensearch" || { echo "Failed to download env file"; exit 1; }
+        curl -SfL "https://raw.githubusercontent.com/opensearch-project/OpenSearch/$OS_REF/distribution/packages/src/common/systemd/opensearch.service" -o "$OUTPUT/../usr/lib/systemd/system/opensearch.service" || { echo "Failed to download env file"; exit 1; }
+        # k-NN lib setups
+        echo -e "\n\n################################" >> "$OUTPUT/../etc/sysconfig/opensearch"
+        echo -e "# Plugin properties" >> "$OUTPUT/../etc/sysconfig/opensearch"
+        echo -e "################################" >> "$OUTPUT/../etc/sysconfig/opensearch"
+        echo -e "\n# k-NN Lib Path" >> "$OUTPUT/../etc/sysconfig/opensearch"
+        echo "LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/share/opensearch/plugins/opensearch-knn/lib" >> "$OUTPUT/../etc/sysconfig/opensearch"
     fi
 elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
     cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install.bat "$OUTPUT/"

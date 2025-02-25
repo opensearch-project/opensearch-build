@@ -7,4 +7,5 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-# TODO: This is used by ScriptFinder tests, needs a working integtest.sh for OpenSearch.
+echo "Run systemd integTest for OpenSearch core engine"
+./gradlew qa:systemd-test:integTest --tests org.opensearch.systemdinteg.SystemdIT --console=plain
