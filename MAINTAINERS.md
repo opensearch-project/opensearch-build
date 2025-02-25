@@ -15,27 +15,27 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 
 ## Current Maintainers
 
-| Maintainer       | GitHub ID                                | Affiliation |
-| ---------------- |------------------------------------------| ----------- |
-| Peter Zhu        | [peterzhuamazon](https://github.com/peterzhuamazon) | Amazon      |
-| Sayali Gaikawad  | [gaiksaya](https://github.com/gaiksaya)  | Amazon      |
-| Rishab Singh     | [rishabh6788](https://github.com/rishabh6788) | Amazon      |
-| Zelin Hao        | [zelinh](https://github.com/zelinh)      | Amazon      |
+| Maintainer      | GitHub ID                                           | Affiliation |
+| --------------- | --------------------------------------------------- | ----------- |
+| Peter Zhu       | [peterzhuamazon](https://github.com/peterzhuamazon) | Amazon      |
+| Sayali Gaikawad | [gaiksaya](https://github.com/gaiksaya)             | Amazon      |
+| Rishab Singh    | [rishabh6788](https://github.com/rishabh6788)       | Amazon      |
+| Zelin Hao       | [zelinh](https://github.com/zelinh)                 | Amazon      |
 | Prudhvi Godithi | [prudhvigodithi](https://github.com/prudhvigodithi) | Amazon      |
-| Divya Madala  | [Divyaasm](https://github.com/Divyaasm)  | Amazon      |
-| Daniel (dB.) Doubrovkine  | [dblock](https://github.com/dblock)      | Amazon      |
-| Tianle Huang | [tianleh](https://github.com/tianleh)    | Amazon      |
+| Divya Madala    | [Divyaasm](https://github.com/Divyaasm)             | Amazon      |
+| Tianle Huang    | [tianleh](https://github.com/tianleh)               | Amazon      |
 
 ## Emeritus Maintainers
 
-| Maintainer        | GitHub ID                                               | Affiliation |
-| ----------------- | ------------------------------------------------------- | ----------- |
-| Abhinav Gupta     | [abhinavGupta16](https://github.com/abhinavGupta16)     | Amazon      |
-| Cameron Skinner   | [camerski](https://github.com/camerski)                 | Amazon      |
-| Marc Handalian    | [mch2](https://github.com/mch2)                         | Amazon      |
-| Peter Nied        | [peternied](https://github.com/peternied)               | Amazon      |
-| Jeff Lu           | [jordarlu](https://github.com/jordarlu)                 | Amazon      |
-| Barani Bikshandi  | [bbarani](https://github.com/bbarani)                   | Amazon      |
+| Maintainer               | GitHub ID                                           | Affiliation |
+| ------------------------ | --------------------------------------------------- | ----------- |
+| Abhinav Gupta            | [abhinavGupta16](https://github.com/abhinavGupta16) | Amazon      |
+| Cameron Skinner          | [camerski](https://github.com/camerski)             | Amazon      |
+| Daniel (dB.) Doubrovkine | [dblock](https://github.com/dblock)                 | Independent |
+| Marc Handalian           | [mch2](https://github.com/mch2)                     | Amazon      |
+| Peter Nied               | [peternied](https://github.com/peternied)           | Amazon      |
+| Jeff Lu                  | [jordarlu](https://github.com/jordarlu)             | Amazon      |
+| Barani Bikshandi         | [bbarani](https://github.com/bbarani)               | Amazon      |
 
 ## Release Owner
 
