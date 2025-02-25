@@ -349,8 +349,14 @@ pipeline {
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
-                                    triggerSmokeTests(buildManifestUrl, 'linux', 'rpm')
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
+                                        },
+                                        'smoke-test': {
+                                            triggerSmokeTests(buildManifestUrl, 'linux', 'rpm')
+                                        }
+                                    ])
                                 }
                             }
                             post {
@@ -459,8 +465,14 @@ pipeline {
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
-                                    triggerSmokeTests(buildManifestUrl, 'linux', 'deb')
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
+                                        },
+                                        'smoke-test': {
+                                            triggerSmokeTests(buildManifestUrl, 'linux', 'deb')
+                                        }
+                                    ])
                                 }
                             }
                             post {
@@ -530,8 +542,14 @@ pipeline {
                             echo "buildManifestUrl (linux, arm64, tar): ${buildManifestUrl}"
                             echo "artifactUrl (linux, arm64, tar): ${artifactUrl}"
 
-                            triggerIntegrationTests(buildManifestUrl, 'linux', 'tar')
-                            triggerSmokeTests(buildManifestUrl, 'linux', 'tar')
+                            parallel([
+                                'integ-test': {
+                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'tar')
+                                },
+                                'smoke-test': {
+                                    triggerSmokeTests(buildManifestUrl, 'linux', 'tar')
+                                }
+                            ])
                         }
                     }
                     post {
@@ -641,8 +659,14 @@ pipeline {
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
-                                    triggerSmokeTests(buildManifestUrl, 'linux', 'rpm')
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
+                                        },
+                                        'smoke-test': {
+                                            triggerSmokeTests(buildManifestUrl, 'linux', 'rpm')
+                                        }
+                                    ])
                                 }
                             }
                             post {
@@ -752,8 +776,15 @@ pipeline {
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
-                                    triggerSmokeTests(buildManifestUrl, 'linux', 'deb')
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
+                                        },
+                                        'smoke-test': {
+                                            triggerSmokeTests(buildManifestUrl, 'linux', 'deb')
+                                        }
+                                    ])
+
                                 }
                             }
                             post {
