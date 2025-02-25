@@ -48,6 +48,12 @@ pipeline {
             trim: true
         )
         string(
+            name: 'SMOKE_TEST_JOB_NAME',
+            description: 'Optional: Name of smoke test job that will be triggered, e.g. smoke-test. A non-null empty value here will skip smoke tests.',
+            defaultValue: 'smoke-test',
+            trim: true
+        )
+        string(
             name: 'BWC_TEST_JOB_NAME',
             description: 'Optional: Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test.  A non-null empty value here will skip BWC tests.',
             defaultValue: 'bwc-test',
@@ -227,6 +233,9 @@ pipeline {
                                 'integ-test': {
                                     triggerIntegrationTests(buildManifestUrl, 'linux', 'tar')
                                 },
+                                'smoke-test': {
+                                    triggerSmokeTests(buildManifestUrl, 'linux', 'tar')
+                                },
                                 'bwc-test': {
                                     triggerBWCTests(buildManifestUrl, 'linux', 'tar')
                                 }
@@ -341,6 +350,7 @@ pipeline {
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
                                     triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
+                                    triggerSmokeTests(buildManifestUrl, 'linux', 'rpm')
                                 }
                             }
                             post {
@@ -450,6 +460,7 @@ pipeline {
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
                                     triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
+                                    triggerSmokeTests(buildManifestUrl, 'linux', 'deb')
                                 }
                             }
                             post {
@@ -520,6 +531,7 @@ pipeline {
                             echo "artifactUrl (linux, arm64, tar): ${artifactUrl}"
 
                             triggerIntegrationTests(buildManifestUrl, 'linux', 'tar')
+                            triggerSmokeTests(buildManifestUrl, 'linux', 'tar')
                         }
                     }
                     post {
@@ -630,6 +642,7 @@ pipeline {
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
                                     triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
+                                    triggerSmokeTests(buildManifestUrl, 'linux', 'rpm')
                                 }
                             }
                             post {
@@ -740,6 +753,7 @@ pipeline {
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
                                     triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
+                                    triggerSmokeTests(buildManifestUrl, 'linux', 'deb')
                                 }
                             }
                             post {
@@ -962,6 +976,21 @@ def triggerIntegrationTests(String buildManifestUrl, String platform, String dis
                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                     string(name: 'RC_NUMBER', value: RC_NUMBER),
                     booleanParam(name: 'UPDATE_GITHUB_ISSUES', value: true)
+                ]
+    }
+}
+
+def triggerSmokeTests(String buildManifestUrl, String platform, String distribution) {
+    Boolean skipSmokeTests = (SMOKE_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || !TEST_PLATFORM.contains(platform) || !TEST_DISTRIBUTION.contains(distribution))
+    echo "${skipSmokeTests ? 'Skipping SMOKE tests as one of the values has empty or wrong string: SMOKE_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, TEST_PLATFORM, TEST_DISTRIBUTION' : 'Running SMOKE tests'}"
+    if (!skipSmokeTests) {
+        def smokeTestResults =
+                build job: SMOKE_TEST_JOB_NAME,
+                propagate: false,
+                wait: false,
+                parameters: [
+                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
                 ]
     }
 }
