@@ -13,7 +13,7 @@ jobs:
     outputs:
       versions_matrix: ${{ steps.set-matrix.outputs.versions }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: set-matrix
         # produces a list of major.minor versions only, no patch versions e.g. ["1.4.0","2.10.0","2.6.0","2.7.0","2.8.0","2.9.0","3.0.0"]
         run: echo "versions=$(ls manifests/**/opensearch-dashboards*.yml | cut -d'/' -f2 | grep '0$' | grep -v '[0-9]0$' | sort | uniq | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
@@ -24,7 +24,7 @@ jobs:
     outputs:
       version_components_matrix: ${{ steps.get-all-components.outputs.combined_matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - id: get-all-components
         run: |

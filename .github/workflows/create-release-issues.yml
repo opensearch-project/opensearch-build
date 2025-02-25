@@ -28,7 +28,7 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: 22958780
       - name: Checkout Build repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check if build repo release issue exists
         id: check_if_build_repo_issue_exists
         uses: actions-cool/issues-helper@v3
@@ -65,7 +65,7 @@ jobs:
           token: ${{ steps.github_app_token.outputs.token }}
           title-includes: '[RELEASE] Release version ${{ inputs.version }}'
       - name: Checkout Build repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Replace Placeholders
         if: steps.check_if_plugin_repo_issue_exists.outputs.issues == '[]'
         run: |
