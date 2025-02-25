@@ -96,8 +96,8 @@ elif [ "$DISTRIBUTION" = "deb" ] || [ "$DISTRIBUTION" = "rpm" ]; then
     else
         cp -va ../../../scripts/pkg/build_templates/current/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
         OS_REF=`yq -e '.components[] | select(.name == "OpenSearch") | .ref' ../../../manifests/$VERSION/opensearch-$VERSION.yml`
-        curl -SL "https://raw.githubusercontent.com/opensearch-project/OpenSearch/$OS_REF/distribution/packages/src/common/env/opensearch" -o "$OUTPUT/../etc/sysconfig/opensearch"
-        curl -SL "https://raw.githubusercontent.com/opensearch-project/OpenSearch/$OS_REF/distribution/packages/src/common/systemd/opensearch.service" -o "$OUTPUT/../usr/lib/systemd/system/opensearch.service"
+        curl -SfL "https://raw.githubusercontent.com/opensearch-project/OpenSearch/$OS_REF/distribution/packages/src/common/env/opensearch" -o "$OUTPUT/../etc/sysconfig/opensearch" || { echo "Failed to download env file"; exit 1; }
+        curl -SfL "https://raw.githubusercontent.com/opensearch-project/OpenSearch/$OS_REF/distribution/packages/src/common/systemd/opensearch.service" -o "$OUTPUT/../usr/lib/systemd/system/opensearch.service" || { echo "Failed to download env file"; exit 1; }
         # k-NN lib setups
         echo -e "\n\n################################" >> "$OUTPUT/../etc/sysconfig/opensearch"
         echo -e "# Plugin properties" >> "$OUTPUT/../etc/sysconfig/opensearch"
