@@ -124,6 +124,7 @@ components:
       - windows
     depends_on:
       - ml-commons
+      - geospatial
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
     ref: main
