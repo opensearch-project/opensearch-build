@@ -3,6 +3,15 @@ name: create-release-issues
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: 'Release version'
+        type: string
+      repos:
+        required: true
+        description: 'List of components repositories'
+        type: string
   workflow_call:
     inputs:
       version:
