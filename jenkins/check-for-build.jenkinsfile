@@ -67,6 +67,11 @@ pipeline {
             description: 'Distribution to test',
             trim: true
         )
+        booleanParam(
+            name: 'UPDATE_GITHUB_ISSUE',
+            description: 'To create/close/update a github issue for all component or not.',
+            defaultValue: true
+        )
     }
     stages {
         stage('detect docker image + args') {
@@ -114,7 +119,8 @@ pipeline {
                             string(name: 'BUILD_PLATFORM', value: "${BUILD_PLATFORM}"),
                             string(name: 'BUILD_DISTRIBUTION', value: "${BUILD_DISTRIBUTION}"),
                             string(name: 'TEST_PLATFORM', value: "${TEST_PLATFORM}"),
-                            string(name: 'TEST_DISTRIBUTION', value: "${TEST_DISTRIBUTION}")
+                            string(name: 'TEST_DISTRIBUTION', value: "${TEST_DISTRIBUTION}"),
+                            booleanParam(name: 'UPDATE_GITHUB_ISSUE', value: "${UPDATE_GITHUB_ISSUE}")
                             ], wait: true
 
                             echo "Build succeeded, uploading build SHA for that job"
