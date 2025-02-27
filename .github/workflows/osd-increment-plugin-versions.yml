@@ -43,8 +43,8 @@ jobs:
           - {repo: opensearch-dashboards-functional-test}
           - {repo: query-insights-dashboards}
         branch:
+          - '2.x'
           - '2.19'
-          - '2.20'
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@v3
