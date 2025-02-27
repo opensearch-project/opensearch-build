@@ -43,9 +43,6 @@ jobs:
           - {repo: opensearch-dashboards-functional-test}
           - {repo: query-insights-dashboards}
         branch:
-          - 2.x
-          - main
-          - '2.18'
           - '2.19'
           - '2.20'
     steps:

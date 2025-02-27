@@ -53,9 +53,6 @@ jobs:
           - {repo: opensearch-remote-metadata-sdk}
           - {repo: opensearch-learning-to-rank-base}
         branch:
-          - 2.x
-          - main
-          - '2.18'
           - '2.19'
           - '2.20'
         exclude:
