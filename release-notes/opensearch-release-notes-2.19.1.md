@@ -1,5 +1,13 @@
 # OpenSearch and OpenSearch Dashboards 2.19.1 Release Notes
 
+## Release Details
+
+[OpenSearch and OpenSearch Dashboards 2.19.1](https://opensearch.org/versions/opensearch-2-19-1.html) includes the following bug fixes, infrastructure and maintenance updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.19/release-notes/opensearch.release-notes-2.19.1.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.19/release-notes/opensearch-dashboards.release-notes-2.19.1.md).
+
 
 ## BUG FIXES
 
@@ -7,27 +15,27 @@
 ### Opensearch Job Scheduler
 
 
-* Only download demo certs when integTest run with `-Dsecurity.enabled=true` [(#737)](https://github.com/opensearch-project/job-scheduler/pull/737) [(#740)](https://github.com/opensearch-project/job-scheduler/pull/740).
+* Only download demo certs when integTest run with `-Dsecurity.enabled=true` ([#737](https://github.com/opensearch-project/job-scheduler/pull/737)) ([#740](https://github.com/opensearch-project/job-scheduler/pull/740)).
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
-* fix ignoreFailure flag in ml inference search processors (#3570)[https://github.com/opensearch-project/ml-commons/pull/3570]
-* updating bulk update to use sdkclient (#3546)[https://github.com/opensearch-project/ml-commons/pull/3546]
-* Add interface for no postprocessing function case (#3553)[https://github.com/opensearch-project/ml-commons/pull/3553]
-* add edge case for models that are marked as not found in cache (#3523)[https://github.com/opensearch-project/ml-commons/pull/3523]
-* applying sdkclient changes to config index (#3521)[https://github.com/opensearch-project/ml-commons/pull/3521]
-* remainig sdk client changes for search (#3522)[https://github.com/opensearch-project/ml-commons/pull/3522]
-* adding tenantId for inline connector in model registration (#3531)[https://github.com/opensearch-project/ml-commons/pull/3531]
-* Remove the integ test case cause cohere classify is deprecated in its llm service (#3513)[https://github.com/opensearch-project/ml-commons/pull/3513]
-* fix null decrypted credential while getting batch predict job status (#3518)[https://github.com/opensearch-project/ml-commons/pull/3518]
+* Fix ignoreFailure flag in ml inference search processors ([#3570](https://github.com/opensearch-project/ml-commons/pull/3570))
+* Updating bulk update to use sdkclient ([#3546](https://github.com/opensearch-project/ml-commons/pull/3546))
+* Add interface for no postprocessing function case ([#3553](https://github.com/opensearch-project/ml-commons/pull/3553))
+* Add edge case for models that are marked as not found in cache ([#3523](https://github.com/opensearch-project/ml-commons/pull/3523))
+* Applying sdkclient changes to config index ([#3521](https://github.com/opensearch-project/ml-commons/pull/3521))
+* Remainig sdk client changes for search ([#3522](https://github.com/opensearch-project/ml-commons/pull/3522))
+* Adding tenantId for inline connector in model registration ([#3531](https://github.com/opensearch-project/ml-commons/pull/3531))
+* Remove the integ test case cause cohere classify is deprecated in its llm service ([#3513](https://github.com/opensearch-project/ml-commons/pull/3513))
+* Fix null decrypted credential while getting batch predict job status ([#3518](https://github.com/opensearch-project/ml-commons/pull/3518))
 
 
 ### Opensearch Observability
 
 
-* bump logback to 1.5.16 ([#1074](https://github.com/opensearch-project/reporting/pull/1074))
+* Bump logback to 1.5.16 ([#1074](https://github.com/opensearch-project/reporting/pull/1074))
 
 
 ### Opensearch Query Insights Dashboards
@@ -39,7 +47,7 @@
 * Fix: Query Insights Dashboards style integration - QueryDetails ([#69](https://github.com/opensearch-project/query-insights-dashboards/pull/69))
 
 
-### Opensearch Remote Metadata Sdk
+### Opensearch Remote Metadata SDK
 
 
 * Improve exception unwrapping flexibility for SdkClientUtils
@@ -51,7 +59,7 @@
 ### Opensearch Reporting
 
 
-* bump logback to 1.5.16 ([#1905](https://github.com/opensearch-project/observability/pull/1905))
+* Bump logback to 1.5.16 ([#1905](https://github.com/opensearch-project/observability/pull/1905))
 
 
 ### Opensearch Security
@@ -144,7 +152,7 @@
 * Increment version to 2.19.1 [#732](https://github.com/opensearch-project/job-scheduler/pull/732).
 
 
-### Opensearch Remote Metadata Sdk
+### Opensearch Remote Metadata SDK
 
 
 * Fix CVE-2025-24970 ([93](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/93))
