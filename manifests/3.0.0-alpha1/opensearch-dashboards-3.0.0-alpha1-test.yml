@@ -29,11 +29,6 @@ components:
       test-configs:
         - with-security
         - without-security
-  - name: ganttChartDashboards
-    integ-test:
-      test-configs:
-        - with-security
-        - without-security
   - name: indexManagementDashboards
     integ-test:
       test-configs:
