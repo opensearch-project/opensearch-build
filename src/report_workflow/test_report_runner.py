@@ -101,7 +101,11 @@ class TestReportRunner:
 
         test_component = self.test_manifest.components[component_name]
 
-        config_names = [config for config in test_component.__to_dict__().get(self.test_type)["test-configs"]]
+        config_names = []
+        if "test-configs" in test_component.__to_dict__().get(self.test_type):
+            config_names = [config for config in test_component.__to_dict__().get(self.test_type)["test-configs"]]
+        elif "test-spec" in test_component.__to_dict__().get(self.test_type):
+            config_names = self.get_spec_path(self.test_report_data["version"], test_component.__to_dict__().get(self.test_type)["test-spec"])
         logging.info(f"Configs for {component_name} on {self.test_type} are {config_names}")
         for config in config_names:
             config_dict = {
@@ -163,6 +167,28 @@ class TestReportRunner:
         }
 
         return templates[template_type]
+
+    def get_spec_path(self, version: str, spec_file: str) -> list:
+        # loading spec yaml file
+        api_paths = []
+        spec_paths = [
+            os.path.join(os.getcwd(), "src", "test_workflow", "smoke_test", "smoke_tests_spec", f"{version.split('.')[0]}.x", spec_file),
+            os.path.join(os.getcwd(), "src", "test_workflow", "smoke_test", "smoke_tests_spec", "default", spec_file)
+        ]
+        logging.info(f"spec_paths is {spec_paths}")
+        for spec_file_path in spec_paths:
+            if os.path.exists(spec_file_path):
+                logging.info(f"Loading {spec_file} from {spec_file_path}")
+                with open(spec_file_path, 'r') as file:
+                    data = yaml.safe_load(file)
+                paths = data.get('paths', {})
+                for api_requests, api_details in paths.items():
+                    for method in api_details.keys():
+                        api_path = '_'.join([method, api_requests.replace("/", "_")])
+                        logging.info(f"api_path is {api_path}")
+                        api_paths.append(api_path)
+                break
+        return api_paths
 
 
 def generate_component_yml_ref(base_path: str, test_number: str, test_type: str, component_name: str,
