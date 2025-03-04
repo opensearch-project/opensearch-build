@@ -112,7 +112,7 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg
     apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 xauth xvfb && \
     apt-get install -y libxrender1 libxi6 libxtst6 libasound2t64 && \
     apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libatspi2.0-dev libxcomposite-dev libxdamage1 libxfixes3 libxfixes-dev libxrandr2 libgbm-dev libxkbcommon-x11-0 libpangocairo-1.0-0 libcairo2 libcairo2-dev libnss3 libnspr4 libnspr4-dev && \
-    apt-get install -y pigz && \
+    apt-get install -y mandoc less pigz && \
     apt-get clean -y
 
 # Install python, update awscli to v2 due to lib conflicts on urllib3 v1 vs v2
@@ -161,7 +161,7 @@ RUN source $NVM_DIR/nvm.sh && ls -al $CONTAINER_USER_HOME && echo $NODE_VERSION 
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN apt-get install -y golang-1.22 && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+RUN apt-get install -y golang-1.22 && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh && apt-get clean -y && apt-get autoremove -y
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm

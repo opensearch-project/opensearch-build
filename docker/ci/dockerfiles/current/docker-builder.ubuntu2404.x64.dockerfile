@@ -31,6 +31,7 @@ RUN apt-get update -y && apt-get install -y software-properties-common && add-ap
 
 # Install necessary packages to build multi-arch docker images
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu-system qemu-system-common qemu-user qemu-user-static docker.io=24.0.7* curl && \
+    apt-get install -y mandoc less && \
     apt-get install -y debmake debhelper-compat
 
 # Install python, update awscli to v2 due to lib conflicts on urllib3 v1 vs v2
