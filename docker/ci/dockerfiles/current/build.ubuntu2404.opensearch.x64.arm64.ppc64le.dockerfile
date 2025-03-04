@@ -6,7 +6,7 @@
 # compatible open source license.
 
 # This is a docker image specifically for assembling the DEB version of OpenSearch/OpenSearch-Dashboards
-# This is not capable of building k-NN plugin as it lacks the necessary old version of glibc on CentOS7
+# This is not capable of building k-NN plugin as it lacks the necessary old version of glibc on AL2
 
 FROM ubuntu:24.04
 
@@ -25,7 +25,9 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y software-prope
 # Install necessary packages
 RUN apt-get update -y && apt-get install -y docker.io=24.0.7* curl build-essential git jq && \
     apt-get install -y debmake debhelper-compat && \
-    apt-get install -y libxi6 libxtst6 libasound2t64 && \
+    apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 xauth xvfb && \
+    apt-get install -y libxrender1 libxi6 libxtst6 libasound2t64 && \
+    apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libatspi2.0-dev libxcomposite-dev libxdamage1 libxfixes3 libxfixes-dev libxrandr2 libgbm-dev libxkbcommon-x11-0 libpangocairo-1.0-0 libcairo2 libcairo2-dev libnss3 libnspr4 libnspr4-dev && \
     apt-get clean -y
 
 # Docker Compose v2
@@ -39,7 +41,8 @@ RUN mkdir -p /usr/local/lib/docker/cli-plugins && \
     else \
         echo "Your system is not supported now" && exit 1; \
     fi; \
-    chmod 755 /usr/local/lib/docker/cli-plugins/docker-compose
+    chmod 755 /usr/local/lib/docker/cli-plugins/docker-compose && \
+    ln -s /usr/local/lib/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
 
 # Install python, update awscli to v2 due to lib conflicts on urllib3 v1 vs v2
 RUN apt-get update -y && apt-get install -y python3.9-full python3.9-dev && \
