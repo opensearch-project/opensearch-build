@@ -150,6 +150,6 @@ exit 0
 %{product_dir}/logs
 
 %changelog
-* Mon Mar 21 2022 OpenSearch Team <opensearch@amazon.com>
+* Mon Mar 21 2022 OpenSearch Team <release@opensearch.org>
 - Initial package
 

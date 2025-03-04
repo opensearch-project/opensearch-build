@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: opensearch
-Upstream-Contact: opensearch@amazon.com
+Upstream-Contact: release@opensearch.org
 Source: https://opensearch.org
 Files: *
 Copyright: OpenSearch Contributors
