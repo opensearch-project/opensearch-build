@@ -20,5 +20,3 @@ if [ "$OSTYPE" = "linux-gnu" ]; then
 else
     echo "Not on linux host, skip test"
 fi
-
-exit 0
