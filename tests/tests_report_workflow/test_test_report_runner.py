@@ -281,3 +281,26 @@ class TestTestReportRunner(unittest.TestCase):
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/with-security/local-cluster-logs/id-0/stdout.txt")
         self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0], "https://ci.opensearch.org/ci"
                                                                                          "/dbc/mock/test-results/123/integ-test/geospatial/without-security/local-cluster-logs/id-1/stdout.txt")
+
+    @patch("report_workflow.report_args.ReportArgs")
+    def test_runner_component_entry_local_smoke_test(self, report_args_mock: MagicMock) -> None:
+        report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
+        report_args_mock.artifact_paths = {"opensearch": self.DATA_DIR}
+        report_args_mock.test_run_id = 12345
+        report_args_mock.base_path = self.DATA_DIR
+        report_args_mock.test_type = "smoke-test"
+
+        test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("index-management")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "PASS")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["name"], "PUT___plugins__ism_policies_policy_1")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["yml"],
+                         os.path.join(self.DATA_DIR, "test-results", "12345", "smoke-test", "index-management", "PUT___plugins__ism_policies_policy_1", "index-management.yml"))
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][0],
+                         os.path.join(self.DATA_DIR, "test-results", "12345", "smoke-test", "local-cluster-logs", "stdout.txt"))
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stderr"][0],
+                         os.path.join(self.DATA_DIR, "test-results", "12345", "smoke-test", "local-cluster-logs", "stderr.txt"))
+        self.assertEqual(test_run_component_dict.get("configs")[0]["test_stdout"],
+                         os.path.join(self.DATA_DIR, "test-results", "12345", "smoke-test", "index-management", "PUT___plugins__ism_policies_policy_1", "stdout.txt"))
+        self.assertEqual(test_run_component_dict.get("configs")[0]["test_stderr"],
+                         os.path.join(self.DATA_DIR, "test-results", "12345", "smoke-test", "index-management", "PUT___plugins__ism_policies_policy_1", "stderr.txt"))
+        self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "No Failed Test")

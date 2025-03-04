@@ -224,19 +224,22 @@ def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, compon
     os_stdout: list = []
     os_stderr: list = []
     cluster_ids: list
-
-    if product_name == 'opensearch':
-        cluster_ids = ['id-0'] if config == 'with-security' else ['id-1']
-    else:
-        cluster_ids = ['id-0', 'id-1'] if config == 'with-security' else ['id-2', 'id-3']
-
-    for ids in cluster_ids:
-        if base_path.startswith("https://"):
-            os_stdout.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"]))
-            os_stderr.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"]))
+    if test_type == "integ-test":
+        if product_name == 'opensearch':
+            cluster_ids = ['id-0'] if config == 'with-security' else ['id-1']
         else:
-            os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"))
-            os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"))
+            cluster_ids = ['id-0', 'id-1'] if config == 'with-security' else ['id-2', 'id-3']
+
+        for ids in cluster_ids:
+            if base_path.startswith("https://"):
+                os_stdout.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"]))
+                os_stderr.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"]))
+            else:
+                os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"))
+                os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"))
+    elif test_type == "smoke-test":
+        os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, "local-cluster-logs", "stdout.txt"))
+        os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, "local-cluster-logs", "stderr.txt"))
 
     return [os_stdout, os_stderr]
 

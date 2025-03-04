@@ -1,0 +1,11 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+WARNING: A terminally deprecated method in java.lang.System has been called
+WARNING: System::setSecurityManager has been called by org.opensearch.bootstrap.OpenSearch (file:/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/lib/opensearch-2.19.0.jar)
+WARNING: Please consider reporting this to the maintainers of org.opensearch.bootstrap.OpenSearch
+WARNING: System::setSecurityManager will be removed in a future release
+Feb 20, 2025 3:07:00 PM sun.util.locale.provider.LocaleProviderAdapter <clinit>
+WARNING: COMPAT locale provider will be removed in a future release
+WARNING: A terminally deprecated method in java.lang.System has been called
+WARNING: System::setSecurityManager has been called by org.opensearch.bootstrap.Security (file:/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/lib/opensearch-2.19.0.jar)
+WARNING: Please consider reporting this to the maintainers of org.opensearch.bootstrap.Security
+WARNING: System::setSecurityManager will be removed in a future release

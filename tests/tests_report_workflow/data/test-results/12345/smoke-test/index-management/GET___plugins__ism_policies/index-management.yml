@@ -1,0 +1,8 @@
+component_name: index-management
+run_id: 12345
+test_config: GET___plugins__ism_policies
+test_result: PASS
+test_result_files:
+- /Users/zelinhao/workspace/fork/opensearch-build/test-results/12345/smoke-test/index-management/GET___plugins__ism_policies/stdout.txt
+- /Users/zelinhao/workspace/fork/opensearch-build/test-results/12345/smoke-test/index-management/GET___plugins__ism_policies/stderr.txt
+test_type: smoke-test
