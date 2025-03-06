@@ -1,0 +1,145 @@
+---
+info:
+  title: OpenSearch Sql plugin smoke tests
+  version: 2.x
+name: ml-commons
+paths:
+    /_plugins/_ml/models/_register:
+        POST:
+            parameters: [
+                {
+                    "name": "openAI-GPT-3.5 model with a connector",
+                    "function_name": "remote",
+                    "description": "test model",
+                    "connector": {
+                        "name": "OpenAI Connector",
+                        "description": "The connector to public OpenAI model service for GPT 3.5",
+                        "version": 1,
+                        "protocol": "http",
+                        "parameters": {
+                            "endpoint": "api.openai.com",
+                            "max_tokens": 7,
+                            "temperature": 0,
+                            "model": "text-davinci-003"
+                        },
+                        "credential": {
+                            "openAI_key": "..."
+                        },
+                        "actions": [
+                            {
+                                "action_type": "predict",
+                                "method": "POST",
+                                "url": "https://${parameters.endpoint}/v1/completions",
+                                "headers": {
+                                    "Authorization": "Bearer ${credential.openAI_key}"
+                                },
+                                "request_body": "{ \"model\": \"${parameters.model}\", \"prompt\": \"${parameters.prompt}\", \"max_tokens\": ${parameters.max_tokens}, \"temperature\": ${parameters.temperature} }"
+                            }
+                        ]
+                    }
+                }
+            ]
+    /_plugins/_ml/stats:
+        GET:
+            parameters: []
+    /_plugins/_ml/stats/ml_request_count:
+        GET:
+            parameters: []
+    /iris_data_train_predict_it:
+        PUT:
+            parameters:[]
+    /_bulk?refresh=true:
+        POST:
+            parameters:[
+                {
+                    "index":
+                        {
+                            "_index":
+                                "iris_data_train_predict_it",
+                            "_id":
+                                "1"
+                        }
+                },
+                {
+                    "sepal_length_in_cm": 5.1,
+                    "sepal_width_in_cm": 3.5,
+                    "petal_length_in_cm": 1.4,
+                    "petal_width_in_cm": 0.2,
+                    "class": "Iris-setosa"
+                },
+                {
+                    "index":
+                        {
+                            "_index":
+                                "iris_data_train_predict_it",
+                            "_id":
+                                "2"
+                        }
+                },
+                {
+                    "sepal_length_in_cm": 4.9,
+                    "sepal_width_in_cm": 3.0,
+                    "petal_length_in_cm": 1.4,
+                    "petal_width_in_cm": 0.2,
+                    "class": "Iris-setosa"
+                },
+                {
+                    "index":
+                        {
+                            "_index":
+                                "iris_data_train_predict_it",
+                            "_id":
+                                "3"
+                        }
+                },
+                {
+                    "sepal_length_in_cm": 4.7,
+                    "sepal_width_in_cm": 3.2,
+                    "petal_length_in_cm": 1.3,
+                    "petal_width_in_cm": 0.2,
+                    "class": "Iris-setosa"
+                },
+                {
+                    "index":
+                        {
+                            "_index":
+                                "iris_data_train_predict_it",
+                            "_id":
+                                "4"
+                        }
+                },
+                {
+                    "sepal_length_in_cm": 4.6,
+                    "sepal_width_in_cm": 3.1,
+                    "petal_length_in_cm": 1.5,
+                    "petal_width_in_cm": 0.2,
+                    "class": "Iris-setosa"
+                }
+            ]
+    /_cluster/settings:
+        PUT:
+            parameters: [
+                {
+                    "persistent": {
+                        "plugins.ml_commons.only_run_on_ml_node": false
+                    }
+                }
+            ]
+    /_plugins/_ml/_train/kmeans:
+        POST:
+            parameters: [
+                {
+                    "parameters": {
+                        "centroids": 3,
+                        "iterations": 10,
+                        "distance_type": "COSINE"
+                    },
+                    "input_query": {
+                        "_source": ["petal_length_in_cm", "petal_width_in_cm"],
+                        "size": 10000
+                    },
+                    "input_index": [
+                        "iris_data_train_predict_it"
+                    ]
+                }
+            ]

@@ -86,6 +86,8 @@ components:
       test-configs:
         - with-security
         - without-security
+    smoke-test:
+      test-spec: ml-commons.yml
   - name: opensearch-learning-to-rank-base
     integ-test:
       test-configs:
