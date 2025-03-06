@@ -67,7 +67,7 @@ pipeline {
                     archiveArtifacts artifacts: 'scan_docker_image.*'
                     script {
                         postCleanup()
-                        sh("trivy image --clear-cache")
+                        sh("trivy clean --all")
                     }
                 }
             }     
