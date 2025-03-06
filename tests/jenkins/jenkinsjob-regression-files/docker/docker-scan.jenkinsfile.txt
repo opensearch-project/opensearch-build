@@ -21,4 +21,4 @@
          docker-scan.script(groovy.lang.Closure)
             docker-scan.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
-            docker-scan.sh(trivy image --clear-cache)
+            docker-scan.sh(trivy clean --all)
