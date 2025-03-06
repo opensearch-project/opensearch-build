@@ -71,7 +71,7 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
         for component in self.test_manifest.components.select(self.args.components):
             if component.smoke_test:
                 logging.info(f"Running smoke test on {component.name} component.")
-                component_spec = self.extract_paths_from_yaml(component.name, self.version)
+                component_spec = self.extract_paths_from_yaml(component.name, component.smoke_test.get("test-spec"), self.version)
                 logging.info(f"component spec is {component_spec}")
                 test_results = TestComponentResults()
                 for api_requests, api_details in component_spec.items():

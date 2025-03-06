@@ -30,7 +30,7 @@ class TestSmokeTestRunnerMethods(unittest.TestCase):
         mock_components = MagicMock()
         mock_component = MagicMock()
         mock_component.name = "opensearch"
-        mock_component.smoke_test = True
+        mock_component.smoke_test = {"test-spec": "mock_component.yml"}
         mock_components.select.return_value = [mock_component]
         self.test_manifest.components = mock_components
 
@@ -45,11 +45,11 @@ class TestSmokeTestRunnerMethods(unittest.TestCase):
         component_name = "test_component"
 
         # Run extract_paths_from_yaml and check output
-        result = runner.extract_paths_from_yaml(component_name, "2.19.0")
+        result = runner.extract_paths_from_yaml(component_name, "mock_component.yml", "2.19.0")
         expected_output = {"/_cat/plugins": {"get": {"parameters": []}}}  # type: Any
 
         self.assertEqual(result, expected_output)
-        mock_open_file.assert_called_once_with(os.path.join("/dummy-path", "smoke_tests_spec", "2.x", f"{component_name}.yml"), 'r')
+        mock_open_file.assert_called_once_with(os.path.join("/dummy-path", "smoke_tests_spec", "2.x", "mock_component.yml"), 'r')
 
     @patch("test_workflow.smoke_test.smoke_test_runner.TestRecorder")
     def test_convert_parameter_json(self, mock_recorder: Mock) -> None:

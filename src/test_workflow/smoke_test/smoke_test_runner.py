@@ -43,11 +43,11 @@ class SmokeTestRunner(abc.ABC):
     def start_test(self, work_dir: Path) -> Any:
         pass
 
-    def extract_paths_from_yaml(self, component: str, version: str) -> Any:
+    def extract_paths_from_yaml(self, component: str, test_spec: str, version: str) -> Any:
         base_path = os.path.dirname(os.path.abspath(__file__))
         paths = [
-            os.path.join(base_path, "smoke_tests_spec", f"{version.split('.')[0]}.x", f"{component}.yml"),
-            os.path.join(base_path, "smoke_tests_spec", "default", f"{component}.yml")
+            os.path.join(base_path, "smoke_tests_spec", f"{version.split('.')[0]}.x", test_spec),
+            os.path.join(base_path, "smoke_tests_spec", "default", test_spec)
         ]
         for file_path in paths:
             if os.path.exists(file_path):
@@ -57,6 +57,8 @@ class SmokeTestRunner(abc.ABC):
                 # Extract paths
                 paths = data.get('paths', {})
                 return paths
+            else:
+                logging.info(f"No spec found at f{file_path}")
         logging.error("No spec found.")
         sys.exit(1)
 
