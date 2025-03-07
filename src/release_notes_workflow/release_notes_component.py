@@ -13,9 +13,10 @@ from manifests.input_manifest import InputComponentFromSource
 
 class ReleaseNotesComponent:
 
-    def __init__(self, component: InputComponentFromSource, build_version: str, root: str) -> None:
+    def __init__(self, component: InputComponentFromSource, build_version: str, build_qualifier: str, root: str) -> None:
         self.component = component
         self.build_version = build_version
+        self.build_qualifier = f'-{build_qualifier}' if build_qualifier else ''
         self.root = root
 
     @property
@@ -53,7 +54,7 @@ class ReleaseNotesOpenSearch(ReleaseNotesComponent):
 
     @property
     def filename(self) -> str:
-        release_notes_filename = f'.release-notes-{self.build_version}.md'
+        release_notes_filename = f'.release-notes-{self.build_version}{self.build_qualifier}.md'
         return release_notes_filename
 
 
@@ -61,15 +62,15 @@ class ReleaseNotesOpenSearchPlugin(ReleaseNotesComponent):
 
     @property
     def filename(self) -> str:
-        release_notes_filename = f'.release-notes-{self.build_version}.0.md'
+        release_notes_filename = f'.release-notes-{self.build_version}.0{self.build_qualifier}.md'
         return release_notes_filename
 
 
 class ReleaseNotesComponents:
 
     @classmethod
-    def from_component(self, component: InputComponentFromSource, build_version: str, root: str) -> ReleaseNotesComponent:
+    def from_component(self, component: InputComponentFromSource, build_version: str, build_qualifier: str, root: str) -> ReleaseNotesComponent:
         if component.name == 'OpenSearch' or component.name == 'OpenSearch-Dashboards':
-            return ReleaseNotesOpenSearch(component, build_version, root)
+            return ReleaseNotesOpenSearch(component, build_version, build_qualifier, root)
         else:
-            return ReleaseNotesOpenSearchPlugin(component, build_version, root)
+            return ReleaseNotesOpenSearchPlugin(component, build_version, build_qualifier, root)
