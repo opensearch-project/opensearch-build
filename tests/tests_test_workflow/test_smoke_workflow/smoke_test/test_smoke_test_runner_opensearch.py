@@ -23,7 +23,7 @@ class TestSmokeTestRunnerOpenSearch(unittest.TestCase):
         mock_components = MagicMock()
         mock_component = MagicMock()
         mock_component.name = "opensearch"
-        mock_component.smoke_test = True
+        mock_component.smoke_test = {"test-spec": "mock_component.yml"}
         mock_components.select.return_value = [mock_component]
         self.test_manifest.components = mock_components
 
@@ -54,7 +54,7 @@ class TestSmokeTestRunnerOpenSearch(unittest.TestCase):
 
         results = runner.start_test(work_dir=Path("/temp/path"))
         self.assertTrue(results)
-        mock_extract_spec.assert_called_with("opensearch", "2.19.0")
+        mock_extract_spec.assert_called_with("opensearch", "mock_component.yml", "2.19.0")
         self.test_manifest.components.select.assert_called()
         mock_get.assert_has_calls(
             [call('https://localhost:9200/', verify=False, auth=('admin', 'myStrongPassword123!'),
