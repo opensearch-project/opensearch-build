@@ -20,7 +20,7 @@ class TestDockerScanJob extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('1.0.4')
+                .defaultVersion('8.2.2')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')

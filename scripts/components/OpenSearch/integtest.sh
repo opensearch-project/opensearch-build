@@ -13,7 +13,7 @@ echo "Check if distribution is deb or rpm on linux"
 if [ "$OSTYPE" = "linux-gnu" ]; then
     if (dpkg -s opensearch > /dev/null 2>&1) || (rpm -q opensearch > /dev/null 2>&1); then
         echo "Run systemd integTest for OpenSearch core engine"
-        ./gradlew :qa:systemd-test:test --tests org.opensearch.systemdinteg.SystemdIntegTests --console=plain
+        ./gradlew qa:systemd-test:integTest --tests org.opensearch.systemdinteg.SystemdIntegTests --console=plain
     else
         echo "No deb or rpm installed detected, skip test"
     fi
