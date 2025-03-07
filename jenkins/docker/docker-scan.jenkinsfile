@@ -20,6 +20,7 @@ pipeline {
     environment {
         TRIVY_DB_REPOSITORY = 'public.ecr.aws/aquasecurity/trivy-db'
         TRIVY_JAVA_DB_REPOSITORY = 'public.ecr.aws/aquasecurity/trivy-java-db'
+        TRIVY_DISABLE_VEX_NOTICE = true
     }
     parameters {
         string(
