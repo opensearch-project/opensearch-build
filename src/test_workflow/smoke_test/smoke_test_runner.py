@@ -75,7 +75,7 @@ class SmokeTestRunner(abc.ABC):
             test_cluster.__start_cluster__(os.path.join(work_dir.path))
             is_cluster_ready = False
             for i in range(10):
-                logging.info(f"Attempt {i} of 10 to check cluster.")
+                logging.info(f"Attempt {i + 1} of 10 to check cluster.")
                 if test_cluster.__check_cluster_ready__():
                     is_cluster_ready = True
                     break
