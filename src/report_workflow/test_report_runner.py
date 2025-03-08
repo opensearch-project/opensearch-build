@@ -255,10 +255,19 @@ def get_failed_tests(product_name: str, test_result: str, test_result_files: lis
 
         if product_name == 'opensearch':
             soup = BeautifulSoup(result_content, "html.parser")
-            target_div = soup.find("div", {"id": "tab0"})
-            target_a_hash = [a for li in target_div.find_all("li") for a in li.find_all("a", href=True) if "#" in a["href"]]
-            for a in target_a_hash:
-                failed_test_list.append(a["href"].replace("classes/", "").replace(".html", ""))
+            target_header = soup.find("h2", string="Failed tests")
+            if target_header:
+                target_div = target_header.find_parent("div")
+                if target_div:
+                    target_a_hash = [a for li in target_div.find_all("li") for a in li.find_all("a", href=True) if "#" in a["href"]]
+                    for a in target_a_hash:
+                        failed_test_list.append(a["href"].replace("classes/", "").replace("../", "", 1).replace(".html", ""))
+                else:
+                    logging.info(f"Test Result File Has Changed Format {result_path}")
+                    failed_test_list.append("Test Result File Has Changed Format")
+            else:
+                logging.info(f"Test Result File Has Changed Format {result_path}")
+                failed_test_list.append("Test Result File Has Changed Format")
         else:
             soup = BeautifulSoup(result_content, "xml")
             class_name = "DefaultClassName"
