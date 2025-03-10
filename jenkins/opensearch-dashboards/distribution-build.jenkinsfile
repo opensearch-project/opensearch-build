@@ -156,7 +156,7 @@ pipeline {
                         BUILD_DOCKER = 'build_docker_with_build_number_tag'
                     }
                     def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${INPUT_MANIFEST}"))
-                    env.version = inputManifestObj.build.version + (inputManifestObj.build?.qualifier ? "-${inputManifestObj.build.qualifier}" : "")
+                    env.version = inputManifestObj.build.version
                 }
             }
         }
