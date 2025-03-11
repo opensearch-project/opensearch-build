@@ -156,7 +156,9 @@ pipeline {
                         BUILD_DOCKER = 'build_docker_with_build_number_tag'
                     }
                     def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${INPUT_MANIFEST}"))
-                    env.version = inputManifestObj.build.version
+                    def version = inputManifestObj.build.version
+                    def qualifier = inputManifestObj.build.qualifier ? '-' + inputManifestObj.build.qualifier : ''
+                    env.revision = version + qualifier
                 }
             }
         }
@@ -963,7 +965,7 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 script {
                     if (params.RC_NUMBER.toInteger() > 0) {
-                        triggerDistributionValidationWorkflow(env.version)
+                        triggerDistributionValidationWorkflow(env.revision)
                     }
                     postCleanup()
                 }
