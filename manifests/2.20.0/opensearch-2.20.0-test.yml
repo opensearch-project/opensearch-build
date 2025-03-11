@@ -77,6 +77,9 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        path.repo:
+          - /tmp
   - name: ml-commons
     integ-test:
       test-configs:
