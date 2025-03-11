@@ -78,6 +78,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
+        node.attr.knn_cb_tier: integ
         path.repo:
           - /tmp
   - name: ml-commons
