@@ -245,6 +245,7 @@ pipeline {
                               timeout(time: 3, unit: 'HOURS') {
                                 node(AGENT_LABEL) {
                                   docker.withRegistry('https://public.ecr.aws/') {
+                                    docker.image(docker_images["$distribution"]).pull() // always pull latest
                                     docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
                                       try {
                                         stage("${local_component}-ci-group-${ciNum}") {
