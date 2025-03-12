@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@8.3.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@8.3.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -259,7 +259,7 @@ pipeline {
                                             artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
                                             distribution: "${distribution}",
                                             buildManifest: "${BUILD_MANIFEST}",
-                                            testManifest: "${TEST_MANIFEST}"
+                                            testManifest: "manifests/${TEST_MANIFEST}"
                                           )
                                         }
                                       } catch (e) {
@@ -306,7 +306,7 @@ pipeline {
                                                             artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
                                                             distribution: "${distribution}",
                                                             buildManifest: "${BUILD_MANIFEST}",
-                                                            testManifest: "${TEST_MANIFEST}"
+                                                            testManifest: "manifests/${TEST_MANIFEST}"
                                                         )
                                                     }
                                                 } catch (e) {
