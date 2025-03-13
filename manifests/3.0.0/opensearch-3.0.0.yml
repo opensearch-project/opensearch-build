@@ -32,6 +32,15 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
     ref: main
@@ -43,15 +52,8 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
     depends_on:
       - common-utils
-  - name: job-scheduler
-    repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: main
-    platforms:
-      - linux
-      - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
+      - job-scheduler
+      - opensearch-remote-metadata-sdk
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
     ref: main
