@@ -14,7 +14,7 @@ lib = library(identifier: 'jenkins@6.4.7', retriever: modernSCM([
 
 def docker_images = [
     "yum": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1",
-    "apt": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2",
+    "apt": "opensearchstaging/ci-runner:ci-runner-ubuntu2404-opensearch-build-v1",
 ]
 
 pipeline {
