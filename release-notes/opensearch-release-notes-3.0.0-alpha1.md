@@ -17,7 +17,7 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 
 ### Opensearch ML Commons
 
-* Use \_list/indices API instead of \_cat/index API in CatIndexTool (#3243)[https://github.com/opensearch-project/ml-commons/pull/3243]
+* Use \_list/indices API instead of \_cat/index API in CatIndexTool ([#3243](https://github.com/opensearch-project/ml-commons/pull/3243))
 
 
 ### Opensearch Security
@@ -306,7 +306,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch ML Commons
 
 
-* Fix building error due to a breaking change from core (#3617)[https://github.com/opensearch-project/ml-commons/pull/3617]
+* Fix building error due to a breaking change from core ([#3617](https://github.com/opensearch-project/ml-commons/pull/3617))
 
 
 ### OpenSearch Neural Search
@@ -460,7 +460,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Skills
 
 
-* Add tutorial to build and test custom tool (#521)[https://github.com/opensearch-project/skills/pull/521]
+* Add tutorial to build and test custom tool ([#521](https://github.com/opensearch-project/skills/pull/521))
 
 
 ## MAINTENANCE
