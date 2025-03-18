@@ -15,7 +15,7 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 ## Breaking Changes
 * For a full list of breaking changes and deprecated/removed features in version 3.0.0, please see details in the [meta issues](https://github.com/opensearch-project/opensearch-build/issues/5243).
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 * Use \_list/indices API instead of \_cat/index API in CatIndexTool (#3243)[https://github.com/opensearch-project/ml-commons/pull/3243]
 
@@ -168,7 +168,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Update plugin name and rearrange Try AI Search Flows card ([#664](https://github.com/opensearch-project/dashboards-flow-framework/pull/664))
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * Support sentence highlighting QA model (#3600)[https://github.com/opensearch-project/ml-commons/pull/3600]
@@ -303,7 +303,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Only download demo certs when integTest run with `-Dsecurity.enabled=true` [#737](https://github.com/opensearch-project/job-scheduler/pull/737).
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * Fix building error due to a breaking change from core (#3617)[https://github.com/opensearch-project/ml-commons/pull/3617]
@@ -319,8 +319,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * [Bug] Traces/Services remove toast message on empty data ([#2346] (https://github.com/opensearch-project/dashboards-observability/pull/2346))
-
-
 * Restore spans limit to 3000 in trace view ([#2353] (https://github.com/opensearch-project/dashboards-observability/pull/2353))
 * [BUG] Updated cache for the sub tree in Workbench ([#2351] (https://github.com/opensearch-project/dashboards-observability/pull/2351))
 * Trace Groups Optimization - Remove duplicate filters ([#2368] (https://github.com/opensearch-project/dashboards-observability/pull/2368))
@@ -436,7 +434,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add text to visualization agent template ([#936](https://github.com/opensearch-project/flow-framework/pull/936))
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * Add tutorial for RAG of openai and bedrock (#2975)[https://github.com/opensearch-project/ml-commons/pull/2975]
@@ -591,7 +589,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix checkout action failure [#650](https://github.com/opensearch-project/job-scheduler/pull/650).
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * Update CB setting to 100 to bypass memory check (#3627)[https://github.com/opensearch-project/ml-commons/pull/3627]
@@ -618,8 +616,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * TraceView - Optimization of queries ([#2349] (https://github.com/opensearch-project/dashboards-observability/pull/2349))
-
-
 * [Integration] Remove maxFilesPerTrigger from all the integrations queries ([#2354] (https://github.com/opensearch-project/dashboards-observability/pull/2354))
 * Bump dashboards observability to version 3.0.0.0-alpha1 ([#2364] (https://github.com/opensearch-project/dashboards-observability/pull/2364))
 * ServiceMap Query Optimizations ([#2367] (https://github.com/opensearch-project/dashboards-observability/pull/2367))
@@ -666,8 +662,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * Update yarn.lock for cross-spawn ([#441] (https://github.com/opensearch-project/dashboards-query-workbench/pull/441))
-
-
 * Bump dashboards query workbench to version 3.0.0.0-alpha1 ([#444] (https://github.com/opensearch-project/dashboards-query-workbench/pull/444))
 * update CIs to install job-scheduler plugin ([#453] (https://github.com/opensearch-project/dashboards-query-workbench/pull/453))
 
@@ -706,8 +700,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * Update package name to fix compilation issue [#2513](https://github.com/opensearch-project/k-NN/pull/2513)
-
-
 * Update gradle to 8.13 to fix command exec on java 21 [#2571](https://github.com/opensearch-project/k-NN/pull/2571)
 * Add fix for nmslib pragma on arm [#2574](https://github.com/opensearch-project/k-NN/pull/2574)
 * Removes Array based vector serialization [#2587](https://github.com/opensearch-project/k-NN/pull/2587)
