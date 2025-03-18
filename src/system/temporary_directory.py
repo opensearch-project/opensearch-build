@@ -42,7 +42,7 @@ class TemporaryDirectory:
         self.keep = keep
         if current_platform() == "windows":
             windows_home_dir = os.path.abspath("C:\\")  # Reduce char counts on windows path
-            self.name = tempfile.mkdtemp(dir=windows_home_dir)
+            self.name = tempfile.mkdtemp(dir=windows_home_dir, prefix='')  # Reduce char counts on windows path
         else:
             self.name = tempfile.mkdtemp()
 
