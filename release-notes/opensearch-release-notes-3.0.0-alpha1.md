@@ -1,7 +1,8 @@
 # OpenSearch and OpenSearch Dashboards 3.0.0-alpha1 Release Notes
 
 ## Release Highlights
-* Lucene 10 is now used in OpenSearch
+* Lucene 10 is now used in OpenSearch 3.0.0-alpha1
+* This is an early-stage preview of the 3.0.0 version, so expect potential bugs and unfinished features. This release is for testing purposes only, and we highly encourage users to try it out and report any issues or feedback. Please refer to the [release schedule](https://opensearch.org/releases.html) for GA release information.
 
 ### DEPRECATION NOTICES
 
