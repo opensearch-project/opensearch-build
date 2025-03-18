@@ -80,8 +80,10 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
+        node.attr.knn_cb_tier: integ
         path.repo:
           - /tmp
+          - 'C:\'
     smoke-test:
       test-spec: k-NN.yml
   - name: ml-commons

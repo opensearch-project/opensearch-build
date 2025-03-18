@@ -81,6 +81,7 @@ components:
         node.attr.knn_cb_tier: integ
         path.repo:
           - /tmp
+          - 'C:\'
   - name: ml-commons
     integ-test:
       test-configs:

@@ -21,10 +21,17 @@ Artifacts found in "<build root>/artifacts/<maven|plugins|libs|dist|core-plugins
 
 class BuilderFromSource(Builder):
     def checkout(self, work_dir: str) -> None:
+        # TODO: Reduce temp dir randomized dirname char counts or remove this after qualifier
+        # This is a temporary fix for OSD Core
+        # Due to path of node installation is longer than 200 chars and cause path not able to be removed
+        # https://github.com/opensearch-project/OpenSearch-Dashboards/issues/9397#issuecomment-2727641857
+        # Even 'osd' would not be enough for the proper cleanup so switch to 'o' for now
+        # https://github.com/opensearch-project/OpenSearch-Dashboards/issues/9397#issuecomment-2731257431
+        component_name = self.component.name if self.component.name != 'OpenSearch-Dashboards' else 'o'
         self.git_repo = GitRepository(
             self.component.repository,
             self.component.ref,
-            os.path.join(work_dir, self.component.name),
+            os.path.join(work_dir, component_name),
             self.component.working_directory,
         )
 
