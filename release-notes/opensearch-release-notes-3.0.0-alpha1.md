@@ -116,11 +116,11 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch k-NN
 
 
-* Introduce Remote Native Index Build feature flag, settings, and initial skeleton [#2525](https://github.com/opensearch-project/k-NN/pull/2525)
-* Implement vector data upload and vector data size threshold setting [#2550](https://github.com/opensearch-project/k-NN/pull/2550)
-* Implement data download and IndexOutput write functionality [#2554](https://github.com/opensearch-project/k-NN/pull/2554)
-* Introduce Client Skeleton + basic Build Request implementation [#2560](https://github.com/opensearch-project/k-NN/pull/2560)
-* Add concurrency optimizations with native memory graph loading and force eviction [#2345](https://github.com/opensearch-project/k-NN/pull/2345)
+* Introduce Remote Native Index Build feature flag, settings, and initial skeleton ([#2525](https://github.com/opensearch-project/k-NN/pull/2525))
+* Implement vector data upload and vector data size threshold setting ([#2550](https://github.com/opensearch-project/k-NN/pull/2550))
+* Implement data download and IndexOutput write functionality ([#2554](https://github.com/opensearch-project/k-NN/pull/2554))
+* Introduce Client Skeleton + basic Build Request implementation ([#2560](https://github.com/opensearch-project/k-NN/pull/2560))
+* Add concurrency optimizations with native memory graph loading and force eviction ([#2345](https://github.com/opensearch-project/k-NN/pull/2345))
 
 
 ### OpenSearch SQL
@@ -171,7 +171,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch ML Commons
 
 
-* Support sentence highlighting QA model (#3600)[https://github.com/opensearch-project/ml-commons/pull/3600]
+* Support sentence highlighting QA model ([#3600](https://github.com/opensearch-project/ml-commons/pull/3600))
 
 
 ### OpenSearch Neural Search
@@ -200,8 +200,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### Opensearch k-NN
 
 
-* Introduce node level circuit breakers for k-NN [#2509](https://github.com/opensearch-project/k-NN/pull/2509)
-* Added more detailed error messages for KNN model training [#2378](https://github.com/opensearch-project/k-NN/pull/2378)
+* Introduce node level circuit breakers for k-NN ([#2509](https://github.com/opensearch-project/k-NN/pull/2509))
+* Added more detailed error messages for KNN model training ([#2378](https://github.com/opensearch-project/k-NN/pull/2378))
 
 
 ### OpenSearch SQL
@@ -298,9 +298,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Job Scheduler
 
 
-* Fix job-scheduler with OpenSearch Refactoring [#730](https://github.com/opensearch-project/job-scheduler/pull/730).
-* Fetch certs from security repo and remove locally checked in demo certs [#713](https://github.com/opensearch-project/job-scheduler/pull/713).
-* Only download demo certs when integTest run with `-Dsecurity.enabled=true` [#737](https://github.com/opensearch-project/job-scheduler/pull/737).
+* Fix job-scheduler with OpenSearch Refactoring ([#730](https://github.com/opensearch-project/job-scheduler/pull/730))
+* Fetch certs from security repo and remove locally checked in demo certs ([#713](https://github.com/opensearch-project/job-scheduler/pull/713))
+* Only download demo certs when integTest run with `-Dsecurity.enabled=true` ([#737](https://github.com/opensearch-project/job-scheduler/pull/737))
 
 
 ### OpenSearch ML Commons
@@ -361,11 +361,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch k-NN
 
 
-* Fix derived source for binary and byte vectors [#2533](https://github.com/opensearch-project/k-NN/pull/2533/)
-
-
-* Fix the put mapping issue for already created index with flat mapper [#2542](https://github.com/opensearch-project/k-NN/pull/2542)
-* Fixing the bug to prevent index.knn setting from being modified or removed on restore snapshot [#2445](https://github.com/opensearch-project/k-NN/pull/2445)
+* Fix derived source for binary and byte vectors ([#2533](https://github.com/opensearch-project/k-NN/pull/2533/))
+* Fix the put mapping issue for already created index with flat mapper ([#2542](https://github.com/opensearch-project/k-NN/pull/2542))
+* Fixing the bug to prevent index.knn setting from being modified or removed on restore snapshot ([#2445](https://github.com/opensearch-project/k-NN/pull/2445))
 
 
 ### Opensearch Security
@@ -415,14 +413,14 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Skills
 
 
-* Replace `ml-common-client` build dependency to `ml-common-common` and `ml-common-spi` (#529)[https://github.com/opensearch-project/skills/pull/529]
+* Replace `ml-common-client` build dependency to `ml-common-common` and `ml-common-spi` ([#529](https://github.com/opensearch-project/skills/pull/529))
 
 
 ### OpenSearch k-NN
 
 
-* Removed JDK 11 and 17 version from CI runs [#1921](https://github.com/opensearch-project/k-NN/pull/1921)
-* Upgrade min JDK compatibility to JDK 21 [#2422](https://github.com/opensearch-project/k-NN/pull/2422)
+* Removed JDK 11 and 17 version from CI runs ([#1921](https://github.com/opensearch-project/k-NN/pull/1921))
+* Upgrade min JDK compatibility to JDK 21 ([#2422](https://github.com/opensearch-project/k-NN/pull/2422))
 
 
 ## DOCUMENTATION
@@ -437,8 +435,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch ML Commons
 
 
-* Add tutorial for RAG of openai and bedrock (#2975)[https://github.com/opensearch-project/ml-commons/pull/2975]
-* Fix template query link (#3612)[https://github.com/opensearch-project/ml-commons/pull/3612]
+* Add tutorial for RAG of openai and bedrock ([#2975](https://github.com/opensearch-project/ml-commons/pull/2975))
+* Fix template query link ([#3612](https://github.com/opensearch-project/ml-commons/pull/3612))
 
 
 ### OpenSearch Neural Search
@@ -578,23 +576,23 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Updated Micromatch new version ([#1273](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/1273))
 
 
-### OpenSsearch Job Scheduler
+### OpenSearch Job Scheduler
 
 
-* Increment version to 3.0.0-alpha1 [#722](https://github.com/opensearch-project/job-scheduler/pull/722).
-* Update shadow plugin to `com.gradleup.shadow` [#722](https://github.com/opensearch-project/job-scheduler/pull/722).
-* Enable custom start commands and options to resolve GHA issues [#702](https://github.com/opensearch-project/job-scheduler/pull/702).
-* Fix delete merged branch workflow [#693](https://github.com/opensearch-project/job-scheduler/pull/693).
-* Update `PULL_REQUEST_TEMPLATE` to include an API spec change in the checklist [#649](https://github.com/opensearch-project/job-scheduler/pull/649).
-* Fix checkout action failure [#650](https://github.com/opensearch-project/job-scheduler/pull/650).
+* Increment version to 3.0.0-alpha1 ([#722](https://github.com/opensearch-project/job-scheduler/pull/722))
+* Update shadow plugin to `com.gradleup.shadow` ([#722](https://github.com/opensearch-project/job-scheduler/pull/722))
+* Enable custom start commands and options to resolve GHA issues ([#702](https://github.com/opensearch-project/job-scheduler/pull/702))
+* Fix delete merged branch workflow ([#693](https://github.com/opensearch-project/job-scheduler/pull/693))
+* Update `PULL_REQUEST_TEMPLATE` to include an API spec change in the checklist ([#649](https://github.com/opensearch-project/job-scheduler/pull/649))
+* Fix checkout action failure ([#650](https://github.com/opensearch-project/job-scheduler/pull/650))
 
 
 ### OpenSearch ML Commons
 
 
-* Update CB setting to 100 to bypass memory check (#3627)[https://github.com/opensearch-project/ml-commons/pull/3627]
-* Use model type to check local or remote model (#3597)[https://github.com/opensearch-project/ml-commons/pull/3597]
-* Fixing security integ test (#3646)[https://github.com/opensearch-project/ml-commons/pull/3646]
+* Update CB setting to 100 to bypass memory check ([#3627](https://github.com/opensearch-project/ml-commons/pull/3627))
+* Use model type to check local or remote model ([#3597](https://github.com/opensearch-project/ml-commons/pull/3597))
+* Fixing security integ test ([#3646](https://github.com/opensearch-project/ml-commons/pull/3646))
 
 
 ### OpenSearch ML Commons Dashboards
@@ -699,13 +697,13 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch k-NN
 
 
-* Update package name to fix compilation issue [#2513](https://github.com/opensearch-project/k-NN/pull/2513)
-* Update gradle to 8.13 to fix command exec on java 21 [#2571](https://github.com/opensearch-project/k-NN/pull/2571)
-* Add fix for nmslib pragma on arm [#2574](https://github.com/opensearch-project/k-NN/pull/2574)
-* Removes Array based vector serialization [#2587](https://github.com/opensearch-project/k-NN/pull/2587)
-* Enabled indices.breaker.total.use\_real\_memory setting via build.gradle for integTest Cluster to catch heap CB in local ITs and github CI actions [#2395](https://github.com/opensearch-project/k-NN/pull/2395/)
-* Fixing Lucene912Codec Issue with BWC for Lucene 10.0.1 upgrade[#2429](https://github.com/opensearch-project/k-NN/pull/2429)
-* Enabled idempotency of local builds when using `./gradlew clean` and nest `jni/release` directory under `jni/build` for easier cleanup [#2516](https://github.com/opensearch-project/k-NN/pull/2516)
+* Update package name to fix compilation issue ([#2513](https://github.com/opensearch-project/k-NN/pull/2513))
+* Update gradle to 8.13 to fix command exec on java 21 ([#2571](https://github.com/opensearch-project/k-NN/pull/2571))
+* Add fix for nmslib pragma on arm ([#2574](https://github.com/opensearch-project/k-NN/pull/2574))
+* Removes Array based vector serialization ([#2587](https://github.com/opensearch-project/k-NN/pull/2587))
+* Enabled indices.breaker.total.use\_real\_memory setting via build.gradle for integTest Cluster to catch heap CB in local ITs and github CI actions ([#2395](https://github.com/opensearch-project/k-NN/pull/2395/))
+* Fixing Lucene912Codec Issue with BWC for Lucene 10.0.1 upgrade ([#2429](https://github.com/opensearch-project/k-NN/pull/2429))
+* Enabled idempotency of local builds when using `./gradlew clean` and nest `jni/release` directory under `jni/build` for easier cleanup ([#2516](https://github.com/opensearch-project/k-NN/pull/2516))
 
 
 ### OpenSearch SQL
@@ -773,10 +771,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch k-NN
 
 
-* Small Refactor Post Lucene 10.0.1 upgrade [#2541](https://github.com/opensearch-project/k-NN/pull/2541)
-
-
-* Refactor codec to leverage backwards\_codecs [#2546](https://github.com/opensearch-project/k-NN/pull/2546)
-* Blocking Index Creation using NMSLIB [#2573](https://github.com/opensearch-project/k-NN/pull/2573)
-* Improve Streaming Compatibility Issue for MethodComponetContext and Remove OpenDistro URL [#2575](https://github.com/opensearch-project/k-NN/pull/2575)
-* 3.0.0 Breaking Changes For KNN [#2564](https://github.com/opensearch-project/k-NN/pull/2564)
+* Small Refactor Post Lucene 10.0.1 upgrade ([#2541](https://github.com/opensearch-project/k-NN/pull/2541))
+* Refactor codec to leverage backwards\_codecs ([#2546](https://github.com/opensearch-project/k-NN/pull/2546))
+* Blocking Index Creation using NMSLIB ([#2573](https://github.com/opensearch-project/k-NN/pull/2573))
+* Improve Streaming Compatibility Issue for MethodComponetContext and Remove OpenDistro URL ([#2575](https://github.com/opensearch-project/k-NN/pull/2575))
+* 3.0.0 Breaking Changes For KNN ([#2564](https://github.com/opensearch-project/k-NN/pull/2564))
