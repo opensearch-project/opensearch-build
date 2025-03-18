@@ -1,7 +1,7 @@
 # OpenSearch and OpenSearch Dashboards 3.0.0-alpha1 Release Notes
 
 ## Release Highlights
-* Lucene 10 is now used in OpenSearch 3.0.0-alpha1
+* Lucene 10 is now used in OpenSearch 3.0.0-alpha1.
 * This is an early-stage preview of the 3.0.0 version, so expect potential bugs and unfinished features. This release is for testing purposes only, and we highly encourage users to try it out and report any issues or feedback. Please refer to the [release schedule](https://opensearch.org/releases.html) for GA release information.
 
 ### DEPRECATION NOTICES
@@ -30,10 +30,10 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 ### Opensearch k-NN
 
 
-* Remove ef construction from Index Seeting [#2564](https://github.com/opensearch-project/k-NN/pull/2564)
-* Remove m from Index Setting [#2564](https://github.com/opensearch-project/k-NN/pull/2564)
-* Remove space type from index setting [#2564](https://github.com/opensearch-project/k-NN/pull/2564)
-* Remove Knn Plugin enabled setting [#2564](https://github.com/opensearch-project/k-NN/pull/2564)
+* Remove ef construction from Index Seeting ([#2564](https://github.com/opensearch-project/k-NN/pull/2564))
+* Remove m from Index Setting ([#2564](https://github.com/opensearch-project/k-NN/pull/2564))
+* Remove space type from index setting ([#2564](https://github.com/opensearch-project/k-NN/pull/2564))
+* Remove Knn Plugin enabled setting ([#2564](https://github.com/opensearch-project/k-NN/pull/2564))
 
 ### OpenSearch SQL
 
