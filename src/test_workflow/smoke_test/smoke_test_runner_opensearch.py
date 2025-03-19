@@ -5,10 +5,12 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import io
 import logging
 import os
+from logging import Handler
 from pathlib import Path
-from typing import Any
+from typing import Any, Tuple
 
 import requests
 from openapi_core import Spec, validate_request, validate_response
@@ -17,6 +19,7 @@ from openapi_core.contrib.requests import RequestsOpenAPIRequest, RequestsOpenAP
 from manifests.test_manifest import TestManifest
 from test_workflow.smoke_test.smoke_test_runner import SmokeTestRunner
 from test_workflow.test_args import TestArgs
+from test_workflow.test_recorder.test_result_data import TestResultData
 from test_workflow.test_result.test_component_results import TestComponentResults
 from test_workflow.test_result.test_result import TestResult
 from test_workflow.test_result.test_suite_results import TestSuiteResults
@@ -64,6 +67,31 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
         validate_response(response=response, spec=self.spec_, request=request)
         logging.info("Response is validated.")
 
+    def record_test_result(self, component: str, test_api: str, api_action: str, stdout: str, stderr: str) -> None:
+        test_config = f"{api_action}_{test_api.replace('/', '_')}"
+        logging.info(f"Recording test result for {component} component, config {test_config}")
+        file_path = self.test_recorder._create_base_folder_structure(component, test_config)
+        self.test_recorder._generate_std_files(stdout, stderr, file_path)
+
+    def setup_logging_buffers(self) -> Tuple[io.StringIO, io.StringIO, logging.StreamHandler, logging.StreamHandler]:
+        info_buffer = io.StringIO()
+        error_buffer = io.StringIO()
+
+        info_handler = logging.StreamHandler(info_buffer)
+        error_handler = logging.StreamHandler(error_buffer)
+
+        info_handler.setLevel(logging.INFO)
+        error_handler.setLevel(logging.ERROR)
+
+        logging.getLogger().addHandler(info_handler)
+        logging.getLogger().addHandler(error_handler)
+
+        return info_buffer, error_buffer, info_handler, error_handler
+
+    def cleanup_logging_handlers(self, info_handler: Handler, error_handler: Handler) -> None:
+        logging.getLogger().removeHandler(info_handler)
+        logging.getLogger().removeHandler(error_handler)
+
     def start_test(self, work_dir: Path) -> TestSuiteResults:
         url = "https://localhost:9200"
 
@@ -76,9 +104,11 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
                 test_results = TestComponentResults()
                 for api_requests, api_details in component_spec.items():
                     request_url = ''.join([url, api_requests])
-                    logging.info(f"Validating api request {api_requests}")
-                    logging.info(f"API request URL is {request_url}")
                     for method in api_details.keys():  # Iterates over each method, e.g., "GET", "POST"
+                        info_buffer, error_buffer, info_handler, error_handler = self.setup_logging_buffers()
+
+                        logging.info(f"Validating api request {api_requests}")
+                        logging.info(f"API request URL is {request_url}")
                         requests_method = getattr(requests, method.lower())
                         parameters_data = self.convert_parameter_json(api_details.get(method).get("parameters"))
                         header = api_details.get(method).get("header", self.mimetype)
@@ -87,7 +117,7 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
                         status = 0
                         try:
                             response = requests_method(request_url, verify=False, auth=("admin", "myStrongPassword123!"), headers=header, data=parameters_data)
-                            logging.info(f"Response is {response.text}")
+                            logging.info(f"Response is \n{response.text}")
                             self.validate_response_swagger(response)
                         except Exception as e:
                             status = 1
@@ -95,7 +125,19 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
                             logging.error(e)
                             logging.info("Response is not validated. Please check the response output text above.")
                         finally:
+                            self.record_test_result(component.name, api_requests, method, info_buffer.getvalue(), error_buffer.getvalue())
                             test_result = TestResult(component.name, ' '.join([api_requests, method]), status)  # type: ignore
+                            test_result_data_local = TestResultData(
+                                component.name,
+                                f"{method}_{api_requests.replace('/', '_')}",
+                                status,
+                                info_buffer.getvalue(),
+                                error_buffer.getvalue(),
+                                {}
+                            )
+                            self.test_recorder.test_results_logs.generate_component_yml(test_result_data_local)
+                            self.cleanup_logging_handlers(info_handler, error_handler)
                             test_results.append(test_result)
+
                 all_results.append(component.name, test_results)
         return all_results
