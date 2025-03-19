@@ -23,15 +23,26 @@ class TestReleaseNotes(unittest.TestCase):
             "data",
         )
         OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(MANIFESTS, "opensearch-test-main.yml"))
+        OPENSEARCH_MANIFEST_QUALIFIER = os.path.realpath(os.path.join(MANIFESTS, "opensearch-test-main-qualifier.yml"))
         self.manifest_file = InputManifest.from_file(open(OPENSEARCH_MANIFEST))
+        self.manifest_file_qualifier = InputManifest.from_file(open(OPENSEARCH_MANIFEST_QUALIFIER))
         self.build_version = self.manifest_file.build.version
+        self.build_qualifier = self.manifest_file.build.qualifier
+        self.build_with_qualifier_version = self.manifest_file_qualifier.build.version
+        self.build_with_qualifier_qualifier = self.manifest_file_qualifier.build.qualifier
         self.release_notes = ReleaseNotes([self.manifest_file], "2022-07-26", "compile")
+        self.release_notes_qualifier = ReleaseNotes([self.manifest_file_qualifier], "2022-07-26", "compile")
         self.component = InputComponentFromSource({"name": "OpenSearch-test", "repository": "url", "ref": "ref"})
 
     @patch("subprocess.check_output", return_value=''.encode())
     @patch("subprocess.check_call")
     def test_check(self, *mocks: Any) -> None:
-        self.assertEqual(self.release_notes.check(self.component, self.build_version), ['OpenSearch-test', '[ref]', None, None, False, None])
+        self.assertEqual(self.release_notes.check(self.component, self.build_version, self.build_qualifier), ['OpenSearch-test', '[ref]', None, None, False, None])
+
+    @patch("subprocess.check_output", return_value=''.encode())
+    @patch("subprocess.check_call")
+    def test_check_qualifier(self, *mocks: Any) -> None:
+        self.assertEqual(self.release_notes.check(self.component, self.build_with_qualifier_version, self.build_with_qualifier_qualifier), ['OpenSearch-test', '[ref]', None, None, False, None])
 
     @patch("subprocess.check_output", return_value=''.encode())
     @patch("subprocess.check_call")
@@ -39,7 +50,15 @@ class TestReleaseNotes(unittest.TestCase):
         component = next(self.manifest_file.components.select())
         if type(component) is InputComponentFromSource:
             self.assertIsInstance(component, InputComponentFromSource)
-            self.assertEqual(self.release_notes.check(component, self.build_version), ['OpenSearch-test', '[main]', None, None, False, None])
+            self.assertEqual(self.release_notes.check(component, self.build_version, self.build_qualifier), ['OpenSearch-test', '[main]', None, None, False, None])
+
+    @patch("subprocess.check_output", return_value=''.encode())
+    @patch("subprocess.check_call")
+    def test_check_with_manifest_qualifier(self, *mocks: Any) -> None:
+        component = next(self.manifest_file.components.select())
+        if type(component) is InputComponentFromSource:
+            self.assertIsInstance(component, InputComponentFromSource)
+            self.assertEqual(self.release_notes.check(component, self.build_with_qualifier_version, self.build_with_qualifier_qualifier), ['OpenSearch-test', '[main]', None, None, False, None])
 
     @patch('release_notes_workflow.release_notes.ReleaseNotes.check', return_value=['OpenSearch-test', '[main]', 'ee26e01', '2022-08-18', False, None])
     def test_table(self, *mocks: Any) -> None:

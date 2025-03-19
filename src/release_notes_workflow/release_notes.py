@@ -31,7 +31,7 @@ class ReleaseNotes:
                 if (component.name == 'OpenSearch' or component.name == 'OpenSearch-Dashboards' or component.name == 'notifications-core') and self.action_type == 'compile':
                     continue
                 if hasattr(component, "repository"):
-                    table_result.append(self.check(component, manifest.build.version))  # type: ignore[arg-type]
+                    table_result.append(self.check(component, manifest.build.version, manifest.build.qualifier))  # type: ignore[arg-type]
 
         # Sort table_result based on Repo column
         table_result.sort(key=lambda x: (x[0], x[1]) if len(x) > 1 else x[0])
@@ -50,7 +50,7 @@ class ReleaseNotes:
         )
         return writer
 
-    def check(self, component: InputComponentFromSource, build_version: str) -> List:
+    def check(self, component: InputComponentFromSource, build_version: str, build_qualifier: str) -> List:
         results = []
         with TemporaryDirectory(chdir=True) as work_dir:
             results.append(component.name)
@@ -62,7 +62,7 @@ class ReleaseNotes:
                     component.working_directory,
             ) as repo:
                 logging.debug(f"Checked out {component.name} into {repo.dir}")
-                release_notes = ReleaseNotesComponents.from_component(component, build_version, repo.dir)
+                release_notes = ReleaseNotesComponents.from_component(component, build_version, build_qualifier, repo.dir)
                 commits = repo.log(self.date)
                 if len(commits) > 0:
                     last_commit = commits[-1]

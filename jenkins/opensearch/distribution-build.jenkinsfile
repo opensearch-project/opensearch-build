@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@8.2.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@8.3.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -22,7 +22,7 @@ pipeline {
         AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host'
         AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
         IMAGE_LINUX_RPM = 'opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1' // required for rpm to create digest sha256 correctly with rpm 4.12+, still define here for 1.x version as 2.x+ moved to rockylinux8, later almalinux8, already
-        IMAGE_LINUX_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2' // required for deb to create pkg using debmake/debuild/debhelper
+        IMAGE_LINUX_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2404-opensearch-build-v1' // required for deb to create pkg using debmake/debuild/debhelper
         IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1' // required for windows to build zip distribution
     }
     parameters {
@@ -45,6 +45,12 @@ pipeline {
             name: 'INTEG_TEST_JOB_NAME',
             description: 'Optional: Name of integration test job that will be triggered, e.g. Playground/integ-test. A non-null empty value here will skip integration tests.',
             defaultValue: 'integ-test',
+            trim: true
+        )
+        string(
+            name: 'SMOKE_TEST_JOB_NAME',
+            description: 'Optional: Name of smoke test job that will be triggered, e.g. smoke-test. A non-null empty value here will skip smoke tests.',
+            defaultValue: 'smoke-test',
             trim: true
         )
         string(
@@ -157,7 +163,9 @@ pipeline {
                         BUILD_DOCKER = 'build_docker_with_build_number_tag'
                     }
                     def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${INPUT_MANIFEST}"))
-                    env.version = inputManifestObj.build.version
+                    def version = inputManifestObj.build.version
+                    def qualifier = inputManifestObj.build.qualifier ? '-' + inputManifestObj.build.qualifier : ''
+                    env.revision = version + qualifier
                 }
             }
         }
@@ -226,6 +234,9 @@ pipeline {
                             parallel([
                                 'integ-test': {
                                     triggerIntegrationTests(buildManifestUrl, 'linux', 'tar')
+                                },
+                                'smoke-test': {
+                                    triggerSmokeTests(buildManifestUrl, 'linux', 'tar')
                                 },
                                 'bwc-test': {
                                     triggerBWCTests(buildManifestUrl, 'linux', 'tar')
@@ -340,7 +351,14 @@ pipeline {
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
+                                        },
+                                        'smoke-test': {
+                                            triggerSmokeTests(buildManifestUrl, 'linux', 'rpm')
+                                        }
+                                    ])
                                 }
                             }
                             post {
@@ -449,7 +467,14 @@ pipeline {
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
+                                        },
+                                        'smoke-test': {
+                                            triggerSmokeTests(buildManifestUrl, 'linux', 'deb')
+                                        }
+                                    ])
                                 }
                             }
                             post {
@@ -519,7 +544,14 @@ pipeline {
                             echo "buildManifestUrl (linux, arm64, tar): ${buildManifestUrl}"
                             echo "artifactUrl (linux, arm64, tar): ${artifactUrl}"
 
-                            triggerIntegrationTests(buildManifestUrl, 'linux', 'tar')
+                            parallel([
+                                'integ-test': {
+                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'tar')
+                                },
+                                'smoke-test': {
+                                    triggerSmokeTests(buildManifestUrl, 'linux', 'tar')
+                                }
+                            ])
                         }
                     }
                     post {
@@ -629,7 +661,14 @@ pipeline {
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'rpm')
+                                        },
+                                        'smoke-test': {
+                                            triggerSmokeTests(buildManifestUrl, 'linux', 'rpm')
+                                        }
+                                    ])
                                 }
                             }
                             post {
@@ -739,7 +778,15 @@ pipeline {
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                                    triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, 'linux', 'deb')
+                                        },
+                                        'smoke-test': {
+                                            triggerSmokeTests(buildManifestUrl, 'linux', 'deb')
+                                        }
+                                    ])
+
                                 }
                             }
                             post {
@@ -925,7 +972,7 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 script {
                     if (params.RC_NUMBER.toInteger() > 0) {
-                        triggerDistributionValidationWorkflow(env.version)
+                        triggerDistributionValidationWorkflow(env.revision)
                     }
                     postCleanup()
                 }
@@ -962,6 +1009,21 @@ def triggerIntegrationTests(String buildManifestUrl, String platform, String dis
                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                     string(name: 'RC_NUMBER', value: RC_NUMBER),
                     booleanParam(name: 'UPDATE_GITHUB_ISSUES', value: true)
+                ]
+    }
+}
+
+def triggerSmokeTests(String buildManifestUrl, String platform, String distribution) {
+    Boolean skipSmokeTests = (SMOKE_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || !TEST_PLATFORM.contains(platform) || !TEST_DISTRIBUTION.contains(distribution))
+    echo "${skipSmokeTests ? 'Skipping SMOKE tests as one of the values has empty or wrong string: SMOKE_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, TEST_PLATFORM, TEST_DISTRIBUTION' : 'Running SMOKE tests'}"
+    if (!skipSmokeTests) {
+        def smokeTestResults =
+                build job: SMOKE_TEST_JOB_NAME,
+                propagate: false,
+                wait: false,
+                parameters: [
+                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
                 ]
     }
 }

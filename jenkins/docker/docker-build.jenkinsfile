@@ -8,7 +8,7 @@
  */
 
 def docker_images = [
-    "linux": "opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-v1",
+    "linux": "opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1",
     "windows": "opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1"
 ]
 
@@ -18,7 +18,7 @@ def docker_args = [
 ]
 
 def agent_nodes = [
-    "linux": "Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder",
+    "linux": "Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder",
     "windows": "Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Builder",
 ]
 

@@ -8,7 +8,7 @@
 Source: opensearch-dashboards
 Section: web
 Priority: optional
-Maintainer: OpenSearch Team <opensearch@amazon.com>
+Maintainer: OpenSearch Team <release@opensearch.org>
 Build-Depends: debhelper-compat (= 12)
 Standards-Version: 4.5.0
 Homepage: https://opensearch.org/

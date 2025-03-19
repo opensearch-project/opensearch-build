@@ -17,7 +17,7 @@ def docker_images = [
     "rpm": "opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
     "yum": "opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
     "zip": "opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1",
-    "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-systemd-base-integtest-v3"
+    "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2404-systemd-base-integtest-v1"
 ]
 
 def docker_args = [
@@ -233,6 +233,7 @@ pipeline {
                                         }
                                     } else {
                                         node(agent_nodes["${local_platform}_${local_architecture}"]) {
+                                            docker.image(docker_images["$local_distribution"]).pull() // always pull latest
                                             docker.withRegistry('https://public.ecr.aws/') {
                                                 docker.image(docker_images["$local_distribution"]).inside(docker_args["$local_distribution"]) {
                                                     try {

@@ -204,7 +204,8 @@ class ValidateDocker(Validation):
     def run_container(self, image_ids: dict, version: str) -> Any:
         self.docker_compose_files = {
             '1': 'docker-compose-1.x.yml',
-            '2': 'docker-compose-2.x.yml'
+            '2': 'docker-compose-2.x.yml',
+            '3': 'docker-compose-3.x.yml'
         }
 
         self.target_yml_file = os.path.join(self.tmp_dir.name, 'docker-compose.yml')

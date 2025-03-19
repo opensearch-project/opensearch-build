@@ -23,7 +23,7 @@ class TestReleaseNotesComponent(unittest.TestCase):
             return "release-notes-2.0.0.md"
 
     def setUp(self) -> None:
-        self.release_notes_component = self.MyReleaseNotesComponent(MagicMock(), "2.2.0", "path")
+        self.release_notes_component = self.MyReleaseNotesComponent(MagicMock(), "2.2.0", "", "path")
 
     def test_path(self) -> None:
         self.assertEqual(self.release_notes_component.path, os.path.join("path", "release-notes"))
@@ -52,30 +52,62 @@ class TestReleaseNotesComponent(unittest.TestCase):
 class TestReleaseNotesOpenSearch(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.release_notes_component = ReleaseNotesOpenSearch(MagicMock(), "2.2.0", "path")
+        self.release_notes_component = ReleaseNotesOpenSearch(MagicMock(), "2.2.0", "", "path")
 
     def test_filename(self) -> None:
         self.assertEqual(self.release_notes_component.filename, ".release-notes-2.2.0.md")
 
 
+class TestReleaseNotesOpenSearchQualifier(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.release_notes_component = ReleaseNotesOpenSearch(MagicMock(), "2.2.0", "alpha1", "path")
+
+    def test_filename(self) -> None:
+        self.assertEqual(self.release_notes_component.filename, ".release-notes-2.2.0-alpha1.md")
+
+
 class TestReleaseNotesOpenSearchPlugin(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.release_notes_component = ReleaseNotesOpenSearchPlugin(MagicMock(), "2.2.0", "path")
+        self.release_notes_component = ReleaseNotesOpenSearchPlugin(MagicMock(), "2.2.0", "", "path")
 
     def test_filename(self) -> None:
         self.assertEqual(self.release_notes_component.filename, ".release-notes-2.2.0.0.md")
 
 
+class TestReleaseNotesOpenSearchPluginQualifier(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.release_notes_component = ReleaseNotesOpenSearchPlugin(MagicMock(), "2.2.0", "alpha1", "path")
+
+    def test_filename(self) -> None:
+        self.assertEqual(self.release_notes_component.filename, ".release-notes-2.2.0.0-alpha1.md")
+
+
 class TestComponentsReleaseNotes(unittest.TestCase):
 
     def test_from_component(self) -> None:
-        self.assertIsInstance(ReleaseNotesComponents.from_component(MagicMock(), "2.2.0", "path"), ReleaseNotesComponent)
+        self.assertIsInstance(ReleaseNotesComponents.from_component(MagicMock(), "2.2.0", "", "path"), ReleaseNotesComponent)
 
     def test_from_component_open_search(self) -> None:
         test_component_opensearch = InputComponentFromSource({"name": "OpenSearch", "repository": "url", "ref": "ref"})
-        self.assertIsInstance(ReleaseNotesComponents.from_component(test_component_opensearch, "2.2.0", "path"), ReleaseNotesOpenSearch)
+        self.assertIsInstance(ReleaseNotesComponents.from_component(test_component_opensearch, "2.2.0", "", "path"), ReleaseNotesOpenSearch)
 
     def test_from_component_open_search_plugin(self) -> None:
         test_component_plugin = InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"})
-        self.assertIsInstance(ReleaseNotesComponents.from_component(test_component_plugin, "2.2.0", "path"), ReleaseNotesOpenSearchPlugin)
+        self.assertIsInstance(ReleaseNotesComponents.from_component(test_component_plugin, "2.2.0", "", "path"), ReleaseNotesOpenSearchPlugin)
+
+
+class TestComponentsReleaseNotesQualifier(unittest.TestCase):
+
+    def test_from_component(self) -> None:
+        self.assertIsInstance(ReleaseNotesComponents.from_component(MagicMock(), "2.2.0", "alpha1", "path"), ReleaseNotesComponent)
+
+    def test_from_component_open_search(self) -> None:
+        test_component_opensearch = InputComponentFromSource({"name": "OpenSearch", "repository": "url", "ref": "ref"})
+        self.assertIsInstance(ReleaseNotesComponents.from_component(test_component_opensearch, "2.2.0", "alpha1", "path"), ReleaseNotesOpenSearch)
+
+    def test_from_component_open_search_plugin(self) -> None:
+        test_component_plugin = InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"})
+        self.assertIsInstance(ReleaseNotesComponents.from_component(test_component_plugin, "2.2.0", "alpha1", "path"), ReleaseNotesOpenSearchPlugin)

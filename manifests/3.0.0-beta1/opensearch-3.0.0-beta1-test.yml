@@ -4,7 +4,7 @@ name: OpenSearch
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1
-    args: -e JAVA_HOME=/opt/java/openjdk-23
+    args: -e JAVA_HOME=/opt/java/openjdk-21
 components:
   - name: OpenSearch
     integ-test:
@@ -76,16 +76,22 @@ components:
     bwc-test:
       test-configs:
         - with-security
+    smoke-test:
+      test-spec: index-management.yml
   - name: k-NN
     integ-test:
       test-configs:
         - with-security
         - without-security
+    smoke-test:
+      test-spec: k-NN.yml
   - name: ml-commons
     integ-test:
       test-configs:
         - with-security
         - without-security
+    smoke-test:
+      test-spec: ml-commons.yml
   - name: opensearch-learning-to-rank-base
     integ-test:
       test-configs:
@@ -122,6 +128,8 @@ components:
     integ-test:
       test-configs:
         - with-security
+    smoke-test:
+      test-spec: security.yml
   - name: security-analytics
     integ-test:
       test-configs:
@@ -138,6 +146,8 @@ components:
     bwc-test:
       test-configs:
         - with-security
+    smoke-test:
+      test-spec: sql.yml
   - name: custom-codecs
     integ-test:
       test-configs:

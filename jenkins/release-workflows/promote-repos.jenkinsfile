@@ -7,14 +7,14 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.4.7', retriever: modernSCM([
+lib = library(identifier: 'jenkins@8.3.4', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
 def docker_images = [
     "yum": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1",
-    "apt": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2",
+    "apt": "opensearchstaging/ci-runner:ci-runner-ubuntu2404-opensearch-build-v1",
 ]
 
 pipeline {

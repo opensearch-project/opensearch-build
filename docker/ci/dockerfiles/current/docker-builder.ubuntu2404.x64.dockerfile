@@ -9,7 +9,8 @@
 # It has binfmt_support package installed to run non-native arch binary, as well as
 # qemu-user-static package to enable execution of different multi-arch containers
 
-# This can only be used on Ubuntu 2004 X64 version, as QEMU 5.0 is required to get buildx work properly without segfault
+# This can only be used on Ubuntu 2404 X64 version, as QEMU 8.2 is required to get buildx work properly without segfault
+# A similar issue on Ubuntu 2004 with QEMU 5.0 requirements has been documented here:
 # https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/1928075
 
 # This image can be used with these arguments: -u root -v /var/run/docker.sock:/var/run/docker.sock
@@ -30,16 +31,18 @@ RUN apt-get update -y && apt-get install -y software-properties-common && add-ap
 
 # Install necessary packages to build multi-arch docker images
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu-system qemu-system-common qemu-user qemu-user-static docker.io=24.0.7* curl && \
+    apt-get install -y mandoc less && \
     apt-get install -y debmake debhelper-compat
 
 # Install python, update awscli to v2 due to lib conflicts on urllib3 v1 vs v2
-RUN apt-get install -y python3.9-full && \
+RUN apt-get install -y python3.9-full python3.9-dev && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 100 && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3.9 100 && \
     update-alternatives --set python3 /usr/bin/python3.9 && \
     update-alternatives --set python /usr/bin/python3.9 && \
     curl -SL https://bootstrap.pypa.io/get-pip.py | python3 - && \
-    pip3 install awscliv2==2.3.1
+    pip3 install awscliv2==2.3.1 && \
+    ln -s `which awsv2` /usr/local/bin/aws && aws --install
 
 # Install trivy to scan the docker images
 RUN apt-get install -y apt-transport-https gnupg lsb-release && \
@@ -58,6 +61,12 @@ RUN groupadd -g 1000 $CONTAINER_USER && \
     useradd -u 1000 -g 1000 -s /bin/bash -d $CONTAINER_USER_HOME -m $CONTAINER_USER && \
     mkdir -p $CONTAINER_USER_HOME && \
     chown -R 1000:1000 $CONTAINER_USER_HOME
+
+# By default, awscliv2 will run with docker fallbacks and requires individual user to run `aws --install` to install binaries
+# https://pypi.org/project/awscliv2/
+USER $CONTAINER_USER
+RUN aws --install
+USER 0
 
 # ENV JDK
 ENV JAVA_HOME=/opt/java/openjdk-11

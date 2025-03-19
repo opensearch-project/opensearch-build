@@ -25,7 +25,7 @@ class BundleLinuxDeb:
     def changelog_content(self, version: str) -> List[str]:
         # In the changelog content we are dynamically generate this part for now.
         # Instead of 'UNRELEASED' its possible to use 'stable'
-        # which will use gpg to sign with the given from 'OpenSearch Team <opensearch@amazon.com>'
+        # which will use gpg to sign with the given from 'OpenSearch Team <release@opensearch.org>'
         # Debian official documentation suggest using 'unstable' to replace 'UNRELEASED'
         # but it is still asking a key to sign during build, therefore use 'UNRELEASED' here
         # as part of changelog content only
@@ -36,7 +36,7 @@ class BundleLinuxDeb:
             "",
             "  * Initial release.",
             "",
-            " -- OpenSearch Team <opensearch@amazon.com>  Fri, 14 Oct 2022 10:06:23 +0000"
+            " -- OpenSearch Team <release@opensearch.org>  Fri, 14 Oct 2022 10:06:23 +0000"
         ]
 
     def generate_changelog_file(self, dest: str, version: str) -> None:
@@ -109,14 +109,19 @@ class BundleLinuxDeb:
         deb_version = build_cls.version.replace('-', '.')
         self.generate_changelog_file(ext_dest, deb_version)
 
+        # 20250316: debmake since 4.3.2-1 introduced nodejs type with auto detection of js
+        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=954828
+        # Official update to 4.4.0-3 further replace pkg-js-tools with dh-nodejs here:
+        # https://launchpad.net/ubuntu/+source/debmake/+changelog
         bundle_cmd = " ".join(
             [
                 'debmake',
                 '--fullname "OpenSearch Team"',
-                '--email "opensearch@amazon.com"',
+                '--email "release@opensearch.org"',
                 '--invoke debuild',
                 f'--package {self.filename}',
                 '--native',
+                f'--binaryspec {self.filename}:bin' if self.filename == 'opensearch' else f'--binaryspec {self.filename}:nodejs',
                 '--revision 1',
                 f"--upstreamversion {deb_version}"
             ]

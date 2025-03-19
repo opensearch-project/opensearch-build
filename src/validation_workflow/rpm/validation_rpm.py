@@ -76,7 +76,7 @@ class ValidateRpm(Validation, DownloadUtils):
         logging.info("Meta data for the RPM distribution is: \n" + stdout)
         ref_map = {}
         ref_map['Name'] = product_type
-        ref_map['Version'] = self.args.version
+        ref_map['Version'] = self.args.version.replace("-", ".")
         ref_map['Architecture'] = self.args.arch
         ref_map['Group'] = "Application/Internet"
         ref_map['License'] = "Apache-2.0"

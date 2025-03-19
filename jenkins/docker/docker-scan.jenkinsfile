@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@8.2.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -20,6 +20,7 @@ pipeline {
     environment {
         TRIVY_DB_REPOSITORY = 'public.ecr.aws/aquasecurity/trivy-db'
         TRIVY_JAVA_DB_REPOSITORY = 'public.ecr.aws/aquasecurity/trivy-java-db'
+        TRIVY_DISABLE_VEX_NOTICE = true
     }
     parameters {
         string(
@@ -33,7 +34,7 @@ pipeline {
             agent {
                 docker {
                     label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-v1'
+                    image 'opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1'
                     args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
@@ -67,7 +68,7 @@ pipeline {
                     archiveArtifacts artifacts: 'scan_docker_image.*'
                     script {
                         postCleanup()
-                        sh("trivy image --clear-cache")
+                        sh("trivy clean --all")
                     }
                 }
             }     

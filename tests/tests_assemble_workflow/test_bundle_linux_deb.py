@@ -56,7 +56,8 @@ class TestBundleLinuxDeb(unittest.TestCase):
 
         self.assertRaises(KeyError, lambda: os.environ['OPENSEARCH_PATH_CONF'])
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual('debmake --fullname "OpenSearch Team" --email "opensearch@amazon.com" --invoke debuild --package opensearch --native --revision 1 --upstreamversion 1.3.0',
+        self.assertEqual('debmake --fullname "OpenSearch Team" --email "release@opensearch.org" --invoke debuild --package opensearch --native '
+                         '--binaryspec opensearch:bin --revision 1 --upstreamversion 1.3.0',
                          args_list_deb[0][0][0])
         self.assertEqual(shutil_move_mock.call_count, 2)
         self.assertEqual(generate_changelog_file_call_mock.call_count, 1)
@@ -74,7 +75,8 @@ class TestBundleLinuxDeb(unittest.TestCase):
 
         self.assertRaises(KeyError, lambda: os.environ['OPENSEARCH_PATH_CONF'])
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual('debmake --fullname "OpenSearch Team" --email "opensearch@amazon.com" --invoke debuild --package opensearch --native --revision 1 --upstreamversion 2.0.0.alpha1',
+        self.assertEqual('debmake --fullname "OpenSearch Team" --email "release@opensearch.org" --invoke debuild --package opensearch --native '
+                         '--binaryspec opensearch:bin --revision 1 --upstreamversion 2.0.0.alpha1',
                          args_list_deb_qualifier[0][0][0])
         self.assertEqual(shutil_move_mock.call_count, 2)
         self.assertEqual(generate_changelog_file_call_mock.call_count, 1)
@@ -94,6 +96,6 @@ class TestBundleLinuxDeb(unittest.TestCase):
                 call('\n'),
                 call('  * Initial release.\n'),
                 call('\n'),
-                call(' -- OpenSearch Team <opensearch@amazon.com>  Fri, 14 Oct 2022 10:06:23 +0000\n')
+                call(' -- OpenSearch Team <release@opensearch.org>  Fri, 14 Oct 2022 10:06:23 +0000\n')
             ]
         )

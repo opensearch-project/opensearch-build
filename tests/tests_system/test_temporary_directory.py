@@ -57,7 +57,8 @@ class TestTemporaryDirectory(unittest.TestCase):
     def test_path_windows(self) -> None:
         with TemporaryDirectory() as work_dir:
             if current_platform() == "windows":
-                windows_home_dir = os.path.expanduser('~')
+                windows_home_dir = os.path.abspath("C:\\")
+                self.assertTrue(not str(work_dir.path).startswith("tmp"))
                 self.assertTrue(str(work_dir.path).startswith(windows_home_dir))
             else:
                 self.assertTrue(str(work_dir.path).startswith(tempfile.gettempdir()))

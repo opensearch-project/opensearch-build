@@ -43,11 +43,11 @@ class SmokeTestRunner(abc.ABC):
     def start_test(self, work_dir: Path) -> Any:
         pass
 
-    def extract_paths_from_yaml(self, component: str, version: str) -> Any:
+    def extract_paths_from_yaml(self, component: str, test_spec: str, version: str) -> Any:
         base_path = os.path.dirname(os.path.abspath(__file__))
         paths = [
-            os.path.join(base_path, "smoke_tests_spec", f"{version.split('.')[0]}.x", f"{component}.yml"),
-            os.path.join(base_path, "smoke_tests_spec", "default", f"{component}.yml")
+            os.path.join(base_path, "smoke_tests_spec", f"{version.split('.')[0]}.x", test_spec),
+            os.path.join(base_path, "smoke_tests_spec", "default", test_spec)
         ]
         for file_path in paths:
             if os.path.exists(file_path):
@@ -57,6 +57,8 @@ class SmokeTestRunner(abc.ABC):
                 # Extract paths
                 paths = data.get('paths', {})
                 return paths
+            else:
+                logging.info(f"No spec found at f{file_path}")
         logging.error("No spec found.")
         sys.exit(1)
 
@@ -73,7 +75,7 @@ class SmokeTestRunner(abc.ABC):
             test_cluster.__start_cluster__(os.path.join(work_dir.path))
             is_cluster_ready = False
             for i in range(10):
-                logging.info(f"Attempt {i} of 10 to check cluster.")
+                logging.info(f"Attempt {i + 1} of 10 to check cluster.")
                 if test_cluster.__check_cluster_ready__():
                     is_cluster_ready = True
                     break

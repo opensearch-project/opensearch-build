@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@8.0.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@8.3.3', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -15,7 +15,7 @@ lib = library(identifier: 'jenkins@8.0.0', retriever: modernSCM([
 def docker_images = [
     "tar": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1",
     "rpm": "opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
-    "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-systemd-base-integtest-v3",
+    "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2404-systemd-base-integtest-v1",
     "zip": "opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1",
 ]
 
@@ -245,6 +245,7 @@ pipeline {
                               timeout(time: 3, unit: 'HOURS') {
                                 node(AGENT_LABEL) {
                                   docker.withRegistry('https://public.ecr.aws/') {
+                                    docker.image(docker_images["$distribution"]).pull() // always pull latest
                                     docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
                                       try {
                                         stage("${local_component}-ci-group-${ciNum}") {
@@ -258,7 +259,7 @@ pipeline {
                                             artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
                                             distribution: "${distribution}",
                                             buildManifest: "${BUILD_MANIFEST}",
-                                            testManifest: "${TEST_MANIFEST}"
+                                            testManifest: "manifests/${TEST_MANIFEST}"
                                           )
                                         }
                                       } catch (e) {
@@ -305,7 +306,7 @@ pipeline {
                                                             artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
                                                             distribution: "${distribution}",
                                                             buildManifest: "${BUILD_MANIFEST}",
-                                                            testManifest: "${TEST_MANIFEST}"
+                                                            testManifest: "manifests/${TEST_MANIFEST}"
                                                         )
                                                     }
                                                 } catch (e) {
