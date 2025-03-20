@@ -72,6 +72,8 @@ components:
       - windows
     depends_on:
       - common-utils
+      - job-scheduler
+      - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
     ref: main
