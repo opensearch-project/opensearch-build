@@ -1,0 +1,8 @@
+Validating api request /_plugins/_ism/add/ism-index-000001
+API request URL is https://localhost:9200/_plugins/_ism/add/ism-index-000001
+Parameter is {"policy_id": "policy_1"}
+ and type is <class 'str'>
+header is {'Content-Type': 'application/json'}
+Response is 
+{"updated_indices":1,"failures":false,"failed_indices":[]}
+Response is validated.

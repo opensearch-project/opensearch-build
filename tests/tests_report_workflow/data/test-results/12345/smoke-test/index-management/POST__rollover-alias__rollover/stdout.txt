@@ -1,0 +1,7 @@
+Validating api request /rollover-alias/_rollover
+API request URL is https://localhost:9200/rollover-alias/_rollover
+Parameter is  and type is <class 'str'>
+header is {'Content-Type': 'application/json'}
+Response is 
+{"acknowledged":true,"shards_acknowledged":true,"old_index":"ism-index-000001","new_index":"ism-index-000002","rolled_over":true,"dry_run":false,"conditions":{}}
+Response is validated.

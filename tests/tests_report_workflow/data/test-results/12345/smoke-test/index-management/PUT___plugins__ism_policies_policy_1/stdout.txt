@@ -1,0 +1,8 @@
+Validating api request /_plugins/_ism/policies/policy_1
+API request URL is https://localhost:9200/_plugins/_ism/policies/policy_1
+Parameter is {"policy": {"description": "ingesting logs", "default_state": "ingest", "states": [{"name": "ingest", "actions": [{"rollover": {"min_doc_count": 5}}], "transitions": [{"state_name": "search"}]}, {"name": "search", "actions": [], "transitions": [{"state_name": "delete", "conditions": {"min_index_age": "5m"}}]}, {"name": "delete", "actions": [{"delete": {}}], "transitions": []}]}}
+ and type is <class 'str'>
+header is {'Content-Type': 'application/json'}
+Response is 
+{"_id":"policy_1","_version":1,"_primary_term":1,"_seq_no":0,"policy":{"policy":{"policy_id":"policy_1","description":"ingesting logs","last_updated_time":1740092877535,"schema_version":1,"error_notification":null,"default_state":"ingest","states":[{"name":"ingest","actions":[{"retry":{"count":3,"backoff":"exponential","delay":"1m"},"rollover":{"min_doc_count":5,"copy_alias":false}}],"transitions":[{"state_name":"search"}]},{"name":"search","actions":[],"transitions":[{"state_name":"delete","conditions":{"min_index_age":"5m"}}]},{"name":"delete","actions":[{"retry":{"count":3,"backoff":"exponential","delay":"1m"},"delete":{}}],"transitions":[]}],"ism_template":null}}}
+Response is validated.
