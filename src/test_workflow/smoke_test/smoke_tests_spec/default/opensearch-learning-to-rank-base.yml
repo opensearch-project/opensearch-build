@@ -1,0 +1,12 @@
+---
+info:
+  title: OpenSearch learning to rank plugin smoke tests
+  version: default
+name: opensearch-learning-to-rank-base
+paths:
+  /_plugins/_ltr/stats:
+    GET:
+      parameters: []
+  /_plugins/_ltr/_all/stats:
+    GET:
+      parameters: []
