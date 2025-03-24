@@ -11,9 +11,50 @@
 # This script is used in OpenSearch Core repo github actions
 # To trigger Jenkins Gradle Check from a PR
 
-
+# Default values
 JENKINS_URL="https://build.ci.opensearch.org"
-TRIGGER_TOKEN=$1
+TRIGGER_TOKEN=""
+GITHUB_USER=""
+GITHUB_TOKEN=""
+
+while getopts "u:t:" opt; do
+  case $opt in
+    t)
+      TRIGGER_TOKEN="$OPTARG"
+      ;;
+    u)
+      GITHUB_USER="$OPTARG"
+      ;;
+    p)
+      GITHUB_TOKEN="$OPTARG"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+# Check if TRIGGER_TOKEN is provided
+if [ -z "$TRIGGER_TOKEN"]; then
+  echo "Error: TRIGGER_TOKEN is required. Use -t option to provide it." >&2
+  exit 1
+fi
+
+if [ -z "$GITHUB_USER" ]; then
+  echo "Error: GITHUB_USER is required. Use -u option to provide it." >&2
+  exit 1
+fi
+
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "Error: GITHUB_TOKEN is required. Use -p option to provide it." >&2
+  exit 1
+fi
+
 PAYLOAD_JSON="{\"pull_request_number\": \"$PR_NUMBER\", \"repository\": \"$REPOSITORY\", \"baseline_cluster_config\": \"$BASELINE_CLUSTER_CONFIG\", \"DISTRIBUTION_URL\": \"$DISTRIBUTION_URL\", \"DISTRIBUTION_VERSION\": \"$OPENSEARCH_VERSION\", \"SECURITY_ENABLED\": \"$SECURITY_ENABLED\", \"SINGLE_NODE_CLUSTER\": \"$SINGLE_NODE_CLUSTER\", \"MIN_DISTRIBUTION\": \"$MIN_DISTRIBUTION\", \"TEST_WORKLOAD\": \"$TEST_WORKLOAD\", \"MANAGER_NODE_COUNT\": \"$MANAGER_NODE_COUNT\", \"DATA_NODE_COUNT\": \"$DATA_NODE_COUNT\", \"DATA_INSTANCE_TYPE\": \"$DATA_INSTANCE_TYPE\", \"DATA_NODE_STORAGE\": \"$DATA_NODE_STORAGE\", \"JVM_SYS_PROPS\": \"$JVM_SYS_PROPS\", \"ADDITIONAL_CONFIG\": \"$ADDITIONAL_CONFIG\", \"USER_TAGS\": \"$USER_TAGS\", \"WORKLOAD_PARAMS\": $WORKLOAD_PARAMS, \"TEST_PROCEDURE\": \"$TEST_PROCEDURE\", \"EXCLUDE_TASKS\": \"$EXCLUDE_TASKS\", \"INCLUDE_TASKS\": \"$INCLUDE_TASKS\", \"CAPTURE_NODE_STAT\": \"$CAPTURE_NODE_STAT\"}"
 echo "Trigger Jenkins workflows"
 JENKINS_REQ=`curl -s -XPOST \
@@ -34,7 +75,7 @@ RETRY_INTERVAL=5
 for i in $(seq 1 $MAX_RETRIES); do
     echo "Attempt $i: Checking if queue exists in Jenkins"
     if [ -n "$QUEUE_URL" ] && [ "$QUEUE_URL" != "null" ]; then
-        WORKFLOW_URL=$(curl -s -XGET ${JENKINS_URL}/${QUEUE_URL}api/json | jq --raw-output .executable.url)
+        WORKFLOW_URL=$(curl -s -XGET ${JENKINS_URL}/${QUEUE_URL}api/json --user ${GITHUB_USER}:${GITHUB_TOKEN}| jq --raw-output .executable.url)
         echo WORKFLOW_URL $WORKFLOW_URL
 
         if [ -n "$WORKFLOW_URL" ] && [ "$WORKFLOW_URL" != "null" ]; then
