@@ -39,7 +39,6 @@ while getopts "u:t:" opt; do
   esac
 done
 
-# Check if TRIGGER_TOKEN is provided
 if [ -z "$TRIGGER_TOKEN"]; then
   echo "Error: TRIGGER_TOKEN is required. Use -t option to provide it." >&2
   exit 1
