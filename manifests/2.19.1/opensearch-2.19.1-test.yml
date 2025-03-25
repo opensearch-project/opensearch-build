@@ -96,6 +96,8 @@ components:
       test-configs:
         - with-security
         - without-security
+    smoke-test:
+      test-spec: opensearch-learning-to-rank-base.yml
   - name: neural-search
     integ-test:
       test-configs:
