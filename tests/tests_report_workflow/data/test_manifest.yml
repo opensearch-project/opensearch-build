@@ -65,6 +65,8 @@ components:
     bwc-test:
       test-configs:
         - with-security
+    smoke-test:
+      test-spec: index-management.yml
 
   - name: opensearch-system-templates
     integ-test:

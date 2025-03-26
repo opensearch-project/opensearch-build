@@ -1,0 +1,501 @@
+OpenSearch 2.12.0 onwards, the OpenSearch Security Plugin introduces a change that requires an initial password for 'admin' user. 
+Please define an environment variable 'OPENSEARCH_INITIAL_ADMIN_PASSWORD' with a strong password string. 
+If a password is not provided, the setup will quit. 
+For more details, please visit: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/tar/
+### OpenSearch Security Demo Installer
+### ** Warning: Do not use on production or public reachable systems **
+OpenSearch install type: .tar.gz on Mac OS X 15.2 aarch64
+OpenSearch config dir: /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/
+OpenSearch config file: /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch.yml
+OpenSearch bin dir: /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/bin/
+OpenSearch plugins dir: /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/plugins/
+OpenSearch lib dir: /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/lib/
+Detected OpenSearch Version: 2.19.0
+Detected OpenSearch Security Version: 2.19.0.0
+Admin password set successfully.
+### Success
+### Execute this script now on all your nodes and then start all nodes
+### OpenSearch Security will be automatically initialized.
+### If you like to change the runtime configuration 
+### change the files in ../../../config/opensearch-security and execute: 
+sudo "/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/plugins/opensearch-security/tools/securityadmin.sh" -cd "/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security" -icl -key "/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/kirk-key.pem" -cert "/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/kirk.pem" -cacert "/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/root-ca.pem" -nhnv
+### or run ./securityadmin_demo.sh
+### To use the Security Plugin ConfigurationGUI
+### To access your secured cluster open https://<hostname>:<HTTP port> and log in with admin/<your-custom-admin-password>.
+### (Ignore the SSL certificate warning because we installed self-signed demo certificates)
+done security
+done plugins
+k-NN libraries not found in JAVA_LIBRARY_PATH. Updating path to: :/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/plugins/opensearch-knn/lib.
+Starting OpenSearch
+[2025-02-20T15:07:00,885][INFO ][o.o.n.Node               ] [7cf34ddf1c97] version[2.19.0], pid[69773], build[tar/b006c0f426558b0cfb4cbd06377b301b2ac28520/2025-01-31T05:54:52.337437362Z], OS[Mac OS X/15.2/aarch64], JVM[Oracle Corporation/Java HotSpot(TM) 64-Bit Server VM/21.0.5/21.0.5+9-LTS-239]
+[2025-02-20T15:07:00,886][INFO ][o.o.n.Node               ] [7cf34ddf1c97] JVM home [/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home], using bundled JDK/JRE [false]
+[2025-02-20T15:07:00,886][INFO ][o.o.n.Node               ] [7cf34ddf1c97] JVM arguments [-Xshare:auto, -Dopensearch.networkaddress.cache.ttl=60, -Dopensearch.networkaddress.cache.negative.ttl=10, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -XX:-OmitStackTraceInFastThrow, -XX:+ShowCodeDetailsInExceptionMessages, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dio.netty.allocator.numDirectArenas=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Djava.security.manager=allow, -Djava.locale.providers=SPI,COMPAT, -Xms1g, -Xmx1g, -XX:+UseG1GC, -XX:G1ReservePercent=25, -XX:InitiatingHeapOccupancyPercent=30, -Djava.io.tmpdir=/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/opensearch-12507786830305030763, -XX:+HeapDumpOnOutOfMemoryError, -XX:HeapDumpPath=data, -XX:ErrorFile=logs/hs_err_pid%p.log, -Xlog:gc*,gc+age=trace,safepoint:file=logs/gc.log:utctime,pid,tags:filecount=32,filesize=64m, -Djava.security.manager=allow, --add-modules=jdk.incubator.vector, -Djava.util.concurrent.ForkJoinPool.common.threadFactory=org.opensearch.secure_sm.SecuredForkJoinWorkerThreadFactory, -Dclk.tck=100, -Djdk.attach.allowAttachSelf=true, -Djava.security.policy=/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-performance-analyzer/opensearch_security.policy, --add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED, -XX:MaxDirectMemorySize=536870912, -Dopensearch.path.home=/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0, -Dopensearch.path.conf=/private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config, -Dopensearch.distribution.type=tar, -Dopensearch.bundled_jdk=true]
+[2025-02-20T15:07:00,999][INFO ][o.a.l.i.v.PanamaVectorizationProvider] [7cf34ddf1c97] Java vector incubator API enabled; uses preferredBitSize=128
+[2025-02-20T15:07:01,586][INFO ][o.o.s.s.t.SSLConfig      ] [7cf34ddf1c97] SSL dual mode is disabled
+[2025-02-20T15:07:01,586][INFO ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] OpenSearch Config path is /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config
+[2025-02-20T15:07:01,692][INFO ][o.o.s.s.SslSettingsManager] [7cf34ddf1c97] TLS HTTP Provider                    : JDK
+[2025-02-20T15:07:01,693][INFO ][o.o.s.s.SslSettingsManager] [7cf34ddf1c97] Enabled TLS protocols for HTTP layer : [TLSv1.3, TLSv1.2]
+[2025-02-20T15:07:01,693][INFO ][o.o.s.s.SslSettingsManager] [7cf34ddf1c97] TLS Transport Client Provider             : JDK
+[2025-02-20T15:07:01,693][INFO ][o.o.s.s.SslSettingsManager] [7cf34ddf1c97] TLS Transport Server Provider             : JDK
+[2025-02-20T15:07:01,694][INFO ][o.o.s.s.SslSettingsManager] [7cf34ddf1c97] Enabled TLS protocols for Transport layer : [TLSv1.3, TLSv1.2]
+[2025-02-20T15:07:01,939][INFO ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] Clustername: opensearch
+[2025-02-20T15:07:01,942][WARN ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] Directory /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config has insecure file permissions (should be 0700)
+[2025-02-20T15:07:01,943][WARN ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] File /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/kirk.pem has insecure file permissions (should be 0600)
+[2025-02-20T15:07:01,943][WARN ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] File /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/esnode-key.pem has insecure file permissions (should be 0600)
+[2025-02-20T15:07:01,943][WARN ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] File /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/root-ca.pem has insecure file permissions (should be 0600)
+[2025-02-20T15:07:01,943][WARN ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] File /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/kirk-key.pem has insecure file permissions (should be 0600)
+[2025-02-20T15:07:01,943][WARN ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] File /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/esnode.pem has insecure file permissions (should be 0600)
+[2025-02-20T15:07:01,943][WARN ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] File /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/securityadmin_demo.sh has insecure file permissions (should be 0600)
+[2025-02-20T15:07:02,456][INFO ][o.o.p.c.c.PluginSettings ] [7cf34ddf1c97] Trying to create directory /dev/shm/performanceanalyzer/.
+[2025-02-20T15:07:02,456][ERROR][o.o.p.c.c.PluginSettings ] [7cf34ddf1c97] Invalid metrics location /dev/shm/performanceanalyzer/. Created: false (Expect True), Directory: false (Expect True), CanWrite: false (Expect True)
+[2025-02-20T15:07:02,457][ERROR][o.o.p.c.c.PluginSettings ] [7cf34ddf1c97] Having issue to load all config items. Disabling plugin.
+org.opensearch.performanceanalyzer.commons.config.ConfigFatalException: Having issue to use path: /dev/shm/performanceanalyzer/
+	at org.opensearch.performanceanalyzer.commons.config.PluginSettings.validateOrCreateDir(PluginSettings.java:258) ~[performance-analyzer-commons-1.6.0.jar:?]
+	at org.opensearch.performanceanalyzer.commons.config.PluginSettings.loadMetricsLocationFromConfig(PluginSettings.java:236) ~[performance-analyzer-commons-1.6.0.jar:?]
+	at org.opensearch.performanceanalyzer.commons.config.PluginSettings.<init>(PluginSettings.java:179) [performance-analyzer-commons-1.6.0.jar:?]
+	at org.opensearch.performanceanalyzer.commons.config.PluginSettings.createInstance(PluginSettings.java:217) [performance-analyzer-commons-1.6.0.jar:?]
+	at org.opensearch.performanceanalyzer.commons.util.Util.lambda$invokePrivilegedAndLogError$3(Util.java:75) [performance-analyzer-commons-1.6.0.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:319) [?:?]
+	at org.opensearch.performanceanalyzer.commons.util.Util.invokePrivilegedAndLogError(Util.java:71) [performance-analyzer-commons-1.6.0.jar:?]
+	at org.opensearch.performanceanalyzer.commons.config.PluginSettings.<clinit>(PluginSettings.java:69) [performance-analyzer-commons-1.6.0.jar:?]
+	at org.opensearch.performanceanalyzer.PerformanceAnalyzerPlugin.<init>(PerformanceAnalyzerPlugin.java:170) [opensearch-performance-analyzer-2.19.0.0.jar:2.19.0.0]
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[?:?]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502) ~[?:?]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486) ~[?:?]
+	at org.opensearch.plugins.PluginsService.loadPlugin(PluginsService.java:809) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.plugins.PluginsService.loadBundle(PluginsService.java:757) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.plugins.PluginsService.loadBundles(PluginsService.java:551) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.plugins.PluginsService.<init>(PluginsService.java:197) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.node.Node.<init>(Node.java:524) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.node.Node.<init>(Node.java:451) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.bootstrap.Bootstrap$5.<init>(Bootstrap.java:242) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.bootstrap.Bootstrap.setup(Bootstrap.java:242) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.bootstrap.Bootstrap.init(Bootstrap.java:404) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.bootstrap.OpenSearch.init(OpenSearch.java:181) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.bootstrap.OpenSearch.execute(OpenSearch.java:172) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.cli.EnvironmentAwareCommand.execute(EnvironmentAwareCommand.java:104) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.cli.Command.mainWithoutErrorHandling(Command.java:138) [opensearch-cli-2.19.0.jar:2.19.0]
+	at org.opensearch.cli.Command.main(Command.java:101) [opensearch-cli-2.19.0.jar:2.19.0]
+	at org.opensearch.bootstrap.OpenSearch.main(OpenSearch.java:138) [opensearch-2.19.0.jar:2.19.0]
+	at org.opensearch.bootstrap.OpenSearch.main(OpenSearch.java:104) [opensearch-2.19.0.jar:2.19.0]
+[2025-02-20T15:07:02,460][INFO ][o.o.p.c.c.PluginSettings ] [7cf34ddf1c97] Config: metricsLocation: /dev/shm/performanceanalyzer/, metricsDeletionInterval: 1, httpsEnabled: false, cleanup-metrics-db-files: false, batch-metrics-retention-period-minutes: 7, rpc-port: 9650, webservice-port 9600
+[2025-02-20T15:07:02,742][INFO ][o.o.i.r.ReindexPlugin    ] [7cf34ddf1c97] ReindexPlugin reloadSPI called
+[2025-02-20T15:07:02,743][INFO ][o.o.i.r.ReindexPlugin    ] [7cf34ddf1c97] Unable to find any implementation for RemoteReindexExtension
+[2025-02-20T15:07:02,761][INFO ][o.o.j.JobSchedulerPlugin ] [7cf34ddf1c97] Loaded scheduler extension: reports-scheduler, index: .opendistro-reports-definitions
+[2025-02-20T15:07:02,761][INFO ][o.o.j.JobSchedulerPlugin ] [7cf34ddf1c97] Loaded scheduler extension: opensearch_time_series_analytics, index: .opendistro-anomaly-detector-jobs
+[2025-02-20T15:07:02,762][INFO ][o.o.j.JobSchedulerPlugin ] [7cf34ddf1c97] Loaded scheduler extension: opendistro-index-management, index: .opendistro-ism-config
+[2025-02-20T15:07:02,763][INFO ][o.o.j.JobSchedulerPlugin ] [7cf34ddf1c97] Loaded scheduler extension: checkBatchJobTaskStatus, index: .ml_commons_task_polling_job
+[2025-02-20T15:07:02,763][INFO ][o.o.j.JobSchedulerPlugin ] [7cf34ddf1c97] Loaded scheduler extension: scheduler_geospatial_ip2geo_datasource, index: .scheduler-geospatial-ip2geo-datasource
+[2025-02-20T15:07:02,763][INFO ][o.o.j.JobSchedulerPlugin ] [7cf34ddf1c97] Loaded scheduler extension: opensearch_sap_job, index: .opensearch-sap--job
+[2025-02-20T15:07:02,764][INFO ][o.o.j.JobSchedulerPlugin ] [7cf34ddf1c97] Loaded scheduler extension: async-query-scheduler, index: .async-query-scheduler
+[2025-02-20T15:07:02,771][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [aggs-matrix-stats]
+[2025-02-20T15:07:02,771][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [analysis-common]
+[2025-02-20T15:07:02,771][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [cache-common]
+[2025-02-20T15:07:02,771][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [geo]
+[2025-02-20T15:07:02,771][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [ingest-common]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [ingest-geoip]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [ingest-user-agent]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [lang-expression]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [lang-mustache]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [lang-painless]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [mapper-extras]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [opensearch-dashboards]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [parent-join]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [percolator]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [rank-eval]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [reindex]
+[2025-02-20T15:07:02,772][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [repository-url]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [search-pipeline-common]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [systemd]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded module [transport-netty4]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-alerting]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-anomaly-detection]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-asynchronous-search]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-cross-cluster-replication]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-custom-codecs]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-flow-framework]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-geospatial]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-index-management]
+[2025-02-20T15:07:02,773][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-job-scheduler]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-knn]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-ltr]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-ml]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-neural-search]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-notifications]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-notifications-core]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-observability]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-performance-analyzer]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-reports-scheduler]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-security]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-security-analytics]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-skills]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-sql]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [opensearch-system-templates]
+[2025-02-20T15:07:02,774][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] loaded plugin [query-insights]
+[2025-02-20T15:07:02,793][INFO ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] Disabled https compression by default to mitigate BREACH attacks. You can enable it by setting 'http.compression: true' in opensearch.yml
+[2025-02-20T15:07:02,823][WARN ][stderr                   ] [7cf34ddf1c97] WARNING: A restricted method in java.lang.foreign.Linker has been called
+[2025-02-20T15:07:02,823][WARN ][stderr                   ] [7cf34ddf1c97] WARNING: java.lang.foreign.Linker::downcallHandle has been called by the unnamed module
+[2025-02-20T15:07:02,823][WARN ][stderr                   ] [7cf34ddf1c97] WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for this module
+[2025-02-20T15:07:02,868][INFO ][o.a.l.s.MemorySegmentIndexInputProvider] [7cf34ddf1c97] Using MemorySegmentIndexInput and native madvise support with Java 21 or later; to disable start with -Dorg.apache.lucene.store.MMapDirectory.enableMemorySegments=false
+[2025-02-20T15:07:02,873][INFO ][o.o.e.NodeEnvironment    ] [7cf34ddf1c97] using [1] data paths, mounts [[/System/Volumes/Data (/dev/disk3s5)]], net usable_space [313.8gb], net total_space [460.4gb], types [apfs]
+[2025-02-20T15:07:02,873][INFO ][o.o.e.NodeEnvironment    ] [7cf34ddf1c97] heap size [1gb], compressed ordinary object pointers [true]
+[2025-02-20T15:07:02,884][INFO ][o.o.n.Node               ] [7cf34ddf1c97] node name [7cf34ddf1c97], node ID [ZMADgELeRECl8cJgMap-6Q], cluster name [opensearch], roles [ingest, remote_cluster_client, data, cluster_manager]
+[2025-02-20T15:07:02,899][INFO ][o.o.e.ExtensionsManager  ] [7cf34ddf1c97] ExtensionsManager initialized
+[2025-02-20T15:07:03,773][INFO ][o.o.n.p.NeuralSearch     ] [7cf34ddf1c97] Registering hybrid query phase searcher with feature flag [plugins.neural_search.hybrid_search_disabled]
+[2025-02-20T15:07:03,927][WARN ][o.o.s.c.Salt             ] [7cf34ddf1c97] If you plan to use field masking pls configure compliance salt e1ukloTsQlOgPquJ to be a random string of 16 chars length identical on all nodes
+[2025-02-20T15:07:03,943][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Message routing enabled: true
+[2025-02-20T15:07:03,957][INFO ][o.o.s.f.SecurityFilter   ] [7cf34ddf1c97] <NONE> indices are made immutable.
+[2025-02-20T15:07:04,012][INFO ][o.o.l.b.LTRCircuitBreakerService] [7cf34ddf1c97] Registered memory breaker.
+[2025-02-20T15:07:04,024][INFO ][o.o.r.m.c.i.SdkClientFactory] [7cf34ddf1c97] Using local opensearch cluster as metadata store.
+[2025-02-20T15:07:04,075][INFO ][o.o.t.b.CircuitBreakerService] [7cf34ddf1c97] Registered memory breaker.
+[2025-02-20T15:07:04,235][INFO ][o.o.r.m.c.i.SdkClientFactory] [7cf34ddf1c97] Using local opensearch cluster as metadata store.
+[2025-02-20T15:07:04,244][INFO ][o.o.m.b.MLCircuitBreakerService] [7cf34ddf1c97] Registered ML memory breaker.
+[2025-02-20T15:07:04,244][INFO ][o.o.m.b.MLCircuitBreakerService] [7cf34ddf1c97] Registered ML disk breaker.
+[2025-02-20T15:07:04,245][INFO ][o.o.m.b.MLCircuitBreakerService] [7cf34ddf1c97] Registered ML native memory breaker.
+[2025-02-20T15:07:04,287][INFO ][o.r.Reflections          ] [7cf34ddf1c97] Reflections took 23 ms to scan 1 urls, producing 27 keys and 67 values 
+[2025-02-20T15:07:04,296][INFO ][o.r.Reflections          ] [7cf34ddf1c97] Reflections took 1 ms to scan 1 urls, producing 3 keys and 5 values 
+[2025-02-20T15:07:04,350][WARN ][o.o.s.p.SQLPlugin        ] [7cf34ddf1c97] Master key is a required config for using create and update datasource APIs. Please set plugins.query.datasources.encryption.masterkey config in opensearch.yml in all the cluster nodes. More details can be found here: https://github.com/opensearch-project/sql/blob/main/docs/user/ppl/admin/datasources.rst#master-key-config-for-encrypting-credential-information
+[2025-02-20T15:07:04,598][INFO ][o.o.t.NettyAllocator     ] [7cf34ddf1c97] creating NettyAllocator with the following configs: [name=unpooled, suggested_max_allocation_size=256kb, factors={opensearch.unsafe.use_unpooled_allocator=null, g1gc_enabled=true, g1gc_region_size=1mb, heap_size=1gb}]
+[2025-02-20T15:07:04,600][INFO ][o.o.s.s.t.SSLConfig      ] [7cf34ddf1c97] SSL dual mode is disabled
+[2025-02-20T15:07:04,638][INFO ][o.o.d.DiscoveryModule    ] [7cf34ddf1c97] using discovery type [zen] and seed hosts providers [settings]
+[2025-02-20T15:07:04,825][WARN ][o.o.g.DanglingIndicesState] [7cf34ddf1c97] gateway.auto_import_dangling_indices is disabled, dangling indices will not be automatically detected or imported and must be managed manually
+[2025-02-20T15:07:05,055][INFO ][o.o.p.h.c.PerformanceAnalyzerConfigAction] [7cf34ddf1c97] PerformanceAnalyzer Enabled: false
+[2025-02-20T15:07:05,074][INFO ][o.o.n.Node               ] [7cf34ddf1c97] initialized
+[2025-02-20T15:07:05,074][INFO ][o.o.n.Node               ] [7cf34ddf1c97] starting ...
+[2025-02-20T15:07:05,088][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [windows_logtype.json] log type
+[2025-02-20T15:07:05,089][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [waf_logtype.json] log type
+[2025-02-20T15:07:05,089][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [vpcflow_logtype.json] log type
+[2025-02-20T15:07:05,089][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [test_windows_logtype.json] log type
+[2025-02-20T15:07:05,089][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [s3_logtype.json] log type
+[2025-02-20T15:07:05,089][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [others_web_logtype.json] log type
+[2025-02-20T15:07:05,089][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [others_proxy_logtype.json] log type
+[2025-02-20T15:07:05,090][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [others_macos_logtype.json] log type
+[2025-02-20T15:07:05,090][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [others_compliance_logtype.json] log type
+[2025-02-20T15:07:05,090][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [others_cloud_logtype.json] log type
+[2025-02-20T15:07:05,090][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [others_apt_logtype.json] log type
+[2025-02-20T15:07:05,090][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [others_application_logtype.json] log type
+[2025-02-20T15:07:05,090][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [okta_logtype.json] log type
+[2025-02-20T15:07:05,091][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [network_logtype.json] log type
+[2025-02-20T15:07:05,091][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [netflow_logtype.json] log type
+[2025-02-20T15:07:05,091][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [m365_logtype.json] log type
+[2025-02-20T15:07:05,091][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [linux_logtype.json] log type
+[2025-02-20T15:07:05,091][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [gworkspace_logtype.json] log type
+[2025-02-20T15:07:05,092][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [github_logtype.json] log type
+[2025-02-20T15:07:05,092][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [dns_logtype.json] log type
+[2025-02-20T15:07:05,092][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [cloudtrail_logtype.json] log type
+[2025-02-20T15:07:05,092][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [azure_logtype.json] log type
+[2025-02-20T15:07:05,092][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [apache_access_logtype.json] log type
+[2025-02-20T15:07:05,092][INFO ][o.o.s.l.BuiltinLogTypeLoader] [7cf34ddf1c97] Loaded [ad_ldap_logtype.json] log type
+[2025-02-20T15:07:05,141][INFO ][o.o.t.TransportService   ] [7cf34ddf1c97] publish_address {127.0.0.1:9300}, bound_addresses {[::1]:9300}, {127.0.0.1:9300}
+[2025-02-20T15:07:05,141][INFO ][o.o.t.TransportService   ] [7cf34ddf1c97] Remote clusters initialized successfully.
+[2025-02-20T15:07:05,236][WARN ][o.o.b.BootstrapChecks    ] [7cf34ddf1c97] the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_cluster_manager_nodes / cluster.initial_master_nodes] must be configured
+[2025-02-20T15:07:05,239][INFO ][o.o.c.c.ClusterBootstrapService] [7cf34ddf1c97] no discovery configuration found, will perform best-effort cluster bootstrapping after [3s] unless existing cluster-manager is discovered
+[2025-02-20T15:07:08,246][INFO ][o.o.c.c.Coordinator      ] [7cf34ddf1c97] setting initial configuration to VotingConfiguration{ZMADgELeRECl8cJgMap-6Q}
+[2025-02-20T15:07:08,403][INFO ][o.o.c.s.MasterService    ] [7cf34ddf1c97] Tasks batched with key: org.opensearch.cluster.coordination.JoinHelper, count:3 and sample tasks: elected-as-cluster-manager ([1] nodes joined)[{7cf34ddf1c97}{ZMADgELeRECl8cJgMap-6Q}{i2bXl0JSSIivIZiVQERnog}{127.0.0.1}{127.0.0.1:9300}{dimr}{shard_indexing_pressure_enabled=true} elect leader, _BECOME_CLUSTER_MANAGER_TASK_, _FINISH_ELECTION_], term: 1, version: 1, delta: cluster-manager node changed {previous [], current [{7cf34ddf1c97}{ZMADgELeRECl8cJgMap-6Q}{i2bXl0JSSIivIZiVQERnog}{127.0.0.1}{127.0.0.1:9300}{dimr}{shard_indexing_pressure_enabled=true}]}
+[2025-02-20T15:07:08,437][INFO ][o.o.c.c.CoordinationState] [7cf34ddf1c97] cluster UUID set to [R_pPNQ9ATaKKbRVoAFt7UA]
+[2025-02-20T15:07:08,464][INFO ][o.o.c.s.ClusterApplierService] [7cf34ddf1c97] cluster-manager node changed {previous [], current [{7cf34ddf1c97}{ZMADgELeRECl8cJgMap-6Q}{i2bXl0JSSIivIZiVQERnog}{127.0.0.1}{127.0.0.1:9300}{dimr}{shard_indexing_pressure_enabled=true}]}, term: 1, version: 1, reason: Publication{term=1, version=1}
+[2025-02-20T15:07:08,467][INFO ][o.o.t.i.IndexManagement  ] [7cf34ddf1c97] Candidate custom result indices are empty.
+[2025-02-20T15:07:08,467][INFO ][o.o.t.i.IndexManagement  ] [7cf34ddf1c97] Candidate custom result indices are empty.
+[2025-02-20T15:07:08,467][INFO ][o.o.t.c.ClusterEventListener] [7cf34ddf1c97] Cluster is not recovered yet.
+[2025-02-20T15:07:08,477][INFO ][o.o.i.i.ManagedIndexCoordinator] [7cf34ddf1c97] Cache cluster manager node onClusterManager time: 1740092828477
+[2025-02-20T15:07:08,480][WARN ][o.o.p.c.s.h.ConfigOverridesClusterSettingHandler] [7cf34ddf1c97] Config override setting update called with empty string. Ignoring.
+[2025-02-20T15:07:08,483][INFO ][o.o.d.PeerFinder         ] [7cf34ddf1c97] setting findPeersInterval to [1s] as node commission status = [true] for local node [{7cf34ddf1c97}{ZMADgELeRECl8cJgMap-6Q}{i2bXl0JSSIivIZiVQERnog}{127.0.0.1}{127.0.0.1:9300}{dimr}{shard_indexing_pressure_enabled=true}]
+[2025-02-20T15:07:08,483][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:08,485][INFO ][o.o.h.AbstractHttpServerTransport] [7cf34ddf1c97] publish_address {127.0.0.1:9200}, bound_addresses {[::1]:9200}, {127.0.0.1:9200}
+[2025-02-20T15:07:08,485][INFO ][o.o.n.Node               ] [7cf34ddf1c97] started
+[2025-02-20T15:07:08,485][INFO ][o.o.s.c.ConfigurationRepository] [7cf34ddf1c97] Will attempt to create index .opendistro_security and default configs if they are absent
+[2025-02-20T15:07:08,486][INFO ][o.o.s.c.ConfigurationRepository] [7cf34ddf1c97] Background init thread started. Install default config?: true
+[2025-02-20T15:07:08,486][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:08,486][INFO ][o.o.s.c.ConfigurationRepository] [7cf34ddf1c97] Wait for cluster to be available ...
+[2025-02-20T15:07:08,486][INFO ][o.o.s.OpenSearchSecurityPlugin] [7cf34ddf1c97] 0 OpenSearch Security modules loaded so far: []
+[2025-02-20T15:07:08,497][INFO ][o.o.t.c.HashRing         ] [7cf34ddf1c97] Node added: [ZMADgELeRECl8cJgMap-6Q]
+[2025-02-20T15:07:08,499][INFO ][o.o.t.c.HashRing         ] [7cf34ddf1c97] Add data node to version hash ring: ZMADgELeRECl8cJgMap-6Q
+[2025-02-20T15:07:08,500][INFO ][o.o.t.c.HashRing         ] [7cf34ddf1c97] All nodes with known version: {ZMADgELeRECl8cJgMap-6Q=ADNodeInfo{version=2.19.0, isEligibleDataNode=true}}
+[2025-02-20T15:07:08,500][INFO ][o.o.t.c.HashRing         ] [7cf34ddf1c97] Rebuild hash ring for realtime with cooldown, nodeChangeEvents size 0
+[2025-02-20T15:07:08,500][INFO ][o.o.t.c.HashRing         ] [7cf34ddf1c97] Build version hash ring successfully
+[2025-02-20T15:07:08,500][INFO ][o.o.t.c.ADDataMigrator   ] [7cf34ddf1c97] Start migrating AD data
+[2025-02-20T15:07:08,500][INFO ][o.o.t.c.ADDataMigrator   ] [7cf34ddf1c97] AD job index doesn't exist, no need to migrate
+[2025-02-20T15:07:08,500][INFO ][o.o.t.c.ClusterEventListener] [7cf34ddf1c97] Init version hash ring successfully
+[2025-02-20T15:07:08,505][INFO ][o.o.g.GatewayService     ] [7cf34ddf1c97] recovered [0] indices into cluster_state
+[2025-02-20T15:07:08,516][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opensearch-observability/Glir3PRDRn-N0VmMvtSxnQ]
+[2025-02-20T15:07:08,562][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [.opensearch-observability] creating index, cause [api], templates [], shards [1]/[0]
+[2025-02-20T15:07:08,565][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:08,601][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opensearch-observability/Glir3PRDRn-N0VmMvtSxnQ]
+[2025-02-20T15:07:08,630][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opensearch-sap-log-types-config/OURFJnjYQR-ntTwdDGHi4A]
+[2025-02-20T15:07:08,634][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [.opensearch-sap-log-types-config] creating index, cause [auto(sap-logtype api)], templates [], shards [1]/[1]
+[2025-02-20T15:07:08,634][INFO ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] updating number_of_replicas to [0] for indices [.opensearch-sap-log-types-config]
+[2025-02-20T15:07:08,635][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:08,675][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opensearch-sap-log-types-config/OURFJnjYQR-ntTwdDGHi4A]
+[2025-02-20T15:07:08,782][INFO ][o.o.o.i.ObservabilityIndex] [7cf34ddf1c97] observability:Index .opensearch-observability creation Acknowledged
+[2025-02-20T15:07:08,783][INFO ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Cluster health status changed from [YELLOW] to [GREEN] (reason: [shards started [[.opensearch-sap-log-types-config][0]]]).
+[2025-02-20T15:07:08,809][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Loading builtin types!
+[2025-02-20T15:07:08,810][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Indexing [432] fieldMappingDocs from logTypes: 24
+[2025-02-20T15:07:08,824][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:08,839][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Indexing [432] fieldMappingDocs
+[2025-02-20T15:07:08,853][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opensearch-sap-log-types-config/OURFJnjYQR-ntTwdDGHi4A]
+[2025-02-20T15:07:08,856][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opensearch-sap-log-types-config/OURFJnjYQR-ntTwdDGHi4A] update_mapping [_doc]
+[2025-02-20T15:07:08,892][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opensearch-sap-log-types-config/OURFJnjYQR-ntTwdDGHi4A]
+[2025-02-20T15:07:08,895][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opensearch-sap-log-types-config/OURFJnjYQR-ntTwdDGHi4A] update_mapping [_doc]
+[2025-02-20T15:07:09,025][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Loaded [432] field mapping docs successfully!
+[2025-02-20T15:07:09,032][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Indexing [23] customLogTypes
+[2025-02-20T15:07:09,060][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Loaded [23] customLogType docs successfully!
+[2025-02-20T15:07:09,060][INFO ][o.o.s.SecurityAnalyticsPlugin] [7cf34ddf1c97] LogType config index successfully created and builtin log types loaded
+[2025-02-20T15:07:09,490][INFO ][o.o.s.i.DetectorIndexManagementService] [7cf34ddf1c97] info deleteOldIndices
+[2025-02-20T15:07:09,494][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Indexing [23] customLogTypes
+[2025-02-20T15:07:09,495][INFO ][o.o.s.i.DetectorIndexManagementService] [7cf34ddf1c97] No Old Correlation Indices to delete
+[2025-02-20T15:07:09,497][INFO ][o.o.s.i.DetectorIndexManagementService] [7cf34ddf1c97] info deleteOldIndices
+[2025-02-20T15:07:09,498][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:09,498][INFO ][o.o.s.i.DetectorIndexManagementService] [7cf34ddf1c97] No Old IOC Findings Indices to delete
+[2025-02-20T15:07:09,502][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [.opendistro_security] creating index, cause [api], templates [], shards [1]/[1]
+[2025-02-20T15:07:09,503][INFO ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] updating number_of_replicas to [0] for indices [.opendistro_security]
+[2025-02-20T15:07:09,503][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:09,509][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Indexing [23] customLogTypes
+[2025-02-20T15:07:09,570][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:09,628][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Loaded [23] customLogType docs successfully!
+[2025-02-20T15:07:09,631][INFO ][o.o.s.l.LogTypeService   ] [7cf34ddf1c97] Loaded [23] customLogType docs successfully!
+[2025-02-20T15:07:09,648][INFO ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Cluster health status changed from [YELLOW] to [GREEN] (reason: [shards started [[.opendistro_security][0]]]).
+[2025-02-20T15:07:09,658][INFO ][o.o.s.i.DetectorIndexManagementService] [7cf34ddf1c97] info deleteOldIndices
+[2025-02-20T15:07:09,658][INFO ][o.o.s.i.DetectorIndexManagementService] [7cf34ddf1c97] info deleteOldIndices
+[2025-02-20T15:07:09,658][INFO ][o.o.s.i.DetectorIndexManagementService] [7cf34ddf1c97] No Old Finding Indices to delete
+[2025-02-20T15:07:09,658][INFO ][o.o.s.i.DetectorIndexManagementService] [7cf34ddf1c97] No Old Alert Indices to delete
+[2025-02-20T15:07:09,669][INFO ][o.o.s.c.ConfigurationRepository] [7cf34ddf1c97] Index .opendistro_security created?: true
+[2025-02-20T15:07:09,669][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:09,670][INFO ][o.o.s.c.ConfigurationRepository] [7cf34ddf1c97] Node started, try to initialize it. Wait for at least yellow cluster state....
+[2025-02-20T15:07:09,672][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'config' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/config.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=false
+[2025-02-20T15:07:09,688][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:09,689][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] create_mapping
+[2025-02-20T15:07:09,733][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'config' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:09,733][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'roles' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/roles.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=false
+[2025-02-20T15:07:09,739][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:09,740][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] update_mapping [_doc]
+[2025-02-20T15:07:09,787][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'roles' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:09,787][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'rolesmapping' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/roles_mapping.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=false
+[2025-02-20T15:07:09,791][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:09,793][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] update_mapping [_doc]
+[2025-02-20T15:07:09,839][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'rolesmapping' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:09,839][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'internalusers' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/internal_users.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=false
+[2025-02-20T15:07:09,843][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:09,845][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] update_mapping [_doc]
+[2025-02-20T15:07:09,883][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'internalusers' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:09,883][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'actiongroups' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/action_groups.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=false
+[2025-02-20T15:07:09,888][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:09,890][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] update_mapping [_doc]
+[2025-02-20T15:07:09,937][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'actiongroups' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:09,937][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'tenants' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/tenants.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=false
+[2025-02-20T15:07:09,940][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:09,943][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] update_mapping [_doc]
+[2025-02-20T15:07:09,984][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'tenants' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:09,984][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'nodesdn' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/nodes_dn.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=true
+[2025-02-20T15:07:09,987][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:09,989][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] update_mapping [_doc]
+[2025-02-20T15:07:10,037][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'nodesdn' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:10,037][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'whitelist' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/whitelist.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=true
+[2025-02-20T15:07:10,040][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:10,042][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] update_mapping [_doc]
+[2025-02-20T15:07:10,085][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'whitelist' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:10,085][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'allowlist' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/allowlist.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=true
+[2025-02-20T15:07:10,087][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:10,091][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] update_mapping [_doc]
+[2025-02-20T15:07:10,129][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'allowlist' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:10,130][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Will update 'audit' with /private/var/folders/ft/7lyj4lg52l53_ppfk94gszph0000gq/T/tmphzkuouen/opensearch-2.19.0/config/opensearch-security/audit.yml and populate it with empty doc if file missing and populateEmptyIfFileMissing=false
+[2025-02-20T15:07:10,136][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro_security/7MCIntskS82QBnSScNOlJg]
+[2025-02-20T15:07:10,138][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [.opendistro_security/7MCIntskS82QBnSScNOlJg] update_mapping [_doc]
+[2025-02-20T15:07:10,182][INFO ][o.o.s.s.ConfigHelper     ] [7cf34ddf1c97] Doc with id 'audit' and version 2 is updated in .opendistro_security index.
+[2025-02-20T15:07:10,235][INFO ][stdout                   ] [7cf34ddf1c97] [FINE] No subscribers registered for event class org.opensearch.security.securityconf.DynamicConfigFactory$NodesDnModelImpl
+[2025-02-20T15:07:10,235][INFO ][stdout                   ] [7cf34ddf1c97] [FINE] No subscribers registered for event class org.greenrobot.eventbus.NoSubscriberEvent
+[2025-02-20T15:07:10,235][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing on REST API is enabled.
+[2025-02-20T15:07:10,235][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] [AUTHENTICATED, GRANTED_PRIVILEGES] are excluded from REST API auditing.
+[2025-02-20T15:07:10,235][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing on Transport API is enabled.
+[2025-02-20T15:07:10,236][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] [AUTHENTICATED, GRANTED_PRIVILEGES] are excluded from Transport API auditing.
+[2025-02-20T15:07:10,236][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of request body is enabled.
+[2025-02-20T15:07:10,236][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Bulk requests resolution is disabled during request auditing.
+[2025-02-20T15:07:10,236][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Index resolution is enabled during request auditing.
+[2025-02-20T15:07:10,236][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Sensitive headers exclusion from auditing is enabled.
+[2025-02-20T15:07:10,236][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing requests from kibanaserver users is disabled.
+[2025-02-20T15:07:10,236][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing request headers <NONE> is disabled.
+[2025-02-20T15:07:10,236][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing request url params <NONE> is disabled.
+[2025-02-20T15:07:10,237][WARN ][o.o.s.a.r.AuditMessageRouter] [7cf34ddf1c97] No endpoint configured for categories [BAD_HEADERS, FAILED_LOGIN, MISSING_PRIVILEGES, GRANTED_PRIVILEGES, OPENDISTRO_SECURITY_INDEX_ATTEMPT, SSL_EXCEPTION, AUTHENTICATED, INDEX_EVENT, COMPLIANCE_DOC_READ, COMPLIANCE_DOC_WRITE, COMPLIANCE_EXTERNAL_CONFIG, COMPLIANCE_INTERNAL_CONFIG_READ, COMPLIANCE_INTERNAL_CONFIG_WRITE], using default endpoint
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of external configuration is disabled.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of internal configuration is enabled.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing only metadata information for read request is enabled.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing will watch {} for read requests.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing read operation requests from kibanaserver users is disabled.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing only metadata information for write request is enabled.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing diffs for write requests is disabled.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing write operation requests from kibanaserver users is disabled.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing will watch <NONE> for write requests.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] .opendistro_security is used as internal security index.
+[2025-02-20T15:07:10,237][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Internal index used for posting audit logs is null
+[2025-02-20T15:07:10,237][INFO ][o.o.s.c.ConfigurationRepository] [7cf34ddf1c97] Hot-reloading of audit configuration is enabled
+[2025-02-20T15:07:10,237][INFO ][o.o.s.c.ConfigurationRepository] [7cf34ddf1c97] Node '7cf34ddf1c97' initialized
+[2025-02-20T15:07:18,507][INFO ][o.o.m.a.MLModelAutoReDeployer] [7cf34ddf1c97] Index not found, not performing auto reloading!
+[2025-02-20T15:07:18,507][INFO ][o.o.m.c.MLCommonsClusterManagerEventListener] [7cf34ddf1c97] Starting ML sync up job...
+[2025-02-20T15:07:28,516][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.plugins-ml-config/cX2clAraSdOLZ48SVJvOxg]
+[2025-02-20T15:07:28,520][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [.plugins-ml-config] creating index, cause [api], templates [], shards [1]/[1]
+[2025-02-20T15:07:28,520][INFO ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] updating number_of_replicas to [0] for indices [.plugins-ml-config]
+[2025-02-20T15:07:28,520][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:28,546][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.plugins-ml-config/cX2clAraSdOLZ48SVJvOxg]
+[2025-02-20T15:07:28,610][INFO ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Cluster health status changed from [YELLOW] to [GREEN] (reason: [shards started [[.plugins-ml-config][0]]]).
+[2025-02-20T15:07:28,639][INFO ][o.o.m.e.i.MLIndicesHandler] [7cf34ddf1c97] create index:.plugins-ml-config
+[2025-02-20T15:07:28,640][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:28,665][INFO ][o.o.m.c.MLSyncUpCron     ] [7cf34ddf1c97] ML configuration initialized successfully
+[2025-02-20T15:07:33,803][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA]
+[2025-02-20T15:07:33,804][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [security-auditlog-2025.02.20] creating index, cause [auto(bulk api)], templates [], shards [1]/[1]
+[2025-02-20T15:07:33,805][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:33,838][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA]
+[2025-02-20T15:07:33,853][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[movies/J773GcdZSM-BSyV1G0tyZQ]
+[2025-02-20T15:07:33,857][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [movies] creating index, cause [auto(bulk api)], templates [], shards [1]/[1]
+[2025-02-20T15:07:33,860][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:33,938][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[movies/J773GcdZSM-BSyV1G0tyZQ]
+[2025-02-20T15:07:34,053][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA]
+[2025-02-20T15:07:34,057][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA] create_mapping
+[2025-02-20T15:07:34,080][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[movies/J773GcdZSM-BSyV1G0tyZQ]
+[2025-02-20T15:07:34,083][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [movies/J773GcdZSM-BSyV1G0tyZQ] create_mapping
+[2025-02-20T15:07:34,085][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA]
+[2025-02-20T15:07:34,088][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA] update_mapping [_doc]
+[2025-02-20T15:07:34,121][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA]
+[2025-02-20T15:07:34,126][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[movies/J773GcdZSM-BSyV1G0tyZQ]
+[2025-02-20T15:07:34,130][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:51,594][WARN ][o.o.s.c.SecurityFlsDlsIndexSearcherWrapper] [7cf34ddf1c97] search action for .opensearch-observability is not allowed for a non adminDN user
+[2025-02-20T15:07:51,594][WARN ][o.o.s.c.SecurityFlsDlsIndexSearcherWrapper] [7cf34ddf1c97] search action for .plugins-ml-config is not allowed for a non adminDN user
+[2025-02-20T15:07:57,539][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro-ism-config/9leXA3VpQwCh9wOjzpNrUw]
+[2025-02-20T15:07:57,540][INFO ][o.o.j.JobSchedulerPlugin ] [7cf34ddf1c97] JobSweeper started listening to operations on index .opendistro-ism-config
+[2025-02-20T15:07:57,547][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [.opendistro-ism-config] creating index, cause [api], templates [], shards [1]/[1]
+[2025-02-20T15:07:57,548][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:07:57,580][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[.opendistro-ism-config/9leXA3VpQwCh9wOjzpNrUw]
+[2025-02-20T15:07:57,580][INFO ][o.o.j.JobSchedulerPlugin ] [7cf34ddf1c97] JobSweeper started listening to operations on index .opendistro-ism-config
+[2025-02-20T15:07:57,596][ERROR][o.o.i.i.ManagedIndexCoordinator] [7cf34ddf1c97] Failed to get ISM policies with templates: Failed to execute phase [query], all shards failed
+[2025-02-20T15:07:57,672][INFO ][o.o.i.i.t.a.i.TransportIndexPolicyAction] [7cf34ddf1c97] Successfully created or updated .opendistro-ism-config with newest mappings.
+[2025-02-20T15:07:57,675][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:08:08,482][INFO ][o.o.i.i.ManagedIndexCoordinator] [7cf34ddf1c97] Performing ISM template migration.
+[2025-02-20T15:08:08,483][INFO ][o.o.i.i.m.ISMTemplateService] [7cf34ddf1c97] Doing ISM template migration 1 time.
+[2025-02-20T15:08:08,483][INFO ][o.o.i.i.m.ISMTemplateService] [7cf34ddf1c97] Use 2025-02-20T22:07:08.477Z as migrating ISM template last_updated_time
+[2025-02-20T15:08:08,483][INFO ][o.o.i.i.m.ISMTemplateService] [7cf34ddf1c97] ISM templates: {}
+[2025-02-20T15:08:08,483][INFO ][o.o.i.i.m.ISMTemplateService] [7cf34ddf1c97] Policies to update: []
+[2025-02-20T15:08:08,483][INFO ][o.o.i.i.ManagedIndexCoordinator] [7cf34ddf1c97] Performing move cluster state metadata.
+[2025-02-20T15:08:08,484][INFO ][o.o.i.i.MetadataService  ] [7cf34ddf1c97] Doing metadata migration 1 time.
+[2025-02-20T15:08:08,484][INFO ][o.o.i.i.m.ISMTemplateService] [7cf34ddf1c97] Failure experienced when migrating ISM Template and update ISM policies: {}
+[2025-02-20T15:08:08,485][INFO ][o.o.i.i.MetadataService  ] [7cf34ddf1c97] Corrupt managed indices with outdated index uuid in metadata: []
+[2025-02-20T15:08:08,524][INFO ][o.o.c.s.ClusterSettings  ] [7cf34ddf1c97] updating [plugins.index_state_management.template_migration.control] from [0] to [-1]
+[2025-02-20T15:08:08,526][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:08:08,526][INFO ][o.o.i.i.m.ISMTemplateService] [7cf34ddf1c97] Successfully update template migration setting
+[2025-02-20T15:08:09,106][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[ism-index-000001/tUf53qETQZW5hqoABOGajA]
+[2025-02-20T15:08:09,108][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [ism-index-000001] creating index, cause [api], templates [], shards [1]/[1]
+[2025-02-20T15:08:09,111][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:08:09,185][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[ism-index-000001/tUf53qETQZW5hqoABOGajA]
+[2025-02-20T15:08:09,274][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:08:14,929][INFO ][o.o.i.i.t.a.a.TransportAddPolicyAction] [7cf34ddf1c97] Successfully created or updated .opendistro-ism-config with newest mappings.
+[2025-02-20T15:08:14,936][INFO ][o.o.j.s.JobScheduler     ] [7cf34ddf1c97] Scheduling job id tUf53qETQZW5hqoABOGajA for index .opendistro-ism-config .
+[2025-02-20T15:08:14,936][INFO ][o.o.j.s.JobScheduler     ] [7cf34ddf1c97] Will delay 17414 miliseconds for next execution of job ism-index-000001
+[2025-02-20T15:08:20,602][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[ism-index-000002/1MylIJL4QlG2EGc1jHgoNA]
+[2025-02-20T15:08:20,603][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [ism-index-000002] creating index, cause [rollover_index], templates [], shards [1]/[1]
+[2025-02-20T15:08:20,603][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:08:20,665][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[ism-index-000002/1MylIJL4QlG2EGc1jHgoNA]
+[2025-02-20T15:08:20,749][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:08:31,983][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:08:31,984][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[ism-index-000001/tUf53qETQZW5hqoABOGajA]
+[2025-02-20T15:08:32,050][INFO ][o.o.j.s.JobSweeper       ] [7cf34ddf1c97] Descheduling job tUf53qETQZW5hqoABOGajA on index .opendistro-ism-config
+[2025-02-20T15:08:32,053][INFO ][o.o.j.s.JobScheduler     ] [7cf34ddf1c97] Descheduling jobId: tUf53qETQZW5hqoABOGajA
+[2025-02-20T15:08:37,732][INFO ][o.o.k.p.s.s.ModelIndexStatusSupplier] [7cf34ddf1c97] no such index [.opensearch-knn-models]
+[2025-02-20T15:08:43,658][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[train-index/f6lvXAvrTVWaK8rgNCfL6g]
+[2025-02-20T15:08:43,664][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [train-index] creating index, cause [api], templates [], shards [3]/[0]
+[2025-02-20T15:08:43,664][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:08:43,714][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[train-index/f6lvXAvrTVWaK8rgNCfL6g]
+[2025-02-20T15:08:43,902][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:09:00,943][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA]
+[2025-02-20T15:09:00,957][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA] update_mapping [_doc]
+[2025-02-20T15:09:06,650][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA]
+[2025-02-20T15:09:06,652][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [security-auditlog-2025.02.20/TJPZT7UhTTS8UhuYDK5FHA] update_mapping [_doc]
+[2025-02-20T15:09:06,748][INFO ][stdout                   ] [7cf34ddf1c97] [FINE] No subscribers registered for event class org.opensearch.security.securityconf.DynamicConfigFactory$NodesDnModelImpl
+[2025-02-20T15:09:06,748][INFO ][stdout                   ] [7cf34ddf1c97] [FINE] No subscribers registered for event class org.greenrobot.eventbus.NoSubscriberEvent
+[2025-02-20T15:09:06,748][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing on REST API is enabled.
+[2025-02-20T15:09:06,749][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] [AUTHENTICATED, GRANTED_PRIVILEGES] are excluded from REST API auditing.
+[2025-02-20T15:09:06,749][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing on Transport API is enabled.
+[2025-02-20T15:09:06,749][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] [AUTHENTICATED, GRANTED_PRIVILEGES] are excluded from Transport API auditing.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of request body is enabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Bulk requests resolution is disabled during request auditing.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Index resolution is enabled during request auditing.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Sensitive headers exclusion from auditing is enabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing requests from kibanaserver users is disabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing request headers <NONE> is disabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing request url params <NONE> is disabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of external configuration is disabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of internal configuration is enabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing only metadata information for read request is enabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing will watch {} for read requests.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing read operation requests from kibanaserver users is disabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing only metadata information for write request is enabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing diffs for write requests is disabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing write operation requests from kibanaserver users is disabled.
+[2025-02-20T15:09:06,750][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing will watch <NONE> for write requests.
+[2025-02-20T15:09:06,753][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] .opendistro_security is used as internal security index.
+[2025-02-20T15:09:06,753][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Internal index used for posting audit logs is null
+[2025-02-20T15:09:08,487][INFO ][o.o.i.i.ManagedIndexCoordinator] [7cf34ddf1c97] Performing move cluster state metadata.
+[2025-02-20T15:09:08,487][INFO ][o.o.i.i.MetadataService  ] [7cf34ddf1c97] Doing metadata migration 2 time.
+[2025-02-20T15:09:08,488][INFO ][o.o.i.i.MetadataService  ] [7cf34ddf1c97] Corrupt managed indices with outdated index uuid in metadata: []
+[2025-02-20T15:09:18,270][INFO ][stdout                   ] [7cf34ddf1c97] [FINE] No subscribers registered for event class org.opensearch.security.securityconf.DynamicConfigFactory$NodesDnModelImpl
+[2025-02-20T15:09:18,270][INFO ][stdout                   ] [7cf34ddf1c97] [FINE] No subscribers registered for event class org.greenrobot.eventbus.NoSubscriberEvent
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing on REST API is enabled.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] [AUTHENTICATED, GRANTED_PRIVILEGES] are excluded from REST API auditing.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing on Transport API is enabled.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] [AUTHENTICATED, GRANTED_PRIVILEGES] are excluded from Transport API auditing.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of request body is enabled.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Bulk requests resolution is disabled during request auditing.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Index resolution is enabled during request auditing.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Sensitive headers exclusion from auditing is enabled.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing requests from kibanaserver users is disabled.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing request headers <NONE> is disabled.
+[2025-02-20T15:09:18,270][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing request url params <NONE> is disabled.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of external configuration is disabled.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of internal configuration is enabled.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing only metadata information for read request is enabled.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing will watch {} for read requests.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing read operation requests from kibanaserver users is disabled.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing only metadata information for write request is enabled.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing diffs for write requests is disabled.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing write operation requests from kibanaserver users is disabled.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing will watch <NONE> for write requests.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] .opendistro_security is used as internal security index.
+[2025-02-20T15:09:18,271][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Internal index used for posting audit logs is null
+[2025-02-20T15:09:30,084][INFO ][stdout                   ] [7cf34ddf1c97] [FINE] No subscribers registered for event class org.opensearch.security.securityconf.DynamicConfigFactory$NodesDnModelImpl
+[2025-02-20T15:09:30,084][INFO ][stdout                   ] [7cf34ddf1c97] [FINE] No subscribers registered for event class org.greenrobot.eventbus.NoSubscriberEvent
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing on REST API is enabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] [AUTHENTICATED, GRANTED_PRIVILEGES] are excluded from REST API auditing.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing on Transport API is enabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] [AUTHENTICATED, GRANTED_PRIVILEGES] are excluded from Transport API auditing.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of request body is enabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Bulk requests resolution is disabled during request auditing.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Index resolution is enabled during request auditing.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Sensitive headers exclusion from auditing is enabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing requests from kibanaserver users is disabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing request headers <NONE> is disabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing request url params <NONE> is disabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of external configuration is disabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing of internal configuration is enabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing only metadata information for read request is enabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing will watch {} for read requests.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing read operation requests from kibanaserver users is disabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing only metadata information for write request is enabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing diffs for write requests is disabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing write operation requests from kibanaserver users is disabled.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Auditing will watch <NONE> for write requests.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] .opendistro_security is used as internal security index.
+[2025-02-20T15:09:30,085][INFO ][o.o.s.a.i.AuditLogImpl   ] [7cf34ddf1c97] Internal index used for posting audit logs is null
+[2025-02-20T15:09:35,950][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[accounts/qmFPw-vyT1yesOuTyEYgRg]
+[2025-02-20T15:09:35,951][INFO ][o.o.c.m.MetadataCreateIndexService] [7cf34ddf1c97] [accounts] creating index, cause [auto(bulk api)], templates [], shards [1]/[1]
+[2025-02-20T15:09:35,952][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:09:36,005][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[accounts/qmFPw-vyT1yesOuTyEYgRg]
+[2025-02-20T15:09:36,141][WARN ][o.o.c.r.a.AllocationService] [7cf34ddf1c97] Falling back to single shard assignment since batch mode disable or multiple custom allocators set
+[2025-02-20T15:09:36,144][INFO ][o.o.p.PluginsService     ] [7cf34ddf1c97] PluginService:onIndexModule index:[accounts/qmFPw-vyT1yesOuTyEYgRg]
+[2025-02-20T15:09:36,146][INFO ][o.o.c.m.MetadataMappingService] [7cf34ddf1c97] [accounts/qmFPw-vyT1yesOuTyEYgRg] create_mapping
+[2025-02-20T15:09:41,838][INFO ][o.o.s.l.p.RestSqlAction  ] [7cf34ddf1c97] [02784eff-c247-437c-b2d3-81dfb1665844] Incoming request /_plugins/_sql
+[2025-02-20T15:09:41,926][INFO ][o.o.s.s.a.SQLSyntaxParser] [7cf34ddf1c97] New Engine Request Query: ( SELECT * FROM table )
+[2025-02-20T15:09:42,005][INFO ][o.o.s.l.p.RestSQLQueryAction] [7cf34ddf1c97] [9d1f4c73-e4b4-44cf-9be4-193b9b4839e3] Request is handled by new SQL query engine
+[2025-02-20T15:09:47,606][INFO ][o.o.s.l.p.RestSqlAction  ] [7cf34ddf1c97] [fea45e04-f05d-4665-98a2-d9dbfac03e7d] Incoming request /_plugins/_sql/_explain
+[2025-02-20T15:09:47,615][INFO ][o.o.s.s.a.SQLSyntaxParser] [7cf34ddf1c97] New Engine Request Query: ( SELECT identifier, identifier FROM table WHERE identifier > number )
+[2025-02-20T15:09:47,627][INFO ][o.o.s.l.p.RestSQLQueryAction] [7cf34ddf1c97] [5019a6cd-fb2e-4af8-92c5-c9dd267d58d4] Request is handled by new SQL query engine
+[2025-02-20T15:09:58,923][INFO ][o.o.s.p.PPLService       ] [7cf34ddf1c97] [0edd9705-7d49-4fc5-9cec-50ea31a8127f] Incoming request source=accounts | where age > *** | fields + firstname,lastname,balance
+[2025-02-20T15:10:04,538][INFO ][o.o.s.p.PPLService       ] [7cf34ddf1c97] [aa970deb-6acf-4308-8e33-d8a4dfc3e449] Incoming request source=accounts | fields + firstname,lastname
+[2025-02-20T15:10:08,492][INFO ][o.o.i.i.ManagedIndexCoordinator] [7cf34ddf1c97] Performing move cluster state metadata.
+[2025-02-20T15:10:08,492][INFO ][o.o.i.i.MetadataService  ] [7cf34ddf1c97] Doing metadata migration 3 time.
+[2025-02-20T15:10:08,492][INFO ][o.o.i.i.MetadataService  ] [7cf34ddf1c97] Corrupt managed indices with outdated index uuid in metadata: []

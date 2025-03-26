@@ -1,0 +1,8 @@
+component_name: index-management
+run_id: 12345
+test_config: POST__rollover-alias__rollover
+test_result: PASS
+test_result_files:
+- /Users/zelinhao/workspace/fork/opensearch-build/test-results/12345/smoke-test/index-management/POST__rollover-alias__rollover/stdout.txt
+- /Users/zelinhao/workspace/fork/opensearch-build/test-results/12345/smoke-test/index-management/POST__rollover-alias__rollover/stderr.txt
+test_type: smoke-test
