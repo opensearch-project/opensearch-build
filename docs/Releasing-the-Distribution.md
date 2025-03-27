@@ -58,6 +58,8 @@ These are the issues created by automation with the distribution build and integ
 
 #### Build Workflows
 
+__Note: [OpenSearch CI/CD system](https://build.ci.opensearch.org/) now requires authentication for readOnly access as well. Please proceed to login using your GitHub.__
+
 | Workflow                                                                                                                      | Description         |
 | ----------------------------------------------------------------------------------------------------------------------------- | ------------------- |
 | [Check for Build](https://build.ci.opensearch.org/job/check-for-build/)                                                       | Workflow that periodically triggers the distribution workflows using parameterized cron. |

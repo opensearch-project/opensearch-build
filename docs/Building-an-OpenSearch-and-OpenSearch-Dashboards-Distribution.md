@@ -12,12 +12,18 @@ Manifests are the single source of truth for building and testing the distributi
   
 ### Building from Source
   
-Input manifests are the source of building the distributions. Each input manifest also contains the docker image that can be used to build these distributions and avoid installing bunch of packages. See [CI image details](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/3.0.0/opensearch-3.0.0.yml#L8-L9) in the manifest.
+Input manifests are the source of building the distributions. Each input manifest also contains the docker image that can be used to build these distributions and avoid installing bunch of packages. See [CI image details](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/3.0.0/opensearch-3.0.0.yml#L8-L9) in the manifest along with java version used to build the distribution.
   
 To run locally:
 ```bash
-  docker run -it -d --entrypoint bash opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2 -e JAVA_HOME=/opt/java/openjdk-20
+  docker run -it --entrypoint bash opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1
 ```
+Once you are inside the container:
+```
+export JAVA_HOME=/opt/java/openjdk-20
+git clone https://github.com/opensearch-project/opensearch-build.git
+```
+
 Then build from source:
   
 ```bash
@@ -67,7 +73,8 @@ OpenSearch is often released with changes in `opensearch-min`, and no changes to
   
 #### CI/CD Environment
   
-We use Jenkins as our CI/CD infrastructure to build, test and release OpenSearch and OpenSearch Dashboards. Access it [here](https://build.ci.opensearch.org/)
+We use Jenkins as our CI/CD infrastructure to build, test and release OpenSearch and OpenSearch Dashboards.
+[OpenSearch CI/CD system](https://build.ci.opensearch.org/) now requires authentication for readOnly access as well. Please proceed to login using your GitHub.
   
 We build, assemble, and test our artifacts on docker containers. We provide docker files in [docker/ci](https://github.com/opensearch-project/opensearch-build/tree/main/docker/ci) folder, and images on [staging docker hub repositories](https://hub.docker.com/r/opensearchstaging/ci-runner/). All Jenkins pipelines can be found in [jenkins](https://github.com/opensearch-project/opensearch-build/tree/main/jenkins). The Jenkins is deployed using infrastructure as a Code and can be found in [opensearch-ci](https://github.com/opensearch-project/opensearch-ci) repository.
   

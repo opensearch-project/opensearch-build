@@ -22,6 +22,8 @@ The **Standalone Component Release**, on the other hand, primarily utilizes GitH
 
 This group consists of workflows that clone, build, assemble, and store OpenSearch/OpenSearch-Dashboards and its related plugin artifacts in one take.
 
+__Note: [OpenSearch CI/CD system](https://build.ci.opensearch.org/) now requires authentication for readOnly access as well. Please proceed to login using your GitHub.__
+
 ##### **2.1.1.1 Check-for-build**
 The "[check-for-build](https://build.ci.opensearch.org/job/check-for-build/)" workflow is used to periodically check out the latest change in opensearch-project repositories and is usually set to trigger every 60 minutes. It compares the head commit of the given branch in all component repositories with the stored caches on the staging S3 bucket. If any discrepancies are identified, it would then trigger the build/assemble workflows, specifically the "[distribution-build-opensearch](https://build.ci.opensearch.org/job/distribution-build-opensearch/)" and "[distribution-build-opensearch-dashboards](https://build.ci.opensearch.org/job/distribution-build-opensearch-dashboards/)" workflows. 
 
