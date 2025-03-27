@@ -69,7 +69,7 @@ perform_curl_and_process_with_jq() {
     local success=false
 
     while [ "$count" -lt "$max_retries" ]; do
-        response=$(curl -s -XGET "${url}api/json --user ${GITHUB_USER}:${GITHUB_TOKEN}")
+        response=$(curl -XGET "${url}api/json --user ${GITHUB_USER}:${GITHUB_TOKEN}")
         processed_response=$(echo "$response" | jq --raw-output "$jq_filter")
         jq_exit_code=$?
 
@@ -109,7 +109,7 @@ echo "Check if queue exist in Jenkins after triggering"
 if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
     while [ "$RESULT" = "null" ] && [ "$TIMEPASS" -le "$TIMEOUT" ]; do
         echo "Use queue information to find build number in Jenkins if available"
-        WORKFLOW_URL=$(curl -s -XGET ${JENKINS_URL}/${QUEUE_URL}api/json --user ${GITHUB_USER}:${GITHUB_TOKEN} | jq --raw-output .executable.url)
+        WORKFLOW_URL=$(curl -XGET ${JENKINS_URL}/${QUEUE_URL}api/json --user ${GITHUB_USER}:${GITHUB_TOKEN} | jq --raw-output .executable.url)
         echo WORKFLOW_URL $WORKFLOW_URL
     
         if [ -n "$WORKFLOW_URL" ] && [ "$WORKFLOW_URL" != "null" ]; then
@@ -131,7 +131,7 @@ if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
                 RESULT="TIMEOUT"
             else
                 echo "Complete the run, checking results now......"
-                RESULT=$(curl -s -XGET ${WORKFLOW_URL}api/json --user ${GITHUB_USER}:${GITHUB_TOKEN} | jq --raw-output .result)
+                RESULT=$(curl -XGET ${WORKFLOW_URL}api/json --user ${GITHUB_USER}:${GITHUB_TOKEN} | jq --raw-output .result)
             fi
     
         else
@@ -145,7 +145,7 @@ fi
 echo "Please check jenkins url for logs: $WORKFLOW_URL"
 echo "Result: $RESULT"
 if [ "$RESULT" == "SUCCESS" ] || [ "$RESULT" == "UNSTABLE" ]; then
-    echo "Get codeCoverage.xml" && curl -SLO ${WORKFLOW_URL}artifact/codeCoverage.xml
+    echo "Get codeCoverage.xml" && curl -SLO ${WORKFLOW_URL}artifact/codeCoverage.xml --user ${GITHUB_USER}:${GITHUB_TOKEN}
 else
     exit 1
 fi
