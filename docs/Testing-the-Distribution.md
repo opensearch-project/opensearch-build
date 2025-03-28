@@ -151,6 +151,8 @@ The `build` workflow automates the process to generate all OpenSearch and OpenSe
 
 ### Integration tests
 
+__Note: [OpenSearch CI/CD system](https://build.ci.opensearch.org/) now requires authentication for readOnly access as well. Please proceed to login using your GitHub account.__
+
 The integration tests for OpenSearch are run via [integ-test](https://build.ci.opensearch.org/view/Test/job/integ-test/) job and for OpenSearch-Dashboards via [integ-test-opensearch-dashboards](https://build.ci.opensearch.org/view/Test/job/integ-test-opensearch-dashboards/) job. These jobs are mainly triggered via distribution build jobs after a distribution is created successfully. They are also triggered manually when required such as during releases or via cronjobs.
 The job reads the build artifact composition from the associated manifest files and spins up parallel, independent integrationTest runs for each component built inside the artifact. For instance, if the artifact is a full distribution, which has all OpenSearch plugins, the job will kick off integration test suite for each individual plugin. Each plugin is run on an independent cluster and in independent container. After the test runs are complete, a test-report is generated using [report-workflow](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow). 
 
