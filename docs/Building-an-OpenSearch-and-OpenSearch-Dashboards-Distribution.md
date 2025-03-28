@@ -18,9 +18,9 @@ To run locally:
 ```bash
   docker run -it --entrypoint bash opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1
 ```
-Once you are inside the container:
+Once you are inside the container set JAVA_HOME as stated in the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/3.0.0-alpha1/opensearch-3.0.0-alpha1.yml#L10):
 ```
-export JAVA_HOME=/opt/java/openjdk-20
+export JAVA_HOME=/opt/java/openjdk-21
 git clone https://github.com/opensearch-project/opensearch-build.git
 ```
 
