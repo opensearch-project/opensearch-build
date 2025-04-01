@@ -102,9 +102,9 @@ class TestReportRunner:
         test_component = self.test_manifest.components[component_name]
 
         config_names = []
-        if "test-configs" in test_component.__to_dict__().get(self.test_type):
+        if self.test_type == "integ-test":
             config_names = [config for config in test_component.__to_dict__().get(self.test_type)["test-configs"]]
-        elif "test-spec" in test_component.__to_dict__().get(self.test_type):
+        elif self.test_type == "smoke-test":
             config_names = self.get_spec_path(self.test_report_data["version"], test_component.__to_dict__().get(self.test_type)["test-spec"])
         logging.info(f"Configs for {component_name} on {self.test_type} are {config_names}")
         for config in config_names:
@@ -240,6 +240,8 @@ def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, compon
     elif test_type == "smoke-test":
         os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, "local-cluster-logs", "stdout.txt"))
         os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, "local-cluster-logs", "stderr.txt"))
+    else:
+        logging.error(f"Test Type {test_type} is not supported")
 
     return [os_stdout, os_stderr]
 
