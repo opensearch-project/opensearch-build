@@ -67,3 +67,16 @@ class TestSignArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [SIGN_PY, OPENSEARCH_MANIFEST, "--platform", "windows", "--overwrite"])
     def test_platform_windows_overwrite(self) -> None:
         self.assertEqual(SignArgs().overwrite, True)
+
+    @patch("argparse._sys.argv", [SIGN_PY, OPENSEARCH_MANIFEST])
+    def test_email_default(self) -> None:
+        self.assertEqual(SignArgs().email, "opensearch@amazon.com")
+
+    @patch("argparse._sys.argv", [SIGN_PY, OPENSEARCH_MANIFEST, "--email", "release@opensearch.org"])
+    def test_email_option(self) -> None:
+        self.assertEqual(SignArgs().email, "release@opensearch.org")
+
+    @patch("argparse._sys.argv", [SIGN_PY, OPENSEARCH_MANIFEST, "--email", "foo"])
+    def test_email_invalid(self) -> None:
+        with self.assertRaises(SystemExit):
+            SignArgs()
