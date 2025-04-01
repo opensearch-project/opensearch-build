@@ -1,0 +1,8 @@
+component_name: index-management
+run_id: 12345
+test_config: POST___plugins__ism_remove_ism-index-000001
+test_result: PASS
+test_result_files:
+- /Users/zelinhao/workspace/fork/opensearch-build/test-results/12345/smoke-test/index-management/POST___plugins__ism_remove_ism-index-000001/stdout.txt
+- /Users/zelinhao/workspace/fork/opensearch-build/test-results/12345/smoke-test/index-management/POST___plugins__ism_remove_ism-index-000001/stderr.txt
+test_type: smoke-test

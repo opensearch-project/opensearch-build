@@ -1,0 +1,7 @@
+Validating api request /_plugins/_ism/explain/ism-index-000001
+API request URL is https://localhost:9200/_plugins/_ism/explain/ism-index-000001
+Parameter is  and type is <class 'str'>
+header is {'Content-Type': 'application/json'}
+Response is 
+{"ism-index-000001":{"index.plugins.index_state_management.policy_id":"policy_1","index.opendistro.index_state_management.policy_id":"policy_1","index":"ism-index-000001","index_uuid":"tUf53qETQZW5hqoABOGajA","policy_id":"policy_1","enabled":true},"total_managed_indices":1}
+Response is validated.

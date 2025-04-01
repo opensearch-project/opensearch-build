@@ -1,0 +1,8 @@
+Validating api request /ism-index-000001
+API request URL is https://localhost:9200/ism-index-000001
+Parameter is {"aliases": {"rollover-alias": {"is_write_index": true}}}
+ and type is <class 'str'>
+header is {'Content-Type': 'application/json'}
+Response is 
+{"acknowledged":true,"shards_acknowledged":true,"index":"ism-index-000001"}
+Response is validated.

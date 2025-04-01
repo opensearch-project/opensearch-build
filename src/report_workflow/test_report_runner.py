@@ -101,7 +101,11 @@ class TestReportRunner:
 
         test_component = self.test_manifest.components[component_name]
 
-        config_names = [config for config in test_component.__to_dict__().get(self.test_type)["test-configs"]]
+        config_names = []
+        if self.test_type == "integ-test":
+            config_names = [config for config in test_component.__to_dict__().get(self.test_type)["test-configs"]]
+        elif self.test_type == "smoke-test":
+            config_names = self.get_spec_path(self.test_report_data["version"], test_component.__to_dict__().get(self.test_type)["test-spec"])
         logging.info(f"Configs for {component_name} on {self.test_type} are {config_names}")
         for config in config_names:
             config_dict = {
@@ -164,6 +168,28 @@ class TestReportRunner:
 
         return templates[template_type]
 
+    def get_spec_path(self, version: str, spec_file: str) -> list:
+        # loading spec yaml file
+        api_paths = []
+        spec_paths = [
+            os.path.join(os.getcwd(), "src", "test_workflow", "smoke_test", "smoke_tests_spec", f"{version.split('.')[0]}.x", spec_file),
+            os.path.join(os.getcwd(), "src", "test_workflow", "smoke_test", "smoke_tests_spec", "default", spec_file)
+        ]
+        logging.info(f"spec_paths is {spec_paths}")
+        for spec_file_path in spec_paths:
+            if os.path.exists(spec_file_path):
+                logging.info(f"Loading {spec_file} from {spec_file_path}")
+                with open(spec_file_path, 'r') as file:
+                    data = yaml.safe_load(file)
+                paths = data.get('paths', {})
+                for api_requests, api_details in paths.items():
+                    for method in api_details.keys():
+                        api_path = '_'.join([method, api_requests.replace("/", "_")])
+                        logging.info(f"api_path is {api_path}")
+                        api_paths.append(api_path)
+                break
+        return api_paths
+
 
 def generate_component_yml_ref(base_path: str, test_number: str, test_type: str, component_name: str,
                                config: str) -> str:
@@ -198,19 +224,24 @@ def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, compon
     os_stdout: list = []
     os_stderr: list = []
     cluster_ids: list
-
-    if product_name == 'opensearch':
-        cluster_ids = ['id-0'] if config == 'with-security' else ['id-1']
-    else:
-        cluster_ids = ['id-0', 'id-1'] if config == 'with-security' else ['id-2', 'id-3']
-
-    for ids in cluster_ids:
-        if base_path.startswith("https://"):
-            os_stdout.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"]))
-            os_stderr.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"]))
+    if test_type == "integ-test":
+        if product_name == 'opensearch':
+            cluster_ids = ['id-0'] if config == 'with-security' else ['id-1']
         else:
-            os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"))
-            os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"))
+            cluster_ids = ['id-0', 'id-1'] if config == 'with-security' else ['id-2', 'id-3']
+
+        for ids in cluster_ids:
+            if base_path.startswith("https://"):
+                os_stdout.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"]))
+                os_stderr.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"]))
+            else:
+                os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"))
+                os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"))
+    elif test_type == "smoke-test":
+        os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, "local-cluster-logs", "stdout.txt"))
+        os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, "local-cluster-logs", "stderr.txt"))
+    else:
+        logging.error(f"Test Type {test_type} is not supported")
 
     return [os_stdout, os_stderr]
 
