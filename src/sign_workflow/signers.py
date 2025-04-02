@@ -30,6 +30,6 @@ class Signers:
         return klass  # type: ignore[return-value]
 
     @classmethod
-    def create(cls, platform: str, overwrite: bool) -> Signer:
+    def create(cls, platform: str, overwrite: bool, email: str) -> Signer:
         klass = cls.from_platform(platform)
-        return klass(overwrite)  # type: ignore[no-any-return, operator]
+        return klass(overwrite, email) if klass is SignerPGP else klass(overwrite)  # type: ignore[no-any-return, operator]

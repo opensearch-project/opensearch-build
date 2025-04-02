@@ -23,16 +23,17 @@ class TestSignArtifacts(unittest.TestCase):
         components = ['maven']
         artifact_type = 'dummy'
         sigtype = '.asc'
+        email = 'release@opensearch.org'
         platform = 'linux'
         overwrite = False
 
-        klass = SignArtifacts.from_path(Path(r"/dummy/path/manifest.yml"), components, artifact_type, sigtype, platform, overwrite)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/manifest.yml"), components, artifact_type, sigtype, email, platform, overwrite)
         self.assertEqual(type(SignWithBuildManifest), type(klass.__class__))
 
-        klass = SignArtifacts.from_path(Path(os.path.dirname(__file__)), components, artifact_type, sigtype, platform, overwrite)
+        klass = SignArtifacts.from_path(Path(os.path.dirname(__file__)), components, artifact_type, sigtype, email, platform, overwrite)
         self.assertEqual(type(SignExistingArtifactsDir), type(klass.__class__))
 
-        klass = SignArtifacts.from_path(Path(r"/dummy/path/artifact.tar.gz"), components, artifact_type, sigtype, platform, overwrite)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/artifact.tar.gz"), components, artifact_type, sigtype, email, platform, overwrite)
         self.assertEqual(type(SignArtifactsExistingArtifactFile), type(klass.__class__))
 
     def test_signer_class(self) -> None:
@@ -52,6 +53,7 @@ class TestSignArtifacts(unittest.TestCase):
     def test_sign_with_build_manifest(self, mock_repo: Mock) -> None:
         manifest = Path(os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml"))
         sigtype = '.asc'
+        email = 'release@opensearch.org'
         platform = 'windows'
         overwrite = False
         signer_with_manifest = SignWithBuildManifest(
@@ -59,6 +61,7 @@ class TestSignArtifacts(unittest.TestCase):
             components=[],
             artifact_type="maven",
             signature_type=sigtype,
+            email=email,
             platform=platform,
             overwrite=overwrite
         )
@@ -79,6 +82,7 @@ class TestSignArtifacts(unittest.TestCase):
     def test_sign_existing_artifacts_file(self, mock_repo: Mock) -> None:
         path = Path(r"/dummy/path/file.tar.gz")
         sigtype = '.sig'
+        email = 'release@opensearch.org'
         platform = 'linux'
         overwrite = False
         signer_with_manifest = SignArtifactsExistingArtifactFile(
@@ -86,6 +90,7 @@ class TestSignArtifacts(unittest.TestCase):
             components=['maven'],
             artifact_type='dummy',
             signature_type=sigtype,
+            email=email,
             platform=platform,
             overwrite=overwrite
         )
@@ -103,6 +108,7 @@ class TestSignArtifacts(unittest.TestCase):
         ]
         path = Path('dummy')
         sigtype = '.sig'
+        email = 'release@opensearch.org'
         platform = 'linux'
         overwrite = False
         signer_with_manifest = SignExistingArtifactsDir(
@@ -110,6 +116,7 @@ class TestSignArtifacts(unittest.TestCase):
             components=['maven'],
             artifact_type='dummy',
             signature_type=sigtype,
+            email=email,
             platform=platform,
             overwrite=overwrite
         )

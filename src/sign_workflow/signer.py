@@ -18,6 +18,7 @@ from git.git_repository import GitRepository
 class Signer(ABC):
     git_repo: GitRepository
     overwrite: bool
+    email: str
 
     def __init__(self, overwrite: bool) -> None:
         self.overwrite = overwrite

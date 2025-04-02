@@ -22,16 +22,19 @@ class SignArtifacts:
     component: str
     artifact_type: str
     signature_type: str
+    email: str
     platform: str
     signer: Signer
 
-    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, platform: str, overwrite: bool) -> None:
+    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, email: str,
+                 platform: str, overwrite: bool) -> None:
         self.target = target
         self.components = components
         self.artifact_type = artifact_type
         self.signature_type = signature_type
+        self.email = email
         self.platform = platform
-        self.signer = Signers.create(platform, overwrite)
+        self.signer = Signers.create(platform, overwrite, email)
 
     @abstractmethod
     def __sign__(self) -> None:
@@ -57,9 +60,10 @@ class SignArtifacts:
             return SignArtifactsExistingArtifactFile
 
     @classmethod
-    def from_path(self, path: Path, components: List[str], artifact_type: str, signature_type: str, platform: str, overwrite: bool) -> Any:
+    def from_path(self, path: Path, components: List[str], artifact_type: str, signature_type: str, email: str,
+                  platform: str, overwrite: bool) -> Any:
         klass = self.__signer_class__(path)
-        return klass(path, components, artifact_type, signature_type, platform, overwrite)
+        return klass(path, components, artifact_type, signature_type, email, platform, overwrite)
 
 
 class SignWithBuildManifest(SignArtifacts):
