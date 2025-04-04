@@ -184,4 +184,11 @@ parameters {
             }
         }
     }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
 }
