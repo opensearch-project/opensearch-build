@@ -25,6 +25,7 @@ class ValidateRpm(Validation, DownloadUtils):
     def installation(self) -> bool:
         try:
             execute('sudo rpm --import https://artifacts.opensearch.org/publickeys/opensearch.pgp', str(self.tmp_dir.path), True, False)
+            execute('sudo rpm --import https://artifacts.opensearch.org/publickeys/opensearch-release.pgp', str(self.tmp_dir.path), True, False)
             for project in self.args.projects:
                 self.filename = os.path.basename(self.args.file_path.get(project))
                 self.validate_metadata(project)
