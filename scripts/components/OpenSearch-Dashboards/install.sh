@@ -84,12 +84,14 @@ if ! (ls ../../../config/ | grep -E "opensearch_dashboards-.*.x.yml" | grep $MAJ
     MAJOR_VERSION="default"
 fi
 
-if [ "$DISTRIBUTION" = "rpm" -o "$DISTRIBUTION" = "deb" ]; then
+if [ "$DISTRIBUTION" = "rpm" ] || [ "$DISTRIBUTION" = "deb" ]; then
     cp -v ../../../config/opensearch_dashboards-$MAJOR_VERSION.x.yml "$OUTPUT/../etc/opensearch-dashboards/opensearch_dashboards.yml"
     cp -va ../../../scripts/pkg/service_templates/opensearch-dashboards/* "$OUTPUT/../"
 
     if [ "$MAJOR_VERSION" = "1" ]; then
-        cp -va ../../../scripts/pkg/build_templates/legacy/opensearch-dashboards/$DISTRIBUTION/* "$OUTPUT/../"
+        cp -va ../../../scripts/pkg/build_templates/1.x/opensearch-dashboards/$DISTRIBUTION/* "$OUTPUT/../"
+    elif [ "$MAJOR_VERSION" = "2" ]; then
+        cp -va ../../../scripts/pkg/build_templates/2.x/opensearch-dashboards/$DISTRIBUTION/* "$OUTPUT/../"
     else
         cp -va ../../../scripts/pkg/build_templates/current/opensearch-dashboards/$DISTRIBUTION/* "$OUTPUT/../"
     fi
