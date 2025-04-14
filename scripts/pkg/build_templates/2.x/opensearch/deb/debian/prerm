@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
+# deb opensearch prerm script
+
+set -e
+
+echo "Running OpenSearch Pre-Removal Script"
+
+# Stop existing service
+if command -v systemctl >/dev/null && systemctl is-active opensearch.service >/dev/null; then
+    echo "Stop existing opensearch.service"
+    systemctl --no-reload stop opensearch.service
+fi
+if command -v systemctl >/dev/null && systemctl is-active opensearch-performance-analyzer.service >/dev/null; then
+    echo "Stop existing opensearch-performance-analyzer.service"
+    systemctl --no-reload stop opensearch-performance-analyzer.service
+fi
+
+exit 0
