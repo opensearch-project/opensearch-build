@@ -189,7 +189,7 @@ exit 0
 %{product_dir}/manifest.yml
 
 # Main dirs
-## agent dir is introduced in 3.0.0-beta
+## agent dir is introduced in 3.0.0-beta1
 ## performance-analyzer-rca was removed in 3.0.0-alpha1 due to deprecation
 %{product_dir}/agent
 %{product_dir}/bin
