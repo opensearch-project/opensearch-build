@@ -39,7 +39,7 @@ Please refer to the [release process document](https://github.com/opensearch-pro
 
 #### Releases and Versions
 
-The OpenSearch project releases as versioned distributions of OpenSearch, OpenSearch Dashboards, and the OpenSearch plugins. It [follows semantic versioning](https://opensearch.org/blog/technical-post/2021/08/what-is-semver/). Software, such as Data Prepper, clients, and the Logstash output plugin, are versioned independently of the OpenSearch Project. They also may have independent releases from the main project distributions. The OpenSearch Project may also release software under alpha, beta, release candidate, and generally available labels. The definition of when to use these labels is derived from [the Wikipedia page on Software release lifecycle](https://en.wikipedia.org/wiki/Software_release_life_cycle). Below is the definition of when to use each label.
+The OpenSearch project releases as versioned distributions of OpenSearch, OpenSearch Dashboards, and the OpenSearch plugins. It [follows semantic versioning](https://opensearch.org/what-is-semver/). Software, such as Data Prepper, clients, and the Logstash output plugin, are versioned independently of the OpenSearch Project. They also may have independent releases from the main project distributions. The OpenSearch Project may also release software under alpha, beta, release candidate, and generally available labels. The definition of when to use these labels is derived from [the Wikipedia page on Software release lifecycle](https://en.wikipedia.org/wiki/Software_release_life_cycle). Below is the definition of when to use each label.
 
 #### Release labels:
 
