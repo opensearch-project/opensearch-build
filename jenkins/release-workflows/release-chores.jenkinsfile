@@ -83,6 +83,7 @@ parameters {
                         currentBuild.result = 'ABORTED'
                         error('RELEASE_VERSION parameter cannot be empty!')
                     }
+                    currentBuild.description = "${params.RELEASE_CHORE}/${params.ACTION}/${params.RELEASE_VERSION}"
                 }
             }
         }
