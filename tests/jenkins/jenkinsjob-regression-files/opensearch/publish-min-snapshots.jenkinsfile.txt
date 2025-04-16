@@ -1,6 +1,6 @@
    publish-min-snapshots.run()
       publish-min-snapshots.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      publish-min-snapshots.library({identifier=jenkins@7.3.4, retriever=null})
+      publish-min-snapshots.library({identifier=jenkins@9.0.0, retriever=null})
       publish-min-snapshots.pipeline(groovy.lang.Closure)
          publish-min-snapshots.timeout({time=1, unit=HOURS})
          publish-min-snapshots.echo(Executing on agent [label:none])
