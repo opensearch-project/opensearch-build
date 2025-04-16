@@ -155,7 +155,11 @@ pipeline {
                         selectedComponents.each { componentName ->
                             def existingComponent = existingManifest.components.find { it.name == componentName.name }
                             if (existingComponent) {
-                                def releaseTag = params.RELEASE_VERSION + ".0"
+                                def versionTokenize = params.RELEASE_VERSION.tokenize('-')
+                                def releaseTag = versionTokenize[0] + ".0"
+                                if (versionTokenize.size() > 1) {
+                                    releaseTag = versionTokenize[0] + ".0-" + versionTokenize[1]
+                                }
                                 if (componentName.name == 'OpenSearch' || componentName.name == 'OpenSearch-Dashboards' || componentName.name == 'functionalTestDashboards') {
                                     releaseTag = params.RELEASE_VERSION
                                 }

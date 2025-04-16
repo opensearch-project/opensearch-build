@@ -90,9 +90,9 @@ if [ "$DISTRIBUTION" = "tar" ]; then
 elif [ "$DISTRIBUTION" = "deb" ] || [ "$DISTRIBUTION" = "rpm" ]; then
     cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
     if [ "$MAJOR_VERSION" = "1" ]; then
-        cp -va ../../../scripts/pkg/build_templates/legacy/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
+        cp -va ../../../scripts/pkg/build_templates/1.x/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
     elif [ "$MAJOR_VERSION" = "2" ]; then
-        cp -va ../../../scripts/pkg/build_templates/current/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
+        cp -va ../../../scripts/pkg/build_templates/2.x/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
     else
         cp -va ../../../scripts/pkg/build_templates/current/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
         OS_REF=`yq -e '.components[] | select(.name == "OpenSearch") | .ref' ../../../manifests/$VERSION/opensearch-$VERSION.yml`
