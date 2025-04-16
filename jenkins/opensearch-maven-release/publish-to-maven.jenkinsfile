@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@1.5.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@9.0.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -46,16 +46,23 @@ pipeline {
                 script {
                     echo "Downloading from S3."
                     downloadFromS3(
-                        destPath: "$WORKSPACE/artifacts",
-                        bucket: "${ARTIFACT_BUCKET_NAME}",
-                        path: "${ARTIFACT_PATH}/",
+                        localPath: "$WORKSPACE/artifacts",
+                        bucketName: "${ARTIFACT_BUCKET_NAME}",
+                        downloadPath: "${ARTIFACT_PATH}/",
+                        roleAccountNumberCred: 'jenkins-aws-account-public',
+                        assumedRoleName: 'opensearch-bundle',
                         force: true
                     )
                     echo "Signing, Staging and Publishing Maven artifacts."
+                    String majorVersion = "${VERSION}".tokenize('.')[0]
+                    echo "Major version is ${majorVersion}"
+                    String email = majorVersion.toInteger() > 2 ? "release@opensearch.org" : "opensearch@amazon.com"
+                    echo "Signing email is ${email}"
                     publishToMaven(
                         signingArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
                         mavenArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/maven",
-                        autoPublish: true
+                        autoPublish: true,
+                        email: "${email}"
                     )
                 }
             }
