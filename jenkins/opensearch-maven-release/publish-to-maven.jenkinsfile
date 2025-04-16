@@ -46,9 +46,11 @@ pipeline {
                 script {
                     echo "Downloading from S3."
                     downloadFromS3(
-                        destPath: "$WORKSPACE/artifacts",
-                        bucket: "${ARTIFACT_BUCKET_NAME}",
-                        path: "${ARTIFACT_PATH}/",
+                        localPath: "$WORKSPACE/artifacts",
+                        bucketName: "${ARTIFACT_BUCKET_NAME}",
+                        downloadPath: "${ARTIFACT_PATH}/",
+                        roleAccountNumberCred: 'jenkins-aws-account-public',
+                        assumedRoleName: 'opensearch-bundle',
                         force: true
                     )
                     echo "Signing, Staging and Publishing Maven artifacts."
