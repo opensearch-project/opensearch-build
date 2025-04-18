@@ -1,5 +1,47 @@
-# OpenSearch and OpenSearch Dashboards 3.0.0 Release Notes
+# OpenSearch and OpenSearch Dashboards 3.0.0-beta1 Release Notes
 
+## Release Highlights
+* Lucene 10 is now used in OpenSearch 3.0.0-beta1.
+* This is an early-stage preview of the 3.0.0 version, so expect potential bugs and unfinished features. This release is for testing purposes only, and we highly encourage users to try it out and report any issues or feedback. Please refer to the [release schedule](https://opensearch.org/releases.html) for GA release information.
+
+### DEPRECATION NOTICES
+
+**Deprecating support for Ubuntu Linux 20.04**
+Please note that OpenSearch and OpenSearch Dashboards will deprecate support for Ubuntu Linux 20.04 as a continuous integration build image and supported operating system in an upcoming version, as Ubuntu Linux 20.04 will reach end-of-life with standard support as of April 2025 (refer to [this notice](https://ubuntu.com/blog/ubuntu-20-04-lts-end-of-life-standard-support-is-coming-to-an-end-heres-how-to-prepare) from Canonical Ubuntu). For a list of the compatible operating systems, [visit here](https://opensearch.org/docs/latest/install-and-configure/os-comp/).
+
+**Deprecating support for Amazon Linux 2 on OpenSearch Dashboards**
+Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2 as a continuous integration build image and supported operating system in an upcoming version, as Node.js 18 will reach end-of-life with support as of April 2025 (refer to [this notice](https://nodejs.org/en/blog/announcements/v18-release-announce) from nodejs.org) and newer version of Node.js LTS version (20+) will not support runtime on Amazon Linux 2. For a list of the compatible operating systems, [visit here](https://opensearch.org/docs/latest/install-and-configure/os-comp/).
+
+## Breaking Changes
+* For a full list of breaking changes and deprecated/removed features in version 3.0.0, please see details in the [meta issues](https://github.com/opensearch-project/opensearch-build/issues/5243).
+
+### OpenSearch SQL
+
+* Unified OpenSearch PPL Data Type ([#3345](https://github.com/opensearch-project/sql/pull/3345))
+* Add datetime functions ([#3473](https://github.com/opensearch-project/sql/pull/3473))
+* Support CAST function with Calcite ([#3439](https://github.com/opensearch-project/sql/pull/3439))
+
+### Opensearch ML Commons
+
+* Deprecate the restful API of batch ingestion (#3688)[https://github.com/opensearch-project/ml-commons/pull/3688]
+
+### Opensearch Observability
+
+* Remove support for legacy notebooks ([#2406](https://github.com/opensearch-project/dashboards-observability/pull/2406))
+
+### Opensearch Security
+
+* Fix Blake2b hash implementation ([#5089](https://github.com/opensearch-project/security/pull/5089))
+* Remove OpenSSL provider ([#5220](https://github.com/opensearch-project/security/pull/5220))
+* Remove whitelist settings in favor of allowlist ([#5224](https://github.com/opensearch-project/security/pull/5224))
+
+
+## Release Details
+[OpenSearch and OpenSearch Dashboards 3.0.0-beta1](https://opensearch.org/versions/opensearch-3-0-0-beta1.html) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.0.0-beta1.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.0.0-beta1.md).
 
 ## FEATURES
 
@@ -182,6 +224,18 @@
 * [Calcite Engine] Function framework refactoring ([#3522](https://github.com/opensearch-project/sql/pull/3522))
 
 
+
+### Opensearch Security
+
+
+* Optimized Privilege Evaluation ([#4380](https://github.com/opensearch-project/security/pull/4380))
+* Add support for CIDR ranges in `ignore_hosts` setting ([#5099](https://github.com/opensearch-project/security/pull/5099))
+* Add 'good' as a valid value for `plugins.security.restapi.password_score_based_validation_strength` ([#5119](https://github.com/opensearch-project/security/pull/5119))
+* Adding stop-replication permission to `index_management_full_access` ([#5160](https://github.com/opensearch-project/security/pull/5160))
+* Replace password generator step with a secure password generator action ([#5153](https://github.com/opensearch-project/security/pull/5153))
+* Run Security build on image from opensearch-build ([#4966](https://github.com/opensearch-project/security/pull/4966))
+
+
 ## BUG FIXES
 
 
@@ -314,6 +368,17 @@
 
 
 * Fix list bug of PPLTool when pass empty list ([#541](https://github.com/opensearch-project/skills/pull/541))
+
+
+
+### Opensearch Security
+
+
+* Fix version matcher string in demo config installer ([#5157](https://github.com/opensearch-project/security/pull/5157)
+* Escape pipe character for injected users ([#5175](https://github.com/opensearch-project/security/pull/5175))
+* Assume default of v7 models if \_meta portion is not present ([#5193](https://github.com/opensearch-project/security/pull/5193))
+* Fixed IllegalArgumentException when building stateful index privileges ([#5217](https://github.com/opensearch-project/security/pull/5217)
+* DlsFlsFilterLeafReader::termVectors implementation causes assertion errors for users with FLS/FM active ([#5243](https://github.com/opensearch-project/security/pull/5243)
 
 
 ### Opensearch k-NN
@@ -672,85 +737,6 @@
 * Merge main for OpenSearch 3.0 release ([#3434](https://github.com/opensearch-project/sql/pull/3434))
 
 
-## REFACTORING
-
-
-### Opensearch Remote Metadata Sdk
-
-
-* Update o.o.client imports to o.o.transport.client ([#73](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/73))
-
-
-### Opensearch k-NN
-
-
-* Switch derived source from field attributes to segment attribute [#2606](https://github.com/opensearch-project/k-NN/pull/2606)
-* Migrate derived source from filter to mask [#2612](https://github.com/opensearch-project/k-NN/pull/2612)
-* Consolidate MethodFieldMapper and LuceneFieldMapper into EngineFieldMapper [#2646](https://github.com/opensearch-project/k-NN/pull/2646)
-
-
-## NON-COMPLIANT
-
-
-## BREAKING CHANGES
-
-
-### Opensearch ML Common
-
-
-* Deprecate the restful API of batch ingestion (#3688)[https://github.com/opensearch-project/ml-commons/pull/3688]
-
-
-## BREAKING CHANGES
-
-
-### Opensearch Observability
-
-
-* Remove support for legacy notebooks ([#2406](https://github.com/opensearch-project/dashboards-observability/pull/2406))
-
-
-## #### BREAKING CHANGES
-
-
-### Opensearch Security
-
-
-* Fix Blake2b hash implementation ([#5089](https://github.com/opensearch-project/security/pull/5089))
-* Remove OpenSSL provider ([#5220](https://github.com/opensearch-project/security/pull/5220))
-* Remove whitelist settings in favor of allowlist ([#5224](https://github.com/opensearch-project/security/pull/5224))
-
-
-## #### ENHANCEMENTS
-
-
-### Opensearch Security
-
-
-* Optimized Privilege Evaluation ([#4380](https://github.com/opensearch-project/security/pull/4380))
-* Add support for CIDR ranges in `ignore_hosts` setting ([#5099](https://github.com/opensearch-project/security/pull/5099))
-* Add 'good' as a valid value for `plugins.security.restapi.password_score_based_validation_strength` ([#5119](https://github.com/opensearch-project/security/pull/5119))
-* Adding stop-replication permission to `index_management_full_access` ([#5160](https://github.com/opensearch-project/security/pull/5160))
-* Replace password generator step with a secure password generator action ([#5153](https://github.com/opensearch-project/security/pull/5153))
-* Run Security build on image from opensearch-build ([#4966](https://github.com/opensearch-project/security/pull/4966))
-
-
-## #### BUG FIXES
-
-
-### Opensearch Security
-
-
-* Fix version matcher string in demo config installer ([#5157](https://github.com/opensearch-project/security/pull/5157)
-* Escape pipe character for injected users ([#5175](https://github.com/opensearch-project/security/pull/5175))
-* Assume default of v7 models if \_meta portion is not present ([#5193](https://github.com/opensearch-project/security/pull/5193))
-* Fixed IllegalArgumentException when building stateful index privileges ([#5217](https://github.com/opensearch-project/security/pull/5217)
-* DlsFlsFilterLeafReader::termVectors implementation causes assertion errors for users with FLS/FM active ([#5243](https://github.com/opensearch-project/security/pull/5243)
-
-
-## #### MAINTENANCE
-
-
 ### Opensearch Security
 
 
@@ -790,8 +776,6 @@
 * Migrate from com.amazon.dlic to org.opensearch.security package ([#5223](https://github.com/opensearch-project/security/pull/5223))
 
 
-## MAINTAINANCE
-
 
 ### Opensearch Skills
 
@@ -802,14 +786,28 @@
 * Add attributes to tools to adapt the upstream changes ([#549](https://github.com/opensearch-project/skills/pull/549))
 
 
-## BREAKING CHANGES
+## REFACTORING
 
 
-### SQL
+### Opensearch Remote Metadata Sdk
 
 
-* Unified OpenSearch PPL Data Type ([#3345](https://github.com/opensearch-project/sql/pull/3345))
-* Add datetime functions ([#3473](https://github.com/opensearch-project/sql/pull/3473))
-* Support CAST function with Calcite ([#3439](https://github.com/opensearch-project/sql/pull/3439))
+* Update o.o.client imports to o.o.transport.client ([#73](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/73))
+
+
+### Opensearch k-NN
+
+
+* Switch derived source from field attributes to segment attribute [#2606](https://github.com/opensearch-project/k-NN/pull/2606)
+* Migrate derived source from filter to mask [#2612](https://github.com/opensearch-project/k-NN/pull/2612)
+* Consolidate MethodFieldMapper and LuceneFieldMapper into EngineFieldMapper [#2646](https://github.com/opensearch-project/k-NN/pull/2646)
+
+
+
+
+
+
+
+
 
 
