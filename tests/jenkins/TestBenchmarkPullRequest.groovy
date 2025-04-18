@@ -28,7 +28,7 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('9.0.1')
+                        .defaultVersion('9.0.2')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
