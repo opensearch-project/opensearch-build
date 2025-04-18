@@ -21,15 +21,15 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 * Add datetime functions ([#3473](https://github.com/opensearch-project/sql/pull/3473))
 * Support CAST function with Calcite ([#3439](https://github.com/opensearch-project/sql/pull/3439))
 
-### Opensearch ML Commons
+### OpenSearch ML Commons
 
 * Deprecate the restful API of batch ingestion (#3688)[https://github.com/opensearch-project/ml-commons/pull/3688]
 
-### Opensearch Observability
+### OpenSearch Dashboards Observability
 
 * Remove support for legacy notebooks ([#2406](https://github.com/opensearch-project/dashboards-observability/pull/2406))
 
-### Opensearch Security
+### OpenSearch Security
 
 * Fix Blake2b hash implementation ([#5089](https://github.com/opensearch-project/security/pull/5089))
 * Remove OpenSSL provider ([#5220](https://github.com/opensearch-project/security/pull/5220))
@@ -37,7 +37,7 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 
 
 ## Release Details
-[OpenSearch and OpenSearch Dashboards 3.0.0-beta1](https://opensearch.org/versions/opensearch-3-0-0-beta1.html) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+[OpenSearch and OpenSearch Dashboards 3.0.0-beta1](https://opensearch.org/artifacts/by-version/#release-3-0-0-alpha1) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.0.0-beta1.md).
 
@@ -46,30 +46,25 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## FEATURES
 
 
-### Opensearch Anomaly Detection Dashboards
-
+### OpenSearch Dashboards Anomaly Detection
 
 * Implmentation of contextual launch ([#1005](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1005))
 
-
-### Opensearch Custom Codecs
-
+### OpenSearch Custom Codecs
 
 * Bump ZTD lib version to 1.5.6-1 ([#232](https://github.com/opensearch-project/custom-codecs/pull/232))
 
 
-### Opensearch Flow Framework
+### OpenSearch Flow Framework
 
 
 * Add per-tenant provisioning throttling ([#1074](https://github.com/opensearch-project/flow-framework/pull/1074))
 
 
-### Opensearch Neural Search
+### OpenSearch Neural Search
 
 
 * Lower bound for min-max normalization technique in hybrid query ([#1195](https://github.com/opensearch-project/neural-search/pull/1195))
-
-
 * Support filter function for HybridQueryBuilder and NeuralQueryBuilder ([#1206](https://github.com/opensearch-project/neural-search/pull/1206))
 * Add Z Score normalization technique ([#1224](https://github.com/opensearch-project/neural-search/pull/1224))
 * Support semantic sentence highlighter ([#1193](https://github.com/opensearch-project/neural-search/pull/1193))
@@ -81,13 +76,13 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add stats API ([#1256](https://github.com/opensearch-project/neural-search/pull/1256))
 
 
-### Opensearch Skills
+### OpenSearch Skills
 
 
 * Add web search tool ([#547](https://github.com/opensearch-project/skills/pull/547))
 
 
-### Opensearch k-NN
+### OpenSearch k-NN
 
 
 * [Remote Vector Index Build] Client polling mechanism, encoder check, method parameter retrieval [#2576](https://github.com/opensearch-project/k-NN/pull/2576)
@@ -98,8 +93,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * [Explain API Support] Added Explain API support for Exact/ANN/Radial/Disk based KNN search on Faiss Engine [#2403] (https://github.com/opensearch-project/k-NN/pull/2403)
 
 
-### SQL
-
+### OpenSearch SQL
 
 * Framework of Calcite Engine: Parser, Catalog Binding and Plan Converter ([#3249](https://github.com/opensearch-project/sql/pull/3249))
 * Enable Calcite by default and refactor all related ITs ([#3468](https://github.com/opensearch-project/sql/pull/3468))
@@ -139,12 +133,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## ENHANCEMENTS
 
 
-### Dashboards Assistant
+### OpenSearch Dashboards Assistant
 
 
-* remove redundant error toast([#515](https://github.com/opensearch-project/dashboards-assistant/pull/515))
-
-
+* Remove redundant error toast ([#515](https://github.com/opensearch-project/dashboards-assistant/pull/515))
 * Add auto suggested aggregation for text2Viz ([#514](https://github.com/opensearch-project/dashboards-assistant/pull/514))
 * Remove experimental badge for natural language vis ([#516](https://github.com/opensearch-project/dashboards-assistant/pull/516))
 * Revert "Add http error instruction for t2ppl task" ([#519](https://github.com/opensearch-project/dashboards-assistant/pull/519))
@@ -153,30 +145,27 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add scroll load conversations ([#530](https://github.com/opensearch-project/dashboards-assistant/pull/530))
 * Refactor InContext style, add white logo and remove outdated code ([#529](https://github.com/opensearch-project/dashboards-assistant/pull/529))
 * Change chatbot entry point to a single button ([#540](https://github.com/opensearch-project/dashboards-assistant/pull/540))
-* Support streaming output([#493](https://github.com/opensearch-project/dashboards-assistant/pull/493))
+* Support streaming output ([#493](https://github.com/opensearch-project/dashboards-assistant/pull/493))
 * Update event names for t2v and feedback ([#543](https://github.com/opensearch-project/dashboards-assistant/pull/543))
 
 
-### Opensearch Anomaly Detection
+### OpenSearch Anomaly Detection
 
 
 * Use testclusters when testing with security ([#1414](https://github.com/opensearch-project/anomaly-detection/pull/1414))
 
 
-### Opensearch Flow Framework Dashboards
+### OpenSearch Flow Framework Dashboards
 
 
 * Add new RAG + hybrid search preset ([#665](https://github.com/opensearch-project/dashboards-flow-framework/pull/665))
-
-
 * Update new index mappings if selecting from existing index ([#670](https://github.com/opensearch-project/dashboards-flow-framework/pull/670))
 * Persist state across Inspector tab switches; add presets dropdown ([#671](https://github.com/opensearch-project/dashboards-flow-framework/pull/671))
 * Simplify ML processor form when interface is defined ([#676](https://github.com/opensearch-project/dashboards-flow-framework/pull/676))
 * Cache form across ML transform types ([#678](https://github.com/opensearch-project/dashboards-flow-framework/pull/678))
 
 
-### Opensearch ML Common
-
+### OpenSearch ML Commons
 
 * Add parser for ModelTensorOutput and ModelTensors (#3658)[https://github.com/opensearch-project/ml-commons/pull/3658]
 * Function calling for openai v1, bedrock claude and deepseek (#3712)[https://github.com/opensearch-project/ml-commons/pull/3712]
@@ -185,12 +174,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Implement async mode in agent execution (#3714)[https://github.com/opensearch-project/ml-commons/pull/3714]
 
 
-### Opensearch Observability
+### OpenSearch Dashboards Observability
 
 
 * Traces - Update custom source display, add toast ([#2403](https://github.com/opensearch-project/dashboards-observability/pull/2403))
-
-
 * Trace to logs correlation, action icon updates ([#2398](https://github.com/opensearch-project/dashboards-observability/pull/2398))
 * Traces - Custom source switch to data grid ([#2390](https://github.com/opensearch-project/dashboards-observability/pull/2390))
 * Service Content/View Optimizationsc ([#2383](https://github.com/opensearch-project/dashboards-observability/pull/2383))
@@ -198,26 +185,20 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Support custom logs correlation ([#2375] (https://github.com/opensearch-project/dashboards-observability/pull/2375))
 
 
-### Opensearch Query Insights
+### OpenSearch Query Insights
 
 
 * Reduce LocalIndexReader size to 50 ([#281](https://github.com/opensearch-project/query-insights/pull/281))
 
 
-### Opensearch Query Insights Dashboards
+### OpenSearch Dashboards Query Insights
 
 
 * Update Default Time Range from 1 Day to 1 Hour in TopNQueries Component ([#148](https://github.com/opensearch-project/query-insights-dashboards/pull/148))
 * Feat: dynamically display columns ([#103](https://github.com/opensearch-project/query-insights-dashboards/pull/103))
 
 
-# Infrastructure
-
-
-* Update 3.0.0 qualifier from alpha1 to beta1 ([#154](https://github.com/opensearch-project/query-insights-dashboards/pull/154))
-
-
-### SQL
+### OpenSearch SQL
 
 
 * Support line comment and block comment in PPL ([#2806](https://github.com/opensearch-project/sql/pull/2806))
@@ -225,7 +206,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 
-### Opensearch Security
+### OpenSearch Security
 
 
 * Optimized Privilege Evaluation ([#4380](https://github.com/opensearch-project/security/pull/4380))
@@ -239,76 +220,70 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## BUG FIXES
 
 
-### Dashboards Assistant
+### OpenSearch Dashboards Assistant
 
 
-* remove experimental badge for vis-nlp ([#528](https://github.com/opensearch-project/dashboards-assistant/pull/528))
-
-
+* Remove experimental badge for vis-nlp ([#528](https://github.com/opensearch-project/dashboards-assistant/pull/528))
 * Fix vertically alignment of alert insights popover title ([#526](https://github.com/opensearch-project/dashboards-assistant/pull/526))
 * Change alert summary icon color to white ([#533](https://github.com/opensearch-project/dashboards-assistant/pull/533))
 * Fix query assistant menu disappear due to upstream method signature change([#541]https://github.com/opensearch-project/dashboards-assistant/pull/541)
 * Fix .plugins-ml-memory-meta not found when get conversations ([#542](https://github.com/opensearch-project/dashboards-assistant/pull/542))
 
 
-### Opensearch Anomaly Detection
+### OpenSearch Anomaly Detection
 
 
 * Distinguish local cluster when local name is same as remote ([#1446](https://github.com/opensearch-project/anomaly-detection/pull/1446))
 
 
-### Opensearch Anomaly Detection Dashboards
+### OpenSearch Dashboards Anomaly Detection
 
 
 * Switching fieldcaps api to utilize js client ([#984](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/984))
-
-
 * Update namespace for alerting plugin to avoid conflict with alerting ([#1003](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1003))
 * Fix remote cluster bug when remote and local have same name ([#1007](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1007))
 * Display selected clusters correctly on edit page ([#1011](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1011))
 
 
-### Opensearch Common Utils
+### OpenSearch Common Utils
 
 
 * Escape/Unescape pipe UserInfo in ThreadContext ([#801](https://github.com/opensearch-project/common-utils/pull/801))
 
 
-### Opensearch Dashboards Reporting
+### OpenSearch Dashboards Reporting
 
 
 * Updated the optional parameters for timefrom and timeto to resolve incorrect report generation scenarios ([#554](https://github.com/opensearch-project/dashboards-reporting/pull/554))
 
 
-### Opensearch Flow Framework
+### OpenSearch Flow Framework
 
 
 * Change REST status codes for RBAC and provisioning ([#1083](https://github.com/opensearch-project/flow-framework/pull/1083))
-
-
 * Fix Config parser does not handle tenant\_id field ([#1096](https://github.com/opensearch-project/flow-framework/pull/1096))
 * Complete action listener on failed synchronous workflow provisioning ([#1098](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/1098))
 
 
-### Opensearch Flow Framework Dashboards
+### OpenSearch Dashboards Flow Framework
 
 
 * Fix missed UI autofilling after JSON Lines change ([#672](https://github.com/opensearch-project/dashboards-flow-framework/pull/672))
 
 
-### Opensearch Index Management
+### OpenSearch Index Management
 
 
 * Fix issue in Docker Security Tests where qualifier is not being parsed correctly ([#1401](https://github.com/opensearch-project/index-management/pull/1401))
 
 
-### Opensearch Index Management Dashboards Plugin
+### OpenSearch Index Management Dashboards Plugin
 
 
 * Fixed CVE: Updated elliptic dependency resolution ([#1290](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/1290))
 
 
-### Opensearch ML Common
+### OpenSearch ML Commons
 
 
 * Fixing the circuit breaker issue for remote model (#3652)[https://github.com/opensearch-project/ml-commons/pull/3652]
@@ -317,37 +292,35 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix config index masterkey pull up for multi-tenancy (#3700)[https://github.com/opensearch-project/ml-commons/pull/3700]
 
 
-### Opensearch ML Commons Dashboards
+### OpenSearch Dashboards ML Commons
 
 
 * Fix data source not compatible with prerelease ([#411](https://github.com/opensearch-project/ml-commons-dashboards/pull/411))
 
 
-### Opensearch Neural Search
+### OpenSearch Neural Search
 
 
 * Remove validations for unmapped fields (text and image) in TextImageEmbeddingProcessor ([#1230](https://github.com/opensearch-project/neural-search/pull/1230))
 
 
-### Opensearch Observability
+### OpenSearch Dashboards Observability
 
 
 * Application Analytics - Flaky cypress fix ([#2402](https://github.com/opensearch-project/dashboards-observability/pull/2402))
-
-
 * Traces table fix for invalid date ([#2399](https://github.com/opensearch-project/dashboards-observability/pull/2399))
 * Custom Traces- Sorting/Toast ([#2397](https://github.com/opensearch-project/dashboards-observability/pull/2397))
 * Event Analytics - Cypress flaky fix ([#2395](https://github.com/opensearch-project/dashboards-observability/pull/2395))
 * Services to Traces - Flyout redirection ([#2392](https://github.com/opensearch-project/dashboards-observability/pull/2392))
 
 
-### Opensearch Opensearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Add a model parser for xgboost (for the correct serialization format) ((#151)[https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/151])
 
 
-### Opensearch Remote Metadata Sdk
+### OpenSearch Remote Metadata Sdk
 
 
 * Fix version conflict check for update ([#114](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/114))
@@ -358,20 +331,20 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Return 404 for Index not found on Local Cluster search ([#130](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/130))
 
 
-### Opensearch Security Analytics
+### OpenSearch Security Analytics
 
 
 * Remove overrides of preserveIndicesUponCompletion ([#1498](https://github.com/opensearch-project/security-analytics/pull/1498))
 
 
-### Opensearch Skills
+### OpenSearch Skills
 
 
 * Fix list bug of PPLTool when pass empty list ([#541](https://github.com/opensearch-project/skills/pull/541))
 
 
 
-### Opensearch Security
+### OpenSearch Security
 
 
 * Fix version matcher string in demo config installer ([#5157](https://github.com/opensearch-project/security/pull/5157)
@@ -381,17 +354,17 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * DlsFlsFilterLeafReader::termVectors implementation causes assertion errors for users with FLS/FM active ([#5243](https://github.com/opensearch-project/security/pull/5243)
 
 
-### Opensearch k-NN
+### OpenSearch k-NN
 
 
-* Fixing bug to prevent NullPointerException while doing PUT mappings [#2556](https://github.com/opensearch-project/k-NN/issues/2556)
-* Add index operation listener to update translog source [#2629](https://github.com/opensearch-project/k-NN/pull/2629)
-* Add parent join support for faiss hnsw cagra [#2647](https://github.com/opensearch-project/k-NN/pull/2647)
-* [Remote Vector Index Build] Fix bug to support `COSINESIMIL` space type [#2627](https://github.com/opensearch-project/k-NN/pull/2627)
-* Disable doc value storage for vector field storage [#2646](https://github.com/opensearch-project/k-NN/pull/2646)
+* Fixing bug to prevent NullPointerException while doing PUT mappings ([#2556](https://github.com/opensearch-project/k-NN/issues/2556))
+* Add index operation listener to update translog source ([#2629](https://github.com/opensearch-project/k-NN/pull/2629))
+* Add parent join support for faiss hnsw cagra ([#2647](https://github.com/opensearch-project/k-NN/pull/2647))
+* [Remote Vector Index Build] Fix bug to support `COSINESIMIL` space type ([#2627](https://github.com/opensearch-project/k-NN/pull/2627))
+* Disable doc value storage for vector field storage ([#2646](https://github.com/opensearch-project/k-NN/pull/2646))
 
 
-### SQL
+### OpenSearch SQL
 
 
 * Fix execution errors caused by plan gap ([#3350](https://github.com/opensearch-project/sql/pull/3350))
@@ -414,46 +387,49 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## INFRASTRUCTURE
 
 
-### Dashboards Assistant
+### OpenSearch Dashboards Assistant
 
 
 * Fix failed UTs with OSD 3.0 ([#527](https://github.com/opensearch-project/dashboards-assistant/pull/527))
-
-
 * Fix empty codecov report in CI([#547](https://github.com/opensearch-project/dashboards-assistant/pull/547))
 
 
-### Opensearch Anomaly Detection
+### OpenSearch Anomaly Detection
 
 
 * Adding dual cluster arg to gradle run ([#1441](https://github.com/opensearch-project/anomaly-detection/pull/1441))
 
 
-### Opensearch Anomaly Detection Dashboards
+### OpenSearch Dashboards Anomaly Detection
 
 
-* change gradle run to dualcluster is true ([#998](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/998))
+* Change gradle run to dualcluster is true ([#998](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/998))
 
 
-### Opensearch Neural Search
+### OpenSearch Neural Search
 
 
 * [3.0] Update neural-search for OpenSearch 3.0 beta compatibility ([#1245](https://github.com/opensearch-project/neural-search/pull/1245))
 
 
-### Opensearch Observability
+### OpenSearch Dashboards Observability
 
 
 * Improve error handling when setting up and reading a new integration ([#2387](https://github.com/opensearch-project/dashboards-observability/pull/2387))
 
 
-### Opensearch k-NN
+### OpenSearch Dashboards Query Insights
+
+* Update 3.0.0 qualifier from alpha1 to beta1 ([#154](https://github.com/opensearch-project/query-insights-dashboards/pull/154))
 
 
-* Add github action to run ITs against remote index builder [2620](https://github.com/opensearch-project/k-NN/pull/2620)
+### OpenSearch k-NN
 
 
-### SQL
+* Add github action to run ITs against remote index builder ([2620](https://github.com/opensearch-project/k-NN/pull/2620))
+
+
+### OpenSearch SQL
 
 
 * Build integration test framework ([#3342](https://github.com/opensearch-project/sql/pull/3342))
@@ -465,32 +441,32 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## DOCUMENTATION
 
 
-### Opensearch ML Common
+### OpenSearch ML Commons
 
 
 * Add standard blueprint for vector search (#3659)[https://github.com/opensearch-project/ml-commons/pull/3659]
 * Add blueprint for Claude 3.7 on Bedrock (#3584)[https://github.com/opensearch-project/ml-commons/pull/3584]
 
 
-### Opensearch Query Insights
+### OpenSearch Query Insights
 
 
 * 3.0.0.0-beta1 Release Notes ([#294](https://github.com/opensearch-project/query-insights/pull/294))
 
 
-### Opensearch Query Insights Dashboards
+### OpenSearch Dashboards Query Insights
 
 
 * 3.0.0.0-beta1 Release Notes ([#157](https://github.com/opensearch-project/query-insights-dashboards/pull/157))
 
 
-### Opensearch Remote Metadata Sdk
+### OpenSearch Remote Metadata Sdk
 
 
 * Add a developer guide ([#124](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/124))
 
 
-### SQL
+### OpenSearch SQL
 
 
 * Documentation for PPL new engine (V3) and limitations of 3.0.0 Beta ([#3488](https://github.com/opensearch-project/sql/pull/3488))
@@ -499,71 +475,69 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## MAINTENANCE
 
 
-### Dashboards Assistant
+### OpenSearch Dashboards Assistant
 
 
 * Bump version to 3.0.0.0-beta1 ([#521](https://github.com/opensearch-project/dashboards-assistant/pull/521))
 
 
-### Opensearch Alerting
+### OpenSearch Alerting
 
 
 * Update version qualifier to beta1. ([#1816](https://github.com/opensearch-project/alerting/pull/1816))
 
 
-### Opensearch Alerting Dashboards Plugin
+### OpenSearch Dashboards Alerting
 
 
 * Update version qualifier to beta1. ([#1227](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1227))
 
 
-### Opensearch Anomaly Detection
+### OpenSearch Anomaly Detection
 
 
 * Increment version to 3.0.0.0-beta1 ([#1444](https://github.com/opensearch-project/anomaly-detection/pull/1444))
 
 
-### Opensearch Anomaly Detection Dashboards
+### OpenSearch Dashboards Anomaly Detection
 
 
-* fix(security): Upgrade axios to 1.8.2 to fix SSRF ([#991](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/991))
-
-
+* Fix(security): Upgrade axios to 1.8.2 to fix SSRF ([#991](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/991))
 * Update @babel/runtime to >=7.26.10 ([#993](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/993))
 * Increment version to 3.0.0.0-beta1 ([#1004](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1004))
 
 
-### Opensearch Asynchronous Search
+### OpenSearch Asynchronous Search
 
 
 * Update main branch for 3.0.0.0-beta1 ([#716](https://github.com/opensearch-project/asynchronous-search/pull/716))
 
 
-### Opensearch Common Utils
+### OpenSearch Common Utils
 
 
 * Change 3.0.0 qualifier from alpha1 to beta1 ( ([#808](https://github.com/opensearch-project/common-utils/pull/808))
 
 
-### Opensearch Cross Cluster Replication
+### OpenSearch Cross Cluster Replication
 
 
 * Version bump to opensearch-3.0.0-beta1 and replaced usage of deprecated classes
 
 
-### Opensearch Dashboards Maps
+### OpenSearch Dashboards Maps
 
 
 * Bump up version to 3.0.0-beta1 [#716](https://github.com/opensearch-project/dashboards-maps/pull/716)
 
 
-### Opensearch Dashboards Notifications
+### OpenSearch Dashboards Notifications
 
 
 * Update version qualifier to beta1. ([#336](https://github.com/opensearch-project/dashboards-notifications/pull/336))
 
 
-### Opensearch Dashboards Reporting
+### OpenSearch Dashboards Reporting
 
 
 * Remove cypress and babel jest from project dependency list ([#559](https://github.com/opensearch-project/dashboards-reporting/pull/559))
@@ -574,46 +548,46 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Minor CI updates and workflow fixes ([#548](https://github.com/opensearch-project/dashboards-reporting/pull/548))
 
 
-### Opensearch Dashboards Search Relevance
+### OpenSearch Dashboards Search Relevance
 
 
 * Increment version to 3.0.0.0-beta1 ([#491](https://github.com/opensearch-project/dashboards-search-relevance/pull/491))
 
 
-### Opensearch Flow Framework
+### OpenSearch Flow Framework
 
 
 * Migrate from BC to BCFIPS libraries ([#1087](https://github.com/opensearch-project/flow-framework/pull/1087))
 
 
-### Opensearch Geospatial
+### OpenSearch Geospatial
 
 
 * Persist necessary license and developer information in maven pom ([#732](https://github.com/opensearch-project/geospatial/pull/732))
 
 
-### Opensearch Index Management
+### OpenSearch Index Management
 
 
 * Update 3.0.0 qualifier from alpha1 to beta1 ([#1398](https://github.com/opensearch-project/index-management/pull/1398))
 
 
-### Opensearch Index Management Dashboards Plugin
+### OpenSearch Dashboards Index Management
 
 
 * Updated 3.0.0 qualifier from alpha1 to beta1 ([#1293](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/1293))
 
 
-### Opensearch Job Scheduler
+### OpenSearch Job Scheduler
 
 
 * Increment version to 3.0.0-beta1 [#752](https://github.com/opensearch-project/job-scheduler/pull/752).
-* dependabot: bump com.google.guava:failureaccess from 1.0.2 to 1.0.3 [#750](https://github.com/opensearch-project/job-scheduler/pull/750).
-* dependabot: bump com.google.googlejavaformat:google-java-format [#753](https://github.com/opensearch-project/job-scheduler/pull/753).
-* dependabot: bump com.netflix.nebula.ospackage from 11.11.1 to 11.11.2 [#754](https://github.com/opensearch-project/job-scheduler/pull/754).
+* Dependabot: bump com.google.guava:failureaccess from 1.0.2 to 1.0.3 [#750](https://github.com/opensearch-project/job-scheduler/pull/750).
+* Dependabot: bump com.google.googlejavaformat:google-java-format [#753](https://github.com/opensearch-project/job-scheduler/pull/753).
+* Dependabot: bump com.netflix.nebula.ospackage from 11.11.1 to 11.11.2 [#754](https://github.com/opensearch-project/job-scheduler/pull/754).
 
 
-### Opensearch ML Common
+### OpenSearch ML Commons
 
 
 * Remove forcing log4j version to 2.24.2 (#3647)[https://github.com/opensearch-project/ml-commons/pull/3647]
@@ -626,30 +600,28 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Sdk client implementation for search connector, model group and task (#3707)[https://github.com/opensearch-project/ml-commons/pull/3707]
 
 
-### Opensearch ML Commons Dashboards
+### OpenSearch ML Commons Dashboards
 
 
 * Bump version to 3.0.0.0-beta1 ([#409](https://github.com/opensearch-project/ml-commons-dashboards/pull/409))
 
 
-### Opensearch Notifications
+### OpenSearch Notifications
 
 
 * [Release 3.0] Update version qualifier to beta1. ([#1011](https://github.com/opensearch-project/notifications/pull/1011))
 
 
-### Opensearch Observability
+### OpenSearch Observability
 
 
 * Bump version 3.0.0-beta1-SNAPSHOT ([#1914] (https://github.com/opensearch-project/observability/pull/1914))
 
 
-### Opensearch Observability
+### OpenSearch Dashboards Observability
 
 
 * Adding husky .only check hook to test files ([#2400](https://github.com/opensearch-project/dashboards-observability/pull/2400))
-
-
 * Remove cypress to make it refer to the version used in OpenSearch Dashboard to fix build failure ([#2405](https://github.com/opensearch-project/dashboards-observability/pull/2405))
 * Fix CVE issue for dependency prismjs ([#2404](https://github.com/opensearch-project/dashboards-observability/pull/2404))
 * Bump dashboards observability to version 3.0.0.0-beta1 ([#2401](https://github.com/opensearch-project/dashboards-observability/pull/2401))
@@ -658,61 +630,59 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Minor CI updates and workflow fixes ([#2388](https://github.com/opensearch-project/dashboards-observability/pull/2388))
 
 
-### Opensearch Opensearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Update 3.0.0 qualifier from alpha1 to beta1 ((#154)[https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/154])
 
 
-### Opensearch Performance Analyzer
+### OpenSearch Performance Analyzer
 
 
 * Bumps plugin version to 3.0.0.0-beta1 in PA ([#794](https://github.com/opensearch-project/performance-analyzer/pull/794))
 
 
-### Opensearch Query Insights
+### OpenSearch Query Insights
 
 
 * Update 3.0.0 qualifier from alpha1 to beta1 ([#290](https://github.com/opensearch-project/query-insights/pull/290))
 
 
-### Opensearch Query Insights Dashboards
+### OpenSearch Dashboards Query Insights
 
 
 * Update babel/runtime version ([#156](https://github.com/opensearch-project/query-insights-dashboards/pull/156))
 
 
-### Opensearch Query Workbench
+### OpenSearch Query Workbench
 
 
 * Remove cypress version to make it uses the version in OpenSearch Dashboards ([#463] (https://github.com/opensearch-project/dashboards-query-workbench/pull/463))
-
-
 * Bump dashboards query workbench to version 3.0.0.0-beta1 ([#462] (https://github.com/opensearch-project/dashboards-query-workbench/pull/462))
 * Remove download JSON feature ([#460](https://github.com/opensearch-project/dashboards-query-workbench/pull/460))
 * Minor CI updates and workflow fixes ([#459](https://github.com/opensearch-project/dashboards-query-workbench/pull/459))
 
 
-### Opensearch Reporting
+### OpenSearch Reporting
 
 
 * Bump version 3.0.0-beta1-SNAPSHOT ([#1083] (https://github.com/opensearch-project/reporting/pull/1083))
 
 
-### Opensearch Security Analytics
+### OpenSearch Security Analytics
 
 
 * Update version qualifier to beta1. ([#1500](https://github.com/opensearch-project/security-analytics/pull/1500))
 
 
-### Opensearch Security Analytics Dashboards
+### OpenSearch Dashboards Security Analytics
 
 
 * Update version qualifier to beta1. ([#1275](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1275))
 * Fix CVE 2025 27789. ([#1276](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1276))
 
 
-### Opensearch Security Dashboards Plugin
+### OpenSearch Dashboards Security
 
 
 * Remove typescript dependency ([#2198](https://github.com/opensearch-project/security-dashboards-plugin/pull/2198))
@@ -720,14 +690,14 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix integration tests by removing sample flight data download ([#2202](https://github.com/opensearch-project/security-dashboards-plugin/pull/2202))
 
 
-### Opensearch k-NN
+### OpenSearch k-NN
 
 
-* Update minimum required CMAKE version in NMSLIB [#2635](https://github.com/opensearch-project/k-NN/pull/2635)
-* Revert CMake version bump, instead add CMake policy version flag to build task to support modern CMake builds [#2645](https://github.com/opensearch-project/k-NN/pull/2645/files)
+* Update minimum required CMAKE version in NMSLIB ([#2635](https://github.com/opensearch-project/k-NN/pull/2635))
+* Revert CMake version bump, instead add CMake policy version flag to build task to support modern CMake builds ([#2645](https://github.com/opensearch-project/k-NN/pull/2645/files))
 
 
-### SQL
+### OpenSearch SQL
 
 
 * CVE-2024-57699 High: Fix json-smart vulnerability ([#3484](https://github.com/opensearch-project/sql/pull/3484))
@@ -737,7 +707,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Merge main for OpenSearch 3.0 release ([#3434](https://github.com/opensearch-project/sql/pull/3434))
 
 
-### Opensearch Security
+### OpenSearch Security
 
 
 * Update AuditConfig.DEPRECATED\_KEYS deprecation message to match 4.0 ([#5155](https://github.com/opensearch-project/security/pull/5155))
@@ -762,7 +732,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Bump ch.qos.logback:logback-classic from 1.5.17 to 1.5.18 ([#5204](https://github.com/opensearch-project/security/pull/5204))
 * Bump spring\_version from 6.2.4 to 6.2.5 ([#5203](https://github.com/opensearch-project/security/pull/5203))
 * Bump bouncycastle\_version from 1.78 to 1.80 ([#5202](https://github.com/opensearch-project/security/pull/5202))
-* remove java version check for reflection args in build.gradle ([#5218](https://github.com/opensearch-project/security/pull/5218))
+* Remove java version check for reflection args in build.gradle ([#5218](https://github.com/opensearch-project/security/pull/5218))
 * Improve coverage: Adding tests for ConfigurationRepository class ([#5206](https://github.com/opensearch-project/security/pull/5206))
 * Refactor InternalAuditLogTest to use Awaitility ([#5214](https://github.com/opensearch-project/security/pull/5214))
 * Bump com.google.googlejavaformat:google-java-format from 1.25.2 to 1.26.0 ([#5231](https://github.com/opensearch-project/security/pull/5231))
@@ -777,7 +747,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 
-### Opensearch Skills
+### OpenSearch Skills
 
 
 * Remove `space_type` in integ test to adapt to the change of k-NN plugin ([#535](https://github.com/opensearch-project/skills/pull/535))
@@ -789,25 +759,15 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## REFACTORING
 
 
-### Opensearch Remote Metadata Sdk
+### OpenSearch Remote Metadata Sdk
 
 
 * Update o.o.client imports to o.o.transport.client ([#73](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/73))
 
 
-### Opensearch k-NN
+### OpenSearch k-NN
 
 
 * Switch derived source from field attributes to segment attribute [#2606](https://github.com/opensearch-project/k-NN/pull/2606)
 * Migrate derived source from filter to mask [#2612](https://github.com/opensearch-project/k-NN/pull/2612)
 * Consolidate MethodFieldMapper and LuceneFieldMapper into EngineFieldMapper [#2646](https://github.com/opensearch-project/k-NN/pull/2646)
-
-
-
-
-
-
-
-
-
-
