@@ -27,7 +27,7 @@ pipeline {
     parameters {
         string(
             name: 'MANIFEST_FILE',
-            description: "Provide either Build Manifest url's or path to manifest files separated by space for branch creation.",
+            description: "Provide either Build Manifest url's or path to Input Manifest files separated by space, Build Manifest will use commitID to create new branch",
             trim: true
         )
         string(
@@ -82,7 +82,15 @@ pipeline {
                                     dir(component) {
                                         checkout([$class: 'GitSCM', branches: [[name: SOURCE_BRANCH]], userRemoteConfigs: [[url: repoUrl]]])
 
-                                        sh "git checkout -b $TARGET_BRANCH"
+                                        if (manifest.contains("builds")) {
+                                            COMMIT_ID = MANIFEST_OBJ.getCommitId(component)
+                                            echo "Create new branch for $component with commit id $COMMIT_ID on $SOURCE_BRANCH"
+                                            sh "git checkout -b $TARGET_BRANCH $COMMIT_ID"
+                                        }
+                                        else {
+                                            echo "Create new branch for $component with commit HEAD on $SOURCE_BRANCH"
+                                            sh "git checkout -b $TARGET_BRANCH"
+                                        }
                                         sh "git push $push_url $TARGET_BRANCH"
                                     }
                                 }
