@@ -279,6 +279,30 @@ class TestValidationRpm(unittest.TestCase):
                                            'MD5 digest: OK\nHeader SHA256 digest: OK\nPayload SHA256 digest: OK\n', None)
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        validate_rpm.args.version = '1.3.0'
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_rpm.filename = 'example.rpm'
+
+        validate_rpm.validate_signature()
+
+        mock_logging_info.assert_any_call('Key digest "Header SHA256 digest" is validated to be present.')
+        mock_logging_info.assert_any_call('Key digest "Payload SHA256 digest" is validated to be present.')
+        mock_logging_info.assert_any_call('Validation of all key digests starts: ')
+        mock_logging_info.assert_any_call('Validation for signature of RPM distribution completed.')
+        mock_execute.assert_called_once_with(
+            'rpm -K -v /tmp/trytytyuit/example.rpm', '.'
+        )
+
+    @patch('validation_workflow.rpm.validation_rpm.execute')
+    @patch('validation_workflow.rpm.validation_rpm.logging.info')
+    @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_validate_signature_release_key(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_logging_info: Mock, mock_execute: Mock) -> None:
+        mock_execute.return_value = (None, '/tmp/trytytyuit/example.rpm\nHeader V4 RSA/SHA512 Signature, key ID 6ba2427f: OK\nHeader SHA1 digest: OK\nV4 RSA/SHA512 Signature, key ID 6ba2427f: OK\n'
+                                           'MD5 digest: OK\nHeader SHA256 digest: OK\nPayload SHA256 digest: OK\n', None)
+
+        validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        validate_rpm.args.version = '3.0.0'
         mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
         validate_rpm.filename = 'example.rpm'
 
@@ -324,6 +348,34 @@ class TestValidationRpm(unittest.TestCase):
                                      None)
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        validate_rpm.args.version = '2.0.0'
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_rpm.filename = 'example.rpm'
+
+        with self.assertRaises(AssertionError) as context:
+            validate_rpm.validate_signature()
+        mock_logging_info.assert_any_call('Key digest "Header SHA256 digest" is validated to be present.')
+        mock_logging_info.assert_any_call('Key digest "Payload SHA256 digest" is validated to be present.')
+        mock_logging_info.assert_any_call('Validation of all key digests starts: ')
+        self.assertIsInstance(context.exception, AssertionError)
+
+        mock_execute.assert_called_once_with(
+            'rpm -K -v /tmp/trytytyuit/example.rpm', '.'
+        )
+
+    @patch('validation_workflow.rpm.validation_rpm.execute')
+    @patch('validation_workflow.rpm.validation_rpm.logging.info')
+    @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_validate_signature_except_release_key(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_logging_info: Mock, mock_execute: Mock) -> None:
+        mock_execute.return_value = (None,
+                                     '/tmp/trytytyuit/example.rpm\n'
+                                     'Header V4 RSA/SHA512 Signature, key ID 6ba2427f: OK\nHeader SHA256 digest: OK\n'
+                                     'Header SHA1 digest: OK\nPayload SHA256 digest: OK\nV4 RSA/SHA512 Signature, key ID 6ba2427f: OK\n',
+                                     None)
+
+        validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        validate_rpm.args.version = '3.0.0'
         mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
         validate_rpm.filename = 'example.rpm'
 
