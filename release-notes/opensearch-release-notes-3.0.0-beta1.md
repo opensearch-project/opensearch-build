@@ -15,10 +15,8 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 ## Breaking Changes
 
 * For a full list of breaking changes and deprecated/removed features in version 3.0.0, please see details in the [meta issues](https://github.com/opensearch-project/opensearch-build/issues/5243).
-
-See OpenSearch [breaking changes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.0.0-beta1.md#breaking-changes).
-
-See OpenSearch Dashboards [breaking changes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.0.0-beta1.md#breaking-changes).
+  * See OpenSearch [breaking changes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.0.0-beta1.md#breaking-changes).
+  * See OpenSearch Dashboards [breaking changes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.0.0-beta1.md#breaking-changes).
 
 ### OpenSearch SQL
 
