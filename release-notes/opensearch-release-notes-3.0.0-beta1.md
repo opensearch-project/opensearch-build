@@ -38,6 +38,42 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 * Remove OpenSSL provider ([#5220](https://github.com/opensearch-project/security/pull/5220))
 * Remove whitelist settings in favor of allowlist ([#5224](https://github.com/opensearch-project/security/pull/5224))
 
+## Known Issues
+
+In this release, we’ve updated our signing key for 3.0.0 version and above in [here](https://github.com/opensearch-project/opensearch-build/issues/5308). Because of this, native/core plugin installations using alias such as `repository-azure` through `./bin/opensearch-plugin` may fail with a key mismatch error until OpenSearch Core also applies the same change. See the related OpenSearch Code [here](https://github.com/opensearch-project/OpenSearch/blob/e25f3320aeab4e6bd00490f0ed6b185f49589a00/distribution/tools/plugin-cli/src/main/java/org/opensearch/tools/cli/plugin/InstallPluginCommand.java#L666).
+
+Example error:
+
+```bash
+% ./bin/opensearch-plugin install --batch repository-s3
+-> Installing repository-s3
+-> Downloading repository-s3 from opensearch
+-> Failed installing repository-s3
+-> Rolling back repository-s3
+-> Rolled back repository-s3
+Exception in thread "main" java.lang.IllegalStateException: key id [4E9275EE6BA2427F] does not match expected key id [C2EE2AF6542C03B4]
+```
+
+### Temporary Workaround:
+
+Until this is resolved, you can work around the issue by installing the native/core plugins using the full URL of the plugin `.zip` file.
+
+Example (installing `repository-azure`):
+
+```bash
+./bin/opensearch-plugin install https://artifacts.opensearch.org/releases/plugins/repository-azure/3.0.0-beta1/repository-azure-3.0.0-beta1.zip
+```
+
+To install other plugins, replace the plugin name in the command:
+
+```bash
+./bin/opensearch-plugin install https://artifacts.opensearch.org/releases/plugins/<PluginName>/3.0.0-beta1/<PluginName>-3.0.0-beta1.zip
+```
+
+You can find the full list of plugin names [here](https://github.com/opensearch-project/OpenSearch/tree/main/plugins).
+
+We plan to resolve this in the final 3.0.0 GA release.
+
 
 ## Release Details
 [OpenSearch and OpenSearch Dashboards 3.0.0-beta1](https://opensearch.org/artifacts/by-version/#release-3-0-0-alpha1) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
