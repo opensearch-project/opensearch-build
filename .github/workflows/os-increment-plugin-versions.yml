@@ -63,7 +63,7 @@ jobs:
           - {entry: {repo: custom-codecs}, branch: '1.3'}
     steps:
       - name: Check out OpenSearch repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: opensearch-project/OpenSearch
           ref: ${{ matrix.branch }}
@@ -83,13 +83,14 @@ jobs:
           cache: gradle
       - name: Check out plugin repo
         if: ${{ matrix.entry.repo != 'OpenSearch' }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
       - name: Increment Version in ${{ matrix.entry.repo }}
         if: ${{ matrix.entry.repo != 'OpenSearch' }}
         run: |
+          rm -rvf .git/hooks
           echo "OpenSearch Core repo version on branch ${{ matrix.branch }} is ${{ env.OPENSEARCH_VERSION_NUMBER }}"
           if [ ${{ matrix.entry.path }} ]; then
             echo "The gradle path is ${{ matrix.entry.path }}"

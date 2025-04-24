@@ -22,12 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          architecture: x64
+          cache: 'pipenv'
       - name: Install Pipenv and Dependencies
         run: |
-          python -m pip install --upgrade pipenv wheel
+          curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
           pipenv install --deploy --dev
       - name: Check for Sorted Imports
         run: |
