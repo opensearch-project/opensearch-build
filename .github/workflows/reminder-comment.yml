@@ -1,0 +1,22 @@
+name: Reminder Comment on New Issues
+on:
+  issues:
+    types:
+      - opened
+permissions:
+  issues: write
+
+jobs:
+  label_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo (optional but avoids errors)
+        uses: actions/checkout@v4
+
+      - name: Comment on the new issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --body $'**Thanks for opening this issue.**\n\nYou can help us to fix this issue faster by opening a pull request. See our [Contribution Guide](https://github.com/opensearch-project/.github/blob/main/CONTRIBUTING.md) if this is your first time contributing. 🙏'
