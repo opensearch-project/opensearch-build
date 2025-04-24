@@ -26,7 +26,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install Pipenv and Dependencies
         run: |
-          curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+          python -m pip install --upgrade pipenv==2023.6.12 wheel
           pipenv install --deploy --dev
       - name: Check for Sorted Imports
         run: |
@@ -58,7 +58,7 @@ jobs:
           architecture: x64
       - name: Install Pipenv and Dependencies
         run: |
-          curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+          python -m pip install --upgrade pipenv==2023.6.12 wheel
           pipenv install --deploy --dev
       - name: Check for Sorted Imports
         run: |
