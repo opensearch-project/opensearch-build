@@ -53,7 +53,8 @@ jobs:
           - {repo: opensearch-remote-metadata-sdk}
           - {repo: opensearch-learning-to-rank-base}
         branch:
-          - '2.x'
+          - 'main'
+          - '3.0'
           - '2.19'
         exclude:
           - {entry: {repo: geospatial}, branch: '1.3'}
