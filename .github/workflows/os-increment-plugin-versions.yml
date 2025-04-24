@@ -73,6 +73,14 @@ jobs:
           echo "OPENSEARCH_VERSION_NUMBER=$OPENSEARCH_VERSION" >> $GITHUB_ENV
           OPENSEARCH_VERSION=$OPENSEARCH_VERSION-SNAPSHOT
           echo "OPENSEARCH_VERSION=$OPENSEARCH_VERSION" >> $GITHUB_ENV
+          OPENSEARCH_JAVA_VERSION=`yq -r '.ci.image.args' manifests/$OPENSEARCH_VERSION/opensearch-$OPENSEARCH_VERSION.yml | grep -oE 'openjdk-[0-9]*' | awk -F'-' '{ print $NF }'`
+          echo "OPENSEARCH_JAVA_VERSION=$OPENSEARCH_JAVA_VERSION" >> $GITHUB_ENV
+      - name: Set up JDK ${{ env.OPENSEARCH_JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.OPENSEARCH_JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: gradle
       - name: Check out plugin repo
         if: ${{ matrix.entry.repo != 'OpenSearch' }}
         uses: actions/checkout@v3
