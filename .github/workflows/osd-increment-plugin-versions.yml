@@ -43,7 +43,8 @@ jobs:
           - {repo: opensearch-dashboards-functional-test}
           - {repo: query-insights-dashboards}
         branch:
-          - '2.x'
+          - 'main'
+          - '3.0'
           - '2.19'
     steps:
       - name: Check out OpenSearch Dashboards repo
