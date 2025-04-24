@@ -9,13 +9,43 @@ jobs:
     with:
       product: opensearch
 
-  python-tests:
+  python-tests-macos:
     strategy:
       matrix:
         os:
           - macos-14  # arm64
           - macos-13  # x64
-          - windows-latest
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHON_VERSION: 3.9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install Pipenv and Dependencies
+        run: |
+          curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+          pipenv install --deploy --dev
+      - name: Check for Sorted Imports
+        run: |
+          pipenv run isort --check .
+      - name: Enforce Style Guide
+        run: |
+          pipenv run flake8 .
+      - name: Run Type Checker
+        run: |
+          pipenv run mypy .
+      - name: Run Tests with Coverage
+        run: |
+          pipenv run coverage run -m pytest --cov=./src --cov-report=xml
+
+  python-tests-windows:
+    strategy:
+      matrix:
+        os:
+          - windows-2022
     runs-on: ${{ matrix.os }}
     env:
       PYTHON_VERSION: 3.9
@@ -26,7 +56,6 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           architecture: x64
-          cache: 'pipenv'
       - name: Install Pipenv and Dependencies
         run: |
           curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
