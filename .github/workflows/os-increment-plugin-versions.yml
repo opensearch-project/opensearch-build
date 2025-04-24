@@ -74,9 +74,11 @@ jobs:
           echo "OPENSEARCH_VERSION_NUMBER=$OPENSEARCH_VERSION" >> $GITHUB_ENV
           OPENSEARCH_VERSION=$OPENSEARCH_VERSION-SNAPSHOT
           echo "OPENSEARCH_VERSION=$OPENSEARCH_VERSION" >> $GITHUB_ENV
-          OPENSEARCH_JAVA_VERSION=`curl -sSfL https://raw.githubusercontent.com/opensearch-project/opensearch-build/refs/heads/main/manifests/$OPENSEARCH_VERSION/opensearch-$OPENSEARCH_VERSION.yml | yq -r '.ci.image.args' | grep -oE 'openjdk-[0-9]*' | awk -F'-' '{ print $NF }'`
-          echo "OPENSEARCH_JAVA_VERSION=$OPENSEARCH_JAVA_VERSION" >> $GITHUB_ENV
-          rm -rf opensearch-build
+      - name: Get JDK version
+        run: |
+          OS_VERSION=${{ env.OPENSEARCH_VERSION_NUMBER }}
+          OPENSEARCH_JAVA_VERSION_NUMBER=`curl -sSfL https://raw.githubusercontent.com/opensearch-project/opensearch-build/refs/heads/main/manifests/$OS_VERSION/opensearch-$OS_VERSION.yml | yq -r '.ci.image.args' | grep -oE 'openjdk-[0-9]*' | awk -F'-' '{ print $NF }'`
+          echo "OPENSEARCH_JAVA_VERSION=$OPENSEARCH_JAVA_VERSION_NUMBER" >> $GITHUB_ENV
       - name: Set up JDK ${{ env.OPENSEARCH_JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
