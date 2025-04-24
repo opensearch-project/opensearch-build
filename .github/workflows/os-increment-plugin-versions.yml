@@ -63,14 +63,6 @@ jobs:
           - {entry: {repo: notifications, path: notifications}, branch: '1.3'}
           - {entry: {repo: custom-codecs}, branch: '1.3'}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          path: opensearch-build
-      - name: Get jdk version
-        run: |
-          OPENSEARCH_JAVA_VERSION=`yq -r '.ci.image.args' opensearch-build/manifests/$OPENSEARCH_VERSION/opensearch-$OPENSEARCH_VERSION.yml | grep -oE 'openjdk-[0-9]*' | awk -F'-' '{ print $NF }'`
-          echo "OPENSEARCH_JAVA_VERSION=$OPENSEARCH_JAVA_VERSION" >> $GITHUB_ENV
-          rm -rf opensearch-build
       - name: Check out OpenSearch repo
         uses: actions/checkout@v4
         with:
@@ -82,6 +74,9 @@ jobs:
           echo "OPENSEARCH_VERSION_NUMBER=$OPENSEARCH_VERSION" >> $GITHUB_ENV
           OPENSEARCH_VERSION=$OPENSEARCH_VERSION-SNAPSHOT
           echo "OPENSEARCH_VERSION=$OPENSEARCH_VERSION" >> $GITHUB_ENV
+          OPENSEARCH_JAVA_VERSION=`curl -sSfL https://raw.githubusercontent.com/opensearch-project/opensearch-build/refs/heads/main/manifests/$OPENSEARCH_VERSION/opensearch-$OPENSEARCH_VERSION.yml | yq -r '.ci.image.args' | grep -oE 'openjdk-[0-9]*' | awk -F'-' '{ print $NF }'`
+          echo "OPENSEARCH_JAVA_VERSION=$OPENSEARCH_JAVA_VERSION" >> $GITHUB_ENV
+          rm -rf opensearch-build
       - name: Set up JDK ${{ env.OPENSEARCH_JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
