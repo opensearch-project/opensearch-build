@@ -48,14 +48,14 @@ jobs:
           - '2.19'
     steps:
       - name: Check out OpenSearch Dashboards repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ matrix.branch }}
           path: OpenSearch-Dashboards
       - name: Check out plugin repo
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
@@ -68,6 +68,7 @@ jobs:
       - name: Install Yarn and Setup Dashboard Version
         shell: bash
         run: |
+          rm -rvf .git/hooks
           YARN_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').engines.yarn")
           echo "Installing yarn@$YARN_VERSION"
           npm i -g yarn@$YARN_VERSION
