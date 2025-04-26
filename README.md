@@ -170,6 +170,7 @@ See [src/manifests_workflow](./src/manifests_workflow) for more information.
 This project uses jenkins as the build infrastructure for building, testing and releasing the artifacts.
 The infrastructure is deployed using CDK and code can be found in [opensearch-ci](https://github.com/opensearch-project/opensearch-ci/tree/main) repository.
 
+
 ## Contributing
 
 See [developer guide](DEVELOPER_GUIDE.md) and [how to contribute to this project](CONTRIBUTING.md). 
