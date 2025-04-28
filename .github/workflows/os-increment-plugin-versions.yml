@@ -55,6 +55,7 @@ jobs:
         branch:
           - '3.0'
           - '2.19'
+          - 'main'
         exclude:
           - {entry: {repo: geospatial}, branch: '1.3'}
           - {entry: {repo: neural-search}, branch: '1.3'}
