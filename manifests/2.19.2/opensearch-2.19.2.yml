@@ -202,7 +202,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: 437702dc2cd351fae10a8c0911cca2fd5a6ed470
+    ref: d13fa0654e1238e878595987744e0a799a9945d0
     platforms:
       - linux
       - windows
