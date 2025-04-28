@@ -15,10 +15,10 @@ components:
     ref: '2.19'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 1a882d3964b2339265cf8bc6a9e30ce43fbaa2c8
+    ref: 07b30eb665a9d07a43bd3fc584c6526888484fd2
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 5504571d3e9c29c18932d86f19daf4ddaa7f4d86
+    ref: 64deacb821866fdbfcb6ba65f897db7fc2b9f248
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     ref: 5efb3071adb7542de688c7d916b95be8766c031c
@@ -45,7 +45,7 @@ components:
     ref: 2cf85205abac18b1a783227c903887a1710ca79a
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: 1b93b93e409a75b68c76ebe23ef1fe7434467d47
+    ref: 54e569047fc11963d8358c817c9e3ffc86d140e8
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: 58c6449e0fc1422402829c43be6e0a1090044577
@@ -60,4 +60,4 @@ components:
     ref: 919afc16a4a844f78aa62ccf55305fe9bca3e713
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
-    ref: 6ffbae6d8295e04f1ab4f881d61da8914fe82fc2
+    ref: fd0da3d7aa408306237745fc5469bce950d68672
