@@ -10,46 +10,46 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: main
+    ref: '3.0'
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
   - name: opensearch-learning-to-rank-base
     repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -57,7 +57,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -65,7 +65,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -75,7 +75,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -84,7 +84,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: main
+    ref: '3.0'
     working_directory: notifications
     platforms:
       - linux
@@ -93,7 +93,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: main
+    ref: '3.0'
     working_directory: notifications
     platforms:
       - linux
@@ -102,7 +102,7 @@ components:
       - common-utils
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -110,7 +110,7 @@ components:
       - common-utils
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -119,7 +119,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -128,7 +128,7 @@ components:
       - geospatial
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -136,7 +136,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -145,7 +145,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -153,7 +153,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -163,7 +163,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -172,18 +172,18 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -192,7 +192,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
@@ -203,13 +203,13 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
   - name: opensearch-system-templates
     repository: https://github.com/opensearch-project/opensearch-system-templates.git
-    ref: main
+    ref: '3.0'
     platforms:
       - linux
       - windows
