@@ -8,7 +8,11 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.19/release-notes/opensearch-dashboards.release-notes-2.19.2.md).
 
-Please note that a new PGP public key is available for artifact verification. OpenSearch’s current PGP public key is scheduled to expire on May 12, 2025. Please visit https://opensearch.org/verify-signatures.html to download the new public key, which is scheduled to expire on March 6, 2027.
+
+### PGP Key Update (opensearch@amazon.com):
+
+
+Please note that a new PGP public key is available for verification on 2.x artifacts. OpenSearch’s current PGP public key with opensearch@amazon.com email is scheduled to expire on May 12, 2025. Please visit https://opensearch.org/verify-signatures.html to download the new public key, which is scheduled to expire on March 6, 2027.
 
 
 ## ENHANCEMENTS
