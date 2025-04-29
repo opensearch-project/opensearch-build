@@ -57,6 +57,12 @@ Please note that a new PGP public key is available for verification on 2.x artif
 * Fix Config parser does not handle tenant\_id field ([#1096](https://github.com/opensearch-project/flow-framework/pull/1096))
 
 
+### OpenSearch k-NN
+
+
+* Enables rescoring by default when dimensions > 1024. ([#2671](https://github.com/opensearch-project/k-NN/pull/2671))
+
+
 ### OpenSearch Query Insights
 
 
