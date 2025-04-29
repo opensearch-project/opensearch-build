@@ -43,7 +43,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: f7c901de1c1c6d6cf365a7c808152831b951e5b5
+    ref: 1b57a2a9a4e0f6993dedcb545a97c710065631eb
     platforms:
       - linux
       - windows
