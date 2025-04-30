@@ -2,7 +2,7 @@
 
 ## Release Details
 
-[OpenSearch and OpenSearch Dashboards 2.19.2](https://opensearch.org/versions/opensearch-2-19-2.html) includes the following enhancements, bug fixes, infrastructure, documentation and maintenance updates.
+[OpenSearch and OpenSearch Dashboards 2.19.2](https://opensearch.org/versions/opensearch-2-19-2.html) includes the following bug fixes, infrastructure, documentation and maintenance updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.19/release-notes/opensearch.release-notes-2.19.2.md).
 
@@ -13,26 +13,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 Please note that a new PGP public key is available for verification on 2.x artifacts. OpenSearch’s current PGP public key with opensearch@amazon.com email is scheduled to expire on May 12, 2025. Please visit https://opensearch.org/verify-signatures.html to download the new public key, which is scheduled to expire on March 6, 2027.
-
-
-## ENHANCEMENTS
-
-
-### OpenSearch Dashboards Query Insights
-
-
-* Update Default Time Range from 1 Day to 1 Hour in TopNQueries Component ([#148](https://github.com/opensearch-project/query-insights-dashboards/pull/148))
-
-
-### OpenSearch Query Insights
-
-
-* Use ClusterStateRequest with index pattern when searching for expired local indices ([#262](https://github.com/opensearch-project/query-insights/pull/262))
-* Add strict hash check on top queries indices ([#266](https://github.com/opensearch-project/query-insights/pull/266))
-* Add default index template for query insights local index ([#255](https://github.com/opensearch-project/query-insights/pull/255))
-* Fix local index deletion timing ([#297](https://github.com/opensearch-project/query-insights/pull/297))
-* Skip profile queries ([#298](https://github.com/opensearch-project/query-insights/pull/298))
-* Add top\_queries API verbose param ([#300](https://github.com/opensearch-project/query-insights/pull/300))
 
 
 ## BUG FIXES
@@ -47,6 +27,7 @@ Please note that a new PGP public key is available for verification on 2.x artif
 ### OpenSearch Dashboards Query Insights
 
 
+* Update Default Time Range from 1 Day to 1 Hour in TopNQueries Component ([#148](https://github.com/opensearch-project/query-insights-dashboards/pull/148))
 * Fix Placeholder metric Not Replaced with Actual Metric Type ([#140](https://github.com/opensearch-project/query-insights-dashboards/pull/140))
 * Fix duplicated requests on refreshing the overview ([#138](https://github.com/opensearch-project/query-insights-dashboards/pull/138))
 
@@ -66,6 +47,12 @@ Please note that a new PGP public key is available for verification on 2.x artif
 ### OpenSearch Query Insights
 
 
+* Use ClusterStateRequest with index pattern when searching for expired local indices ([#262](https://github.com/opensearch-project/query-insights/pull/262))
+* Add strict hash check on top queries indices ([#266](https://github.com/opensearch-project/query-insights/pull/266))
+* Add default index template for query insights local index ([#255](https://github.com/opensearch-project/query-insights/pull/255))
+* Fix local index deletion timing ([#297](https://github.com/opensearch-project/query-insights/pull/297))
+* Skip profile queries ([#298](https://github.com/opensearch-project/query-insights/pull/298))
+* Add top\_queries API verbose param ([#300](https://github.com/opensearch-project/query-insights/pull/300))
 * Fix unit test SearchQueryCategorizerTests.testFunctionScoreQuery ([#270](https://github.com/opensearch-project/query-insights/pull/270))
 * Fix bugs in top\_queries, including a wrong illegal argument exception and size limit ([#293](https://github.com/opensearch-project/query-insights/pull/293))
 
