@@ -25,7 +25,7 @@ class TestReleaseChores extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('8.4.3')
+                .defaultVersion('9.1.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -58,7 +58,7 @@ class TestReleaseChores extends BuildPipelineTest {
         addParam('ACTION', 'check')
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
-        assertCallStack().contains('release-chores.groovyScript({fallbackScript={classpath=[], oldScript=, sandbox=true, script=return ["Unknown chore"]}, script={classpath=[], oldScript=, sandbox=true, script=return [ "checkReleaseOwners", "checkDocumentation", "checkCodeCoverage", "checkReleaseNotes", "checkReleaseIssues", "addRcDetailsComment" ]}})',
+        assertCallStack().contains('release-chores.groovyScript({fallbackScript={classpath=[], oldScript=, sandbox=true, script=return ["Unknown chore"]}, script={classpath=[], oldScript=, sandbox=true, script=return [ "checkReleaseOwners", "checkDocumentation", "checkCodeCoverage", "checkReleaseNotes", "checkReleaseIssues", "addRcDetailsComment", "checkDocumentationPullRequests", "checkIntegTestResultsOverview" ]}})',
         'release-chores.activeChoice({name=RELEASE_CHORE, choiceType=PT_SINGLE_SELECT, description=Release chore to carry out, filterLength=1, filterable=false, randomName=choice-parameter-338807851658059, script=null})',
         'release-chores.groovyScript({fallbackScript={classpath=[], oldScript=, sandbox=true, script= return ["Unknown action"]}, script={classpath=[], oldScript=, sandbox=true, script=if (RELEASE_CHORE == "checkReleaseOwners") {\n' +
                 '                    return ["check", "request", "assign" ]\n' +
@@ -70,6 +70,10 @@ class TestReleaseChores extends BuildPipelineTest {
                 '                    return ["check", "notify"]\n' +
                 '                    } else if (RELEASE_CHORE == "checkReleaseIssues") {\n' +
                 '                    return ["check", "create"]\n' +
+                '                    } else if (RELEASE_CHORE == "checkDocumentationPullRequests") {\n' +
+                '                    return ["check"]\n' +
+                '                    } else if (RELEASE_CHORE == "checkIntegTestResultsOverview") {\n' +
+                '                    return ["check"]\n' +
                 '                    } else if (RELEASE_CHORE == "addRcDetailsComment") {\n' +
                 '                    return ["add"]\n' +
                 '                    }\n' +
@@ -128,7 +132,7 @@ class TestReleaseChores extends BuildPipelineTest {
     }
 
     @Test
-    public void testStageToLibMappingCheckReleaseIssuess() {
+    public void testStageToLibMappingCheckReleaseIssues() {
         addParam('RELEASE_VERSION', '3.0.0-beta1')
         addParam('RELEASE_CHORE', 'checkReleaseIssues')
         addParam('ACTION', 'check')
@@ -136,6 +140,17 @@ class TestReleaseChores extends BuildPipelineTest {
         def callStack = helper.getCallStack()
         assertCallStack().contains('release-chores.stage(checkReleaseIssues, groovy.lang.Closure)')
         assertCallStack().contains('release-chores.checkReleaseIssues({version=3.0.0-beta1, inputManifest=[manifests/3.0.0-beta1/opensearch-3.0.0-beta1.yml, manifests/3.0.0-beta1/opensearch-dashboards-3.0.0-beta1.yml], action=check})')
+    }
+
+    @Test
+    public void testStageToLibMappingCheckDocumentationPullRequests() {
+        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_CHORE', 'checkDocumentationPullRequests')
+        addParam('ACTION', 'check')
+            runScript('jenkins/release-workflows/release-chores.jenkinsfile')
+        def callStack = helper.getCallStack()
+        assertCallStack().contains('release-chores.stage(checkDocumentationPullRequests, groovy.lang.Closure)')
+        assertCallStack().contains('release-chores.checkDocumentationPullRequests({version=3.0.0-beta1})')
     }
 
     def getCommandExecutions(methodName, command) {
