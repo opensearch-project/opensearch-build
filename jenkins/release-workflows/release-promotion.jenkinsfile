@@ -491,6 +491,8 @@ pipeline {
             echo 'Triggering validation workflow'
             build job: 'distribution-validation', wait: true, parameters: [
                 string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
+                string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
+                string(name: 'OSD_BUILD_NUMBER', value: "${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"),
                 string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
                 string(name: 'ARCHITECTURE', value: 'x64 arm64'),
                 string(name: 'PLATFORM', value: 'linux windows'),
