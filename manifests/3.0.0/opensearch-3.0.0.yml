@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 21b53e51c0e7dada7d40250395c89a8ec661448c
+    ref: dc4efa821904cc2d7ea7ef61c0f577d3fc0d8be9
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 6a6115b421e464b20e5cead3edd9c9186764b6ba
