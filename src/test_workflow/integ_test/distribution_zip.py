@@ -48,4 +48,6 @@ class DistributionZip(Distribution):
 
     def uninstall(self) -> None:
         logging.info(f"Cleanup {self.install_dir} content after the test")
+        subprocess.check_call("ps -ef | grep 'opensearch-dashboards.bat' | grep -v 'grep' | awk '{print $2}' | xargs -I {} kill -15 {} || echo stop Dashboards", shell=True)
+        subprocess.check_call("ps -ef | grep 'opensearch-windows-install.bat' | grep -v 'grep' | awk '{print $2}' | xargs -I {} kill -15 {} || echo stop OpenSearch", shell=True)
         subprocess.check_call(f"rm -rf {self.install_dir}", shell=True)
