@@ -41,7 +41,7 @@ class TemporaryDirectory:
     def __init__(self, keep: bool = False, chdir: bool = False) -> None:
         self.keep = keep
         if current_platform() == "windows":
-            windows_home_dir = os.path.abspath("C:\\Users\\Administrator")  # Stays on windows administrator home to match docker mounts
+            windows_home_dir = os.path.abspath("C:\\")  # Reduce char counts on windows path
             self.name = tempfile.mkdtemp(dir=windows_home_dir, prefix='')  # Reduce char counts on windows path
         else:
             self.name = tempfile.mkdtemp()
