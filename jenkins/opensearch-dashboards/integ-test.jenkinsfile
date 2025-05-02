@@ -222,7 +222,7 @@ pipeline {
 
                     // Stash the current working directory files, aka opensearch-build repo
                     // Unstash later in each triggered stage to run integTest
-                    stash includes: "**", excludes: '.git/*', name: "integtest-opensearch-dashboards-$BUILD_NUMBER"
+                    stash includes: "**", name: "integtest-opensearch-dashboards-$BUILD_NUMBER"
 
                     componentTests = [:]
 
@@ -242,7 +242,7 @@ pipeline {
                             echo "Adding Component: ${local_component}-ci-group-${ciNum}"
 
                             componentTests["Run Integtest ${local_component}-ci-group-${ciNum}"] = {
-                              timeout(time: 4, unit: 'HOURS') {
+                              timeout(time: 3, unit: 'HOURS') {
                                 node(AGENT_LABEL) {
                                   docker.withRegistry('https://public.ecr.aws/') {
                                     docker.image(docker_images["$distribution"]).pull() // always pull latest

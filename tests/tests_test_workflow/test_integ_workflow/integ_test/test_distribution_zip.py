@@ -63,10 +63,8 @@ class TestDistributionZipOpenSearch(unittest.TestCase):
         self.distribution_zip.uninstall()
         args_list = check_call_mock.call_args_list
 
-        self.assertEqual(check_call_mock.call_count, 3)
-        self.assertEqual("ps -ef | grep 'opensearch-dashboards.bat' | grep -v 'grep' | awk '{print $2}' | xargs -I {} kill -15 {} || echo stop Dashboards", args_list[0][0][0])
-        self.assertEqual("ps -ef | grep 'opensearch-windows-install.bat' | grep -v 'grep' | awk '{print $2}' | xargs -I {} kill -15 {} || echo stop OpenSearch", args_list[1][0][0])
-        self.assertEqual(f"rm -rf {os.path.join(self.work_dir, 'opensearch-2.4.0')}", args_list[2][0][0])
+        self.assertEqual(check_call_mock.call_count, 1)
+        self.assertEqual(f"rm -rf {os.path.join(self.work_dir, 'opensearch-2.4.0')}", args_list[0][0][0])
 
 
 class TestDistributionZipOpenSearchDashboards(unittest.TestCase):
@@ -107,7 +105,5 @@ class TestDistributionZipOpenSearchDashboards(unittest.TestCase):
         self.distribution_zip.uninstall()
         args_list = check_call_mock.call_args_list
 
-        self.assertEqual(check_call_mock.call_count, 3)
-        self.assertEqual("ps -ef | grep 'opensearch-dashboards.bat' | grep -v 'grep' | awk '{print $2}' | xargs -I {} kill -15 {} || echo stop Dashboards", args_list[0][0][0])
-        self.assertEqual("ps -ef | grep 'opensearch-windows-install.bat' | grep -v 'grep' | awk '{print $2}' | xargs -I {} kill -15 {} || echo stop OpenSearch", args_list[1][0][0])
-        self.assertEqual(f"rm -rf {os.path.join(self.work_dir, 'opensearch-dashboards-2.4.0')}", args_list[2][0][0])
+        self.assertEqual(check_call_mock.call_count, 1)
+        self.assertEqual(f"rm -rf {os.path.join(self.work_dir, 'opensearch-dashboards-2.4.0')}", args_list[0][0][0])
