@@ -87,7 +87,7 @@ components:
         node.attr.knn_cb_tier: integ
         path.repo:
           - /tmp
-          - C:\
+          - logs
     smoke-test:
       test-spec: k-NN.yml
   - name: ml-commons
