@@ -190,7 +190,7 @@ pipeline {
 
                     // Stash the current working directory files, aka opensearch-build repo
                     // Unstash later in each triggered stage to run integTest
-                    stash includes: '**', excludes: '.git/*',  name: "integtest-opensearch-$BUILD_NUMBER"
+                    stash includes: '**', name: "integtest-opensearch-$BUILD_NUMBER"
 
                     componentTests = [:]
 
