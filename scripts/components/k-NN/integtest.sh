@@ -102,4 +102,9 @@ fi
 USERNAME=`echo $CREDENTIAL | awk -F ':' '{print $1}'`
 PASSWORD=`echo $CREDENTIAL | awk -F ':' '{print $2}'`
 
+# This will be added after 3.0.0 to k-NN repo directly
+# As of now it is a temp measure to avoid building another Release Candidate
+# while re-running test with a different configurations that is customizable
+sed -i 's|^[[:space:]]\+task\.systemProperty\s*"tests\.path\.repo".*|    task.systemProperty "tests.path.repo", System.getProperty("tests.path.repo", "${buildDir}/testSnapshotFolder")|' build.gradle
+sed -i 's|^[[:space:]]\+systemProperty\s*"tests\.path\.repo".*|    systemProperty "tests.path.repo", System.getProperty("tests.path.repo", "${buildDir}/testSnapshotFolder")|' build.gradle
 ./gradlew integTest -Dtests.path.repo=/tmp -Dopensearch.version=$OPENSEARCH_VERSION -Dbuild.snapshot=$SNAPSHOT -Dtests.rest.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.clustername="opensearch-integrationtest" -Dhttps=$SECURITY_ENABLED -Duser=$USERNAME -Dpassword=$PASSWORD --console=plain
