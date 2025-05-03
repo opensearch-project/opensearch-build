@@ -192,7 +192,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: ca93705c7647fa08db4820ebd5240c7fc0adc423
+    ref: '3.0'
     platforms:
       - linux
       - windows
