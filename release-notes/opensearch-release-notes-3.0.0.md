@@ -18,6 +18,9 @@ Please note that OpenSearch and OpenSearch Dashboards will deprecate support for
 **Deprecating support for Amazon Linux 2 on OpenSearch Dashboards**
 Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2 as a continuous integration build image and supported operating system in an upcoming version, as Node.js 18 will reach end-of-life with support as of April 2025 (refer to [this notice](https://nodejs.org/en/blog/announcements/v18-release-announce) from nodejs.org) and newer version of Node.js LTS version (20+) will not support runtime on Amazon Linux 2. For a list of the compatible operating systems, [visit here](https://opensearch.org/docs/latest/install-and-configure/os-comp/).
 
+### PGP Key Update (release@opensearch.org):
+
+Please note that a new PGP public key (with release@opensearch.org email) is available for artifact verification on OpenSearch version 3.0.0 and above. OpenSearch’s current PGP public key (with opensearch@amazon.com email) will be reserved for 2.x releases only. Please visit https://opensearch.org/verify-signatures.html to download the new public key, which is scheduled to expire on March 6, 2027.
 
 
 ## Breaking Changes
@@ -79,10 +82,10 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 
 ### OpenSearch k-NN
 
-* Remove ef construction from Index Seeting [#2564](https://github.com/opensearch-project/k-NN/pull/2564)
-* Remove m from Index Setting [#2564](https://github.com/opensearch-project/k-NN/pull/2564)
-* Remove space type from index setting [#2564](https://github.com/opensearch-project/k-NN/pull/2564)
-* Remove Knn Plugin enabled setting [#2564](https://github.com/opensearch-project/k-NN/pull/2564)
+* Remove ef construction from Index Seeting ([#2564](https://github.com/opensearch-project/k-NN/pull/2564))
+* Remove m from Index Setting ([#2564](https://github.com/opensearch-project/k-NN/pull/2564))
+* Remove space type from index setting ([#2564](https://github.com/opensearch-project/k-NN/pull/2564))
+* Remove Knn Plugin enabled setting ([#2564](https://github.com/opensearch-project/k-NN/pull/2564))
 
 ### OpenSearch SQL
 
@@ -143,7 +146,7 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 * Add per-tenant provisioning throttling ([#1074](https://github.com/opensearch-project/flow-framework/pull/1074))
 
 
-### OpenSearch Flow Framework Dashboards
+### OpenSearch Dashboards Flow Framework
 
 * Add fine-grained error handling ([#598](https://github.com/opensearch-project/dashboards-flow-framework/pull/598))
 * Change ingestion input to JSON lines format ([#639](https://github.com/opensearch-project/dashboards-flow-framework/pull/639))
@@ -195,16 +198,16 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 
 ### OpenSearch k-NN
 
-* [Remote Vector Index Build] Client polling mechanism, encoder check, method parameter retrieval ([[#2576](https://github.com/opensearch-project/k-NN/pull/2576))
-* [Remote Vector Index Build] Move client to separate module ([[#2603](https://github.com/opensearch-project/k-NN/pull/2603))
-* Add filter function to KNNQueryBuilder with unit tests and integration tests ([[#2599](https://github.com/opensearch-project/k-NN/pull/2599))
-* [Lucene On Faiss] Add a new mode, memory-optimized-search enable user to run vector search on FAISS index under memory constrained environment. ([[#2630](https://github.com/opensearch-project/k-NN/pull/2630))
-* [Remote Vector Index Build] Add metric collection for remote build process ([[#2615](https://github.com/opensearch-project/k-NN/pull/2615))
-* [Explain API Support] Added Explain API support for Exact/ANN/Radial/Disk based KNN search on Faiss Engine ([[#2403](https://github.com/opensearch-project/k-NN/pull/2403))
-* Introduce Remote Native Index Build feature flag, settings, and initial skeleton ([[#2525](https://github.com/opensearch-project/k-NN/pull/2525))
-* Implement vector data upload and vector data size threshold setting ([[#2550](https://github.com/opensearch-project/k-NN/pull/2550))
-* Implement data download and IndexOutput write functionality ([[#2554](https://github.com/opensearch-project/k-NN/pull/2554))
-* Introduce Client Skeleton + basic Build Request implementation ([[#2560](https://github.com/opensearch-project/k-NN/pull/2560))
+* [Remote Vector Index Build] Client polling mechanism, encoder check, method parameter retrieval ([#2576](https://github.com/opensearch-project/k-NN/pull/2576))
+* [Remote Vector Index Build] Move client to separate module ([#2603](https://github.com/opensearch-project/k-NN/pull/2603))
+* Add filter function to KNNQueryBuilder with unit tests and integration tests ([#2599](https://github.com/opensearch-project/k-NN/pull/2599))
+* [Lucene On Faiss] Add a new mode, memory-optimized-search enable user to run vector search on FAISS index under memory constrained environment. ([#2630](https://github.com/opensearch-project/k-NN/pull/2630))
+* [Remote Vector Index Build] Add metric collection for remote build process ([#2615](https://github.com/opensearch-project/k-NN/pull/2615))
+* [Explain API Support] Added Explain API support for Exact/ANN/Radial/Disk based KNN search on Faiss Engine ([#2403](https://github.com/opensearch-project/k-NN/pull/2403))
+* Introduce Remote Native Index Build feature flag, settings, and initial skeleton ([#2525](https://github.com/opensearch-project/k-NN/pull/2525))
+* Implement vector data upload and vector data size threshold setting ([#2550](https://github.com/opensearch-project/k-NN/pull/2550))
+* Implement data download and IndexOutput write functionality ([#2554](https://github.com/opensearch-project/k-NN/pull/2554))
+* Introduce Client Skeleton + basic Build Request implementation ([#2560](https://github.com/opensearch-project/k-NN/pull/2560))
 * Add concurrency optimizations with native memory graph loading and force eviction ([#2345](https://github.com/opensearch-project/k-NN/pull/2345))
 
 
@@ -413,7 +416,7 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 * remove experimental badge for vis-nlp ([#528](https://github.com/opensearch-project/dashboards-assistant/pull/528))
 * Fix vertically alignment of alert insights popover title ([#526](https://github.com/opensearch-project/dashboards-assistant/pull/526))
 * Change alert summary icon color to white ([#533](https://github.com/opensearch-project/dashboards-assistant/pull/533))
-* Fix query assistant menu disappear due to upstream method signature change([#541]https://github.com/opensearch-project/dashboards-assistant/pull/541)
+* Fix query assistant menu disappear due to upstream method signature change([#541](https://github.com/opensearch-project/dashboards-assistant/pull/541))
 * Fix .plugins-ml-memory-meta not found when get conversations ([#542](https://github.com/opensearch-project/dashboards-assistant/pull/542))
 * Fix save to notebook with MDS ([#554](https://github.com/opensearch-project/dashboards-assistant/pull/554))
 
