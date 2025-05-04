@@ -10,7 +10,7 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.0.0.md).
 
-## DEPRECATION NOTICES
+## Deprecation Notices
 
 ### Deprecating support for Ubuntu Linux 20.04
 Please note that OpenSearch and OpenSearch Dashboards will deprecate support for Ubuntu Linux 20.04 as a continuous integration build image and supported operating system in an upcoming version, as Ubuntu Linux 20.04 will reach end-of-life with standard support as of April 2025 (refer to [this notice](https://ubuntu.com/blog/ubuntu-20-04-lts-end-of-life-standard-support-is-coming-to-an-end-heres-how-to-prepare) from Canonical Ubuntu). For a list of the compatible operating systems, [visit here](https://opensearch.org/docs/latest/install-and-configure/os-comp/).
@@ -21,7 +21,6 @@ Please note that OpenSearch Dashboards will deprecate support for Amazon Linux 2
 ## PGP Key Update (release@opensearch.org):
 
 Please note that a new PGP public key (with release@opensearch.org email) is available for artifact verification on OpenSearch version 3.0.0 and above. OpenSearch’s current PGP public key (with opensearch@amazon.com email) will be reserved for 2.x releases only. Please visit https://opensearch.org/verify-signatures.html to download the new public key, which is scheduled to expire on March 6, 2027.
-
 
 ## Breaking Changes
 
