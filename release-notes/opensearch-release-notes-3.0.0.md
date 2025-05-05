@@ -71,6 +71,7 @@ Please note that a new PGP public key (with release@opensearch.org email) is ava
 * Deprecate the restful API of batch ingestion ([#3688](https://github.com/opensearch-project/ml-commons/pull/3688))
 
 ### OpenSearch Observability
+
 * Remove support for legacy notebooks ([#2406](https://github.com/opensearch-project/dashboards-observability/pull/2406))
 
 ### OpenSearch Security
@@ -103,13 +104,13 @@ Please note that a new PGP public key (with release@opensearch.org email) is ava
 
 ### OpenSearch Dashboards Assistant
 
-* expose chatEnabled flag to capabilities ([#398](https://github.com/opensearch-project/dashboards-assistant/pull/398))
-* update chatbot UI to align with new look ([#435](https://github.com/opensearch-project/dashboards-assistant/pull/435))
-* add data to summary response post processing ([#436](https://github.com/opensearch-project/dashboards-assistant/pull/436))
-* add flag to control if display conversation list ([#438](https://github.com/opensearch-project/dashboards-assistant/pull/438))
-* when open chatbot, load the last conversation automatically ([#439](https://github.com/opensearch-project/dashboards-assistant/pull/439))
-* add index type detection ([#454](https://github.com/opensearch-project/dashboards-assistant/pull/454))
-* add error handling when open chatbot and loading conversation ([#485](https://github.com/opensearch-project/dashboards-assistant/pull/485))
+* Expose chatEnabled flag to capabilities ([#398](https://github.com/opensearch-project/dashboards-assistant/pull/398))
+* Update chatbot UI to align with new look ([#435](https://github.com/opensearch-project/dashboards-assistant/pull/435))
+* Add data to summary response post processing ([#436](https://github.com/opensearch-project/dashboards-assistant/pull/436))
+* Add flag to control if display conversation list ([#438](https://github.com/opensearch-project/dashboards-assistant/pull/438))
+* When open chatbot, load the last conversation automatically ([#439](https://github.com/opensearch-project/dashboards-assistant/pull/439))
+* Add index type detection ([#454](https://github.com/opensearch-project/dashboards-assistant/pull/454))
+* Add error handling when open chatbot and loading conversation ([#485](https://github.com/opensearch-project/dashboards-assistant/pull/485))
 * Generate visualization on t2v page mount ([#505](https://github.com/opensearch-project/dashboards-assistant/pull/505))
 * Update insight badge ([#507](https://github.com/opensearch-project/dashboards-assistant/pull/507))
 
@@ -430,18 +431,15 @@ Please note that a new PGP public key (with release@opensearch.org email) is ava
 
 ### OpenSearch Alerting Dashboards Plugin
 
-
 * Alerting Dashboard doesn't find sub-fields when building the list of fields by type. ([#1234](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1234))
 
 
 ### OpenSearch Anomaly Detection
 
-
 * Distinguish local cluster when local name is same as remote ([#1446](https://github.com/opensearch-project/anomaly-detection/pull/1446))
 
 
 ### OpenSearch Dashboards Anomaly Detection
-
 
 * Switching fieldcaps api to utilize js client ([#984](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/984))
 * Update namespace for alerting plugin to avoid conflict with alerting ([#1003](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1003))
@@ -1183,6 +1181,7 @@ Please note that a new PGP public key (with release@opensearch.org email) is ava
 * Merge main for OpenSearch 3.0 release ([#3434](https://github.com/opensearch-project/sql/pull/3434))
 * Fix build due to phasing off SecurityManager usage in favor of Java Agent ([#3539](https://github.com/opensearch-project/sql/pull/3539))
 * Using java-agent gradle plugin to phase off Security Manager in favor of Java-agent ([#3551](https://github.com/opensearch-project/sql/pull/3551))
+
 
 ### OpenSearch Security
 
