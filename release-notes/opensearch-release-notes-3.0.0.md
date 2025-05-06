@@ -1,7 +1,42 @@
 # OpenSearch and OpenSearch Dashboards 3.0.0 Release Notes
 
-## Release Highlights (PENDING UPDATE)
-* Lucene 10 is now used in OpenSearch 3.0.0.
+## Release Highlights
+
+OpenSearch 3.0 delivers significant upgrades for performance, data management, security, vector database functionality, and more to help you build and deploy powerful, flexible solutions for search, analytics, observability, and other use cases.
+
+### New and Updated Features
+
+* Among the significant performance improvements included in OpenSearch 3.0 is an update to range queries. Applying smarter strategies for numeric and date fields, OpenSearch can now answer range filters with far fewer I/O operations to deliver 25% faster performance in Big5 benchmarks.
+* New optimization features for high-cardinality queries introduce execution hints for cardinality aggregation, enabling users to better balance precision and performance. This enhancement achieves a 75% reduction in p90 latency in benchmark testing compared to the previous release.
+* Concurrent segment search is now enabled by default for k-NN, delivering up to 2.5x faster query performance. Additionally, improvements to the floor segment size setting help improve tail latencies by up to 20%.
+* Date histogram aggregations now benefit from enhanced filter rewrite optimization that supports sub-aggregations, offering significant performance gains for real-world use cases requiring multi-level aggregations.
+* Derived source for k-NN vectors is production ready in this release, optimizing vector search performance with up to 30x improvement in cold start query latencies. This feature can also reduce storage requirements by 3x across the Faiss, Lucene, and NMSLIB libraries.
+* Semantic sentence highlighting introduces context-aware highlighting to identify and highlight relevant sentences based on meaning, not just keyword matches, working seamlessly with traditional search as well as neural and hybrid search. This feature includes a pre-trained model for basic semantic highlighting use cases.
+* Concurrent Segment Search is now enabled by default for k-NN, delivering up to 2.5x faster query performance. Additionally, improvements to the floor segment size setting help improve tail latencies by up to 20%.
+* The new explain parameter for Faiss engine queries provides detailed insights into k-NN query scoring processes. This enhancement helps users understand and optimize their query results by providing a comprehensive view into search result scores.
+* This release changes the default BM25 scoring function from LegacyBM25Similarity to BM25Similarity. This provides better compatibility with the latest Apache Lucene optimizations and removes unnecessary legacy code, leading to cleaner, more maintainable implementations while preserving search result quality.
+* Piped Processing Language (PPL) receives powerful new capabilities with lookup, join, and subsearch commands, improving log correlation and filtering capabilities. These enhancements, backed by Apache Calcite, enable better query planning and execution for interactive data exploration.
+* Query insights see major improvements with a new live queries API for real-time monitoring and a verbose parameter for optimized dashboard performance. Dynamic columns in the query insights dashboard support efficient query analysis.
+* The observability experience is enhanced with contextual launch for anomaly detection, allow you to launch an anomaly detector from the main dashboard and automatically populating relevant logs in the Discover view. This streamlined workflow can significantly accelerate the task of investigating anomalies.
+* Z-score normalization introduces a new statistical approach for hybrid search score normalization that better handles outliers compared to the default score-based normalization method. This supports more consistent and reliable hybrid search results.
+* The addition of lower bound min-max normalization helps prevent over-amplification of low scores in hybrid search results by establishing minimum thresholds during normalization, supporting  more relevant and proportionate search results.
+* Inner hits support for hybrid queries provides detailed visibility into results that are hidden by default when searching nested or parent-join fields.
+* Star-tree indexing capabilities have been expanded to support metric aggregations and filtered terms queries, delivering up to 100x reduction in query work. This enhancement particularly benefits high-cardinality group-by operations and multi-level aggregations.
+* New functionality lets you separates indexing and search traffic in remote store-enabled clusters to support failure isolation, enable independent scaling, and improve performance and efficiency.  For use cases that write-once and read-many, a new _scale API allows you to turn of all writers and make an index search only.  
+* A new security framework replaces the Java Security Manager with a Java agent that enables OpenSearch to intercept privileged calls and ensure that the caller performing the privileged action has permissions. The replacement is configured in the same manner as the JSM, with policy files that give grants to individual codebases which specify the privileged actions they are allowed to perform.
+* The Security plugin receives significant performance improvements through optimized privilege evaluation. These enhancements reduce internal serialization overhead and improve cluster performance for deployments using advanced security features.
+* A new PGP public key has been implemented for version 3.0.0 and above, updating the artifact verification process, valid through March 6, 2027. The previous key will continue to be used for 2.x releases only.
+* You can now configure node-level circuit breakers in OpenSearch k-NN, introducing the possibility of heterogenous circuit breaker limits, offering benefits for scenarios in which clusters live in mixed-hardware environments with different memory constraints.
+
+### Experimental Features
+
+* OpenSearch 3.0 includes the following experimental functionality. Experimental features are disabled by default. For instructions on how to enable them, refer to the documentation for the feature.
+* New experimental GPU acceleration for vector search operations offers substantial performance gains, delivering up to 9.3x faster indexing speeds while reducing operational costs by 3.75x compared to CPU-based solutions.
+* This release introduces experimental high-performance data transport using protocol buffers (protobuf) over gRPC, enabling concurrent requests over single TCP connections. This can significantly reduces serialization overhead compared to JSON and provides an efficient path for integrating OpenSearch into existing gRPC ecosystems.
+* Pull-based ingestion allows OpenSearch to fetch data directly from streaming sources like Apache Kafka and Amazon Kinesis. This experimental feature supports improved data pipeline stability, natively handling backpressure and offering a more resilient approach to ingestion.
+* Experimental native Model Context Protocol (MCP) support enables seamless integration with AI agents, standardizing communications across LLM applications, data sources, and tools. This makes it easier to integrate OpenSearch with external AI agents such as Anthropic, LangChain, and OpenAI and build AI-powered applications. 
+* A new plan-execute-reflect agent introduces autonomous problem-solving capabilities that break complex tasks into manageable steps. This intelligent agent supports iterative improvement through reflection, making it particularly effective for complex troubleshooting scenarios.
+
 
 ## Release Details
 [OpenSearch and OpenSearch Dashboards 3.0.0](https://opensearch.org/artifacts/by-version/#release-3-0-0) includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
