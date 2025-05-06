@@ -76,7 +76,7 @@ We plan to resolve this in the final 3.0.0 GA release.
 
 
 ## Release Details
-[OpenSearch and OpenSearch Dashboards 3.0.0-beta1](https://opensearch.org/artifacts/by-version/#release-3-0-0-alpha1) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+[OpenSearch and OpenSearch Dashboards 3.0.0-beta1](https://opensearch.org/artifacts/by-version/#release-3-0-0-beta1) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.0.0-beta1.md).
 
