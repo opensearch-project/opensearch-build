@@ -19,7 +19,7 @@ for entry in "${PLATFORM_LIST[@]}"; do
     fi
 done
 ARCH=`uname -m`
-VERSION="2.42.0"
+VERSION="2.55.0"
 
 # ppc64le specific
 function gh_install_ppc64le {
