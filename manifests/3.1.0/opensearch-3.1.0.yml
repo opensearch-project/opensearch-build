@@ -47,6 +47,8 @@ components:
     platforms:
       - linux
       - windows
+    depends_on:
+      - common-utils
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
     ref: main
@@ -190,6 +192,9 @@ components:
     depends_on:
       - common-utils
       - opensearch-remote-metadata-sdk
+      - ml-commons
+      - k-NN
+      - neural-search
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
     ref: main
