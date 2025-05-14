@@ -46,6 +46,8 @@ jobs:
           - 'main'
           - '3.0'
           - '2.19'
+          - '3.1'
+          - 3.x
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@v4
