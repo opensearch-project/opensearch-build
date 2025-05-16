@@ -1,0 +1,60 @@
+---
+info:
+  title: OpenSearch geospatial plugin smoke tests
+  version: default
+name: geospatial
+paths:
+  /_plugins/geospatial/geojson/_upload:
+    PUT:
+      parameters:
+        - index: national_parks_test
+          field: boundary
+          type: geo_shape
+          data:
+            - type: Feature
+              geometry:
+                type: Polygon
+                coordinates:
+                  - - - 100.0
+                      - 0.0
+                    - - 101.0
+                      - 0.0
+                    - - 101.0
+                      - 1.0
+                    - - 100.0
+                      - 1.0
+                    - - 100.0
+                      - 0.0
+              properties:
+                name: Yosemite Valley
+                type: National Park
+                state: California
+            - type: Feature
+              geometry:
+                type: LineString
+                coordinates:
+                  - - 106.0
+                    - 6.0
+                  - - 106.1
+                    - 6.1
+                  - - 106.2
+                    - 6.2
+                  - - 106.3
+                    - 6.3
+              properties:
+                name: Grand Canyon Trail
+                type: Hiking Trail
+                difficulty: Moderate
+  /_plugins/geospatial/_upload/stats:
+    GET:
+      parameters: []
+  /_plugins/geospatial/ip2geo/datasource/test-datasource:
+    PUT:
+      parameters:
+        - endpoint: https://geoip.maps.opensearch.org/v1/geolite2-city/manifest.json
+          update_interval_in_days: 5
+    GET:
+      parameters: []
+  /_plugins/geospatial/ip2geo/datasource:
+    GET:
+      parameters: []
