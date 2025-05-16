@@ -59,6 +59,8 @@ components:
       test-configs:
         - with-security
         - without-security
+    smoke-test:
+      test-spec: geospatial.yml
   - name: index-management
     integ-test:
       build-dependencies:
