@@ -33,7 +33,7 @@ pipeline {
         )
         choice(
             name: 'TAG',
-            choices: ['2', '1'],
+            choices: ['2', '3'],
             description: "Choose the tag of the Product.",
         )
     }
