@@ -26,7 +26,7 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('7.0.0')
+                        .defaultVersion('9.1.2')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
