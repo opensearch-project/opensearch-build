@@ -71,7 +71,8 @@ class TestValidateTar(unittest.TestCase):
     @patch('system.temporary_directory.TemporaryDirectory')
     @patch('os.path.basename')
     @patch('validation_workflow.tar.validation_tar.execute')
-    def test_installation(self, mock_system: Mock, mock_basename: Mock, mock_temporary_directory: Mock, mock_validation_args: Mock) -> None:
+    @patch('validation_workflow.validation.Validation.install_native_plugin')
+    def test_installation(self, mock_native_plugin: Mock, mock_system: Mock, mock_basename: Mock, mock_temporary_directory: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.platform = 'linux'
@@ -83,6 +84,7 @@ class TestValidateTar(unittest.TestCase):
         mock_basename.side_effect = lambda path: "mocked_filename"
         mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         result = validate_tar.installation()
+        mock_native_plugin.assert_called_with("/tmp/trytytyuit/opensearch")
         self.assertTrue(result)
 
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')

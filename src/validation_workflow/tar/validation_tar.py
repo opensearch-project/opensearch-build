@@ -28,8 +28,14 @@ class ValidateTar(Validation, DownloadUtils):
     def installation(self) -> bool:
         try:
             for project in self.args.projects:
-                self.filename = os.path.basename(self.args.file_path.get(project))
-                execute('mkdir ' + os.path.join(self.tmp_dir.path, project) + ' | tar -xzf ' + os.path.join(str(self.tmp_dir.path), self.filename) + ' -C ' + os.path.join(self.tmp_dir.path, project) + ' --strip-components=1', ".", True, False)  # noqa: E501
+                try:
+                    self.filename = os.path.basename(self.args.file_path.get(project))
+                    execute('mkdir ' + os.path.join(self.tmp_dir.path, project) + ' | tar -xzf ' + os.path.join(str(self.tmp_dir.path), self.filename) + ' -C ' + os.path.join(self.tmp_dir.path, project) + ' --strip-components=1', ".", True, False)  # noqa: E501
+                    if self.args.validate_native_plugin:
+                        self.install_native_plugin(os.path.join(self.tmp_dir.path, "opensearch"))
+
+                except:
+                    return False
         except:
             raise Exception('Failed to install Opensearch')
         return True

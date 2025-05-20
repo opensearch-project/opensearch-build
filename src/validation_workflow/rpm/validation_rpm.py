@@ -32,6 +32,9 @@ class ValidateRpm(Validation, DownloadUtils):
                 self.validate_signature()
                 execute(f'sudo yum remove {project} -y', ".")
                 execute(f'sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))} rpm -ivh {os.path.join(self.tmp_dir.path, self.filename)}', str(self.tmp_dir.path), True, False)  # noqa: 501
+                if self.args.validate_native_plugin:
+                    self.install_native_plugin(os.path.join(os.sep, "usr", "share", "opensearch"))
+
         except:
             raise Exception('Failed to install Opensearch')
         return True

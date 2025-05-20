@@ -5,9 +5,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
 import unittest
 from unittest import mock
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, call, patch
 
 import requests
 
@@ -91,6 +92,72 @@ class TestValidation(unittest.TestCase):
         result = mock_validation.check_for_security_plugin("/tmp/trytytyuit/opensearch")
 
         self.assertTrue(result)
+
+    @patch("validation_workflow.validation.execute")
+    @patch.object(Validation, "get_native_plugin_list")
+    @patch('validation_workflow.validation.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_install_native_plugin(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_plugin_list: Mock, mock_execute: Mock) -> None:
+        mock_plugin_list.return_value = ["discovery-ec2", "repository-s3"]
+        mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
+        mock_temporary_directory.return_value.path = os.path.join("tmp","trytytyuit")
+
+        validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        validate_tar.install_native_plugin(os.path.join("tmp","trytytyuit"))
+        mock_execute.assert_has_calls(
+            [
+                call(f'.{os.sep}opensearch-plugin install --batch discovery-ec2', os.path.join("tmp","trytytyuit","bin")),
+                call(f'.{os.sep}opensearch-plugin install --batch repository-s3', os.path.join("tmp","trytytyuit","bin"))
+            ]
+        )
+
+    @patch('requests.get')
+    @patch('os.listdir')
+    @patch('manifests.bundle_manifest.BundleManifest.from_path')
+    @patch('validation_workflow.validation.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_get_native_plugin_list(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
+                                    mock_manifest_from_path: Mock, mock_list_dir: Mock, mock_get: Mock) -> None:
+
+        mock_response = Mock()
+        mock_response.json.return_value = [{'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
+                                           {'name': 'analysis-nori', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+                                           {'name': 'query-insights', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+                                           {'name': 'examples', 'path': 'examples', 'sha': 'hjkd7559hiji96'},
+                                           {'name': 'build.gradle', 'path': 'build.gradle', 'sha': 'd3e5d75cdsiji96'},
+                                           {'name': 'identity-shiro', 'path': 'plugins/identity-shiro', 'sha': 'd3e5d75cdsiji96'}
+                                           ]
+        mock_response.status_code = 200
+        mock_get.return_value = mock_response
+        mock_list_dir.return_value = ["query-insights", "ml-commons"]
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        result = validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path)
+
+        self.assertEqual(["analysis-icu", "analysis-nori"], result)
+
+    @patch('requests.get')
+    @patch('os.listdir')
+    @patch('manifests.bundle_manifest.BundleManifest.from_path')
+    @patch('validation_workflow.validation.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_get_native_plugin_list_exception(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
+                                              mock_manifest_from_path: Mock, mock_list_dir: Mock, mock_get: Mock) -> None:
+        mock_response = Mock()
+        mock_response.json.return_value = [
+            {'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
+            {'name': 'analysis-nori', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+            {'name': 'query-insights', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'}
+        ]
+        mock_response.status_code = 503
+        mock_get.return_value = mock_response
+        mock_list_dir.return_value = ["query-insights", "ml-commons"]
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        with self.assertRaises(Exception) as e1:
+            validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path)
+
+        self.assertEqual(str(e1.exception), "Github Api returned error code while retrieving the list of native plugins")
 
     @patch("time.sleep")
     @patch('validation_workflow.validation.Validation.check_http_request')

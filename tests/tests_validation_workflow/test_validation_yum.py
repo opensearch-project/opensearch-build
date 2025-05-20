@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
 import unittest
 from unittest.mock import Mock, patch
 
@@ -94,7 +95,8 @@ class TestValidationYum(unittest.TestCase):
     @patch("validation_workflow.yum.validation_yum.execute")
     @patch('validation_workflow.yum.validation_yum.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
-    def test_installation(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_execute: Mock) -> None:
+    @patch('validation_workflow.validation.Validation.install_native_plugin')
+    def test_installation(self, mock_native_plugin: Mock, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_execute: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.allow_http = False
@@ -105,6 +107,7 @@ class TestValidationYum(unittest.TestCase):
         validate_yum = ValidateYum(mock_validation_args.return_value, mock_temporary_directory.return_value)
 
         result = validate_yum.installation()
+        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr","share","opensearch"))
         self.assertTrue(result)
 
     @patch("validation_workflow.yum.validation_yum.execute", return_value=True)
