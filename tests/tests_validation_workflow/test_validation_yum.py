@@ -107,7 +107,7 @@ class TestValidationYum(unittest.TestCase):
         validate_yum = ValidateYum(mock_validation_args.return_value, mock_temporary_directory.return_value)
 
         result = validate_yum.installation()
-        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr","share","opensearch"))
+        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr", "share", "opensearch"))
         self.assertTrue(result)
 
     @patch("validation_workflow.yum.validation_yum.execute", return_value=True)

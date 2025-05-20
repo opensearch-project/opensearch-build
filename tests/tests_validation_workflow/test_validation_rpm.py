@@ -104,12 +104,12 @@ class TestValidationRpm(unittest.TestCase):
         mock_validation_args.return_value.platform = 'linux'
         mock_validation_args.return_value.allow_http = True
         mock_validation_args.return_value.projects = ["opensearch"]
-        mock_temporary_directory.return_value.path = os.path.join("tmp","trytytyuit")
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
         mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         result = validate_rpm.installation()
-        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr","share","opensearch"))
+        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr", "share", "opensearch"))
 
         self.assertTrue(result)
 

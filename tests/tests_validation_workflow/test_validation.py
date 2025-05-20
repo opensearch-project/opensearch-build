@@ -100,14 +100,14 @@ class TestValidation(unittest.TestCase):
     def test_install_native_plugin(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_plugin_list: Mock, mock_execute: Mock) -> None:
         mock_plugin_list.return_value = ["discovery-ec2", "repository-s3"]
         mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
-        mock_temporary_directory.return_value.path = os.path.join("tmp","trytytyuit")
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
 
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
-        validate_tar.install_native_plugin(os.path.join("tmp","trytytyuit"))
+        validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit"))
         mock_execute.assert_has_calls(
             [
-                call(f'.{os.sep}opensearch-plugin install --batch discovery-ec2', os.path.join("tmp","trytytyuit","bin")),
-                call(f'.{os.sep}opensearch-plugin install --batch repository-s3', os.path.join("tmp","trytytyuit","bin"))
+                call(f'.{os.sep}opensearch-plugin install --batch discovery-ec2', os.path.join("tmp", "trytytyuit", "bin")),
+                call(f'.{os.sep}opensearch-plugin install --batch repository-s3', os.path.join("tmp", "trytytyuit", "bin"))
             ]
         )
 

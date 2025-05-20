@@ -5,8 +5,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import unittest
 import os
+import unittest
 from unittest.mock import MagicMock, Mock, call, patch
 
 from validation_workflow.deb.validation_deb import ValidateDeb
@@ -34,7 +34,7 @@ class TestValidateDeb(unittest.TestCase):
         result = validate_deb.installation()
         self.assertTrue(result)
         mock_get_pwd.assert_called_with("2.3.0")
-        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr","share","opensearch"))
+        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr", "share", "opensearch"))
 
     @patch("validation_workflow.deb.validation_deb.execute")
     @patch("validation_workflow.deb.validation_deb.get_password")
