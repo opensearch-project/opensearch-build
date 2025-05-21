@@ -111,6 +111,8 @@ components:
       test-configs:
         - with-security
         - without-security
+    smoke-test:
+      test-spec: neural-search.yml
   - name: notifications
     working-directory: notifications
     integ-test:

@@ -1,0 +1,20 @@
+---
+info:
+  title: OpenSearch neural-search plugin smoke tests
+  version: default
+name: neural-search
+paths:
+  /_cluster/settings:
+    PUT:
+      parameters:
+        - persistent:
+            plugins.neural_search.stats_enabled: true
+  /_plugins/_neural/stats:
+    GET:
+      parameters: []
+  /_plugins/_neural/stats?flat_stat_paths=true&include_metadata=true:
+    GET:
+      parameters: []
+  /_plugins/_neural/stats/text_embedding_executions:
+    GET:
+      parameters: []
