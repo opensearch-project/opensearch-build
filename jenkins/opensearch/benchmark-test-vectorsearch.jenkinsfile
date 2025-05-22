@@ -1,0 +1,441 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+lib = library(identifier: 'jenkins@9.1.2', retriever: modernSCM([
+
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    agent none
+    options {
+        timeout(time: 24, unit: 'HOURS')
+        buildDiscarder(logRotator(daysToKeepStr: '30'))
+    }
+    environment {
+        AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Vector-Benchmark-Test'
+        BUNDLE_MANIFEST = 'bundle-manifest.yml'
+        JOB_NAME = 'benchmark-test'
+    }
+    triggers {
+        parameterizedCron(
+        '''
+            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.1/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-nmslib-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/nmslib-index.json","target_index_primary_shards":3,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","neighbors_data_set_corpus":"cohere-1m","neighbors_data_set_format":"hdf5","query_count":10000};CAPTURE_NODE_STAT=true
+            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.1/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-faiss-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":3,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","query_count":10000};CAPTURE_NODE_STAT=true
+            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.1/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-lucene-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/lucene-index.json","target_index_primary_shards":3,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","query_count":10000};CAPTURE_NODE_STAT=true
+            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.1/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-nmslib-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/nmslib-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","neighbors_data_set_corpus":"cohere-10m","neighbors_data_set_format":"hdf5","query_count":10000};CAPTURE_NODE_STAT=true
+            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.1/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-lucene-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/lucene-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};CAPTURE_NODE_STAT=true
+            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.1/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-faiss-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};CAPTURE_NODE_STAT=true
+
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-nmslib-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo-219","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots-219","snapshot_name":"vectorsearch-nmslib-1m","target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/nmslib-index.json","target_index_primary_shards":3,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","neighbors_data_set_corpus":"cohere-1m","neighbors_data_set_format":"hdf5","query_count":10000};TEST_PROCEDURE=restore-from-snapshot;EXCLUDE_TASKS="create-target-index,delete-target-index";CAPTURE_NODE_STAT=true
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-faiss-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":3,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","query_count":10000};CAPTURE_NODE_STAT=true
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-lucene-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/lucene-index.json","target_index_primary_shards":3,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","query_count":10000};CAPTURE_NODE_STAT=true
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-nmslib-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo-219","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots-219","snapshot_name":"vectorsearch-nmslib-10m","target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/nmslib-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","neighbors_data_set_corpus":"cohere-10m","neighbors_data_set_format":"hdf5","query_count":10000};TEST_PROCEDURE=restore-from-snapshot;EXCLUDE_TASKS="create-target-index,delete-target-index";CAPTURE_NODE_STAT=true
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-lucene-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/lucene-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};CAPTURE_NODE_STAT=true
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-faiss-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};CAPTURE_NODE_STAT=true
+
+            H 2 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-nmslib-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo-219","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots-219","snapshot_name":"vectorsearch-nmslib-1m","target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/nmslib-index.json","target_index_primary_shards":3,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","neighbors_data_set_corpus":"cohere-1m","neighbors_data_set_format":"hdf5","query_count":10000};TEST_PROCEDURE=restore-from-snapshot;EXCLUDE_TASKS="create-target-index,delete-target-index";CAPTURE_NODE_STAT=true
+            H 2 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-faiss-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":3,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","query_count":10000};CAPTURE_NODE_STAT=true
+            H 2 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-lucene-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/lucene-index.json","target_index_primary_shards":3,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","query_count":10000};CAPTURE_NODE_STAT=true
+            H 2 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-nmslib-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo-219","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"workload-snapshots-219","snapshot_name":"vectorsearch-nmslib-10m","target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/nmslib-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","neighbors_data_set_corpus":"cohere-10m","neighbors_data_set_format":"hdf5","query_count":10000};TEST_PROCEDURE=restore-from-snapshot;EXCLUDE_TASKS="create-target-index,delete-target-index";CAPTURE_NODE_STAT=true
+            H 3 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-lucene-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/lucene-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};CAPTURE_NODE_STAT=true
+            H 3 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-faiss-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};CAPTURE_NODE_STAT=true
+
+            H 3 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=2;DATA_INSTANCE_TYPE=r7gd.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r7gd.2xlarge,major-version:2x,cluster-config:arm64-r7gd.2xlarge-2-data-5-shards-1-replica-faiss-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":5,"target_index_replica_shards":1,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"mode":"on_disk","query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};CAPTURE_NODE_STAT=true;ENABLE_INSTANCE_BASED_STORAGE=true
+            H 3 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=2;DATA_INSTANCE_TYPE=r7gd.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r7gd.2xlarge,major-version:2x,cluster-config:arm64-r7gd.2xlarge-2-data-5-shards-1-replica-faiss-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":5,"target_index_replica_shards":1,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"mode":"on_disk","query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};CAPTURE_NODE_STAT=true;ENABLE_INSTANCE_BASED_STORAGE=true
+            H 3 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.1/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=2;DATA_INSTANCE_TYPE=r7gd.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r7gd.2xlarge,major-version:2x,cluster-config:arm64-r7gd.2xlarge-2-data-5-shards-1-replica-faiss-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":5,"target_index_replica_shards":1,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"mode":"on_disk","query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};CAPTURE_NODE_STAT=true;ENABLE_INSTANCE_BASED_STORAGE=true
+
+            H 4 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.2xlarge,major-version:2x,cluster-config:arm64-r6g.2xlarge-3-data-3-shards-1-replica-remote-index-faiss-cohere-1m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":6,"target_index_replica_shards":1,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-1m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-1m","query_count":10000,"snapshot_bucket_name":"gpu-based-vector-snapshots","snapshot_repo_name":"vector-repo","snapshot_base_path":"3.0.0","client_endpoint":"http://internal-remoteBuildNightlyCoordinatorALB-1881709761.us-east-1.elb.amazonaws.com:80","remote_index_build_enabled":"true","remote_index_build_size_threshold":"0mb"};TEST_PROCEDURE=gpu-based-vector-test;CAPTURE_NODE_STAT=true
+            H 4 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=vectorsearch;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r6g.4xlarge;DATA_NODE_STORAGE=500;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:arm64,instance-type:r6g.4xlarge,major-version:2x,cluster-config:arm64-r6g.4xlarge-3-data-6-shards-1-replica-faiss-cohere-10m;ADDITIONAL_CONFIG=knn.algo_param.index_thread_qty:2;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":6,"target_index_replica_shards":1,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000,"snapshot_bucket_name":"gpu-based-vector-snapshots","snapshot_repo_name":"vector-repo","snapshot_base_path":"3.0.0","client_endpoint":"http://internal-remoteBuildNightlyCoordinatorALB-1881709761.us-east-1.elb.amazonaws.com:80","remote_index_build_enabled":"true","remote_index_build_size_threshold":"0mb"};TEST_PROCEDURE=gpu-based-vector-test;CAPTURE_NODE_STAT=true
+        '''
+        )
+    }
+    parameters {
+        string(
+            name: 'BUNDLE_MANIFEST_URL',
+            description: 'The distribution manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.3.0/6039/linux/x64/tar/dist/opensearch/manifest.yml',
+            trim: true
+        )
+        string(
+            name: 'DISTRIBUTION_URL',
+            description: 'Publicly available download url of the OpenSearch artifact tarball. Currently only supports x64 arch.',
+            trim: true
+        )
+        string(
+            name: 'DISTRIBUTION_VERSION',
+            description: 'The distribution version of of the OpenSearch artifact, only to be provided in combination with DISTRIBUTION_URL param.',
+            trim: true
+        )
+        string(
+            defaultValue: 'nyc_taxis',
+            name: 'TEST_WORKLOAD',
+            description: 'The workload name from OpenSearch Benchmark Workloads.',
+            trim: true
+        )
+        booleanParam(
+            defaultValue: false,
+            name: 'SECURITY_DISABLED',
+            description: 'Force the security of the cluster to be disabled'
+        )
+        booleanParam(
+            name: 'SINGLE_NODE_CLUSTER',
+            description: 'Benchmark test on a single node cluster',
+            defaultValue: true
+        )
+        booleanParam(
+            name: 'MIN_DISTRIBUTION',
+            description: 'Use OpenSearch min distribution',
+            defaultValue: false
+        )
+        booleanParam(
+            name: 'ENABLE_REMOTE_STORE',
+            description: 'Enable remote-store feature in OpenSearch cluster',
+            defaultValue: false
+        )
+        string(
+            name: 'MANAGER_NODE_COUNT',
+            description: 'Number of cluster manager nodes, empty value defaults to 3.',
+            trim: true
+        )
+        string(
+            name: 'DATA_NODE_COUNT',
+            description: 'Number of cluster data nodes, empty value defaults to 2.',
+            trim: true
+        )
+        string(
+            name: 'CLIENT_NODE_COUNT',
+            description: 'Number of cluster client nodes, empty value default to 0.',
+            trim: true
+        )
+        string(
+            name: 'INGEST_NODE_COUNT',
+            description: 'Number of cluster INGEST nodes, empty value defaults to 0.',
+            trim: true
+        )
+        string(
+            name: 'ML_NODE_COUNT',
+            description: 'Number of cluster ml nodes, empty value defaults to 0.',
+            trim: true
+        )
+        string(
+            name: 'DATA_INSTANCE_TYPE',
+            description: 'EC2 instance type for data node, empty defaults to r5.xlarge.',
+            trim: true
+        )
+        string(
+            name: 'DATA_NODE_STORAGE',
+            description: 'Data node ebs block storage size, empty value defaults to 100Gb',
+            trim: true
+        )
+        booleanParam(
+            name: 'ENABLE_INSTANCE_BASED_STORAGE',
+            description: 'Use instance based SSD storage for supported instance types',
+            defaultValue: false
+        )
+        string(
+            name: 'ML_NODE_STORAGE',
+            description: 'ML node ebs block storage size, empty value defaults to 100Gb',
+            trim: true
+        )
+        string(
+            name: 'JVM_SYS_PROPS',
+            description: 'A comma-separated list of key=value pairs that will be added to jvm.options as JVM system properties.',
+            trim: true
+        )
+        string(
+            name: 'ADDITIONAL_CONFIG',
+            description: 'Additional opensearch.yml config parameters passed as JSON. e.g., `opensearch.experimental.feature.segment_replication_experimental.enabled:true cluster.indices.replication.strategy:SEGMENT`',
+            trim: true
+        )
+        booleanParam(
+            name: 'USE_50_PERCENT_HEAP',
+            description: 'Use 50 percent of physical memory as heap.',
+            defaultValue: false
+        )
+        string(
+            name: 'USER_TAGS',
+            description: 'Attach arbitrary text to the meta-data of each benchmark metric record, without any spaces. e.g., `run-type:adhoc,segrep:enabled,arch:x64`. ',
+            trim: true
+        )
+        string(
+            name: 'WORKLOAD_PARAMS',
+            description: 'With this parameter you can inject variables into workloads. Use json type. e.g., `{"number_of_replicas":"1","number_of_shards":"5"}`',
+            trim: true
+        )
+        string(
+            name: 'TEST_PROCEDURE',
+            description: 'Defines a test procedure to use. e.g., `append-no-conflicts,significant-text`',
+            trim: true
+        )
+        string(
+            name: 'EXCLUDE_TASKS',
+            description: 'Defines a comma-separated list of test procedure tasks not to run. Default runs all. e.g., `type:search,delete-index`',
+            trim: true
+        )
+        string(
+            name: 'INCLUDE_TASKS',
+            description: 'Defines a comma-separated list of test procedure tasks to run. Default runs all. e.g., `type:search,delete-index`',
+            trim: true
+        )
+        booleanParam(
+            name: 'CAPTURE_NODE_STAT',
+            description: 'Enable opensearch-benchmark node-stats telemetry to capture system level metrics.',
+            defaultValue: false
+        )
+        booleanParam(
+            name: 'CAPTURE_SEGMENT_REPLICATION_STAT',
+            description: 'Enable opensearch-benchmark segment-replication-stats telemetry to capture metrics such as replication lag.',
+            defaultValue: false
+        )
+        string(
+            name: 'TELEMETRY_PARAMS',
+            description: 'Allows to set parameters for telemetry devices. Use json type. e.g.,{"node-stats-include-indices":"true","node-stats-include-indices-metrics":"segments"}',
+            trim: true
+        )
+    }
+
+    stages {
+        stage('validate-and-set-parameters') {
+            agent { label AGENT_LABEL }
+            steps {
+                script {
+                    if (BUNDLE_MANIFEST_URL == '' && DISTRIBUTION_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Benchmark Tests failed to start. Provide either BUNDLE_MANIFEST_URL or DISTRIBUTION_URL with DISTRIBUTION_VERSION")
+                    }
+                    if (BUNDLE_MANIFEST_URL != '') {
+                        def bundleManifestObj = downloadBuildManifest (
+                        url: BUNDLE_MANIFEST_URL,
+                        path: BUNDLE_MANIFEST
+                        )
+                        String buildId = bundleManifestObj.getArtifactBuildId()
+                        env.BUILD_ID = buildId
+                        env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
+                        env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+                        echo "HAS_SECURITY: ${env.HAS_SECURITY}"
+                        lib.jenkins.Messages.new(this).add(JOB_NAME, "Benchmark tests for #${BUILD_ID}")
+                        currentBuild.description = "Running benchmark test for build number: ${BUILD_ID} Manifest: ${BUNDLE_MANIFEST_URL}"
+                    }
+                    else {
+                        BUNDLE_MANIFEST = ''
+                        env.HAS_SECURITY = "false"
+                        env.ARCHITECTURE = "x64"
+                        echo "HAS_SECURITY: ${env.HAS_SECURITY}"
+                        lib.jenkins.Messages.new(this).add(JOB_NAME, "Benchmark tests for ${DISTRIBUTION_URL}")
+                        currentBuild.description = "Running benchmark test for distribution-url: ${DISTRIBUTION_URL} distribution-version: ${DISTRIBUTION_VERSION}"
+                    }
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+        stage('benchmark-test') {
+            parallel {
+                stage('test-with-security') {
+                agent { label AGENT_LABEL }
+                    when {
+                        expression { return HAS_SECURITY.toBoolean() }
+                    }
+                    steps {
+                        script {
+                            if (BUNDLE_MANIFEST_URL != '') {
+                                def bundleManifestObj = downloadBuildManifest (
+                                url: BUNDLE_MANIFEST_URL,
+                                path: BUNDLE_MANIFEST
+                                )
+                                echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                                echo "BUILD_ID: ${BUILD_ID}"
+                                echo "Architecture: ${ARCHITECTURE}"
+                            }
+                            else {
+                                echo "DISTRIBUTION_URL: ${DISTRIBUTION_URL}"
+                                echo "DISTRIBUTION_VERSION: ${DISTRIBUTION_VERSION}"
+                            }
+
+                            runBenchmarkTestScript(
+                                command: 'execute-test',
+                                bundleManifest: BUNDLE_MANIFEST,
+                                distributionUrl: DISTRIBUTION_URL,
+                                distributionVersion: DISTRIBUTION_VERSION,
+                                workload: TEST_WORKLOAD,
+                                insecure: "false",
+                                singleNode: SINGLE_NODE_CLUSTER,
+                                minDistribution: MIN_DISTRIBUTION,
+                                use50PercentHeap: USE_50_PERCENT_HEAP,
+                                enableRemoteStore: ENABLE_REMOTE_STORE,
+                                suffix: "${BUILD_NUMBER}-secure",
+                                managerNodeCount: MANAGER_NODE_COUNT,
+                                dataNodeCount: DATA_NODE_COUNT,
+                                clientNodeCount: CLIENT_NODE_COUNT,
+                                ingestNodeCount: INGEST_NODE_COUNT,
+                                mlNodeCount: ML_NODE_COUNT,
+                                dataInstanceType: DATA_INSTANCE_TYPE,
+                                userTag: USER_TAGS.isEmpty() ? "security-enabled:true,jenkins-build-id:${BUILD_NUMBER}" : "${USER_TAGS},security-enabled:true,jenkins-build-id:${BUILD_NUMBER}",
+                                workloadParams: WORKLOAD_PARAMS,
+                                testProcedure: TEST_PROCEDURE,
+                                excludeTasks: EXCLUDE_TASKS,
+                                includeTasks: INCLUDE_TASKS,
+                                additionalConfig: ADDITIONAL_CONFIG,
+                                dataStorageSize: DATA_NODE_STORAGE,
+                                mlStorageSize: ML_NODE_STORAGE,
+                                enableInstanceStorage: ENABLE_INSTANCE_BASED_STORAGE,
+                                jvmSysProps: JVM_SYS_PROPS,
+                                captureNodeStat: CAPTURE_NODE_STAT,
+                                captureSegmentReplicationStat: CAPTURE_SEGMENT_REPLICATION_STAT,
+                                telemetryParams: TELEMETRY_PARAMS
+                            )
+                            lib.jenkins.Messages.new(this).add(JOB_NAME,
+                                lib.jenkins.Messages.new(this).get([JOB_NAME]) +
+                                    "\nBenchmark tests with security for ${BUILD_ID} completed")
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('test-without-security') {
+                agent { label AGENT_LABEL }
+                    steps {
+                        script {
+                            if (BUNDLE_MANIFEST_URL != '') {
+                                def bundleManifestObj = downloadBuildManifest (
+                                url: BUNDLE_MANIFEST_URL,
+                                path: BUNDLE_MANIFEST
+                                )
+                                echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                                echo "BUILD_ID: ${BUILD_ID}"
+                                echo "Architecture: ${ARCHITECTURE}"
+                            }
+                            else {
+                                echo "DISTRIBUTION_URL: ${DISTRIBUTION_URL}"
+                                echo "DISTRIBUTION_VERSION: ${DISTRIBUTION_VERSION}"
+                            }
+
+                            runBenchmarkTestScript(
+                                command: 'execute-test',
+                                bundleManifest: BUNDLE_MANIFEST,
+                                distributionUrl: DISTRIBUTION_URL,
+                                distributionVersion: DISTRIBUTION_VERSION,
+                                workload: TEST_WORKLOAD,
+                                insecure: "true",
+                                singleNode: SINGLE_NODE_CLUSTER,
+                                minDistribution: MIN_DISTRIBUTION,
+                                use50PercentHeap: USE_50_PERCENT_HEAP,
+                                enableRemoteStore: ENABLE_REMOTE_STORE,
+                                suffix: "${BUILD_NUMBER}",
+                                managerNodeCount: MANAGER_NODE_COUNT,
+                                dataNodeCount: DATA_NODE_COUNT,
+                                clientNodeCount: CLIENT_NODE_COUNT,
+                                ingestNodeCount: INGEST_NODE_COUNT,
+                                mlNodeCount: ML_NODE_COUNT,
+                                dataInstanceType: DATA_INSTANCE_TYPE,
+                                userTag: USER_TAGS.isEmpty() ? "security-enabled:false,jenkins-build-id:${BUILD_NUMBER}" : "${USER_TAGS},security-enabled:false,jenkins-build-id:${BUILD_NUMBER}",
+                                workloadParams: WORKLOAD_PARAMS,
+                                testProcedure: TEST_PROCEDURE,
+                                excludeTasks: EXCLUDE_TASKS,
+                                includeTasks: INCLUDE_TASKS,
+                                additionalConfig: ADDITIONAL_CONFIG,
+                                dataStorageSize: DATA_NODE_STORAGE,
+                                mlStorageSize: ML_NODE_STORAGE,
+                                enableInstanceStorage: ENABLE_INSTANCE_BASED_STORAGE,
+                                jvmSysProps: JVM_SYS_PROPS,
+                                captureNodeStat: CAPTURE_NODE_STAT,
+                                captureSegmentReplicationStat: CAPTURE_SEGMENT_REPLICATION_STAT,
+                                telemetryParams: TELEMETRY_PARAMS
+                            )
+                            lib.jenkins.Messages.new(this).add(JOB_NAME,
+                                lib.jenkins.Messages.new(this).get([JOB_NAME]) +
+                                "\nBenchmark tests without security for ${BUILD_ID} completed")
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    post {
+        success {
+            node(AGENT_LABEL) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Benchmark Tests Successful',
+                        extra: stashed,
+                        credentialsId: 'jenkins-integ-test-webhook',
+                    )
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node(AGENT_LABEL) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Benchmark Tests Failed',
+                        extra: stashed,
+                        credentialsId: 'jenkins-integ-test-webhook',
+                    )
+                    postCleanup()
+                }
+            }
+        }
+        aborted {
+            node(AGENT_LABEL) {
+                script {
+                    def stackNames = null
+                    if (BUNDLE_MANIFEST_URL != '') {
+                        stackNames = [
+                             "opensearch-infra-stack-${BUILD_NUMBER}-${BUILD_ID}-${ARCHITECTURE}",
+                             "opensearch-infra-stack-${BUILD_NUMBER}-secure-${BUILD_ID}-${ARCHITECTURE}"
+                        ]
+                    } else {
+                        stackNames = [
+                             "opensearch-infra-stack-${BUILD_NUMBER}"
+                        ]
+                    }
+                    withCredentials([string(credentialsId: 'perf-test-account-id', variable: 'PERF_TEST_ACCOUNT_ID')]) {
+                        withAWS(role: 'cfn-set-up', roleAccount: "${PERF_TEST_ACCOUNT_ID}", duration: 900, roleSessionName: 'jenkins-session', region: 'us-east-1') {
+                            try {
+                                for (String stackName : stackNames) {
+                                    def stack = null
+                                    try {
+                                        stack = cfnDescribe(stack: stackName)
+                                    } catch (Exception) {
+                                        echo "Stack '${stackName}' does not exist, nothing to remove"
+                                    }
+                                    if (stack != null) {
+                                        echo "Deleting stack '${stackName}'"
+                                        cfnDelete(stack: stackName, pollInterval:1000)
+                                    }
+                                }
+                            } catch (Exception e) {
+                                error "Exception occurred while deleting the CloudFormation stack: ${e.toString()}"
+                            }
+                        }
+                    }
+                }
+                postCleanup()
+            }
+        }
+    }
+}
