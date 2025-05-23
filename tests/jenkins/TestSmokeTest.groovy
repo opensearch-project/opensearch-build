@@ -23,7 +23,7 @@ class TestSmokeTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('9.1.2')
+                .defaultVersion('9.2.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
