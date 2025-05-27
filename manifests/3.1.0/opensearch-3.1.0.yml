@@ -218,3 +218,9 @@ components:
     platforms:
       - linux
       - windows
+  - name: user-behavior-insights
+    repository: https://github.com/opensearch-project/user-behavior-insights.git
+    ref: main
+    platforms:
+      - linux
+      - windows
