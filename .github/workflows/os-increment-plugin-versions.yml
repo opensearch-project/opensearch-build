@@ -52,6 +52,7 @@ jobs:
           - {repo: opensearch-system-templates}
           - {repo: opensearch-remote-metadata-sdk}
           - {repo: opensearch-learning-to-rank-base}
+          - {repo: search-relevance}
         branch:
           - '3.0'
           - '2.19'
