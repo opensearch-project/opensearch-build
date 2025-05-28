@@ -23,7 +23,6 @@ pipeline {
         AGENT_MACOS_X64 = 'Jenkins-Agent-MacOS13-X64-Mac1Metal-Multi-Host'
         AGENT_MACOS_ARM64 = 'Jenkins-Agent-MacOS13-ARM64-Mac2M2proMetal-Multi-Host'
         AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
-        IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1' // required for windows to build zip distribution
     }
     parameters {
         string(
@@ -44,8 +43,16 @@ pipeline {
             }
             steps {
                 script {
-                    dockerAgent = detectDockerAgent()
-                    env.javaVersionNumber = dockerAgent.javaVersion.replaceAll("[^0-9]", "") // Only get number
+                    // default to linux-tar in INPUT_MANIFEST schemaVersion >= 1.2
+                    // Everything except macos and windows can be built on the default linux-tar images
+                    // macos currently built directly on VMs, and windows has its own windows images
+                    dockerAgent = detectDockerAgent() 
+                    dockerAgentWindowsZip = detectDockerAgent(
+                        distribution: "zip",
+                        platform: "windows"
+                    )
+                    env.javaVersionNumber = dockerAgent.javaVersionWindowsZip.replaceAll("[^0-9]", "") // Only get number
+                    echo("Windows Java Version: ${env.javaVersionNumber}")
                     currentBuild.description = INPUT_MANIFEST
                 }
             }
@@ -182,7 +189,7 @@ pipeline {
                     agent {
                         docker {
                             label AGENT_WINDOWS_X64
-                            image IMAGE_WINDOWS_ZIP
+                            image dockerAgentWindowsZip.image
                             registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }

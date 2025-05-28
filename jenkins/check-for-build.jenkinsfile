@@ -82,7 +82,7 @@ pipeline {
             }
             steps {
                 script {
-                    dockerAgent = detectDockerAgent()
+                    dockerAgent = detectDockerAgent()  // default to linux-tar in INPUT_MANIFEST schemaVersion >= 1.2
                 }
             }
         }

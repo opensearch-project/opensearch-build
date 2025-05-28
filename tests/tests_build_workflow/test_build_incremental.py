@@ -13,16 +13,25 @@ from unittest.mock import MagicMock, patch
 from build_workflow.build_incremental import BuildIncremental
 from manifests.build_manifest import BuildManifest
 from manifests.input_manifest import InputManifest
+from manifests.input.input_manifest_1_1 import InputManifest_1_1
 
 
 class TestBuildIncremental(unittest.TestCase):
     INPUT_MANIFEST = InputManifest.from_path(
+        os.path.join(os.path.dirname(__file__), "data", "opensearch-input-3.1.0.yml"))
+    INPUT_MANIFEST_1_1 = InputManifest.from_path(
         os.path.join(os.path.dirname(__file__), "data", "opensearch-input-2.12.0.yml"))
     INPUT_MANIFEST_QUALIFIER = InputManifest.from_path(
+        os.path.join(os.path.dirname(__file__), "data", "opensearch-input-3.1.0-alpha1.yml"))
+    INPUT_MANIFEST_QUALIFIER_1_1 = InputManifest.from_path(
         os.path.join(os.path.dirname(__file__), "data", "opensearch-input-3.0.0-alpha1.yml"))
     BUILD_MANIFEST = BuildManifest.from_path(
+        os.path.join(os.path.dirname(__file__), "data", "opensearch-build-tar-3.1.0.yml"))
+    BUILD_MANIFEST_1_1 = BuildManifest.from_path(
         os.path.join(os.path.dirname(__file__), "data", "opensearch-build-tar-2.12.0.yml"))
     BUILD_MANIFEST_WINDOWS = BuildManifest.from_path(
+        os.path.join(os.path.dirname(__file__), "data", "opensearch-build-zip-3.1.0.yml"))
+    BUILD_MANIFEST_WINDOWS_1_1 = BuildManifest.from_path(
         os.path.join(os.path.dirname(__file__), "data", "opensearch-build-zip-2.12.0.yml"))
     BUILD_MANIFEST_PATH = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-tar-2.12.0.yml")
     INPUT_MANIFEST_DASHBOARDS = InputManifest.from_path(
@@ -36,7 +45,7 @@ class TestBuildIncremental(unittest.TestCase):
     @patch("manifests.input_manifest.InputManifest.stable")
     def test_no_commits_diff(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
         mock_path_exists.return_value = True
-        input_manifest_data = {'schema-version': '1.1', 'build': {'name': 'OpenSearch', 'version': '2.12.0'},
+        input_manifest_data = {'schema-version': '1.2', 'build': {'name': 'OpenSearch', 'version': '2.12.0'},
                                'components': [{'name': 'OpenSearch',
                                                'repository': 'https://github.com/opensearch-project/OpenSearch.git',
                                                'ref': '05c2befd7d01fab4aef4f0d3d6722d2da240b2c6',
@@ -58,8 +67,58 @@ class TestBuildIncremental(unittest.TestCase):
 
     @patch("os.path.exists")
     @patch("manifests.build_manifest.BuildManifest.from_path")
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.stable")
+    def test_no_commits_diff_schema_1_1(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
+        mock_path_exists.return_value = True
+        input_manifest_data = {'schema-version': '1.1', 'build': {'name': 'OpenSearch', 'version': '2.12.0'},
+                               'components': [{'name': 'OpenSearch',
+                                               'repository': 'https://github.com/opensearch-project/OpenSearch.git',
+                                               'ref': '05c2befd7d01fab4aef4f0d3d6722d2da240b2c6',
+                                               'checks': ['gradle:publish', 'gradle:properties:version']}]}
+        build_manifest_data = {'schema-version': '1.2',
+                               'build': {'name': 'OpenSearch', 'version': '2.12.0', 'platform': 'linux',
+                                         'architecture': 'x64', 'id': 'b2b848e29077488ca7e8c37501b36c87'},
+                               'components': [{'name': 'OpenSearch',
+                                               'repository': 'https://github.com/opensearch-project/OpenSearch.git',
+                                               'ref': '2.x', 'commit_id': '05c2befd7d01fab4aef4f0d3d6722d2da240b2c6',
+                                               'version': '2.12.0.0'}]}
+        stable_mock_input_manifest.return_value = InputManifest_1_1(input_manifest_data)
+        mock_build_manifest.return_value = BuildManifest(build_manifest_data)
+
+        diff_list = self.buildIncremental.commits_diff(self.INPUT_MANIFEST_1_1)
+
+        self.assertFalse(diff_list)
+        self.assertEqual(len(diff_list), 0)
+
+    @patch("os.path.exists")
+    @patch("manifests.build_manifest.BuildManifest.from_path")
     @patch("manifests.input_manifest.InputManifest.stable")
-    def test_no_commits_diffi_with_qualifier(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
+    def test_no_commits_diff_with_qualifier(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
+        mock_path_exists.return_value = True
+        input_manifest_data = {'schema-version': '1.2', 'build': {'name': 'OpenSearch', 'version': '3.1.0', 'qualifier': 'alpha1'},
+                               'components': [{'name': 'OpenSearch',
+                                               'repository': 'https://github.com/opensearch-project/OpenSearch.git',
+                                               'ref': '91a93dacb84eae4f09decbabe54771585d42b570',
+                                               'checks': ['gradle:publish', 'gradle:properties:version']}]}
+        build_manifest_data = {'schema-version': '1.2',
+                               'build': {'name': 'OpenSearch', 'version': '3.1.0-alpha1', 'platform': 'linux',
+                                         'architecture': 'x64', 'id': 'b2b848e29077488ca7e8c37501b36c87'},
+                               'components': [{'name': 'OpenSearch',
+                                               'repository': 'https://github.com/opensearch-project/OpenSearch.git',
+                                               'ref': 'main', 'commit_id': '91a93dacb84eae4f09decbabe54771585d42b570',
+                                               'version': '3.1.0-alpha1'}]}
+        stable_mock_input_manifest.return_value = InputManifest(input_manifest_data)
+        mock_build_manifest.return_value = BuildManifest(build_manifest_data)
+
+        diff_list = self.buildIncremental.commits_diff(self.INPUT_MANIFEST_QUALIFIER)
+
+        self.assertFalse(diff_list)
+        self.assertEqual(len(diff_list), 0)
+
+    @patch("os.path.exists")
+    @patch("manifests.build_manifest.BuildManifest.from_path")
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.stable")
+    def test_no_commits_diff_with_qualifier_schema_1_1(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
         mock_path_exists.return_value = True
         input_manifest_data = {'schema-version': '1.1', 'build': {'name': 'OpenSearch', 'version': '3.0.0', 'qualifier': 'alpha1'},
                                'components': [{'name': 'OpenSearch',
@@ -73,10 +132,10 @@ class TestBuildIncremental(unittest.TestCase):
                                                'repository': 'https://github.com/opensearch-project/OpenSearch.git',
                                                'ref': 'main', 'commit_id': '91a93dacb84eae4f09decbabe54771585d42b570',
                                                'version': '3.0.0-alpha1'}]}
-        stable_mock_input_manifest.return_value = InputManifest(input_manifest_data)
+        stable_mock_input_manifest.return_value = InputManifest_1_1(input_manifest_data)
         mock_build_manifest.return_value = BuildManifest(build_manifest_data)
 
-        diff_list = self.buildIncremental.commits_diff(self.INPUT_MANIFEST_QUALIFIER)
+        diff_list = self.buildIncremental.commits_diff(self.INPUT_MANIFEST_QUALIFIER_1_1)
 
         self.assertFalse(diff_list)
         self.assertEqual(len(diff_list), 0)
@@ -90,6 +149,32 @@ class TestBuildIncremental(unittest.TestCase):
         mock_build_manifest.return_value = self.BUILD_MANIFEST
 
         diff_list = self.buildIncremental.commits_diff(self.INPUT_MANIFEST)
+        print(diff_list)
+
+        stable_mock_input_manifest.assert_called_once()
+        mock_build_manifest.assert_called_once()
+        self.assertIsNotNone(diff_list)
+        self.assertEqual(len(diff_list), 9)
+        self.assertTrue("k-NN" in diff_list)
+        self.assertTrue("geospatial" in diff_list)
+        self.assertTrue("security" in diff_list)
+        self.assertTrue("cross-cluster-replication" in diff_list)
+        self.assertTrue("ml-commons" in diff_list)
+        self.assertTrue("neural-search" in diff_list)
+        self.assertTrue("opensearch-observability" in diff_list)
+        self.assertTrue("security-analytics" in diff_list)
+        self.assertTrue("performance-analyzer" in diff_list)
+
+    @patch("os.path.exists")
+    @patch("manifests.build_manifest.BuildManifest.from_path")
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.stable")
+    def test_commits_diff_schema_1_1(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
+        mock_path_exists.return_value = True
+        stable_mock_input_manifest.return_value = self.INPUT_MANIFEST_1_1
+        mock_build_manifest.return_value = self.BUILD_MANIFEST_1_1
+
+        diff_list = self.buildIncremental.commits_diff(self.INPUT_MANIFEST_1_1)
+        print(diff_list)
 
         stable_mock_input_manifest.assert_called_once()
         mock_build_manifest.assert_called_once()
@@ -123,7 +208,7 @@ class TestBuildIncremental(unittest.TestCase):
     @patch("manifests.input_manifest.InputManifest.stable")
     def test_commits_diff_for_different_version(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
         mock_path_exists.return_value = True
-        input_manifest_data = {'schema-version': '1.1',
+        input_manifest_data = {'schema-version': '1.2',
                                'build': {'name': 'OpenSearch', 'version': '2.12.0'},
                                'components': [{'name': 'OpenSearch',
                                                'repository': 'https://github.com/opensearch-project/OpenSearch.git',
@@ -153,6 +238,20 @@ class TestBuildIncremental(unittest.TestCase):
         mock_build_manifest.return_value = self.BUILD_MANIFEST_WINDOWS
 
         diff_list = BuildIncremental(self.INPUT_MANIFEST, "zip", "windows").commits_diff(self.INPUT_MANIFEST)
+        stable_mock_input_manifest.assert_called_once()
+        mock_build_manifest.assert_called_once()
+        self.assertFalse(diff_list)
+        self.assertEqual(len(diff_list), 0)
+
+    @patch("os.path.exists")
+    @patch("manifests.build_manifest.BuildManifest.from_path")
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.stable")
+    def test_commits_diff_platform_incompatible_schema_1_1(self, stable_mock_input_manifest: MagicMock, mock_build_manifest: MagicMock, mock_path_exists: MagicMock) -> None:
+        mock_path_exists.return_value = True
+        stable_mock_input_manifest.return_value = self.INPUT_MANIFEST_1_1
+        mock_build_manifest.return_value = self.BUILD_MANIFEST_WINDOWS_1_1
+
+        diff_list = BuildIncremental(self.INPUT_MANIFEST_1_1, "zip", "windows").commits_diff(self.INPUT_MANIFEST_1_1)
         stable_mock_input_manifest.assert_called_once()
         mock_build_manifest.assert_called_once()
         self.assertFalse(diff_list)

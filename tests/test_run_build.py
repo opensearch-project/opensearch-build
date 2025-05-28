@@ -40,6 +40,7 @@ class TestRunBuild(unittest.TestCase):
 
     OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(MANIFESTS, "templates", "opensearch", "2.x", "os-template-2.11.0.yml"))
     OPENSEARCH_MANIFEST_2_12 = os.path.realpath(os.path.join(MANIFESTS, "templates", "opensearch", "2.x", "os-template-2.12.0.yml"))
+    OPENSEARCH_MANIFEST_3_x = os.path.realpath(os.path.join(MANIFESTS, "templates", "opensearch", "3.x", "manifest.yml"))
     NON_OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(MANIFESTS, "templates", "opensearch", "1.x", "non-os-template-1.1.0.yml"))
 
     INPUT_MANIFEST_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "tests_build_workflow", "data", "opensearch-input-2.12.0.yml"))
@@ -128,64 +129,112 @@ class TestRunBuild(unittest.TestCase):
             main()
 
     @patch("os.path.exists", return_value=True)
-    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "--lock"])
-    @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST))
-    @patch("manifests.input.input_manifest_1_0.InputManifest_1_0.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST))
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST_3_x, "--lock"])
+    @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_3_x))
+    @patch("run_build.InputManifest.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_3_x))
     @patch("run_build.InputManifest.to_file")
     @patch("logging.info")
     def test_main_manifest_lock_without_changes(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
         main()
         mock_stable.assert_called_with()
         mock_to_file.assert_not_called()
+        mock_logging.assert_called_with(f"No changes since {self.OPENSEARCH_MANIFEST_3_x}.lock")
+
+    @patch("os.path.exists", return_value=True)
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST_2_12, "--lock"])
+    @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.to_file")
+    @patch("logging.info")
+    def test_main_manifest_lock_without_changes_1_1(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+        main()
+        mock_stable.assert_called_with()
+        mock_to_file.assert_not_called()
+        mock_logging.assert_called_with(f"No changes since {self.OPENSEARCH_MANIFEST_2_12}.lock")
+
+    @patch("os.path.exists", return_value=True)
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "--lock"])
+    @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST))
+    @patch("manifests.input.input_manifest_1_0.InputManifest_1_0.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST))
+    @patch("manifests.input.input_manifest_1_0.InputManifest_1_0.to_file")
+    @patch("logging.info")
+    def test_main_manifest_lock_without_changes_1_0(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+        main()
+        mock_stable.assert_called_with()
+        mock_to_file.assert_not_called()
         mock_logging.assert_called_with(f"No changes since {self.OPENSEARCH_MANIFEST}.lock")
+
+    @patch("os.path.exists", return_value=True)
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST_2_12, "--lock"])
+    @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_3_x))
+    @patch("run_build.InputManifest.to_file")
+    @patch("logging.info")
+    def test_main_manifest_lock_with_changes_schema_1_1_and_1_2(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+        main()
+        mock_stable.assert_called_with()
+        mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST_2_12 + ".lock")
+        mock_logging.assert_called_with(f"Updating {self.OPENSEARCH_MANIFEST_2_12}.lock")
 
     @patch("os.path.exists", return_value=True)
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "--lock"])
     @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST))
     @patch("manifests.input.input_manifest_1_0.InputManifest_1_0.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
-    @patch("run_build.InputManifest.to_file")
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.to_file")
     @patch("logging.info")
-    def test_main_manifest_lock_with_changes(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+    def test_main_manifest_lock_with_changes_schema_1_0_and_1_1(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
         main()
         mock_stable.assert_called_with()
         mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST + ".lock")
         mock_logging.assert_called_with(f"Updating {self.OPENSEARCH_MANIFEST}.lock")
 
     @patch("os.path.exists", return_value=False)
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST_2_12, "--lock"])
+    @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_3_x))
+    @patch("run_build.InputManifest.to_file")
+    @patch("logging.info")
+    def test_main_manifest_new_lock_schema_1_1_and_1_2(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+        main()
+        mock_stable.assert_called_with()
+        mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST_2_12 + ".lock")
+        mock_logging.assert_called_with(f"Creating {self.OPENSEARCH_MANIFEST_2_12}.lock")
+
+    @patch("os.path.exists", return_value=False)
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "--lock"])
     @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST))
     @patch("manifests.input.input_manifest_1_0.InputManifest_1_0.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
-    @patch("run_build.InputManifest.to_file")
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.to_file")
     @patch("logging.info")
-    def test_main_manifest_new_lock(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+    def test_main_manifest_new_lock_schema_1_0_and_1_1(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
         main()
         mock_stable.assert_called_with()
         mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST + ".lock")
         mock_logging.assert_called_with(f"Creating {self.OPENSEARCH_MANIFEST}.lock")
 
     @patch("os.path.exists", return_value=False)
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST_2_12, "--lock", "--architecture", "arm64", "--platform", "windows", "--snapshot"])
+    @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_3_x))
+    @patch("run_build.InputManifest.to_file")
+    @patch("logging.info")
+    def test_main_manifest_new_lock_with_overrides_schema_1_1_and_1_2(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+        main()
+        mock_stable.assert_called_with()
+        mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST_2_12 + ".lock")
+        mock_logging.assert_called_with(f"Creating {self.OPENSEARCH_MANIFEST_2_12}.lock")
+
+    @patch("os.path.exists", return_value=False)
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "--lock", "--architecture", "arm64", "--platform", "windows", "--snapshot"])
     @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST))
     @patch("manifests.input.input_manifest_1_0.InputManifest_1_0.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
-    @patch("run_build.InputManifest.to_file")
+    @patch("manifests.input.input_manifest_1_1.InputManifest_1_1.to_file")
     @patch("logging.info")
-    def test_main_manifest_new_lock_with_overrides(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+    def test_main_manifest_new_lock_with_overrides_schema_1_0_and_1_1(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
         main()
         mock_stable.assert_called_with()
         mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST + ".lock")
         mock_logging.assert_called_with(f"Creating {self.OPENSEARCH_MANIFEST}.lock")
-
-    @patch("os.path.exists", return_value=True)
-    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST_2_12, "--lock"])
-    @patch("run_build.InputManifest.from_path", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
-    @patch("run_build.InputManifest.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_2_12))
-    @patch("run_build.InputManifest.to_file")
-    @patch("logging.info")
-    def test_main_manifest_lock_without_changes_input_schema_1_1(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
-        main()
-        mock_stable.assert_called_with()
-        mock_to_file.assert_not_called()
-        mock_logging.assert_called_with(f"No changes since {self.OPENSEARCH_MANIFEST_2_12}.lock")
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "linux", "--continue-on-error"])
     @patch("run_build.Builders.builder_from", return_value=MagicMock())

@@ -2,7 +2,7 @@
 schema-version: '1.2'
 build:
   name: OpenSearch
-  version: 'replace'
+  version: 3.1.0
 ci:
   image:
     linux:

@@ -7,9 +7,14 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@9.0.1', retriever: modernSCM([
+//lib = library(identifier: 'jenkins@9.0.1', retriever: modernSCM([
+//    $class: 'GitSCMSource',
+//    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+//]))
+
+lib = library(identifier: 'jenkins@images-manifests-versionlib', retriever: modernSCM([
     $class: 'GitSCMSource',
-    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+    remote: 'https://github.com/peterzhuamazon/opensearch-build-libraries.git',
 ]))
 
 pipeline {
@@ -21,9 +26,6 @@ pipeline {
         AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
         AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host'
         AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
-        IMAGE_LINUX_RPM = 'opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1' // required for rpm to create digest sha256 correctly with rpm 4.12+, still define here for 1.x version as 2.x+ moved to rockylinux8, later almalinux8, already
-        IMAGE_LINUX_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2404-opensearch-build-v1' // required for deb to create pkg using debmake/debuild/debhelper
-        IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1' // required for windows to build zip distribution
     }
     parameters {
         string(
@@ -134,9 +136,36 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Input manifest was not provided or not found at manifests/${INPUT_MANIFEST}.")
                     }
+
                     echo('Detect Docker Images and Related Parameters')
-                    dockerAgent = detectDockerAgent()
-                    env.javaVersionNumber = dockerAgent.javaVersion.replaceAll('[^0-9]', '') // Only get number
+                    dockerAgentLinuxTar = detectDockerAgent(
+                        distribution: "tar",
+                        platform: "linux"
+                    )
+                    dockerAgentLinuxDeb = detectDockerAgent(
+                        distribution: "deb",
+                        platform: "linux"
+                    )
+                    dockerAgentLinuxRpm = detectDockerAgent(
+                        distribution: "rpm",
+                        platform: "linux"
+                    )
+                    dockerAgentWindowsZip = detectDockerAgent(
+                        distribution: "zip",
+                        platform: "windows"
+                    )
+                    echo('Print Image Information')
+                    [
+                        linux_tar: dockerAgentLinuxTar,
+                        linux_deb: dockerAgentLinuxDeb,
+                        linux_rpm: dockerAgentLinuxRpm,
+                        windows_zip: dockerAgentWindowsZip
+                    ].each { name, agent ->
+                        echo("${name} Image: ${agent.image}, Args: ${agent.args}")
+                    }
+
+                    env.javaVersionNumber = dockerAgentWindowsZip.javaVersion.replaceAll('[^0-9]', '') // Only get number
+                    echo("Windows Java Version: ${env.javaVersionNumber}")
                     currentBuild.description = INPUT_MANIFEST
 
                     paramType = [
@@ -205,8 +234,8 @@ pipeline {
                     agent {
                         docker {
                             label AGENT_LINUX_X64
-                            image dockerAgent.image
-                            args dockerAgent.args
+                            image dockerAgentLinuxTar.image
+                            args dockerAgentLinuxTar.args
                             registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
@@ -289,8 +318,8 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_LINUX_X64
-                                    image dockerAgent.image
-                                    args dockerAgent.args
+                                    image dockerAgentLinuxTar.image
+                                    args dockerAgentLinuxRpm.args
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -325,7 +354,7 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_LINUX_X64
-                                    image IMAGE_LINUX_RPM
+                                    image dockerAgentLinuxRpm.image
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -405,8 +434,8 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_LINUX_X64
-                                    image dockerAgent.image
-                                    args dockerAgent.args
+                                    image dockerAgentLinuxTar.image
+                                    args dockerAgentLinuxDeb.args
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -441,7 +470,7 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_LINUX_X64
-                                    image IMAGE_LINUX_DEB
+                                    image dockerAgentLinuxDeb.image
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -518,8 +547,8 @@ pipeline {
                     agent {
                         docker {
                             label AGENT_LINUX_ARM64
-                            image dockerAgent.image
-                            args dockerAgent.args
+                            image dockerAgentLinuxTar.image
+                            args dockerAgentLinuxTar.args
                             registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
@@ -599,8 +628,8 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_LINUX_ARM64
-                                    image dockerAgent.image
-                                    args dockerAgent.args
+                                    image dockerAgentLinuxTar.image
+                                    args dockerAgentLinuxRpm.args
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -635,7 +664,7 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_LINUX_ARM64
-                                    image IMAGE_LINUX_RPM
+                                    image dockerAgentLinuxRpm.image
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -716,8 +745,8 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_LINUX_ARM64
-                                    image dockerAgent.image
-                                    args dockerAgent.args
+                                    image dockerAgentLinuxTar.image
+                                    args dockerAgentLinuxDeb.args
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -752,7 +781,7 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_LINUX_ARM64
-                                    image IMAGE_LINUX_DEB
+                                    image dockerAgentLinuxDeb.image
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -830,7 +859,7 @@ pipeline {
                     agent {
                         docker {
                             label AGENT_WINDOWS_X64
-                            image IMAGE_WINDOWS_ZIP
+                            image dockerAgentWindowsZip.image
                             registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
@@ -909,8 +938,8 @@ pipeline {
                     agent {
                         docker {
                             label AGENT_LINUX_X64
-                            image dockerAgent.image
-                            args dockerAgent.args
+                            image dockerAgentLinuxTar.image
+                            args dockerAgentLinuxTar.args
                             registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
@@ -980,7 +1009,7 @@ pipeline {
         }
         failure {
             node(AGENT_LINUX_X64) {
-                checkout scm
+                //checkout scm
                 script {
                     postCleanup()
                 }
