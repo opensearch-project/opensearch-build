@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import unittest
 import urllib.request
+from typing import Any
 from unittest.mock import MagicMock, Mock, call, patch
 
 from validation_workflow.docker.validation_docker import ValidateDocker
@@ -40,6 +41,15 @@ class TestValidateDocker(unittest.TestCase):
         self.assertEqual(result, True)
         mock_is_container_daemon_running.assert_called_once()
 
+    def subprocess_side_effect(self, *args: Any, **kwargs: Any) -> subprocess.CompletedProcess:
+        cmd = args[0]
+        if 'docker cp' in cmd:
+            return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="file copied", stderr='')
+        elif 'docker exec' in cmd:
+            return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="command executed inside docker conatiner", stderr='')
+        else:
+            return subprocess.CompletedProcess(args=cmd, returncode=0, stdout='', stderr='')
+
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.check_http_request')
     @patch('validation_workflow.docker.validation_docker.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
@@ -47,7 +57,9 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.ApiTestCases')
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
     @patch('validation_workflow.docker.validation_docker.InspectDockerImage.inspect_digest')
-    def test_staging(self, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_temporary_directory: Mock,
+    @patch('validation_workflow.docker.validation_docker.subprocess.run')
+    @patch('validation_workflow.validation.Validation.get_native_plugin_list')
+    def test_staging(self, mock_native_plugin: Mock, mock_subprocess_run: Mock, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_temporary_directory: Mock,
                      mock_validation_args: Mock, mock_check_http: Mock) -> None:
         # Set up mock objects
         mock_validation_args.return_value.version = '1.0.0.1000'
@@ -60,7 +72,9 @@ class TestValidateDocker(unittest.TestCase):
         mock_test_apis_instance.test_apis.return_value = (True, 2)
         mock_digest.return_value = True
         mock_check_http.return_value = True
-        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        mock_temporary_directory.return_value.name = "/tmp/trytytyuit"
+        mock_subprocess_run.side_effect = self.subprocess_side_effect
+        mock_native_plugin.return_value = ["analysis-icu", "analysis-nori"]
 
         # Create instance of ValidateDocker class
         validate_docker = ValidateDocker(mock_validation_args.return_value, mock_temporary_directory.return_value)
@@ -74,6 +88,10 @@ class TestValidateDocker(unittest.TestCase):
         # Assert that the mock methods are called as expected
         mock_container.assert_called_once()
         mock_test.assert_called_once()
+        mock_native_plugin.assert_called_with("/tmp/trytytyuit")
+        mock_subprocess_run.assert_called_with(
+            'docker-compose -f test_file.yml restart', shell=True, stdout=-1, stderr=-1, universal_newlines=True)
+
         mock_test.assert_has_calls([call(), call().test_apis("1.0.0.1000", ['opensearch'], True)])
 
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.check_cluster_readiness')

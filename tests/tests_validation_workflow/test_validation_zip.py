@@ -16,6 +16,7 @@ class TestValidateZip(unittest.TestCase):
     def setUp(self) -> None:
         self.mock_args = MagicMock()
         self.tmp_dir = MagicMock()
+        self.tmp_dir.path = "/tmp/trytytyuit/"
         self.mock_args.projects = ["opensearch", "opensearch-dashboards"]
         self.mock_args.version = "2.11.0"
         self.mock_args.arch = "x64"
@@ -26,15 +27,17 @@ class TestValidateZip(unittest.TestCase):
 
     @patch("validation_workflow.zip.validation_zip.ZipFile")
     @patch('os.path.basename')
-    def test_installation(self, mock_basename: Mock, mock_zip_file: MagicMock) -> None:
+    @patch('validation_workflow.validation.Validation.install_native_plugin')
+    def test_installation(self, mock_native_plugin: Mock, mock_basename: Mock, mock_zip_file: MagicMock) -> None:
         mock_zip_file_instance = mock_zip_file.return_value.__enter__()
         mock_extractall = MagicMock()
         mock_zip_file_instance.extractall = mock_extractall
         mock_basename.side_effect = lambda path: "mocked_filename"
-
         validate_zip = ValidateZip(self.mock_args, self.tmp_dir)
+
         result = validate_zip.installation()
         self.assertTrue(result)
+        mock_native_plugin.assert_called_with(f"/tmp/trytytyuit/opensearch-{self.mock_args.version}")
 
         expected_calls = [call((validate_zip.tmp_dir.path))] * len(self.mock_args.projects)
         mock_extractall.assert_has_calls(expected_calls)
@@ -47,6 +50,7 @@ class TestValidateZip(unittest.TestCase):
         mock_basename.side_effect = lambda path: "mocked_filename"
         with self.assertRaises(Exception) as context:
             validate_zip.installation()
+
         self.assertEqual(str(context.exception), "Failed to install OpenSearch/OpenSearch-Dashboards")
 
     @patch.object(Process, "start")
