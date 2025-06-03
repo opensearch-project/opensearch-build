@@ -1,6 +1,6 @@
    publish-min-snapshots.run()
       publish-min-snapshots.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      publish-min-snapshots.library({identifier=jenkins@9.3.0, retriever=null})
+      publish-min-snapshots.library({identifier=jenkins@9.4.0, retriever=null})
       publish-min-snapshots.pipeline(groovy.lang.Closure)
          publish-min-snapshots.timeout({time=1, unit=HOURS})
          publish-min-snapshots.echo(Executing on agent [label:none])
@@ -9,7 +9,7 @@
             publish-min-snapshots.script(groovy.lang.Closure)
                publish-min-snapshots.detectDockerAgent()
                   detectDockerAgent.legacySCM(groovy.lang.Closure)
-                  detectDockerAgent.library({identifier=jenkins@9.3.0, retriever=null})
+                  detectDockerAgent.library({identifier=jenkins@9.4.0, retriever=null})
                   detectDockerAgent.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                   InputManifest.asBoolean()
                   detectDockerAgent.echo(Using Docker image opensearchstaging/ci-runner:ci-runner-centos7-v1 (null))
@@ -19,7 +19,7 @@
             publish-min-snapshots.script(groovy.lang.Closure)
                publish-min-snapshots.buildManifest({componentName=OpenSearch, inputManifest=manifests/3.0.0/opensearch-3.0.0.yml, platform=linux, architecture=x64, distribution=tar, snapshot=true})
                   buildManifest.legacySCM(groovy.lang.Closure)
-                  buildManifest.library({identifier=jenkins@9.3.0, retriever=null})
+                  buildManifest.library({identifier=jenkins@9.4.0, retriever=null})
                   buildManifest.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                   InputManifest.asBoolean()
                   buildManifest.isUnix()
@@ -27,7 +27,7 @@
                publish-min-snapshots.echo(Uploading linux x64 tar min snapshots to S3)
                publish-min-snapshots.uploadMinSnapshotsToS3({distribution=tar})
                   uploadMinSnapshotsToS3.legacySCM(groovy.lang.Closure)
-                  uploadMinSnapshotsToS3.library({identifier=jenkins@9.3.0, retriever=null})
+                  uploadMinSnapshotsToS3.library({identifier=jenkins@9.4.0, retriever=null})
                   uploadMinSnapshotsToS3.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                   InputManifest.asBoolean()
                   uploadMinSnapshotsToS3.readYaml({file=/tmp/workspace/tar/builds/opensearch/manifest.yml})
@@ -43,7 +43,8 @@
                      uploadMinSnapshotsToS3.createSha512Checksums()
                      uploadMinSnapshotsToS3.createSignatureFiles()
                         createSignatureFiles.legacySCM(groovy.lang.Closure)
-                        createSignatureFiles.library({identifier=jenkins@9.3.0, retriever=null})
+                        createSignatureFiles.library({identifier=jenkins@9.4.0, retriever=null})
+                     createSha512Checksums.isUnix()
                      createSha512Checksums.sh({script=find /tmp/workspace/tar/builds/opensearch/core-plugins -type f, returnStdout=true})
                      createSha512Checksums.echo(Not generating sha for bbb in /tmp/workspace/tar/builds/opensearch/core-plugins, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                      createSha512Checksums.echo(Not generating sha for ccc in /tmp/workspace/tar/builds/opensearch/core-plugins, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
@@ -67,16 +68,18 @@
                )
                      uploadMinSnapshotsToS3.echo(Create .sha512 for Min Snapshots Artifacts)
                      uploadMinSnapshotsToS3.createSha512Checksums()
+                     createSha512Checksums.isUnix()
                      createSha512Checksums.sh({script=find /tmp/workspace/tar/builds/opensearch/dist -type f, returnStdout=true})
                      createSha512Checksums.echo(Not generating sha for bbb in /tmp/workspace/tar/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                      createSha512Checksums.echo(Not generating sha for ccc in /tmp/workspace/tar/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                      uploadMinSnapshotsToS3.echo(Start copying files: version-3.0.0-SNAPSHOT revision-3.0.0-SNAPSHOT-SNAPSHOT architecture-x64 platform-linux buildid-c1c835af3b9646868a9ac3f1e20a51de distribution-tar extension-tar.gz)
+                     uploadMinSnapshotsToS3.isUnix()
                      uploadMinSnapshotsToS3.sh(
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64.tar.gz /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64.tar.gz.sha512 /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.sha512
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/../manifest.yml /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.build-manifest.yml
-                sed -i "s/.tar.gz/-latest.tar.gz/g" /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.sha512
-            )
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64.tar.gz /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64.tar.gz.sha512 /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.sha512
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/../manifest.yml /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.build-manifest.yml
+                    sed -i "s/.tar.gz/-latest.tar.gz/g" /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.sha512
+                )
                      uploadMinSnapshotsToS3.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         uploadMinSnapshotsToS3.echo(Upload min snapshots)
                         uploadMinSnapshotsToS3.s3Upload({file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz})
@@ -115,7 +118,7 @@
             publish-min-snapshots.script(groovy.lang.Closure)
                publish-min-snapshots.buildManifest({componentName=OpenSearch, inputManifest=manifests/3.0.0/opensearch-3.0.0.yml, platform=linux, architecture=arm64, distribution=tar, snapshot=true})
                   buildManifest.legacySCM(groovy.lang.Closure)
-                  buildManifest.library({identifier=jenkins@9.3.0, retriever=null})
+                  buildManifest.library({identifier=jenkins@9.4.0, retriever=null})
                   buildManifest.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                   InputManifest.asBoolean()
                   buildManifest.isUnix()
@@ -123,7 +126,7 @@
                publish-min-snapshots.echo(Uploading linux arm64 tar min snapshots to S3)
                publish-min-snapshots.uploadMinSnapshotsToS3({distribution=tar})
                   uploadMinSnapshotsToS3.legacySCM(groovy.lang.Closure)
-                  uploadMinSnapshotsToS3.library({identifier=jenkins@9.3.0, retriever=null})
+                  uploadMinSnapshotsToS3.library({identifier=jenkins@9.4.0, retriever=null})
                   uploadMinSnapshotsToS3.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                   InputManifest.asBoolean()
                   uploadMinSnapshotsToS3.readYaml({file=/tmp/workspace/tar/builds/opensearch/manifest.yml})
@@ -137,16 +140,18 @@
                      uploadMinSnapshotsToS3.fileExists(/tmp/workspace/tar/builds/opensearch/core-plugins)
                      uploadMinSnapshotsToS3.echo(Create .sha512 for Min Snapshots Artifacts)
                      uploadMinSnapshotsToS3.createSha512Checksums()
+                     createSha512Checksums.isUnix()
                      createSha512Checksums.sh({script=find /tmp/workspace/tar/builds/opensearch/dist -type f, returnStdout=true})
                      createSha512Checksums.echo(Not generating sha for bbb in /tmp/workspace/tar/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                      createSha512Checksums.echo(Not generating sha for ccc in /tmp/workspace/tar/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                      uploadMinSnapshotsToS3.echo(Start copying files: version-3.0.0-SNAPSHOT revision-3.0.0-SNAPSHOT-SNAPSHOT architecture-arm64 platform-linux buildid-629 distribution-tar extension-tar.gz)
+                     uploadMinSnapshotsToS3.isUnix()
                      uploadMinSnapshotsToS3.sh(
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64.tar.gz /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64.tar.gz.sha512 /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.sha512
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/../manifest.yml /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.build-manifest.yml
-                sed -i "s/.tar.gz/-latest.tar.gz/g" /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.sha512
-            )
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64.tar.gz /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64.tar.gz.sha512 /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.sha512
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/../manifest.yml /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.build-manifest.yml
+                    sed -i "s/.tar.gz/-latest.tar.gz/g" /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.sha512
+                )
                      uploadMinSnapshotsToS3.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         uploadMinSnapshotsToS3.echo(Upload min snapshots)
                         uploadMinSnapshotsToS3.s3Upload({file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz})
@@ -162,7 +167,7 @@
                publish-min-snapshots.sh(java -version)
                publish-min-snapshots.buildManifest({componentName=OpenSearch, inputManifest=manifests/3.0.0/opensearch-3.0.0.yml, platform=darwin, architecture=x64, distribution=tar, snapshot=true})
                   buildManifest.legacySCM(groovy.lang.Closure)
-                  buildManifest.library({identifier=jenkins@9.3.0, retriever=null})
+                  buildManifest.library({identifier=jenkins@9.4.0, retriever=null})
                   buildManifest.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                   InputManifest.asBoolean()
                   buildManifest.isUnix()
@@ -170,7 +175,7 @@
                publish-min-snapshots.echo(Uploading darwin x64 tar min snapshots to S3)
                publish-min-snapshots.uploadMinSnapshotsToS3({distribution=tar})
                   uploadMinSnapshotsToS3.legacySCM(groovy.lang.Closure)
-                  uploadMinSnapshotsToS3.library({identifier=jenkins@9.3.0, retriever=null})
+                  uploadMinSnapshotsToS3.library({identifier=jenkins@9.4.0, retriever=null})
                   uploadMinSnapshotsToS3.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                   InputManifest.asBoolean()
                   uploadMinSnapshotsToS3.readYaml({file=/tmp/workspace/tar/builds/opensearch/manifest.yml})
@@ -184,16 +189,18 @@
                      uploadMinSnapshotsToS3.fileExists(/tmp/workspace/tar/builds/opensearch/core-plugins)
                      uploadMinSnapshotsToS3.echo(Create .sha512 for Min Snapshots Artifacts)
                      uploadMinSnapshotsToS3.createSha512Checksums()
+                     createSha512Checksums.isUnix()
                      createSha512Checksums.sh({script=find /tmp/workspace/tar/builds/opensearch/dist -type f, returnStdout=true})
                      createSha512Checksums.echo(Not generating sha for bbb in /tmp/workspace/tar/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                      createSha512Checksums.echo(Not generating sha for ccc in /tmp/workspace/tar/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                      uploadMinSnapshotsToS3.echo(Start copying files: version-3.0.0-SNAPSHOT revision-3.0.0-SNAPSHOT-SNAPSHOT architecture-x64 platform-darwin buildid-8469 distribution-tar extension-tar.gz)
+                     uploadMinSnapshotsToS3.isUnix()
                      uploadMinSnapshotsToS3.sh(
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64.tar.gz /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64.tar.gz.sha512 /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/../manifest.yml /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.build-manifest.yml
-                gsed -i "s/.tar.gz/-latest.tar.gz/g" /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512
-            )
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64.tar.gz /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64.tar.gz.sha512 /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/../manifest.yml /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.build-manifest.yml
+                    gsed -i "s/.tar.gz/-latest.tar.gz/g" /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512
+                )
                      uploadMinSnapshotsToS3.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         uploadMinSnapshotsToS3.echo(Upload min snapshots)
                         uploadMinSnapshotsToS3.s3Upload({file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz})
@@ -209,7 +216,7 @@
                publish-min-snapshots.sh(java -version)
                publish-min-snapshots.buildManifest({componentName=OpenSearch, inputManifest=manifests/3.0.0/opensearch-3.0.0.yml, platform=darwin, architecture=arm64, distribution=tar, snapshot=true})
                   buildManifest.legacySCM(groovy.lang.Closure)
-                  buildManifest.library({identifier=jenkins@9.3.0, retriever=null})
+                  buildManifest.library({identifier=jenkins@9.4.0, retriever=null})
                   buildManifest.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                   InputManifest.asBoolean()
                   buildManifest.isUnix()
@@ -217,7 +224,7 @@
                publish-min-snapshots.echo(Uploading darwin arm64 tar min snapshots to S3)
                publish-min-snapshots.uploadMinSnapshotsToS3({distribution=tar})
                   uploadMinSnapshotsToS3.legacySCM(groovy.lang.Closure)
-                  uploadMinSnapshotsToS3.library({identifier=jenkins@9.3.0, retriever=null})
+                  uploadMinSnapshotsToS3.library({identifier=jenkins@9.4.0, retriever=null})
                   uploadMinSnapshotsToS3.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                   InputManifest.asBoolean()
                   uploadMinSnapshotsToS3.readYaml({file=/tmp/workspace/tar/builds/opensearch/manifest.yml})
@@ -231,16 +238,18 @@
                      uploadMinSnapshotsToS3.fileExists(/tmp/workspace/tar/builds/opensearch/core-plugins)
                      uploadMinSnapshotsToS3.echo(Create .sha512 for Min Snapshots Artifacts)
                      uploadMinSnapshotsToS3.createSha512Checksums()
+                     createSha512Checksums.isUnix()
                      createSha512Checksums.sh({script=find /tmp/workspace/tar/builds/opensearch/dist -type f, returnStdout=true})
                      createSha512Checksums.echo(Not generating sha for bbb in /tmp/workspace/tar/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                      createSha512Checksums.echo(Not generating sha for ccc in /tmp/workspace/tar/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                      uploadMinSnapshotsToS3.echo(Start copying files: version-3.0.0-SNAPSHOT revision-3.0.0-SNAPSHOT-SNAPSHOT architecture-arm64 platform-darwin buildid-8469 distribution-tar extension-tar.gz)
+                     uploadMinSnapshotsToS3.isUnix()
                      uploadMinSnapshotsToS3.sh(
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64.tar.gz /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64.tar.gz.sha512 /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.sha512
-                cp -v /tmp/workspace/tar/builds/opensearch/dist/../manifest.yml /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.build-manifest.yml
-                gsed -i "s/.tar.gz/-latest.tar.gz/g" /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.sha512
-            )
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64.tar.gz /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64.tar.gz.sha512 /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.sha512
+                    cp -v /tmp/workspace/tar/builds/opensearch/dist/../manifest.yml /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.build-manifest.yml
+                    gsed -i "s/.tar.gz/-latest.tar.gz/g" /tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.sha512
+                )
                      uploadMinSnapshotsToS3.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         uploadMinSnapshotsToS3.echo(Upload min snapshots)
                         uploadMinSnapshotsToS3.s3Upload({file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz})
@@ -256,7 +265,7 @@
                   publish-min-snapshots.sh(scoop reset `scoop list jdk | cut -d ' ' -f1 | grep 17 | head -1`)
                   publish-min-snapshots.buildManifest({componentName=OpenSearch, inputManifest=manifests/3.0.0/opensearch-3.0.0.yml, platform=windows, architecture=x64, distribution=zip, snapshot=true})
                      buildManifest.legacySCM(groovy.lang.Closure)
-                     buildManifest.library({identifier=jenkins@9.3.0, retriever=null})
+                     buildManifest.library({identifier=jenkins@9.4.0, retriever=null})
                      buildManifest.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                      InputManifest.asBoolean()
                      buildManifest.isUnix()
@@ -264,7 +273,7 @@
                   publish-min-snapshots.echo(Uploading windows x64 zip min snapshots to S3)
                   publish-min-snapshots.uploadMinSnapshotsToS3({distribution=zip})
                      uploadMinSnapshotsToS3.legacySCM(groovy.lang.Closure)
-                     uploadMinSnapshotsToS3.library({identifier=jenkins@9.3.0, retriever=null})
+                     uploadMinSnapshotsToS3.library({identifier=jenkins@9.4.0, retriever=null})
                      uploadMinSnapshotsToS3.readYaml({file=manifests/3.0.0/opensearch-3.0.0.yml})
                      InputManifest.asBoolean()
                      uploadMinSnapshotsToS3.readYaml({file=/tmp/workspace/zip/builds/opensearch/manifest.yml})
@@ -278,16 +287,18 @@
                         uploadMinSnapshotsToS3.fileExists(/tmp/workspace/zip/builds/opensearch/core-plugins)
                         uploadMinSnapshotsToS3.echo(Create .sha512 for Min Snapshots Artifacts)
                         uploadMinSnapshotsToS3.createSha512Checksums()
+                        createSha512Checksums.isUnix()
                         createSha512Checksums.sh({script=find /tmp/workspace/zip/builds/opensearch/dist -type f, returnStdout=true})
                         createSha512Checksums.echo(Not generating sha for bbb in /tmp/workspace/zip/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                         createSha512Checksums.echo(Not generating sha for ccc in /tmp/workspace/zip/builds/opensearch/dist, doesn't match allowed types [.tar.gz, .zip, .rpm, .deb])
                         uploadMinSnapshotsToS3.echo(Start copying files: version-3.0.0-SNAPSHOT revision-3.0.0-SNAPSHOT-SNAPSHOT architecture-x64 platform-windows buildid-8469 distribution-zip extension-zip)
+                        uploadMinSnapshotsToS3.isUnix()
                         uploadMinSnapshotsToS3.sh(
-                cp -v /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64.zip /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip
-                cp -v /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64.zip.sha512 /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.sha512
-                cp -v /tmp/workspace/zip/builds/opensearch/dist/../manifest.yml /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.build-manifest.yml
-                sed -i "s/.zip/-latest.zip/g" /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.sha512
-            )
+                    cp -v /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64.zip /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip
+                    cp -v /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64.zip.sha512 /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.sha512
+                    cp -v /tmp/workspace/zip/builds/opensearch/dist/../manifest.yml /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.build-manifest.yml
+                    sed -i "s/.zip/-latest.zip/g" /tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.sha512
+                )
                         uploadMinSnapshotsToS3.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                            uploadMinSnapshotsToS3.echo(Upload min snapshots)
                            uploadMinSnapshotsToS3.s3Upload({file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip})
