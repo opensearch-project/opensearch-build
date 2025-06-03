@@ -216,7 +216,13 @@ pipeline {
                                                     // Docker is mounting the agent directory so it can communicate with the agent
                                                     // this sometimes causes the workspace to retain last run test-results and ends with build failures
                                                     // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
-                                                    sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
+                                                    if (isUnix()) {
+                                                        sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
+                                                    } else {
+                                                        bat"""
+                                                            bash -c "echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}"
+                                                        """
+                                                    }
                                                     unstash "integtest-opensearch-$BUILD_NUMBER"
                                                     if (env.platform == 'windows') {
                                                         echo "Unstashing the repository and downloading the artifacts from S3: ${artifactPath}"
@@ -228,13 +234,19 @@ pipeline {
                                                             localPath: "${WORKSPACE}/artifacts",
                                                             force: true
                                                           )
-                                                        sh("rm -rf $WORKSPACE/$distribution && mv -v $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
+                                                        bat"""
+                                                            bash -c "rm -rf $WORKSPACE/$distribution && mv -v $WORKSPACE/artifacts/${artifactPath} $WORKSPACE"
+                                                        """
                                                     }
                                                     else {
                                                         echo 'Unstashing both artifacts and repository'
                                                     }
 
-                                                    sh('rm -rf test-results')
+                                                    if (isUnix()) {
+                                                        sh('rm -rf test-results')
+                                                    } else {
+                                                        bat "bash -c \"rm -rf test-results\""
+                                                    }
                                                     runIntegTestScript(
                                                         jobName: "$BUILD_JOB_NAME",
                                                         componentName: "${local_component}",
@@ -290,7 +302,7 @@ pipeline {
                                 }
                             }
                         }
-                        retry(5) { 
+                        retry(5) {
                             node(agent_nodes['linux_x64']) {
                                 sleep 10
                                 def rc = (params.RC_NUMBER.toInteger() > 0)
