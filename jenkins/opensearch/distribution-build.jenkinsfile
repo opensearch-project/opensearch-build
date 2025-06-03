@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@9.3.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@9.5.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -839,10 +839,9 @@ pipeline {
                         script {
                             retry(3) {
                                 echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
-                                //sh("scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`")
                                 bat """
                                     bash -c "scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`"
-                """
+                                """
                                 def buildManifestObj = buildAssembleUpload(
                                     componentName: "${COMPONENT_NAME}",
                                     inputManifest: "manifests/${INPUT_MANIFEST}",
