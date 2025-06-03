@@ -83,6 +83,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             return new Yaml().load((this.testManifest ?: binding.getVariable('TEST_MANIFEST') as File).text)
         })
+        helper.registerAllowedMethod('isUnix', [], { true })
 
         helper.registerAllowedMethod('parameterizedCron', [String], null)
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
@@ -100,7 +101,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod('findFiles', [Map.class], null)
         helper.registerAllowedMethod('unstash', [String.class], null)
-        helper.registerAllowedMethod("parallel", [Map]) { stages -> 
+        helper.registerAllowedMethod("parallel", [Map]) { stages ->
     println "Mock parallel stages:"
     stages.each { stageName, stageContent ->
         println "\nStage: ${stageName}"

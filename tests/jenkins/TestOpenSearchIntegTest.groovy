@@ -84,6 +84,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod('findFiles', [Map.class], null)
         helper.registerAllowedMethod('unstash', [String.class], null)
+        helper.registerAllowedMethod('isUnix', [], { true })
     }
 
     @Test
