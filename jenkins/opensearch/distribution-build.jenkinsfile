@@ -839,7 +839,10 @@ pipeline {
                         script {
                             retry(3) {
                                 echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
-                                sh("scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`")
+                                //sh("scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`")
+                                bat """
+                                    bash -c "scoop reset `scoop list jdk | cut -d ' ' -f1 | grep ${env.javaVersionNumber} | head -1`"
+                """
                                 def buildManifestObj = buildAssembleUpload(
                                     componentName: "${COMPONENT_NAME}",
                                     inputManifest: "manifests/${INPUT_MANIFEST}",
