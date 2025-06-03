@@ -187,3 +187,8 @@ components:
       test-configs:
         - with-security
         - without-security
+  - name: search-relevance
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
