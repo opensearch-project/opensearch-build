@@ -25,7 +25,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('9.1.2')
+                .defaultVersion('9.4.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -59,6 +59,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
         })
         helper.registerAllowedMethod('s3Upload', [Map], {})
         helper.registerAllowedMethod('fileExists', [String], { true })
+        helper.registerAllowedMethod('isUnix', [], { true })
     }
 
     @Test

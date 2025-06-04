@@ -236,3 +236,9 @@ components:
     platforms:
       - linux
       - windows
+  - name: search-relevance
+    repository: https://github.com/opensearch-project/search-relevance.git
+    ref: main
+    platforms:
+      - linux
+      - windows
