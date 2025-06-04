@@ -25,7 +25,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('9.4.0')
+                .defaultVersion('9.6.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
