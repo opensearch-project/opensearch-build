@@ -21,7 +21,9 @@ pid_dir=/var/run/opensearch
 
 # Apply Security Settings
 if [ -d ${product_dir}/plugins/opensearch-security ]; then
-    bash ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1
+    if [ ! "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
+        bash ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1
+    fi
 fi
 
 # Apply PerformanceAnalyzer Settings
