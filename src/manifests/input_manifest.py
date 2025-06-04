@@ -166,7 +166,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
             self.image = None if data is None else self.__image_extract__(data.get("image", {}))
 
         def __image_extract__(self, data: dict) -> Dict[str, Dict[str, 'Image']]:
-            image_dict = {}
+            image_dict = {}  # type: ignore[var-annotated]
             for plat, dists in data.items():
                 image_dict[plat] = {}
                 for dist, img in dists.items():

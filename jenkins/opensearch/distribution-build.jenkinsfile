@@ -9,7 +9,7 @@
 
 lib = library(identifier: 'jenkins@9.5.0', retriever: modernSCM([
     $class: 'GitSCMSource',
-    remote: 'https://github.com/peterzhuamazon/opensearch-build-libraries.git',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
 pipeline {
@@ -1006,7 +1006,7 @@ pipeline {
         }
         failure {
             node(AGENT_LINUX_X64) {
-                //checkout scm
+                checkout scm
                 script {
                     postCleanup()
                 }

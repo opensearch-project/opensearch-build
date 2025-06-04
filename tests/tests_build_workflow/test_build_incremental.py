@@ -12,8 +12,8 @@ from unittest.mock import MagicMock, patch
 
 from build_workflow.build_incremental import BuildIncremental
 from manifests.build_manifest import BuildManifest
-from manifests.input_manifest import InputManifest
 from manifests.input.input_manifest_1_1 import InputManifest_1_1
+from manifests.input_manifest import InputManifest
 
 
 class TestBuildIncremental(unittest.TestCase):

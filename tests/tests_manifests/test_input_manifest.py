@@ -100,8 +100,8 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "1.2.0")
-        self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028")
-        self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot")
+        self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028")  # type: ignore[attr-defined]
+        self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot")  # type: ignore[attr-defined]
         self.assertNotEqual(len(manifest.components), 0)
         self.assertEqual(len(list(manifest.components.select(focus=["common-utils"]))), 1)
         # opensearch component
@@ -131,8 +131,8 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "2.12.0")
-        self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3")
-        self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/opt/java/openjdk-17")
+        self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3")  # type: ignore[attr-defined]
+        self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/opt/java/openjdk-17")  # type: ignore[attr-defined]
         self.assertNotEqual(len(manifest.components), 0)
         self.assertEqual(len(list(manifest.components.select(focus=["neural-search"]))), 1)
         # opensearch component
@@ -267,44 +267,7 @@ class TestInputManifest(unittest.TestCase):
         })
         self.assertNotEqual(manifest1, manifest2)
 
-    def test_to_file_formatted_before_schema_version_1_1(self) -> None:
-        data_path = os.path.join(os.path.dirname(__file__), "data")
-        manifest = InputManifest_1_1({
-            "schema-version": "1.1",
-            "build": {
-                "name": "OpenSearch",
-                "version": "2.0.0"
-            },
-            "ci": {
-                "image": {
-                    "name": "image-name",
-                    "args": "-e JAVA_HOME=/opt/java/openjdk-11"
-                }
-            },
-            "components": [
-                {
-                    "name": "OpenSearch",
-                    "ref": "main",
-                    "repository": "https://github.com/opensearch-project/OpenSearch.git",
-                    "checks": [
-                        "gradle:publish",
-                        "gradle:properties:version"
-                    ]
-                }
-            ]
-        })
-
-        with TemporaryDirectory() as path:
-            output_path = os.path.join(path.name, "manifest.yml")
-            manifest.to_file(output_path)
-            with open(output_path) as f:
-                written_manifest = f.read()
-            with open(os.path.join(data_path, "formatted.yml")) as f:
-                formatted_manifest = f.read()
-
-        self.assertEqual(formatted_manifest, written_manifest)
-
-    def test_to_file_formatted_before_schema_version_1_2(self) -> None:
+    def test_to_file_formatted_schema_version_1_2(self) -> None:
         data_path = os.path.join(os.path.dirname(__file__), "data")
         manifest = InputManifest({
             "schema-version": "1.2",
@@ -341,6 +304,43 @@ class TestInputManifest(unittest.TestCase):
             with open(output_path) as f:
                 written_manifest = f.read()
             with open(os.path.join(data_path, "formatted_schema_1_2.yml")) as f:
+                formatted_manifest = f.read()
+
+        self.assertEqual(formatted_manifest, written_manifest)
+
+    def test_to_file_formatted_schema_version_1_1(self) -> None:
+        data_path = os.path.join(os.path.dirname(__file__), "data")
+        manifest = InputManifest_1_1({
+            "schema-version": "1.1",
+            "build": {
+                "name": "OpenSearch",
+                "version": "2.0.0"
+            },
+            "ci": {
+                "image": {
+                    "name": "image-name",
+                    "args": "-e JAVA_HOME=/opt/java/openjdk-11"
+                }
+            },
+            "components": [
+                {
+                    "name": "OpenSearch",
+                    "ref": "main",
+                    "repository": "https://github.com/opensearch-project/OpenSearch.git",
+                    "checks": [
+                        "gradle:publish",
+                        "gradle:properties:version"
+                    ]
+                }
+            ]
+        })
+
+        with TemporaryDirectory() as path:
+            output_path = os.path.join(path.name, "manifest.yml")
+            manifest.to_file(output_path)
+            with open(output_path) as f:
+                written_manifest = f.read()
+            with open(os.path.join(data_path, "formatted.yml")) as f:
                 formatted_manifest = f.read()
 
         self.assertEqual(formatted_manifest, written_manifest)
