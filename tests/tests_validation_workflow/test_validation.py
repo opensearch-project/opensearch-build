@@ -103,7 +103,7 @@ class TestValidation(unittest.TestCase):
         mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
 
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
-        validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit"))
+        validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit"), ["discovery-ec2", "repository-s3"])
         mock_execute.assert_has_calls(
             [
                 call(f'.{os.sep}opensearch-plugin install --batch discovery-ec2', os.path.join("tmp", "trytytyuit", "bin")),
@@ -112,12 +112,11 @@ class TestValidation(unittest.TestCase):
         )
 
     @patch('requests.get')
-    @patch('os.listdir')
     @patch('manifests.bundle_manifest.BundleManifest.from_path')
     @patch('validation_workflow.validation.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_get_native_plugin_list(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
-                                    mock_manifest_from_path: Mock, mock_list_dir: Mock, mock_get: Mock) -> None:
+                                    mock_manifest_from_path: Mock, mock_get: Mock) -> None:
 
         mock_response = Mock()
         mock_response.json.return_value = [{'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
@@ -129,20 +128,18 @@ class TestValidation(unittest.TestCase):
                                            ]
         mock_response.status_code = 200
         mock_get.return_value = mock_response
-        mock_list_dir.return_value = ["query-insights", "ml-commons"]
         mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
-        result = validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path)
+        result = validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path, ["query-insights"])
 
         self.assertEqual(["analysis-icu", "analysis-nori"], result)
 
     @patch('requests.get')
-    @patch('os.listdir')
     @patch('manifests.bundle_manifest.BundleManifest.from_path')
     @patch('validation_workflow.validation.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_get_native_plugin_list_exception(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
-                                              mock_manifest_from_path: Mock, mock_list_dir: Mock, mock_get: Mock) -> None:
+                                              mock_manifest_from_path: Mock, mock_get: Mock) -> None:
         mock_response = Mock()
         mock_response.json.return_value = [
             {'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
@@ -151,11 +148,10 @@ class TestValidation(unittest.TestCase):
         ]
         mock_response.status_code = 503
         mock_get.return_value = mock_response
-        mock_list_dir.return_value = ["query-insights", "ml-commons"]
         mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
         with self.assertRaises(Exception) as e1:
-            validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path)
+            validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path, ["query-insights", "ml-commons"])
 
         self.assertEqual(str(e1.exception), "Github Api returned error code while retrieving the list of native plugins")
 

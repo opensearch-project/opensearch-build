@@ -84,18 +84,17 @@ class ValidateDocker(Validation):
                         try:
                             subprocess.run(f'docker cp opensearch-node1:/usr/share/opensearch/manifest.yml {self.tmp_dir.name}/manifest.yml',
                                            shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-                            subprocess.run(f'docker cp opensearch-node1:/usr/share/opensearch/plugins {self.tmp_dir.name}/plugins',
-                                           shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-                            native_plugins_list = self.get_native_plugin_list(self.tmp_dir.name)
-                            for container in ["opensearch-node1", "opensearch-node2"]:
-                                for native_plugin in native_plugins_list:
-                                    command = f'docker exec -it {container} sh .' + os.sep + 'bin' + os.sep + f'opensearch-plugin install --batch {native_plugin}'
-                                    logging.info(f"Executing {command}")
-                                    subprocess.run(command,
-                                                   shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+                            result = subprocess.run('docker exec opensearch-node1 ls /usr/share/opensearch/plugins',
+                                                    shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+                            native_plugins_list = self.get_native_plugin_list(self.tmp_dir.name, result.stdout.strip().split('\n'))
+                            for native_plugin in native_plugins_list:
+                                command = 'docker exec opensearch-node1 sh .' + os.sep + 'bin' + os.sep + f'opensearch-plugin install --batch {native_plugin}'
+                                logging.info(f"Executing {command}")
+                                subprocess.run(command,
+                                               shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
 
-                                subprocess.run(f"docker-compose -f {self._target_yml_file} restart", shell=True, stdout=PIPE, stderr=PIPE,
-                                               universal_newlines=True)
+                            subprocess.run(f"docker-compose -f {self._target_yml_file} restart", shell=True, stdout=PIPE, stderr=PIPE,
+                                           universal_newlines=True)
                         except subprocess.CalledProcessError:
                             logging.info("Docker daemon is not running")
                             return False

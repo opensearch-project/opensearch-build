@@ -25,16 +25,18 @@ class TestValidateDeb(unittest.TestCase):
 
     @patch("validation_workflow.deb.validation_deb.execute")
     @patch('os.path.basename')
+    @patch('os.listdir')
     @patch("validation_workflow.deb.validation_deb.get_password")
     @patch('validation_workflow.validation.Validation.install_native_plugin')
-    def test_installation(self, mock_native_plugin: Mock, mock_get_pwd: Mock, mock_basename: Mock, mock_system: Mock) -> None:
+    def test_installation(self, mock_native_plugin: Mock, mock_get_pwd: Mock, mock_list_dir: Mock, mock_basename: Mock, mock_system: Mock) -> None:
         validate_deb = ValidateDeb(self.mock_args, self.tmp_dir)
         mock_basename.side_effect = lambda path: "mocked_filename"
+        mock_list_dir.return_value = ["query-insights", "ml-commons"]
         mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         result = validate_deb.installation()
         self.assertTrue(result)
         mock_get_pwd.assert_called_with("2.3.0")
-        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr", "share", "opensearch"))
+        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr", "share", "opensearch"), mock_list_dir.return_value)
 
     @patch("validation_workflow.deb.validation_deb.execute")
     @patch("validation_workflow.deb.validation_deb.get_password")

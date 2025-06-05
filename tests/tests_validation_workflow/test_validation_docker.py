@@ -45,6 +45,8 @@ class TestValidateDocker(unittest.TestCase):
         cmd = args[0]
         if 'docker cp' in cmd:
             return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="file copied", stderr='')
+        elif 'ls' in cmd:
+            return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="job-scheduler\nquery-insights", stderr='')
         elif 'docker exec' in cmd:
             return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="command executed inside docker conatiner", stderr='')
         else:
@@ -88,7 +90,7 @@ class TestValidateDocker(unittest.TestCase):
         # Assert that the mock methods are called as expected
         mock_container.assert_called_once()
         mock_test.assert_called_once()
-        mock_native_plugin.assert_called_with("/tmp/trytytyuit")
+        mock_native_plugin.assert_called_with("/tmp/trytytyuit", ['job-scheduler', 'query-insights'])
         mock_subprocess_run.assert_called_with(
             'docker-compose -f test_file.yml restart', shell=True, stdout=-1, stderr=-1, universal_newlines=True)
 
