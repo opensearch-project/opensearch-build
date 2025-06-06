@@ -21,8 +21,8 @@ This workflow reacts to version increments in OpenSearch and its components by e
 
 The following options are available.
 
-| name               | description                                                             |
-|--------------------|-------------------------------------------------------------------------|
-| --keep             | Do not delete the temporary working directory on both success or error. |
-| --type             | Only list manifests of a specific type).                                |
-| -v, --verbose      | Show more verbose output.                                               |
+| name               | description                                                                     |
+|--------------------|---------------------------------------------------------------------------------|
+| --keep             | Do not delete the temporary working directory on both success or error.         |
+| --type             | Only list manifests of a specific type ('opensearch', 'opensearch-dashboards'). |
+| -v, --verbose      | Show more verbose output.                                                       |
