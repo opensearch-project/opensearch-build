@@ -39,7 +39,7 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
         self.command = f'docker run --name docker-container-{self.args.stack_suffix}'
         if self.args.benchmark_config:
             self.command += f" -v {self.args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini"
-        self.command += f" opensearchproject/opensearch-benchmark:1.8.0 execute-test --workload={self.args.workload} " \
+        self.command += f" opensearchproject/opensearch-benchmark:1.13.0 execute-test --workload={self.args.workload} " \
                         f"--pipeline=benchmark-only --target-hosts={self.endpoint}"
 
         if self.args.workload_params:

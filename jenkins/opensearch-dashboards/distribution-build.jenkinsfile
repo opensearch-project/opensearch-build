@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@9.5.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@9.5.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -838,7 +838,7 @@ pipeline {
                                     architecture: 'x64',
                                     distribution: 'zip',
                                     continueOnError: params.CONTINUE_ON_ERROR,
-                                    incremental: 'false',
+                                    incremental: false,
                                     previousBuildId: params.PREVIOUS_BUILD_ID
                                 )
                                 String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
