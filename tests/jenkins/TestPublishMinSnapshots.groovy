@@ -49,6 +49,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
         binding.setVariable('JOB_NAME', 'distribution-build-opensearch')
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'bot_token_name')
         binding.setVariable('dockerAgent', [image:'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3', args:'-e JAVA_HOME=/opt/java/openjdk-20'])
+        binding.setVariable('dockerAgentWindowsZip', [image:'opensearchstaging/ci-runner:ci-runner:ci-runner-windows2019-opensearch-build-v1', args:'-e JAVA_HOME=/opt/java/openjdk-21', javaVersion: '21'])
         helper.registerAllowedMethod('withCredentials', [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)

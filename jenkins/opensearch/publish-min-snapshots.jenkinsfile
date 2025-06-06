@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@9.4.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@9.6.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -51,7 +51,7 @@ pipeline {
                         distribution: "zip",
                         platform: "windows"
                     )
-                    env.javaVersionNumber = dockerAgent.javaVersionWindowsZip.replaceAll("[^0-9]", "") // Only get number
+                    env.javaVersionNumber = dockerAgentWindowsZip.javaVersion.replaceAll("[^0-9]", "") // Only get number
                     echo("Windows Java Version: ${env.javaVersionNumber}")
                     currentBuild.description = INPUT_MANIFEST
                 }
