@@ -70,19 +70,23 @@ class TestValidateTar(unittest.TestCase):
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
     @patch('os.path.basename')
+    @patch('os.listdir')
     @patch('validation_workflow.tar.validation_tar.execute')
-    def test_installation(self, mock_system: Mock, mock_basename: Mock, mock_temporary_directory: Mock, mock_validation_args: Mock) -> None:
+    @patch('validation_workflow.validation.Validation.install_native_plugin')
+    def test_installation(self, mock_native_plugin: Mock, mock_system: Mock, mock_list_dir: Mock, mock_basename: Mock, mock_temporary_directory: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.platform = 'linux'
         mock_validation_args.return_value.allow_http = True
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        mock_list_dir.return_value = ["query-insights", "ml-commons"]
 
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
         mock_basename.side_effect = lambda path: "mocked_filename"
         mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         result = validate_tar.installation()
+        mock_native_plugin.assert_called_with("/tmp/trytytyuit/opensearch", mock_list_dir.return_value)
         self.assertTrue(result)
 
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')

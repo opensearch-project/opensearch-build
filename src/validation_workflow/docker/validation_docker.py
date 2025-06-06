@@ -79,7 +79,32 @@ class ValidateDocker(Validation):
 
                 if self.check_cluster_readiness():
                     # STEP 4 . OS, OSD API validation
-                    _test_result, _counter = ApiTestCases().test_apis(self.args.version, self.args.projects, True)
+
+                    if self.args.validate_native_plugin:
+                        try:
+                            subprocess.run(f'docker cp opensearch-node1:/usr/share/opensearch/manifest.yml {self.tmp_dir.name}/manifest.yml',
+                                           shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+                            result = subprocess.run('docker exec opensearch-node1 ls /usr/share/opensearch/plugins',
+                                                    shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+                            native_plugins_list = self.get_native_plugin_list(self.tmp_dir.name, result.stdout.strip().split('\n'))
+                            for native_plugin in native_plugins_list:
+                                command = 'docker exec opensearch-node1 sh .' + os.sep + 'bin' + os.sep + f'opensearch-plugin install --batch {native_plugin}'
+                                logging.info(f"Executing {command}")
+                                subprocess.run(command,
+                                               shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+
+                            subprocess.run(f"docker-compose -f {self._target_yml_file} restart", shell=True, stdout=PIPE, stderr=PIPE,
+                                           universal_newlines=True)
+                        except subprocess.CalledProcessError:
+                            logging.info("Docker daemon is not running")
+                            return False
+
+                        # Check for cluster readiness again and run api tests
+                        if self.check_cluster_readiness():
+                            _test_result, _counter = ApiTestCases().test_apis(self.args.version, self.args.projects, True)
+                        else:
+                            self.cleanup()
+                            return False
 
                     if _test_result:
                         logging.info(f'All tests Pass : {_counter}')

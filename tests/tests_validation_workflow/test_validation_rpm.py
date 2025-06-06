@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
 import unittest
 from unittest.mock import Mock, patch
 
@@ -95,17 +96,23 @@ class TestValidationRpm(unittest.TestCase):
     @patch("validation_workflow.rpm.validation_rpm.execute")
     @patch("validation_workflow.rpm.validation_rpm.ValidateRpm.validate_metadata")
     @patch("validation_workflow.rpm.validation_rpm.ValidateRpm.validate_signature")
-    def test_installation(self, mock_validate_signature: Mock, mock_validate_metadata: Mock, mock_temporary_directory: Mock, mock_system: Mock, mock_validation_args: Mock) -> None:
+    @patch('validation_workflow.validation.Validation.install_native_plugin')
+    @patch('os.listdir')
+    def test_installation(self, mock_list_dir: Mock, mock_native_plugin: Mock, mock_validate_signature: Mock, mock_validate_metadata: Mock,
+                          mock_temporary_directory: Mock, mock_system: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.platform = 'linux'
         mock_validation_args.return_value.allow_http = True
         mock_validation_args.return_value.projects = ["opensearch"]
-        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
+        mock_list_dir.return_value = ["query-insights", "ml-commons"]
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value, mock_temporary_directory.return_value)
         mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         result = validate_rpm.installation()
+        mock_native_plugin.assert_called_with(os.path.join(os.sep, "usr", "share", "opensearch"), mock_list_dir.return_value)
+
         self.assertTrue(result)
 
     @patch("validation_workflow.rpm.validation_rpm.execute", return_value=True)

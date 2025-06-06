@@ -29,6 +29,8 @@ class ValidateZip(Validation, DownloadUtils):
             for project in self.args.projects:
                 with ZipFile(os.path.join(self.tmp_dir.path, os.path.basename(self.args.file_path.get(project))), "r") as zip:
                     zip.extractall(self.tmp_dir.path)
+                installed_plugins_list = os.listdir(os.path.join(self.tmp_dir.path, f"opensearch-{self.args.version}", "plugins"))
+                self.install_native_plugin(os.path.join(self.tmp_dir.path, f"opensearch-{self.args.version}"), installed_plugins_list)
         except:
             raise Exception("Failed to install OpenSearch/OpenSearch-Dashboards")
         return True

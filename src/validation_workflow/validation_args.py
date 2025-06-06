@@ -117,6 +117,13 @@ class ValidationArgs:
             default=False,
             help="If True, use http/https to connect based on the existence of security plugin, else always use https, default to False"
         )
+        parser.add_argument(
+            "-np",
+            "--validate-native-plugin",
+            action="store_true",
+            default=True,
+            help="Set the option to True if native plugins for OS need to be installed before starting the cluster, defaults to False"
+        )
         group = parser.add_mutually_exclusive_group()
         group.add_argument(
             "--validate-digest-only",
@@ -153,6 +160,7 @@ class ValidationArgs:
         self.file_path = args.file_path
         self.artifact_type = args.artifact_type
         self.allow_http = args.allow_http
+        self.validate_native_plugin = args.validate_native_plugin
         self.logging_level = args.logging_level
         self.distribution = args.distribution
         self.platform = args.platform
