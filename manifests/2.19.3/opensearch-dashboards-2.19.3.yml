@@ -1,11 +1,20 @@
 ---
-schema-version: '1.1'
+schema-version: '1.2'
 build:
   name: OpenSearch Dashboards
   version: 2.19.3
 ci:
   image:
-    name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-build-v1
+    linux:
+      tar:
+        name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-build-v1
+      deb:
+        name: opensearchstaging/ci-runner:ci-runner-ubuntu2404-opensearch-build-v1
+      rpm:
+        name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1
+    windows:
+      zip:
+        name: opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
