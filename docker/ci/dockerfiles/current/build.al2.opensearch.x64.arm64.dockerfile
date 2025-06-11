@@ -44,8 +44,8 @@ RUN yum install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN yum install -y go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh config/op-setup.sh /tmp/
+RUN yum install -y go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh && /tmp/op-setup.sh
 
 # Install higher version of maven 3.8.x
 RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"' | uniq | head -n 1`  && \

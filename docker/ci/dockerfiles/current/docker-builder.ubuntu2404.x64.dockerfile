@@ -104,5 +104,5 @@ RUN curl -SL -o- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/s
     apt-get clean
 
 # Tools setup
-COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN apt-get install -y golang-1.22 && /tmp/yq-setup.sh && /tmp/gh-setup.sh && apt-get clean && apt-get autoremove -y
+COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh config/op-setup.sh /tmp/
+RUN apt-get install -y golang-1.22 && /tmp/yq-setup.sh && /tmp/gh-setup.sh && /tmp/op-setup.sh && apt-get clean && apt-get autoremove -y

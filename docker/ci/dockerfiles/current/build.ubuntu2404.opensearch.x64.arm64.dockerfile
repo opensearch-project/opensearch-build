@@ -63,8 +63,8 @@ RUN curl -SfL -o /etc/apt/keyrings/aptly.asc https://www.aptly.info/pubkey.txt &
     dpkg -r lintian
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN apt-get install -y golang-1.22 && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh && apt-get clean -y && apt-get autoremove -y # Ubuntu has a bug where entrypoint=bash does not actually run .bashrc correctly
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh config/op-setup.sh /tmp/
+RUN apt-get install -y golang-1.22 && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh && /tmp/op-setup.sh && apt-get clean -y && apt-get autoremove -y # Ubuntu has a bug where entrypoint=bash does not actually run .bashrc correctly
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \

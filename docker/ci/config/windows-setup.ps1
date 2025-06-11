@@ -203,6 +203,10 @@ cmake --version
 scoop install zip
 scoop install unzip
 
+# Install onepassword-cli
+scoop install "1password-cli"
+op.exe --version
+
 # Install docker
 # Lock Docker 24.0.7
 # Lock Docker-Compose 2.23.0
