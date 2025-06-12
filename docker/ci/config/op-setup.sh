@@ -31,6 +31,10 @@ case $PLATFORM-$ARCH in
     linux-aarch64|linux-arm64)
         ARCH_FINAL="arm64"
         ;;
+    linux-ppc64le)
+        echo "PPC64LE is not supported at the moment"
+        exit 0
+        ;;
     darwin-x86_64|darwin-arm64)
         brew install 1password-cli
         exit 0
