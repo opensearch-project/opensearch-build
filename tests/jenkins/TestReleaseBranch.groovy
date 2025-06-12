@@ -28,7 +28,7 @@ class TestReleaseBranch extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('6.3.3')
+                .defaultVersion('9.6.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
