@@ -37,8 +37,8 @@ ARG DOT_NET_LIST="8.0"
 RUN for dotnet_version in $DOT_NET_LIST; do dnf install -y dotnet-sdk-$dotnet_version; done
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN dnf install -y go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh config/op-setup.sh /tmp/
+RUN dnf install -y go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh && /tmp/op-setup.sh
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \

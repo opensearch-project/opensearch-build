@@ -43,8 +43,8 @@ RUN groupadd -g 1000 $CONTAINER_USER && \
     chown -R 1000:1000 $CONTAINER_USER_HOME
 
 # install yq
-COPY --chown=0:0 config/yq-setup.sh /tmp/
-RUN /tmp/yq-setup.sh
+COPY --chown=0:0 config/yq-setup.sh config/op-setup.sh /tmp/
+RUN /tmp/yq-setup.sh && /tmp/yq-setup.sh
 
 # Change User
 USER $CONTAINER_USER
@@ -139,8 +139,8 @@ RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils
 RUN dnf groupinstall -y "Development Tools" && dnf clean all
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && dnf remove -y "java-1.8.0*" && dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh config/op-setup.sh /tmp/
+RUN /tmp/jdk-setup.sh && dnf remove -y "java-1.8.0*" && dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh && /tmp/op-setup.sh
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm

@@ -35,8 +35,8 @@ RUN groupadd -g 1000 $CONTAINER_USER && \
     chown -R 1000:1000 $CONTAINER_USER_HOME
 
 # install yq
-COPY --chown=0:0 config/yq-setup.sh /tmp/
-RUN /tmp/yq-setup.sh
+COPY --chown=0:0 config/yq-setup.sh config/op-setup.sh /tmp/
+RUN /tmp/yq-setup.sh && /tmp/op-setup.sh
 
 # Change User
 USER $CONTAINER_USER
@@ -133,8 +133,8 @@ RUN dnf install -y epel-release && dnf clean all && dnf install -y jq && dnf cle
     pip3 install cmake==3.26.4
 
 # Tools setup
-COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh config/op-setup.sh /tmp/
+RUN dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh && /tmp/op-setup.sh
 
 # Change User
 USER $CONTAINER_USER

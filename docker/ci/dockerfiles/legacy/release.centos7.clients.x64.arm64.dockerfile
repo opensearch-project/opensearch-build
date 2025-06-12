@@ -54,8 +54,8 @@ RUN if [[ `uname -m` = 'aarch64' ]]; then mkdir -p aarch64-builds && cd aarch64-
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
 
 # Tools setup
-COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN yum install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh config/op-setup.sh /tmp/
+RUN yum install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh && /tmp/op-setup.sh
 
 # Install JDK
 RUN curl -SL https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.15_10.tar.gz -o /opt/jdk11.tar.gz && \
