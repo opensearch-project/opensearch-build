@@ -1,3 +1,4 @@
+---
 info:
   title: OpenSearch search relevance plugin smoke tests
   version: default
@@ -65,66 +66,66 @@ paths:
           'description': 'Judgments generated outside SRW',
           'type': 'IMPORT_JUDGMENT',
           'judgmentRatings': [
-              {
-                'query': 'button',
-                'ratings': [
-                  {
-                    'docId': 'B07D29PHFY',
-                    'rating': '0.6'
-                  },
-                  {
-                    'docId': 'B06Y1L1YJD',
-                    'rating': '0.7'
-                  },
-                  {
-                    'docId': 'B01M3XBRRX',
-                    'rating': '0.9'
-                  }
-                ]
-              },
-              {
-                'query': 'keyboard',
-                'ratings': [
-                  {
-                    'docId': 'B01D8YNJH0',
-                    'rating': '1.0'
-                  }
-                ]
-              },
-              {
-                'query': 'giangentic form',
-                'ratings': [
-                  {
-                    'docId': 'B08KH3GFXL',
-                    'rating': '0.4'
-                  }
-                ]
-              },
-              {
-                'query': 'metal frame',
-                'ratings': [
-                  {
-                    'docId': 'B07MBG53JD',
-                    'rating': '0.6'
-                  },
-                  {
-                    'docId': 'B097Q69V1B',
-                    'rating': '0.9'
-                  },
-                  {
-                    'docId': 'B07H81Z91C',
-                    'rating': '0.7'
-                  },
-                  {
-                    'docId': 'B00TLYRBMG',
-                    'rating': '0.2'
-                  },
-                  {
-                    'docId': 'B08G46SS1T',
-                    'rating': '0.7'
-                  }
-                ]
-              }
+            {
+              'query': 'button',
+              'ratings': [
+                {
+                  'docId': 'B07D29PHFY',
+                  'rating': '0.6'
+                },
+                {
+                  'docId': 'B06Y1L1YJD',
+                  'rating': '0.7'
+                },
+                {
+                  'docId': 'B01M3XBRRX',
+                  'rating': '0.9'
+                }
+              ]
+            },
+            {
+              'query': 'keyboard',
+              'ratings': [
+                {
+                  'docId': 'B01D8YNJH0',
+                  'rating': '1.0'
+                }
+              ]
+            },
+            {
+              'query': 'giangentic form',
+              'ratings': [
+                {
+                  'docId': 'B08KH3GFXL',
+                  'rating': '0.4'
+                }
+              ]
+            },
+            {
+              'query': 'metal frame',
+              'ratings': [
+                {
+                  'docId': 'B07MBG53JD',
+                  'rating': '0.6'
+                },
+                {
+                  'docId': 'B097Q69V1B',
+                  'rating': '0.9'
+                },
+                {
+                  'docId': 'B07H81Z91C',
+                  'rating': '0.7'
+                },
+                {
+                  'docId': 'B00TLYRBMG',
+                  'rating': '0.2'
+                },
+                {
+                  'docId': 'B08G46SS1T',
+                  'rating': '0.7'
+                }
+              ]
+            }
           ]
         }
       ]
