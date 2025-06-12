@@ -80,11 +80,17 @@ pipeline {
                     def CREDENTIAL_ID = "jenkins-staging-dockerhub-credential"
                     sh("echo Account: ${CREDENTIAL_ID}")
                     withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh '''
-                            set -e
-                            set +x
-                            docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
-                        '''
+                        if (isUnix()){
+                            sh """
+                                set -e
+                                set +x
+                                docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
+                            """
+                        } else {
+                            bat"""
+                                bash -c "set -e && set +x && docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS"
+                            """
+                        }
                     }
                 }
             }
@@ -92,7 +98,13 @@ pipeline {
                 always {
                     script {
                         cleanWs disableDeferredWipeout: true, deleteDirs: true
-                        sh("docker logout && docker image prune -f --all")
+                        if (isUnix()){
+                            sh("docker logout && docker image prune -f --all")
+                        } else {
+                            bat"""
+                                bash -c "docker logout && docker image prune -f --all"
+                            """
+                        }
                     }
                 }
             }
