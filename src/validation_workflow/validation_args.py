@@ -121,7 +121,7 @@ class ValidationArgs:
             "-np",
             "--validate-native-plugin",
             action="store_true",
-            default=True,
+            default=False,
             help="Set the option to True if native plugins for OS need to be installed before starting the cluster, defaults to False"
         )
         group = parser.add_mutually_exclusive_group()

@@ -100,11 +100,10 @@ class ValidateDocker(Validation):
                             return False
 
                         # Check for cluster readiness again and run api tests
-                        if self.check_cluster_readiness():
-                            _test_result, _counter = ApiTestCases().test_apis(self.args.version, self.args.projects, True)
-                        else:
+                        if not self.check_cluster_readiness():
                             self.cleanup()
                             return False
+                    _test_result, _counter = ApiTestCases().test_apis(self.args.version, self.args.projects, True)
 
                     if _test_result:
                         logging.info(f'All tests Pass : {_counter}')
