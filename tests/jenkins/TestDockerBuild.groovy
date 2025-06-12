@@ -20,6 +20,8 @@ class TestDockerBuild extends BuildPipelineTest {
     // Variables
     String dockerBuildGitRespository = 'https://github.com/opensearch-project/opensearch-build'
     String dockerBuildGitRespositoryReference = 'main'
+    String dockerUsername = 'dockerUsername'
+    String dockerPassword = 'dockerPassword'
     String dockerBuildScriptwithCommands = 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>'
     String dockerBuildOS = 'linux'
 
@@ -41,8 +43,11 @@ class TestDockerBuild extends BuildPipelineTest {
 
         binding.setVariable('DOCKER_BUILD_GIT_REPOSITORY', dockerBuildGitRespository)
         binding.setVariable('DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', dockerBuildGitRespositoryReference)
+        binding.setVariable('DOCKER_USERNAME', dockerUsername)
+        binding.setVariable('DOCKER_PASSWORD', dockerPassword)
         binding.setVariable('DOCKER_BUILD_SCRIPT_WITH_COMMANDS', dockerBuildScriptwithCommands)
         binding.setVariable('DOCKER_BUILD_OS', dockerBuildOS)
+        helper.registerAllowedMethod('isUnix', [], { true })
 
     }
 
@@ -60,7 +65,7 @@ class TestDockerBuild extends BuildPipelineTest {
 
         // Ensure the entire docker command is executed in an external shell script exactly once
         def dockerLoginCommand = getCommands('docker').findAll {
-            shCommand -> shCommand.contains('docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS')
+            shCommand -> shCommand.contains('docker logout && echo DOCKER_PASSWORD | docker login -u DOCKER_USERNAME --password-stdin && eval bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>')
         }
         assertThat(dockerLoginCommand.size(), equalTo(1))
 
