@@ -1,0 +1,134 @@
+---
+info:
+  title: OpenSearch search relevance plugin smoke tests
+  version: default
+name: search-relevance
+paths:
+  /_cluster/settings:
+    PUT:
+      parameters: [
+        {
+          'transient': {
+            'plugins.search_relevance.workbench_enabled': true
+          }
+        }
+      ]
+  /_plugins/_search_relevance/search_configurations:
+    PUT:
+      parameters: [
+        {
+          'name': 'test_search_config',
+          'index': 'test_index',
+          'query': '{\"query\": {\"match_all\": {}}}',
+          'searchPipeline': 'test_pipeline'
+        }
+      ]
+  /_plugins/_search_relevance/query_sets:
+    PUT:
+      parameters: [
+        {
+          'name': 'query_set',
+          'description': 'Test query set',
+          'sampling': 'manual',
+          'querySetQueries': [
+            {
+              'queryText': 'phone'
+            },
+            {
+              'queryText': 'iphone'
+            },
+            {
+              'queryText': 'steel'
+            },
+            {
+              'queryText': 'keyboard'
+            },
+            {
+              'queryText': 'diamond wheel'
+            },
+            {
+              'queryText': 'button'
+            },
+            {
+              'queryText': 'metal frame'
+            },
+            {
+              'queryText': 'giangentic form'
+            }
+          ]
+        }
+      ]
+  /_plugins/_search_relevance/judgments:
+    PUT:
+      parameters: [
+        {
+          'name': 'ESCI Judgments',
+          'description': 'Judgments generated outside SRW',
+          'type': 'IMPORT_JUDGMENT',
+          'judgmentRatings': [
+            {
+              'query': 'button',
+              'ratings': [
+                {
+                  'docId': 'B07D29PHFY',
+                  'rating': '0.6'
+                },
+                {
+                  'docId': 'B06Y1L1YJD',
+                  'rating': '0.7'
+                },
+                {
+                  'docId': 'B01M3XBRRX',
+                  'rating': '0.9'
+                }
+              ]
+            },
+            {
+              'query': 'keyboard',
+              'ratings': [
+                {
+                  'docId': 'B01D8YNJH0',
+                  'rating': '1.0'
+                }
+              ]
+            },
+            {
+              'query': 'giangentic form',
+              'ratings': [
+                {
+                  'docId': 'B08KH3GFXL',
+                  'rating': '0.4'
+                }
+              ]
+            },
+            {
+              'query': 'metal frame',
+              'ratings': [
+                {
+                  'docId': 'B07MBG53JD',
+                  'rating': '0.6'
+                },
+                {
+                  'docId': 'B097Q69V1B',
+                  'rating': '0.9'
+                },
+                {
+                  'docId': 'B07H81Z91C',
+                  'rating': '0.7'
+                },
+                {
+                  'docId': 'B00TLYRBMG',
+                  'rating': '0.2'
+                },
+                {
+                  'docId': 'B08G46SS1T',
+                  'rating': '0.7'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+  /_plugins/_search_relevance/stats:
+    GET:
+      parameters: []
