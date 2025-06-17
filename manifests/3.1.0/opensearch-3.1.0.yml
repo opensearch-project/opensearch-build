@@ -49,13 +49,13 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 3d55b78a592256f361bccbb24acdadc3b822d2dd
+    ref: b2a40e036441b691c203031e7cb34cd046dd052d
     platforms:
       - linux
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 4ad0338ba87650e42cc38dacec6f45aebf301359
+    ref: 0bb47270248fccac2370c5ddce5131fd99370565
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: bdb04356df6c5e062cbb0f9922c0a1ec24745ebd
+    ref: fd7ff496f9178df5bfe44146521dca9f4d948bf7
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 0f197e5be89b1916a51eb0bb7b17ceff17efbaa1
+    ref: 8f76f8fa37836ecf927b21ede6a685977d3a56b0
     platforms:
       - linux
       - windows
@@ -238,7 +238,7 @@ components:
       - windows
   - name: search-relevance
     repository: https://github.com/opensearch-project/search-relevance.git
-    ref: 3b3903e7fd3cbad8259744395cb35f77ab9310f1
+    ref: dfb2c2e6c52cd33a1e23c7a22e81704cc39c16ba
     platforms:
       - linux
       - windows
