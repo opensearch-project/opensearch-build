@@ -5,8 +5,8 @@
          docker-re-release.timeout({time=2, unit=HOURS})
          docker-re-release.echo(Executing on agent [label:none])
          docker-re-release.parameterizedCron(
-            H 19 15 * * %PRODUCT=opensearch;TAG=1
-            H 19 15 * * %PRODUCT=opensearch-dashboards;TAG=1
+            H 19 15 * * %PRODUCT=opensearch;TAG=3
+            H 19 15 * * %PRODUCT=opensearch-dashboards;TAG=3
             H 19 15 * * %PRODUCT=opensearch;TAG=2
             H 19 15 * * %PRODUCT=opensearch-dashboards;TAG=2
         )
