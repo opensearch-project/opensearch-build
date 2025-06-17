@@ -18,7 +18,7 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: f2714ded9ad50b22b55c8b5339454c70190d4e4d
+    ref: 646eb48c32728019f0dbbb4e75829f6ca7c2ba70
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '3.1'
@@ -39,7 +39,7 @@ components:
     ref: eff0d6165768229bf939fa7ca45bac2eb9a3de6a
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
-    ref: 1f37b7111710940c2f6f977e94d7bcad9a9e8ec8
+    ref: 43592e0442c3f0dedbb370231905713381487b86
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
     ref: 1ccbbe2727a74d4a4d3737728154711bf7ade6de
@@ -60,7 +60,7 @@ components:
     ref: bf4d88dd46ac9f2041fb4a332759e032a535bd93
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
-    ref: 85e5a64ad4673232dd3ca1e35115da59622348fb
+    ref: 47540d1ea348ebc7fdf58661e851c0f8350aaf76
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
     ref: 30541e32ca5e5fd3ae956cdc1239db0012898fdc
