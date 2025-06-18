@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 18ae61750708876c360b60b50319ed22635cd87d
+    ref: 8ff7c6ee924a49f0f59f80a6e1c73073c8904214
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 3e28c9218fb1229a49194a5850902b85697d770f
@@ -37,7 +37,7 @@ components:
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: 4b9de366052a48d7c508f26f3bb538e541b628b8
+    ref: 59e9abcdb87f9ce74510a101d612e406f3505d38
     platforms:
       - linux
       - windows
@@ -49,7 +49,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: b2a40e036441b691c203031e7cb34cd046dd052d
+    ref: ea46ee118d6cf1c84942fb8c826a4a4be61e63ee
     platforms:
       - linux
       - windows
@@ -63,7 +63,7 @@ components:
       - common-utils
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 2385492d39aa6917cba4462fc318bb20d8473ae3
+    ref: fd507515e3e4a615d988c5943ef36745ba35a0e8
     platforms:
       - linux
       - windows
@@ -142,7 +142,7 @@ components:
       - geospatial
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 404a9f9b70b3ef5551f4c06bf89fdd60659b4291
+    ref: 0fa164a324d34668a4590b9523b5bba476bd7937
     platforms:
       - linux
       - windows
@@ -238,7 +238,7 @@ components:
       - windows
   - name: search-relevance
     repository: https://github.com/opensearch-project/search-relevance.git
-    ref: dfb2c2e6c52cd33a1e23c7a22e81704cc39c16ba
+    ref: 9897c2fb44c46db64a06b130573ad722c733dec1
     platforms:
       - linux
       - windows
