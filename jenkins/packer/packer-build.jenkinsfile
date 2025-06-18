@@ -12,6 +12,16 @@ lib = library(identifier: 'jenkins@2.2.0', retriever: modernSCM([
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
+def secret_packer_ids = [
+    [envVar: 'vpc_id', secretRef: 'op://opensearch-infra-secrets/packer-build-ids/jenkins-agent-vpc-id'],
+    [envVar: 'subnet_id', secretRef: 'op://opensearch-infra-secrets/packer-build-ids/jenkins-agent-subnet-id'],
+    [envVar: 'sg_id', secretRef: 'op://opensearch-infra-secrets/packer-build-ids/jenkins-agent-sg-id']
+]
+
+def secret_aws_account = [
+    [envVar: 'AWS_ACCOUNT_PUBLIC', secretRef: 'op://opensearch-infra-secrets/aws-accounts/jenkins-aws-account-public']
+]
+
 pipeline {
     options {
         timeout(time: 4, unit: 'HOURS')
@@ -54,11 +64,7 @@ pipeline {
                     print("Getting $PACKER_TEMPLATE_NAME from $PACKER_BUILD_GIT_REPOSITORY repository with reference $PACKER_BUILD_GIT_REPOSITORY_REFERENCE")
                     checkout([$class: 'GitSCM', branches: [[name: PACKER_BUILD_GIT_REPOSITORY_REFERENCE ]], userRemoteConfigs: [[url: PACKER_BUILD_GIT_REPOSITORY ]]])
                     def packer_jenkins_agent_json = readJSON file: "./packer/$PACKER_TEMPLATE_NAME"
-                    withCredentials([
-                        string(credentialsId: 'jenkins-agent-vpc-id', variable: 'vpc_id'),
-                        string(credentialsId: 'jenkins-agent-subnet-id', variable: 'subnet_id'),
-                        string(credentialsId: 'jenkins-agent-sg-id', variable: 'sg_id')
-                    ]){
+                    withSecrets(secrets: secret_packer_ids){
                         packer_jenkins_agent_json["variables"]["build-vpc"] = vpc_id
                         packer_jenkins_agent_json["variables"]["build-subnet"] = subnet_id
                         packer_jenkins_agent_json["variables"]["build-secgrp"] = sg_id
@@ -68,7 +74,7 @@ pipeline {
                     writeJSON file: "./packer/$PACKER_TEMPLATE_NAME_SUBSTITUTE", json: packer_jenkins_agent_json, pretty: 2
 
                     // Start to build packer
-                    withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
+                    withSecrets(secrets: secret_aws_account) {
                         withAWS(role: 'opensearch-packer', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 3600, roleSessionName: 'jenkins-session', useNode: true) {
                             sh ("cd packer && packer build -color=false $PACKER_TEMPLATE_NAME_SUBSTITUTE")
                         }
