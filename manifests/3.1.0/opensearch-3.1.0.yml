@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: f7ebe22b39f8c2ccae6f22f9b7776995a2c19be1
+    ref: 18ae61750708876c360b60b50319ed22635cd87d
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 3e28c9218fb1229a49194a5850902b85697d770f
@@ -43,7 +43,7 @@ components:
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 90b53cca9066dd4a80ed07f557448d4b0193dd31
+    ref: 6a6411cad640dcb21e5123b6bd754aac0077b7d9
     platforms:
       - linux
       - windows
@@ -55,7 +55,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 0bb47270248fccac2370c5ddce5131fd99370565
+    ref: 48c41c5073481fb843642304dbf1c1cc8bc3a479
     platforms:
       - linux
       - windows
@@ -63,7 +63,7 @@ components:
       - common-utils
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: ee84d8a084c6d7682b7d18bbf52889a0d67326bb
+    ref: 2385492d39aa6917cba4462fc318bb20d8473ae3
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 6ad1d964d5c7a06e520b39c8ad5a82b337e82a14
+    ref: ed4658d80f7505001d69f67ddfcfebe3a5a192b2
     platforms:
       - linux
       - windows
@@ -191,7 +191,7 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: e7bc0e72d3851746468db0991f42b0cb3871ca8a
+    ref: e0385291fcb4289ba44db3e2d2eea8227e440cd5
     platforms:
       - linux
       - windows
@@ -209,7 +209,7 @@ components:
       - neural-search
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: 4562958971be01c22778a75ba5f6d9429245e588
+    ref: 75e30eca9573b0d58d8bc181c05ed86941ca7019
     platforms:
       - linux
       - windows
@@ -232,7 +232,7 @@ components:
       - windows
   - name: user-behavior-insights
     repository: https://github.com/opensearch-project/user-behavior-insights.git
-    ref: 5cc9a46dca8641c673f5f9cd556f328687e73418
+    ref: 72b439981b4e0708e2b5fb3b6f45d27a0b42f1a5
     platforms:
       - linux
       - windows
