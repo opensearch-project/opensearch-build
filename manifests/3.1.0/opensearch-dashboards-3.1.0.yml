@@ -36,7 +36,7 @@ components:
     ref: b1d8740f94f5ef93afcab17269b4e000d1f99e8e
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin.git
-    ref: eff0d6165768229bf939fa7ca45bac2eb9a3de6a
+    ref: 5f0bea9af44be0c99383f7c9c7da4aaddfb8cd6a
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
     ref: 43592e0442c3f0dedbb370231905713381487b86
