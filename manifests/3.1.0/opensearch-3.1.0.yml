@@ -25,7 +25,7 @@ components:
     ref: 8ff7c6ee924a49f0f59f80a6e1c73073c8904214
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 3e28c9218fb1229a49194a5850902b85697d770f
+    ref: 4ffebbaf3801820a9b4befa1c3e7a5545d8c2e14
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 666ce8d871cbf8b71768e305345ff8512ca62bba
+    ref: 612049194cb087925e88c2f291b7075ff6f4e98a
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: ed4658d80f7505001d69f67ddfcfebe3a5a192b2
+    ref: 1e84491d4227e7145ce2698ec2bb081de917d8c7
     platforms:
       - linux
       - windows
