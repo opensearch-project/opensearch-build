@@ -49,7 +49,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: ea46ee118d6cf1c84942fb8c826a4a4be61e63ee
+    ref: ef6598732aadf07b19b625c748fd7623901cfb09
     platforms:
       - linux
       - windows
@@ -71,7 +71,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 9f15f8e405c38c01fc3c35167319095151a21400
+    ref: a166c52dadb4e85d429549198f06f90d37e18c54
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 612049194cb087925e88c2f291b7075ff6f4e98a
+    ref: a551c9c09c7e5d3765afab12bd055f4f1fb98dbb
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 8f76f8fa37836ecf927b21ede6a685977d3a56b0
+    ref: 8f7e5a74d53de5227f66c90b6617389f87d0010d
     platforms:
       - linux
       - windows
@@ -177,7 +177,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 4ef0f4ffcaad3c5df9dffacbc4ed95f16454493e
+    ref: 4572c4c7ee402824f23e2214d1cfdd15ef574649
     platforms:
       - linux
       - windows
@@ -186,12 +186,12 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: c49d550e31f11627030ebd245150110c9ac578b6
+    ref: 472764d9d51ce358488d2b7799ad2b10425e73d5
     platforms:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: e0385291fcb4289ba44db3e2d2eea8227e440cd5
+    ref: 753ffd9a4bd16432a787cf74451e35714665d7b6
     platforms:
       - linux
       - windows
@@ -226,7 +226,7 @@ components:
       - windows
   - name: opensearch-system-templates
     repository: https://github.com/opensearch-project/opensearch-system-templates.git
-    ref: e0560fb80da5af00a10077b69842e0ee3f7924ec
+    ref: 4ac890de805982b1be0894e2aa7a4aba126e00f8
     platforms:
       - linux
       - windows
@@ -238,7 +238,7 @@ components:
       - windows
   - name: search-relevance
     repository: https://github.com/opensearch-project/search-relevance.git
-    ref: 9897c2fb44c46db64a06b130573ad722c733dec1
+    ref: 45026922298795d0527864afbdf119f90d897573
     platforms:
       - linux
       - windows
