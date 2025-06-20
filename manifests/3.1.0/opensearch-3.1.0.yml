@@ -25,7 +25,7 @@ components:
     ref: 8ff7c6ee924a49f0f59f80a6e1c73073c8904214
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 4ffebbaf3801820a9b4befa1c3e7a5545d8c2e14
+    ref: 0d8fe216f41306712c059487f76054aff582c00b
     platforms:
       - linux
       - windows
@@ -37,7 +37,7 @@ components:
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: 59e9abcdb87f9ce74510a101d612e406f3505d38
+    ref: 58e667ca26a36f1c280b4d7cd90fa83a0a3afd79
     platforms:
       - linux
       - windows
@@ -98,7 +98,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: d85c851970f8a0e7c42dca817d3eb10e93fafd3e
+    ref: f0cbbdb83289d034978f32d6d1e53c9be8e39c00
     working_directory: notifications
     platforms:
       - linux
@@ -107,7 +107,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: d85c851970f8a0e7c42dca817d3eb10e93fafd3e
+    ref: f0cbbdb83289d034978f32d6d1e53c9be8e39c00
     working_directory: notifications
     platforms:
       - linux
@@ -159,7 +159,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 9bf6d544dd765cdf9bd16741528e7c03b258f3ad
+    ref: 11132d2e6e868d92af574f4a31394ed856959ef0
     platforms:
       - linux
       - windows
@@ -167,7 +167,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: e61462effb679129ba9655b6f1c46cea650599d8
+    ref: 382eebd7b5bf2585eb3554af076e8123ee2b8c31
     platforms:
       - linux
       - windows
@@ -186,7 +186,7 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 472764d9d51ce358488d2b7799ad2b10425e73d5
+    ref: 269779067cf2b9cc37de26ce092dc5d7a73d1383
     platforms:
       - linux
   - name: custom-codecs
@@ -197,7 +197,7 @@ components:
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: deb02e7bf3354a845e80cd87292346ea6a261cf0
+    ref: 13fb133b1a702b3f2a763f9da17eea3443a4ddec
     platforms:
       - linux
       - windows
