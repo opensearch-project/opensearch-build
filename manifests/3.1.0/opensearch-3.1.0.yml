@@ -49,7 +49,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: ef6598732aadf07b19b625c748fd7623901cfb09
+    ref: 841e1be91baf53d2c31eaa612481b6edec0fe85b
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: a551c9c09c7e5d3765afab12bd055f4f1fb98dbb
+    ref: e50c7d743e091de21e7baa3ae0d0497ea8509c41
     platforms:
       - linux
       - windows
@@ -89,7 +89,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 35c6b45f67f6f0379f0a30ab716446c348419998
+    ref: c480080115295b1c5dc4471aeb88780d75f0771c
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 8f7e5a74d53de5227f66c90b6617389f87d0010d
+    ref: 98c0c21e4247361e1cbd10706a174ce9aba7a042
     platforms:
       - linux
       - windows
@@ -167,7 +167,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 382eebd7b5bf2585eb3554af076e8123ee2b8c31
+    ref: 2a1014d4b3f47bf8b5ea58334c71154b392366fa
     platforms:
       - linux
       - windows
@@ -220,7 +220,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: d42d354774fcfff033ff7f1ec25a6ea63e413ba3
+    ref: fd6efc09acf0a2c4403fc0eb748580c6f51c8208
     platforms:
       - linux
       - windows
