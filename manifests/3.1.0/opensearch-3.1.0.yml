@@ -37,7 +37,7 @@ components:
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: 58e667ca26a36f1c280b4d7cd90fa83a0a3afd79
+    ref: f0e651642d97ba0c222a21d00b005d009fc3937e
     platforms:
       - linux
       - windows
@@ -63,7 +63,7 @@ components:
       - common-utils
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: fd507515e3e4a615d988c5943ef36745ba35a0e8
+    ref: 0d9d4f5e4f45e2671aeb62246bc3719d7ce71db1
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: e50c7d743e091de21e7baa3ae0d0497ea8509c41
+    ref: 9dc7b3e5a79a8f0ef3445bda07ff3eab58449253
     platforms:
       - linux
       - windows
