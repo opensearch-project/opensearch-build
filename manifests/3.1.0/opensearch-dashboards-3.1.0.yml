@@ -66,4 +66,4 @@ components:
     ref: 30541e32ca5e5fd3ae956cdc1239db0012898fdc
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
-    ref: f43fb93a94bfc3dc0c7398561ba05d7a75673a71
+    ref: 99bbbd775f2276e4517ee00eeab0b19b1e0e70ec
