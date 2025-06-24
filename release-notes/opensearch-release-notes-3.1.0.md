@@ -1,16 +1,48 @@
 # OpenSearch and OpenSearch Dashboards 3.1.0 Release Notes
 
+## Release Highlights
+
+OpenSearch 3.1 delivers an array of upgrades to help you increase indexing performance, improve search results, dig deeper into your observability data, build more powerful agentic AI solutions, and more. 
+ 
+### New and Updated Features
+
+* GPU-accelerated index builds: Released as experimental in OpenSearch 3.0, GPU acceleration is production-ready in OpenSearch 3.1, unlocking parallel processing power for intensive index build operations that can reduce time-to-build by a factor of 9.3x while reducing costs by 3.75x compared to CPU-based solutions.
+* New Update Agent API: Now users can make direct updates to existing agents via an API, eliminating the need to create new agents when modifying configurations such as model IDs, workflow tools, or prompts for streamlined agent management.
+* ML Commons metrics integration: ML Commons is integrated with the OpenSearch metrics framework, enabling user-configurable, comprehensive monitoring capabilities with OpenTelemetry compatibility. Included are dynamic instrumentation that captures runtime metrics along critical code paths and static collection via scheduled jobs that report state-level metrics.
+* Search Relevance Workbench: A new Search Relevance Workbench lets you explore, experiment with, and tune search strategies in OpenSearch. The toolset offers search algorithm comparison within the OpenSearch UI, along with the ability to evaluate search quality based on user activity via User Behavior Insights.
+* Lucene HNSW on Faiss indexes: This release enables Lucene's HNSW graph search algorithm to run directly on existing Faiss indexes, unlocking partial byte loading and early termination for improved large-scale vector search efficiency in memory-constrained environments and up to 2x faster performance compared to Faiss C++.
+* OpenSearch Flow enhancements: Upgrades to OpenSearch Flow include a redesigned workflow detail page that simplifies end-to-end configuration with a unified view of ingest and search components. A new workflow template for semantic search using sparse encoders simplifies deployment of search-by-text and ranks results by semantic similarity, improving the quality and relevance of search experiences.
+* OnDisk 4x compression rescoring: Rescoring support is enabled by default for new indexes using 4x compression, allowing you to maintain high search recall quality while realizing the performance and efficiency benefits of compression. Users who prefer the previous behavior have the option to explicitly set rescore to false.
+* New semantic field type: The semantic field streamlines semantic search setup. You can define a semantic field in your index mapping with an associated ML model ID, and OpenSearch can automatically create the appropriate embedding field based on the model's metadata. The neural query supports semantic fields, so you can query with plain text and let OpenSearch handle embedding generation and field resolution.
+* Star-tree indexes in production: Now generally available, star-tree indexes can increase  the performance of aggregations by up to 100x, with support for a wide range of query and aggregation types.
+* Workload management enhancements: Index-based auto-tagging allows you to manage groups of tenants and define rules for how they consume cluster resources, without the need to explicitly tag search requests via headers.
+* Hybrid query performance improvements: Enhanced document collection and scoring techniques boost hybrid search performance, delivering improvements of up to 65% in query response times and up to 3.5x in throughput. These algorithmic improvements help optimize how OpenSearch identifies and ranks matching documents during the fusion of lexical and semantic search results for even more efficient hybrid search.
+* Tracing and correlation for observability workloads: Support for custom index names containing OpenTelemetry spans, logs, and service maps helps users correlate logs and traces across multiple clusters. Users can also map custom fields for log indexes that do not follow the OpenTelemetry format. Cross-cluster search for traces enables analysis across cluster boundaries, and new features for trace-to-logs correlation make it easier to monitor, troubleshoot, and maintain distributed applications regardless of logging format or deployment architecture.
+* PPL commands for nested JSON: New JSON functions and Piped Processing Language (PPL) commands for JSON help analysts extract specific values from deeply nested JSON objects or transform nested arrays into a more analyzable format, eliminating the need for complex workarounds and enabling sophisticated analysis of JSON data directly within OpenSearch.
+* Native time-series forecasting: Apply a Random Cut Forest model to turn an index with a timestamped field into a self-updating signal. As the model retrains incrementally on each new point, it can adapt instantly to shifts while minimizing compute and storage overhead. Combine forecasts with Alerting for real-time notifications when a metric is predicted to cross a threshold so you can scale capacity or adjust spend before issues arise.
+* Additional PPL commands and functions: More than 20 new PPL commands and functions offer additional ways to explore your data with OpenSearch's observability tools.
+* Immutable user object for security authorization: The user object is now immutable in the Security plugin, reducing the number of serializations and deserializations required as this object is passed internally within the cluster while handling a request, resulting in lower performance overhead.
+* Privilege optimization for tenants: This release incorporates updates to privilege evaluation as part of an ongoing optimization effort. Extending privilege evaluation to encompass tenant_permissions lets OpenSearch roles take full advantage of precomputed data structures for performance improvements, particularly for clusters using multi-tenancy with a large number of tenants.
+* Collapse in hybrid query: This release extends hybrid query functionality with collapse parameter support, enabling document grouping and deduplication based on specified field values.
+* New encoding of BPV 21 for DocIdsWriter: A new variation of an existing encoding algorithm offers optimized docId storage within the BKD index, resulting in reduced storage footprint across numeric, IP, and other fields using the BKD index while facilitating more efficient docId retrieval.
+
+### Experimental Features
+
+OpenSearch 3.1 includes the following experimental functionality. Experimental features are disabled by default. For instructions on how to enable them, refer to the documentation for the feature.
+ 
+* Resource sharing and access control: An experimental authorization framework moves the sharing and access authorization setup from individual plugins to the Security plugin to support improved security posture. Plugins will be required to onboard to this new feature; for this release, the Anomaly Detection plugin has been updated to support the new authorization framework.
+* Model Context Protocol (MCP) enhancements: New update MCP tools and list MCP tools APIs add functionality to OpenSearch's MCP support. A new system index is also included, allowing the MCP tools to persist in the system index so that tools won't be lost after a restart at the cluster or node level.
 
 
 ## Release Details
-[OpenSearch and OpenSearch Dashboards 3.1.0](https://opensearch.org/versions/opensearch-3-1-0.html) includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+[OpenSearch and OpenSearch Dashboards 3.1.0](https://opensearch.org/artifacts/by-version/#release-3-1-0) includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.1.0.md).
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.1.0.md).
 
 
-## BREAKING
+## BREAKING CHANGES
 
 
 ### SQL
