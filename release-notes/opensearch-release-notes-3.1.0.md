@@ -42,16 +42,6 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.1.0.md).
 
 
-## BREAKING CHANGES
-
-
-### SQL
-
-
-* Switch percentile implementation to MergingDigest to align with OpenSearch ([#3698](https://github.com/opensearch-project/sql/pull/3698))
-* Support decimal literal with Calcite ([#3673](https://github.com/opensearch-project/sql/pull/3673))
-
-
 ## FEATURES
 
 
@@ -172,6 +162,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Implement cryptographic hash UDFs ([#3574](https://github.com/opensearch-project/sql/pull/3574))
 * Calcite patterns command brain pattern method ([#3570](https://github.com/opensearch-project/sql/pull/3570))
 * Add json functions ([#3559](https://github.com/opensearch-project/sql/pull/3559))
+* Switch percentile implementation to MergingDigest to align with OpenSearch ([#3698](https://github.com/opensearch-project/sql/pull/3698))
+* Support decimal literal with Calcite ([#3673](https://github.com/opensearch-project/sql/pull/3673))
+
 
 
 ## ENHANCEMENTS
