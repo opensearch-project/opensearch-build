@@ -216,13 +216,13 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Update README.md ([#744](https://github.com/opensearch-project/dashboards-flow-framework/pull/744))
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * Support persisting MCP tools in system index ([#3874](https://github.com/opensearch-project/ml-commons/pull/3874))
 * [Agent] PlanExecuteReflect: Return memory early to track progress ([#3884](https://github.com/opensearch-project/ml-commons/pull/3884))
 * Add space type mapping for pre-trained embedding models, add new additional\_config field and BaseModelConfig class ([#3786](https://github.com/opensearch-project/ml-commons/pull/3786))
-* support customized message endpoint and addressing comments ([#3810](https://github.com/opensearch-project/ml-commons/pull/3810))
+* Support customized message endpoint and addressing comments ([#3810](https://github.com/opensearch-project/ml-commons/pull/3810))
 * Add custom SSE endpoint for the MCP Client ([#3891](https://github.com/opensearch-project/ml-commons/pull/3891))
 * Expose Update Agent API ([#3820](https://github.com/opensearch-project/ml-commons/pull/3902))
 * Use function calling for existing LLM interfaces ([#3888](https://github.com/opensearch-project/ml-commons/pull/3888))
@@ -375,7 +375,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Removed unnecessary user notifications for version conflict exceptions in Snapshot Management ([#1413](https://github.com/opensearch-project/index-management/pull/1413))
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * Fix connector private IP validation when executing agent without remote model ([#3862](https://github.com/opensearch-project/ml-commons/pull/3862))
@@ -536,7 +536,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add a CHANGELOG and changelog\_verifier workflow ([#778](https://github.com/opensearch-project/job-scheduler/pull/778)).
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * Change release note ([#3811](https://github.com/opensearch-project/ml-commons/pull/3811))
@@ -570,7 +570,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Search Relevance
 
 
-
 * Run integTests with security as a PR check ([#136](https://github.com/opensearch-project/search-relevance/pull/136))
 * Realistic test data set based on ESCI (products, queries, judgements) ([#70](https://github.com/opensearch-project/search-relevance/pull/70))
 
@@ -585,7 +584,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## DOCUMENTATION
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * Replace the usage of elasticsearch with OpenSearch in README ([#3876](https://github.com/opensearch-project/ml-commons/pull/3876))
@@ -691,7 +690,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Remove guava dependency ([#770](https://github.com/opensearch-project/job-scheduler/pull/770)).
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * [Code Quality] Adding test cases for PlanExecuteReflect Agent ([#3778](https://github.com/opensearch-project/ml-commons/pull/3778))
