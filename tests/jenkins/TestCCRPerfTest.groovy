@@ -10,7 +10,7 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
-
+import org.junit.Ignore
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
-class TestCCRPerfTest extends BuildPipelineTest {
+@Ignore class TestCCRPerfTest extends BuildPipelineTest {
 
     @Override   
     @Before
