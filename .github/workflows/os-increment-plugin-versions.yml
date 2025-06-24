@@ -80,7 +80,7 @@ jobs:
       - name: Get JDK version
         run: |
           OS_VERSION=${{ env.OPENSEARCH_VERSION_NUMBER }}
-          OPENSEARCH_JAVA_VERSION_NUMBER=`curl -sSfL https://raw.githubusercontent.com/opensearch-project/opensearch-build/refs/heads/main/manifests/$OS_VERSION/opensearch-$OS_VERSION.yml | yq -r '.ci.image.args' | grep -oE 'openjdk-[0-9]*' | awk -F'-' '{ print $NF }'`
+          OPENSEARCH_JAVA_VERSION_NUMBER=`curl -sSfL https://raw.githubusercontent.com/opensearch-project/opensearch-build/refs/heads/main/manifests/$OS_VERSION/opensearch-$OS_VERSION.yml | yq -r '.ci.image.linux.tar.args' | grep -oE 'openjdk-[0-9]*' | awk -F'-' '{ print $NF }'`
           echo "OPENSEARCH_JAVA_VERSION=$OPENSEARCH_JAVA_VERSION_NUMBER" >> $GITHUB_ENV
       - name: Set up JDK ${{ env.OPENSEARCH_JAVA_VERSION }}
         uses: actions/setup-java@v4
