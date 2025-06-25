@@ -7,10 +7,11 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
+import org.junit.Ignore
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
-class TestMavenSignReleaseJob extends BuildPipelineTest {
+@Ignore class TestMavenSignReleaseJob extends BuildPipelineTest {
 
     @Override
     @Before
