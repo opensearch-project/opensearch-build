@@ -54,9 +54,24 @@ class Validation(ABC):
         return path
 
     def install_native_plugin(self, path: str, installed_plugins_list: list) -> None:
-        self.native_plugins_list = self.get_native_plugin_list(path, installed_plugins_list)
-        for native_plugin in self.native_plugins_list:
-            execute('.' + os.sep + f'opensearch-plugin install --batch {native_plugin}', os.path.join(path, "bin"))
+        native_plugins_list = self.get_native_plugin_list(path, installed_plugins_list)
+        try:
+            if self.args.artifact_type == "staging":
+                for native_plugin in native_plugins_list:
+                    plugin_url = f'{self.base_url_staging}opensearch/{self.args.version}/{self.args.build_number["opensearch"]}/{self.args.platform}/' \
+                                 f'{self.args.arch}/{self.args.distribution}/builds/opensearch/core-plugins/{native_plugin}-{self.args.version}.zip'
+                    response = requests.get(plugin_url)
+                    with open(os.path.join(os.path.join(path, "bin"), f'{native_plugin}-{self.args.version}.zip'), 'wb') as f:
+                        f.write(response.content)
+                    execute(
+                        '.' + os.sep + f'opensearch-plugin install --batch file:{os.path.join(os.path.join(path, "bin"), f"{native_plugin}-{self.args.version}.zip")}',
+                        os.path.join(path, "bin"))
+            else:
+                for native_plugin in native_plugins_list:
+                    execute('.' + os.sep + f'opensearch-plugin install --batch {native_plugin}', os.path.join(path, "bin"))
+
+        except Exception as e:
+            raise Exception(f"Unable to install native plugin: {str(e)}")
 
     def get_native_plugin_list(self, workdir: str, installed_plugins_list: list) -> list:
         bundle_manifest = BundleManifest.from_path(os.path.join(workdir, "manifest.yml"))

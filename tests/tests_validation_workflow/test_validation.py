@@ -6,9 +6,10 @@
 # compatible open source license.
 
 import os
+import subprocess
 import unittest
 from unittest import mock
-from unittest.mock import Mock, call, patch
+from unittest.mock import Mock, call, mock_open, patch
 
 import requests
 
@@ -97,19 +98,80 @@ class TestValidation(unittest.TestCase):
     @patch.object(Validation, "get_native_plugin_list")
     @patch('validation_workflow.validation.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
-    def test_install_native_plugin(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_plugin_list: Mock, mock_execute: Mock) -> None:
+    def test_install_native_plugin_production(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
+                                              mock_plugin_list: Mock, mock_execute: Mock) -> None:
         mock_plugin_list.return_value = ["discovery-ec2", "repository-s3"]
         mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
 
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
-        validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit"), ["discovery-ec2", "repository-s3"])
+        validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"), ["discovery-ec2", "repository-s3"])
         mock_execute.assert_has_calls(
             [
-                call(f'.{os.sep}opensearch-plugin install --batch discovery-ec2', os.path.join("tmp", "trytytyuit", "bin")),
-                call(f'.{os.sep}opensearch-plugin install --batch repository-s3', os.path.join("tmp", "trytytyuit", "bin"))
+                call(f'.{os.sep}opensearch-plugin install --batch discovery-ec2',
+                     os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
+                call(f'.{os.sep}opensearch-plugin install --batch repository-s3',
+                     os.path.join("tmp", "trytytyuit", "opensearch", "bin"))
             ]
         )
+
+    @patch('requests.get')
+    @patch("validation_workflow.validation.execute")
+    @patch.object(Validation, "get_native_plugin_list")
+    @patch('validation_workflow.validation.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    @patch("builtins.open", new_callable=mock_open)
+    def test_install_native_plugin_staging(self, mock_temporary_directory: Mock, mock_file: Mock,
+                                           mock_validation_args: Mock, mock_plugin_list: Mock, mock_execute: Mock,
+                                           mock_get: Mock) -> None:
+        mock_response = Mock()
+        mock_validation_args.return_value.version = "3.0.0"
+        mock_validation_args.os_build_number.return_value = "1123"
+        mock_validation_args.platform.return_value = "linux"
+        mock_validation_args.arch.return_value = "x64"
+        mock_validation_args.distribution.return_value = "tar"
+        mock_response.status_code = 200
+        mock_get.return_value = mock_response
+        mock_plugin_list.return_value = ["analysis-icu", "analysis-nori"]
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
+        mock_validation_args.return_value.artifact_type = "staging"
+        mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
+        validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"),
+                                           ["analysis-icu", "analysis-nori"])
+
+        mock_execute.assert_has_calls(
+            [
+                call(
+                    f'.{os.sep}opensearch-plugin install --batch file:{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
+                    os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
+                call(
+                    f'.{os.sep}opensearch-plugin install --batch file:{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-nori-3.0.0.zip")}',
+                    os.path.join("tmp", "trytytyuit", "opensearch", "bin"))]
+        )
+
+    @patch('requests.get')
+    @patch("validation_workflow.validation.execute")
+    @patch.object(Validation, "get_native_plugin_list")
+    @patch('validation_workflow.validation.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    @patch("builtins.open", new_callable=mock_open)
+    def test_install_native_plugin_exception(self, mock_file: Mock, mock_temporary_directory: Mock,
+                                             mock_validation_args: Mock,
+                                             mock_plugin_list: Mock, mock_execute: Mock, mock_get: Mock) -> None:
+        mock_plugin_list.return_value = ["discovery-ec2", "repository-s3"]
+        mock_execute.side_effect = subprocess.CalledProcessError(
+            returncode=1,
+            cmd=f".{os.sep}opensearch-plugin install --batch discovery-ec2', {os.path.join('tmp', 'trytytyuit', 'bin')}",
+            stderr="stdout err"
+        )
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
+        validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        with self.assertRaises(Exception) as e:
+            validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", ), ["discovery-ec2"])
+        self.assertEqual(str(e.exception),
+                         f"Unable to install native plugin: Command '.{os.sep}opensearch-plugin install"
+                         f" --batch discovery-ec2', tmp{os.sep}trytytyuit{os.sep}bin' returned non-zero exit status 1.")
 
     @patch('requests.get')
     @patch('manifests.bundle_manifest.BundleManifest.from_path')
@@ -148,7 +210,7 @@ class TestValidation(unittest.TestCase):
         ]
         mock_response.status_code = 503
         mock_get.return_value = mock_response
-        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
         with self.assertRaises(Exception) as e1:
             validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path, ["query-insights", "ml-commons"])
@@ -164,7 +226,7 @@ class TestValidation(unittest.TestCase):
         mock_validation_args.return_value.validate_digest_only = False
         mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
-        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
         mock_check_http.return_value = False
 
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
@@ -182,7 +244,7 @@ class TestValidation(unittest.TestCase):
         mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
         mock_api_get.return_value = (200, "text")
-        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
 
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
         result = validate_tar.check_http_request()
@@ -199,7 +261,7 @@ class TestValidation(unittest.TestCase):
         mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_api_get.return_value = (400, "text")
-        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
 
         validate_docker = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
         result = validate_docker.check_http_request()
@@ -215,7 +277,7 @@ class TestValidation(unittest.TestCase):
         mock_validation_args.return_value.validate_digest_only = False
         mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
-        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
         mock_api_get.side_effect = requests.exceptions.ConnectionError
 
         validate_docker = ValidateDocker(mock_validation_args.return_value, mock_temporary_directory.return_value)
