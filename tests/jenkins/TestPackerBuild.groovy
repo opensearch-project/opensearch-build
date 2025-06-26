@@ -38,6 +38,10 @@ class TestPackerBuild extends BuildPipelineTest {
         super.setUp()
 
         binding.setVariable('PACKER_TEMPLATE_NAME', packerTemplateName)
+        binding.setVariable('vpc_id', 'vpc_id_123')
+        binding.setVariable('subnet_id', 'subnet_id_123')
+        binding.setVariable('sg_id', 'sg_id_123')
+        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'aws_account_public_123')
         def sample_json = [
             "variables" : [
                 "name-base" : "Jenkins-Agent-AL2-X64" ,
@@ -66,7 +70,7 @@ class TestPackerBuild extends BuildPipelineTest {
         helper.registerAllowedMethod("writeJSON", [Map.class], {c -> sample_json_output})
         helper.registerAllowedMethod("checkout", [Map], {})
         helper.registerAllowedMethod("git", [Map])
-        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
@@ -90,7 +94,7 @@ class TestPackerBuild extends BuildPipelineTest {
         assertThat(gitCheckoutCommands, hasItem("{\$class=GitSCM, branches=[{name=main}], userRemoteConfigs=[{url=https://github.com/opensearch-project/opensearch-ci}]}".toString()))
 
         def aws = getCommands('withAWS', 'packer')
-        assertThat(aws, hasItem('{role=opensearch-packer, roleAccount=AWS_ACCOUNT_PUBLIC, duration=3600, roleSessionName=jenkins-session, useNode=true}, groovy.lang.Closure'))
+        assertThat(aws, hasItem('{role=opensearch-packer, roleAccount=aws_account_public_123, duration=3600, roleSessionName=jenkins-session, useNode=true}, groovy.lang.Closure'))
 
         def packerCommands = getCommands('sh', 'packer')
         assertThat(packerCommands, hasItem('cd packer && packer build -color=false substitute_jenkins-agent-al2-arm64.json'))
