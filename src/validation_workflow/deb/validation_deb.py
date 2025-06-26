@@ -27,10 +27,8 @@ class ValidateDeb(Validation, DownloadUtils):
                 set_password = f' env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))}' if project == "opensearch" else ""
                 execute(f'sudo dpkg --purge {project}', ".")
                 execute(f'sudo {set_password} dpkg -i {os.path.basename(self.args.file_path.get(project))}', str(self.tmp_dir.path))
-
-                if self.args.validate_native_plugin:
-                    installed_plugins_list = os.listdir(os.path.join(os.sep, "usr", "share", "opensearch", "plugins"))
-                    self.install_native_plugin(os.path.join(os.sep, "usr", "share", "opensearch"), installed_plugins_list)
+                installed_plugins_list = os.listdir(os.path.join(os.sep, "usr", "share", "opensearch", "plugins"))
+                self.install_native_plugin(os.path.join(os.sep, "usr", "share", "opensearch"), installed_plugins_list)
         except:
             raise Exception("Failed to install OpenSearch/OpenSearch-Dashboards")
         return True
