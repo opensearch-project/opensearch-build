@@ -20,6 +20,11 @@ plugins {
     id 'groovy'
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://repo.jenkins-ci.org/releases/' }
@@ -34,6 +39,7 @@ dependencies {
     testImplementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
     testImplementation group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.13'
+    testImplementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
 }
 
 configurations.all {
@@ -44,7 +50,7 @@ configurations.all {
         force group: 'com.google.errorprone', name: 'error_prone_annotations', version: '2.18.0'
         force group: 'org.checkerframework', name: 'checker-qual', version: '3.33.0'
         force group: 'com.google.j2objc', name: 'j2objc-annotations', version: '2.8'
-        force group: 'org.jenkins-ci.plugins', name: 'durable-task', version: '547.vd1ea_007d100c'
+        force group: 'org.jenkins-ci.plugins', name: 'durable-task', version: '587.v84b_877235b_45'
     }
 }
 
@@ -64,21 +70,30 @@ sourceSets {
 }
 
 sharedLibrary {
-    coreVersion = '2.426.3' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
-    testHarnessVersion = '2085.va_c531db_287b_d' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
+    coreVersion = '2.492.3' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
+    testHarnessVersion = '2457.vb_7281b_a_d62e8' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
     pluginDependencies {
         // see https://mvnrepository.com/artifact/org.jenkins-ci.plugins/<name>?repo=jenkins-releases for latest
-        workflowCpsGlobalLibraryPluginVersion = '609.vd95673f149b_b'
-        dependency('io.jenkins.plugins', 'pipeline-groovy-lib', '613.v9c41a_160233f')
-        dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '2.26.1')
-        dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '456.vd8a_957db_5b_e9') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
-        dependency('org.jenkins-ci.plugins', 'script-security', '1229.v4880b_b_e905a_6')
-        dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
-        dependency('org.jenkins-ci.plugins', 'git-client', '3.11.1')
-        dependency('org.apache.sshd', 'sshd-core', '2.12.1')
-        dependency('org.jenkins-ci.plugins', 'junit', '1166.1168.vd6b_8042a_06de')
-        dependency('org.jenkins-ci.plugins', 'mailer', '408.vd726a_1130320') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
+        dependency('io.jenkins.plugins', 'pipeline-groovy-lib', '752.vdddedf804e72')
+        dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '806.vb_b_688f609ee9')
+        dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '527.vd61b_1d3c5078') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
+        dependency('org.jenkins-ci.plugins', 'script-security', '1373.vb_b_4a_a_c26fa_00')
+        dependency('org.jenkins-ci.plugins', 'credentials', '1415.v831096eb_5534')
+        dependency('org.jenkins-ci.plugins', 'git-client', '6.2.0')
+        dependency('org.apache.sshd', 'sshd-core', '2.15.0')
+        dependency('org.jenkins-ci.plugins', 'junit', '1335.v6b_a_a_e18534e1')
+        dependency('org.jenkins-ci.plugins', 'mailer', '509.vc54d23fc427e') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
     }
+}
+
+// Configure tasks to use Java 17
+tasks.withType(JavaCompile) {
+    options.release = 17
+}
+
+tasks.withType(GroovyCompile) {
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
 }
 
 test {
