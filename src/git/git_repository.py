@@ -23,12 +23,13 @@ class GitRepository:
     Clients can obtain the actual commit ID by querying the "sha" attribute, and the temp directory name with "dir".
     """
 
-    def __init__(self, url: str, ref: str, directory: str = None, working_subdirectory: str = None) -> None:
+    def __init__(self, url: str, ref: str, directory: str = None, working_subdirectory: str = None, fetch_depth: int = 1) -> None:
         self.url = url
         self.ref = ref
+        self.fetch_depth = fetch_depth
         if directory is None:
             self.temp_dir = TemporaryDirectory()
-            self.dir = os.path.realpath(self.temp_dir.name)
+            self.dir = os.path.abspath(self.temp_dir.name)
         else:
             self.temp_dir = None
             self.dir = directory
@@ -46,7 +47,12 @@ class GitRepository:
     def __checkout__(self) -> None:
         self.execute_silent("git init", self.dir)
         self.execute_silent(f"git remote add origin {self.url}", self.dir)
-        self.execute_silent(f"git fetch --depth 1 origin {self.ref}", self.dir)
+        if self.fetch_depth == 0:
+            # Fetch full history
+            self.execute_silent(f"git fetch origin {self.ref}", self.dir)
+        else:
+            # Fetch with specified depth
+            self.execute_silent(f"git fetch --depth {self.fetch_depth} origin {self.ref}", self.dir)
         self.execute_silent("git checkout FETCH_HEAD", self.dir)
         self.sha = self.output("git rev-parse HEAD", self.dir)
         logging.info(f"Checked out {self.url}@{self.ref} into {self.dir} at {self.sha}")
@@ -92,11 +98,14 @@ class GitRepository:
 
     def log(self, after: str) -> List[GitCommit]:
         result = []
-        cmd = f'git log --date=short --after={after} --pretty=format:"%h %ad"'
+        cmd = f'git log --date=short --after={after} --pretty=format:"%h %ad %s"'
         log = self.output(cmd).split("\n")
         for line in log:
             if len(line) == 0:
                 continue
-            parts = line.split(" ")
-            result.append(GitCommit(parts[0], parts[1]))
+            parts = line.split(" ", 2)  # Split into hash, date, and message
+            if len(parts) >= 3:
+                result.append(GitCommit(parts[0], parts[1], parts[2]))
+            elif len(parts) >= 2:
+                result.append(GitCommit(parts[0], parts[1]))
         return result

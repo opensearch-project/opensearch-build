@@ -60,6 +60,7 @@ class ReleaseNotes:
                     component.ref,
                     os.path.join(work_dir.name, component.name),
                     component.working_directory,
+                    fetch_depth=0  # Fetch full history for commit analysis
             ) as repo:
                 logging.debug(f"Checked out {component.name} into {repo.dir}")
                 release_notes = ReleaseNotesComponents.from_component(component, build_version, build_qualifier, repo.dir)
@@ -82,3 +83,76 @@ class ReleaseNotes:
                 else:
                     results.append(None)
         return results
+
+    def generate(self, component: InputComponentFromSource, build_version: str, build_qualifier: str, manifest_path: str = None) -> None:
+        """Generate AI-powered release notes for a component."""
+        from release_notes_workflow.ai_release_notes_generator import AIReleaseNotesGenerator
+        
+        # Store original working directory before changing to temp dir
+        original_cwd = os.getcwd()
+        
+        # Extract manifest name from manifest path if provided
+        manifest_name = "opensearch"  # Default
+        if manifest_path:
+            # Extract from path like "manifests/3.2.0/opensearch-3.2.0.yml" -> "opensearch"
+            # or "manifests/3.2.0/opensearch-dashboards-3.2.0.yml" -> "opensearch-dashboards"
+            manifest_filename = os.path.basename(manifest_path)
+            if '-' in manifest_filename:
+                # Split by '-' and remove the version part (last part that contains digits)
+                parts = manifest_filename.split('-')
+                # Find the last part that's not a version (contains digits and dots)
+                manifest_parts = []
+                for part in parts:
+                    if not any(char.isdigit() for char in part) or part in ['dashboards']:
+                        manifest_parts.append(part)
+                    else:
+                        break
+                manifest_name = '-'.join(manifest_parts) if manifest_parts else "opensearch"
+        
+        with TemporaryDirectory(chdir=True) as work_dir:
+            with GitRepository(
+                    component.repository,
+                    component.ref,
+                    os.path.join(work_dir.name, component.name),
+                    component.working_directory,
+                    fetch_depth=0  # Fetch full history for commit analysis
+            ) as repo:
+                logging.debug(f"Checked out {component.name} into {repo.dir}")
+                
+                # Check if release notes already exist
+                release_notes = ReleaseNotesComponents.from_component(component, build_version, build_qualifier, repo.dir)
+                
+                if not release_notes.exists():
+                    logging.info(f"Generating AI release notes for {component.name}")
+                    
+                    # Initialize AI generator (no token needed - uses git commands)
+                    ai_generator = AIReleaseNotesGenerator(
+                        github_token=None,  # Not needed for git-based access
+                        version=build_version,
+                        baseline_date=self.date
+                    )
+                    
+                    # Generate AI release notes using existing repository directory
+                    ai_result = ai_generator.process_repository(component, existing_repo_dir=repo.dir)
+                    
+                    if ai_result.get('success'):
+                        logging.info(f"✅ AI release notes generated for {component.name}")
+                        
+                        # Save the AI result to local file (outside the temporary directory)
+                        if ai_result.get('ai_result'):
+                            repo_name = component.repository.rstrip('/').split('/')[-1].replace('.git', '').lower()
+                            
+                            # Generate filename in format: opensearch-sql.release-notes-3.2.0.md
+                            local_filename = f"{manifest_name}-{repo_name}.release-notes-{build_version}.md"
+                            
+                            # Write file to original working directory
+                            output_path = os.path.join(original_cwd, local_filename)
+                            with open(output_path, 'w') as f:
+                                f.write(f"# {component.name} {build_version} Release Notes\n\n")
+                                f.write(ai_result['ai_result'])
+                            
+                            logging.info(f"📄 Saved release notes to {output_path}")
+                    else:
+                        logging.warning(f"❌ AI release notes failed for {component.name}: {ai_result.get('error')}")
+                else:
+                    logging.info(f"Release notes already exist for {component.name}")
