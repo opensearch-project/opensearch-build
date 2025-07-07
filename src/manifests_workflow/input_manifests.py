@@ -224,14 +224,10 @@ class InputManifests(Manifests):
                 data = yaml.load(f)
 
             version_entry = []
-            major_version_entry = version.split(".")[0] + ".x"
             minor_version_entry = version.rsplit(".", 1)[0]
             if minor_version_entry not in data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"]:
                 logging.info(f"Adding {minor_version_entry} to {workflow_file}")
                 version_entry.append(minor_version_entry)
-            if major_version_entry not in data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"]:
-                logging.info(f"Adding {major_version_entry} to {workflow_file}")
-                version_entry.append(major_version_entry)
 
             if version_entry:
                 branch_list = list(data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"])
