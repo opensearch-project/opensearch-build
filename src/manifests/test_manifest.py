@@ -46,7 +46,7 @@ The format for schema version 1.1 is:
           test-spec: spec.yml
 """
 
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from manifests.component_manifest import Component, ComponentManifest, Components
 from manifests.test.test_manifest_1_0 import TestManifest_1_0

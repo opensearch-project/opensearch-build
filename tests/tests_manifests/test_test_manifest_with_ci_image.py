@@ -8,8 +8,8 @@
 import os
 import unittest
 
-from manifests.test_manifest import TestManifest
 from manifests.test.test_manifest_1_0 import TestManifest_1_0
+from manifests.test_manifest import TestManifest
 
 
 class TestTestManifest(unittest.TestCase):
