@@ -106,7 +106,8 @@ jobs:
           pipenv run mypy .
       - name: Run Tests with Coverage
         run: |
-          pipenv run coverage run -m pytest --cov=./src --cov-report=xml
+          pipenv run coverage run -m pytest --cov=./ --cov-report=xml
+          sed -i 's|<source>.*</source>|<source>opensearch-build</source>|' coverage.xml
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-report-${{ matrix.os }}
