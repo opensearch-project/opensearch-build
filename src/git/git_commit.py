@@ -8,6 +8,7 @@
 
 class GitCommit:
 
-    def __init__(self, id: str, date: str) -> None:
+    def __init__(self, id: str, date: str, message: str = None) -> None:
         self.id = id
         self.date = date
+        self.message = message or ""
