@@ -988,6 +988,17 @@ pipeline {
                 script {
                     if (params.RC_NUMBER.toInteger() > 0) {
                         triggerDistributionValidationWorkflow(env.revision)
+                        triggerNightlyPlayground()
+                    }
+                    postCleanup()
+                }
+            }
+        }
+        unstable {
+            node(AGENT_LINUX_X64) {
+                script {
+                    if (params.RC_NUMBER.toInteger() > 0) {
+                        triggerNightlyPlayground()
                     }
                     postCleanup()
                 }
@@ -1058,6 +1069,20 @@ def triggerDistributionValidationWorkflow(String version) {
                 string(name: 'PROJECTS', value: 'Both'),
                 string(name: 'ARTIFACT_TYPE', value: 'staging')
             ]
+}
+
+def triggerNightlyPlayground() {
+    withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+        println("Triggering nightly playground workflow.")
+        try {
+            sh(
+                script: "gh workflow run nightly-playground-trigger.yml -R opensearch-project/opensearch-devops --ref main",
+                returnStdout: true
+            )
+        } catch (Exception ex) {
+            println("Error in triggering nightly playground workflow. ${ex.getMessage()}")
+        }
+    }
 }
 
 def verifyParameterPlatformDistribution(String paramName, String allowedValue) {

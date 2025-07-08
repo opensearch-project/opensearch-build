@@ -78,10 +78,10 @@ class TestInputManifests(unittest.TestCase):
         self.assertEqual(
             input_manifest[0].to_dict(),
             {
-                "schema-version": "1.1",
+                "schema-version": "1.2",
                 "build": {"name": "OpenSearch", "version": "0.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1",
-                       "args": "-e JAVA_HOME=/opt/java/openjdk-21"}},
+                "ci": {"image": {"linux": {"tar": {"name": "opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1",
+                       "args": "-e JAVA_HOME=/opt/java/openjdk-24"}}}},
                 "components": [{"name": "OpenSearch",
                                 "repository": "https://github.com/opensearch-project/OpenSearch.git",
                                 "ref": "0.x",
@@ -94,7 +94,7 @@ class TestInputManifests(unittest.TestCase):
                 'schema-version': '1.0',
                 'name': 'OpenSearch',
                 'ci': {'image': {'name': 'opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1',
-                                 'args': '-e JAVA_HOME=/opt/java/openjdk-21'}},
+                                 'args': '-e JAVA_HOME=/opt/java/openjdk-24'}},
                 'components': [{'name': 'index-management',
                                 'integ-test': {'build-dependencies': ['job-scheduler'],
                                                'test-configs': ['with-security', 'without-security'],
