@@ -275,47 +275,47 @@ pipeline {
             }
             post {
                 always {
-                    script {
-                        retry(5) {
-                            node(AGENT_LABEL) {
-                                docker.withRegistry('https://public.ecr.aws/') {
-                                    docker.image(testDockerAgent.image).inside(testDockerAgent.args) {
-                                        checkout scm
-                                        sleep 10
-                                        downloadBuildManifest(
-                                            url: BUILD_MANIFEST_URL,
-                                            path: BUILD_MANIFEST
-                                        )
-                                        createUploadTestReportManifest(
-                                            testManifest: "manifests/${TEST_MANIFEST}",
-                                            buildManifest: BUILD_MANIFEST,
-                                            testRunID: "${env.BUILD_NUMBER}",
-                                            testType: 'integ-test',
-                                            rcNumber: params.RC_NUMBER,
-                                            componentName: "${COMPONENT_NAME}",
-                                        )
-                                        echo("Download report manifest from https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml")
-                                        archiveArtifacts artifacts: 'test-report.yml'
-                                    }
-                                }
-                            }
-                        }
-                        retry(5) {
-                            node(agent_nodes['linux_x64']) {
-                                sleep 10
-                                def rc = (params.RC_NUMBER.toInteger() > 0)
-                                sh "mkdir -p test-results-os-${env.BUILD_NUMBER}"
-                                sh "curl -sSL https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml --output test-results-os-${env.BUILD_NUMBER}/test-report.yml"
-                                publishIntegTestResults(
-                                    distributionBuildUrl: "https://build.ci.opensearch.org/blue/organizations/jenkins/${env.BUILD_JOB_NAME}/detail/${env.BUILD_JOB_NAME}/${env.buildId}/pipeline",
-                                    jobName: env.JOB_NAME,
-                                    testReportManifestYml: "test-results-os-${env.BUILD_NUMBER}/test-report.yml"
-                                )
-                                postCleanup()
-                            }
-                        }
+                    //script {
+                    //    retry(5) {
+                    //        node(AGENT_LABEL) {
+                    //            docker.withRegistry('https://public.ecr.aws/') {
+                    //                docker.image(testDockerAgent.image).inside(testDockerAgent.args) {
+                    //                    checkout scm
+                    //                    sleep 10
+                    //                    downloadBuildManifest(
+                    //                        url: BUILD_MANIFEST_URL,
+                    //                        path: BUILD_MANIFEST
+                    //                    )
+                    //                    createUploadTestReportManifest(
+                    //                        testManifest: "manifests/${TEST_MANIFEST}",
+                    //                        buildManifest: BUILD_MANIFEST,
+                    //                        testRunID: "${env.BUILD_NUMBER}",
+                    //                        testType: 'integ-test',
+                    //                        rcNumber: params.RC_NUMBER,
+                    //                        componentName: "${COMPONENT_NAME}",
+                    //                    )
+                    //                    echo("Download report manifest from https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml")
+                    //                    archiveArtifacts artifacts: 'test-report.yml'
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //    retry(5) {
+                    //        node(agent_nodes['linux_x64']) {
+                    //            sleep 10
+                    //            def rc = (params.RC_NUMBER.toInteger() > 0)
+                    //            sh "mkdir -p test-results-os-${env.BUILD_NUMBER}"
+                    //            sh "curl -sSL https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml --output test-results-os-${env.BUILD_NUMBER}/test-report.yml"
+                    //            publishIntegTestResults(
+                    //                distributionBuildUrl: "https://build.ci.opensearch.org/blue/organizations/jenkins/${env.BUILD_JOB_NAME}/detail/${env.BUILD_JOB_NAME}/${env.buildId}/pipeline",
+                    //                jobName: env.JOB_NAME,
+                    //                testReportManifestYml: "test-results-os-${env.BUILD_NUMBER}/test-report.yml"
+                    //            )
+                    //            postCleanup()
+                    //        }
+                    //    }
 
-                    }
+                    //}
                     postCleanup()
                 }
             }
@@ -325,14 +325,14 @@ pipeline {
         always {
             node(AGENT_LABEL) {
                 script {
-                    def triggerIntegTestNotification =
-                            build job: 'integ-test-notification',
-                            propagate: false,
-                            wait: false,
-                            parameters: [
-                                string(name: 'INPUT_MANIFEST', value: "${env.version}/opensearch-${env.version}.yml"),
-                                string(name: 'DISTRIBUTION_NUMBER', value: "${env.buildId}")
-                            ]
+                    //def triggerIntegTestNotification =
+                    //        build job: 'integ-test-notification',
+                    //        propagate: false,
+                    //        wait: false,
+                    //        parameters: [
+                    //            string(name: 'INPUT_MANIFEST', value: "${env.version}/opensearch-${env.version}.yml"),
+                    //            string(name: 'DISTRIBUTION_NUMBER', value: "${env.buildId}")
+                    //        ]
                     postCleanup()
                 }
             }
