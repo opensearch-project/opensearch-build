@@ -10,7 +10,6 @@ import os
 import subprocess
 from pathlib import Path
 from typing import Any, List
-
 from git.git_commit import GitCommit
 from system.temporary_directory import TemporaryDirectory
 
@@ -29,7 +28,7 @@ class GitRepository:
         self.fetch_depth = fetch_depth
         if directory is None:
             self.temp_dir = TemporaryDirectory()
-            self.dir = os.path.abspath(self.temp_dir.name)
+            self.dir = os.path.realpath(self.temp_dir.name)
         else:
             self.temp_dir = None
             self.dir = directory
@@ -50,6 +49,8 @@ class GitRepository:
         if self.fetch_depth == 0:
             # Fetch full history
             self.execute_silent(f"git fetch origin {self.ref}", self.dir)
+            # Fetch tags as well
+            self.execute_silent("git fetch --tags", self.dir)
         else:
             # Fetch with specified depth
             self.execute_silent(f"git fetch --depth {self.fetch_depth} origin {self.ref}", self.dir)
@@ -109,3 +110,23 @@ class GitRepository:
             elif len(parts) >= 2:
                 result.append(GitCommit(parts[0], parts[1]))
         return result
+    
+    def get_last_tag_date(self) -> str:
+        """Get the date of the last tag in the repository."""
+        try:
+            # Get all tags sorted by version (newest first)
+            last_tag = self.output("git tag -l | sort -V -r").split("\n")[0]
+            
+            if not last_tag or not last_tag[0]:
+                logging.warning("No tags found")
+                return None
+            
+            logging.info(f"Found last tag: {last_tag}")
+            
+            # Get the date of the last tag
+            tag_date = self.output(f"git log -1 --format=%ad --date=short {last_tag}")
+            logging.info(f"Date of last tag {last_tag}: {tag_date}")
+            return tag_date
+        except Exception as e:
+            logging.warning(f"Failed to get last tag date: {e}")
+            return None
