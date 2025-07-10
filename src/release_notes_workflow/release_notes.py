@@ -7,22 +7,27 @@
 
 import logging
 import os
-from typing import List
-
+import sys
+from typing import Any, Dict, List
 from pytablewriter import MarkdownTableWriter
-
 from git.git_repository import GitRepository
 from manifests.input_manifest import InputComponentFromSource, InputManifest
 from release_notes_workflow.release_notes_component import ReleaseNotesComponents
 from system.temporary_directory import TemporaryDirectory
+from llms.ai_release_notes_generator import AIReleaseNotesGenerator
+
+# Add the parent directory to sys.path to import process.py
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+from process import Processor
 
 
 class ReleaseNotes:
 
-    def __init__(self, input_manifests: List[InputManifest], date: str, action_type: str) -> None:
+    def __init__(self, input_manifests: List[InputManifest], date: str, action_type: str, test_mode: bool = False) -> None:
         self.manifests = input_manifests  # type: ignore[assignment]
         self.date = date
         self.action_type = action_type
+        self.test_mode = test_mode
 
     def table(self) -> MarkdownTableWriter:
         table_result = []
@@ -86,73 +91,53 @@ class ReleaseNotes:
 
     def generate(self, component: InputComponentFromSource, build_version: str, build_qualifier: str, manifest_path: str = None) -> None:
         """Generate AI-powered release notes for a component."""
-        from release_notes_workflow.ai_release_notes_generator import AIReleaseNotesGenerator
-        
-        # Store original working directory before changing to temp dir
-        original_cwd = os.getcwd()
-        
-        # Extract manifest name from manifest path if provided
-        manifest_name = "opensearch"  # Default
-        if manifest_path:
-            # Extract from path like "manifests/3.2.0/opensearch-3.2.0.yml" -> "opensearch"
-            # or "manifests/3.2.0/opensearch-dashboards-3.2.0.yml" -> "opensearch-dashboards"
-            manifest_filename = os.path.basename(manifest_path)
-            if '-' in manifest_filename:
-                # Split by '-' and remove the version part (last part that contains digits)
-                parts = manifest_filename.split('-')
-                # Find the last part that's not a version (contains digits and dots)
-                manifest_parts = []
-                for part in parts:
-                    if not any(char.isdigit() for char in part) or part in ['dashboards']:
-                        manifest_parts.append(part)
-                    else:
-                        break
-                manifest_name = '-'.join(manifest_parts) if manifest_parts else "opensearch"
-        
         with TemporaryDirectory(chdir=True) as work_dir:
+            # Initialize processor with initial date
+            processor = Processor(build_version, self.date)
+            
+            # First, get the date of the last tag in the opensearch-build repository
+            baseline_date = self.date
+            try:
+                # Check out the opensearch-build repository to get the last tag date
+                with GitRepository(
+                        "https://github.com/opensearch-project/opensearch-build.git",
+                        "main",
+                        os.path.join(work_dir.name, "opensearch-build"),
+                        fetch_depth=0  # Fetch full history to get tags
+                ) as build_repo:
+                    baseline_date = processor.get_last_tag_date(build_repo, self.date)
+                    # Update processor with the final baseline date
+                    processor = Processor(build_version, baseline_date)
+            except Exception as e:
+                logging.warning(f"Failed to get last tag date from opensearch-build: {e}")
+            
             with GitRepository(
                     component.repository,
                     component.ref,
                     os.path.join(work_dir.name, component.name),
                     component.working_directory,
-                    fetch_depth=0  # Fetch full history for commit analysis
+                    fetch_depth=0  # Fetch full history to get all commits
             ) as repo:
-                logging.debug(f"Checked out {component.name} into {repo.dir}")
-                
-                # Check if release notes already exist
+                # Initialize AI generator
+                ai_generator = AIReleaseNotesGenerator(
+                    github_token=None,
+                    version=build_version,
+                    baseline_date=baseline_date,
+                    test_mode=self.test_mode
+                )
+
                 release_notes = ReleaseNotesComponents.from_component(component, build_version, build_qualifier, repo.dir)
                 
-                if not release_notes.exists():
-                    logging.info(f"Generating AI release notes for {component.name}")
-                    
-                    # Initialize AI generator (no token needed - uses git commands)
-                    ai_generator = AIReleaseNotesGenerator(
-                        github_token=None,  # Not needed for git-based access
-                        version=build_version,
-                        baseline_date=self.date
-                    )
-                    
-                    # Generate AI release notes using existing repository directory
-                    ai_result = ai_generator.process_repository(component, existing_repo_dir=repo.dir)
-                    
-                    if ai_result.get('success'):
-                        logging.info(f"✅ AI release notes generated for {component.name}")
-                        
-                        # Save the AI result to local file (outside the temporary directory)
-                        if ai_result.get('ai_result'):
-                            repo_name = component.repository.rstrip('/').split('/')[-1].replace('.git', '').lower()
-                            
-                            # Generate filename in format: opensearch-sql.release-notes-3.2.0.md
-                            local_filename = f"{manifest_name}-{repo_name}.release-notes-{build_version}.md"
-                            
-                            # Write file to original working directory
-                            output_path = os.path.join(original_cwd, local_filename)
-                            with open(output_path, 'w') as f:
-                                f.write(f"# {component.name} {build_version} Release Notes\n\n")
-                                f.write(ai_result['ai_result'])
-                            
-                            logging.info(f"📄 Saved release notes to {output_path}")
-                    else:
-                        logging.warning(f"❌ AI release notes failed for {component.name}: {ai_result.get('error')}")
-                else:
-                    logging.info(f"Release notes already exist for {component.name}")
+                # Try to fetch CHANGELOG.md directly from GitHub
+                content = processor.fetch_changelog_from_github(component)
+                if content:
+                    processed_data = processor.process(content, component.name)
+                    ai_generator.process(processed_data['formatted_content'], component.name, manifest_path)
+                    return
+                
+                # If no CHANGELOG.md found from GitHub, use commit history
+                logging.info(f"No CHANGELOG.md found for {component.name}, will use commit history")
+                content = processor.get_commit_history_content(repo, baseline_date, component.name)
+                if content:
+                    processed_data = processor.process(content, component.name)
+                    ai_generator.process(processed_data['formatted_content'], component.name, manifest_path)

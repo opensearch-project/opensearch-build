@@ -44,18 +44,9 @@ class ReleaseNotesCheckArgs:
         
         # AI-powered release notes options
         parser.add_argument(
-            "--ai",
-            action="store_true",
-            help="Generate AI-powered release notes using AWS Bedrock"
-        )
-        parser.add_argument(
             "--ai-model",
             default="claude-3-7-sonnet",
             help="AI model to use for analysis (default: claude-3-7-sonnet)"
-        )
-        parser.add_argument(
-            "--baseline-date",
-            help="Baseline date for commit analysis (format: YYYY-MM-DD)"
         )
         parser.add_argument(
             "--test-mode",
@@ -63,8 +54,12 @@ class ReleaseNotesCheckArgs:
             help="Test mode: only read from GitHub, no write operations (branches, commits, PRs)"
         )
         parser.add_argument(
+            "-c",
             "--component",
-            help="Process only a specific component (optional)"
+            dest="components",
+            nargs='*',
+            type=str,
+            help="Process one or more components."
         )
         
         args = parser.parse_args()
@@ -75,16 +70,9 @@ class ReleaseNotesCheckArgs:
         self.output = args.output
         
         # AI options
-        self.ai = args.ai
         self.ai_model = args.ai_model
-        self.baseline_date = args.baseline_date
         self.test_mode = args.test_mode
-        self.component = args.component
-        
-        # GitHub access using existing OpenSearch build system pattern
-        self.github_token = os.environ.get('GITHUB_TOKEN')
-        if not self.github_token:
-            logging.warning("GITHUB_TOKEN environment variable not set. GitHub API calls may fail.")
+        self.components = args.components
         
         if self.action == "check" and self.date is None:
             parser.error("check option requires --date argument")

@@ -1,5 +1,6 @@
 - [Consolidated Release Notes Automation](#consolidated-release-notes-automation)
   - [Components Release Notes Check](#components-release-notes-check)
+  - [AI-Powered Release Notes Generation](#ai-powered-release-notes-generation)
   - [Consolidated Release Notes](#consolidated-release-notes)
 
 ## Consolidated Release Notes
@@ -40,6 +41,39 @@ The following options are available.
 |--------------------|-------------------------------------------------------------------------|
 | --date             | Shows commit after a specific date.                                     |
 | --output           | Saves the table output to user specified file.  		       	       |
+| -v, --verbose      | Show more verbose output.                                               |
+
+### AI-Powered Release Notes Generation
+
+This workflow generates AI-powered release notes for components using AWS Bedrock. It analyzes either CHANGELOG.md files or git commit history to create structured release notes.
+
+#### Usage
+```
+./release_notes.sh generate manifests/3.2.0/opensearch-3.2.0.yml -c sql --test-mode
+```
+
+#### Sample Output
+```
+2025-07-14 17:11:30 INFO     Saved release notes to /local/home/rjerger/opensearch-build-2/release-notes/opensearch-sql.release-notes-3.2.0.md
+Saved release notes to /local/home/rjerger/opensearch-build-2/release-notes/opensearch-sql.release-notes-3.2.0.md
+```
+
+The workflow uses the following arguments:
+* `--date`: Baseline date for commit analysis (in format yyyy-mm-dd, example 2025-06-24).
+* `--component` or `-c`: Generate release notes for specific components only.
+* `--test-mode`: Run in test mode without creating PRs.
+* `--output`: Save the generated release notes to a specified file.
+* `--ai-model`: Specify the AI model to use (default: claude-3-7-sonnet).
+
+The following options are available.
+
+| name               | description                                                             |
+|--------------------|-------------------------------------------------------------------------|
+| --date             | Baseline date for commit analysis.                                      |
+| --component, -c    | Generate release notes for specific components only.                    |
+| --test-mode        | Run in test mode without creating PRs.                                  |
+| --output           | Saves the generated release notes to user specified file.               |
+| --ai-model         | AI model to use for analysis (default: claude-3-7-sonnet).              |
 | -v, --verbose      | Show more verbose output.                                               |
 
 ### Consolidated Release Notes
