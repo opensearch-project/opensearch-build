@@ -90,7 +90,7 @@ pipeline {
                     env.AGENT_LABEL = agent_nodes["${env.platform}_${architecture}"]
 
                     // Get docker information
-                    env.testDockerAgent = detectTestDockerAgent(
+                    testDockerAgent = detectTestDockerAgent(
                         distribution: "${distribution}",
                         platform: "${platform}"
                     )
