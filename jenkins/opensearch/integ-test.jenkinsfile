@@ -88,6 +88,13 @@ pipeline {
                     env.platform = buildManifestObj.build.platform
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     env.AGENT_LABEL = agent_nodes["${env.platform}_${architecture}"]
+
+                    // Get docker information
+                    env.testDockerAgent = detectTestDockerAgent(
+                        distribution: "${distribution}",
+                        platform: "${platform}"
+                    )
+                    echo("Test Docker Image: ${testDockerAgent.image}, Args: ${testDockerAgent.args}, JavaVersion: ${testDockerAgent.javaVersion}")
                 }
             }
             post {
@@ -178,13 +185,6 @@ pipeline {
                     else {
                         echo 'Skipping artifacts downloads since platform is Windows and only stashing the repository'
                     }
-
-                    // Get docker information
-                    def testDockerAgent = detectTestDockerAgent(
-                        distribution: "${distribution}",
-                        platform: "${platform}"
-                    )
-                    echo("Test Docker Image: ${testDockerAgent.image}, Args: ${testDockerAgent.args}, JavaVersion: ${testDockerAgent.javaVersion}")
 
                     // Stash the current working directory files, aka opensearch-build repo
                     // Unstash later in each triggered stage to run integTest
