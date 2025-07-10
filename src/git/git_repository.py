@@ -10,7 +10,6 @@ import os
 import subprocess
 from pathlib import Path
 from typing import Any, List
-
 from git.git_commit import GitCommit
 from system.temporary_directory import TemporaryDirectory
 
@@ -29,7 +28,7 @@ class GitRepository:
         self.fetch_depth = fetch_depth
         if directory is None:
             self.temp_dir = TemporaryDirectory()
-            self.dir = os.path.abspath(self.temp_dir.name)
+            self.dir = os.path.realpath(self.temp_dir.name)
         else:
             self.temp_dir = None
             self.dir = directory

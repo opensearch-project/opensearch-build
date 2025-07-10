@@ -9,18 +9,28 @@ import logging
 import os
 import re
 import shutil
+import subprocess
+import sys
+import requests
 from collections import defaultdict
 from typing import List
-
-import requests
-
 from manifests.input_manifest import InputManifest
 from release_notes_workflow.release_notes import ReleaseNotes
 from release_notes_workflow.release_notes_check_args import ReleaseNotesCheckArgs
 from system import console
+from system.temporary_directory import TemporaryDirectory
+try:
+    import markdownify
+    import mistune
+except ImportError:
+    markdownify = None
+    mistune = None
 
 
 def main() -> int:
+    # Add the src directory to the Python path
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+    
     args = ReleaseNotesCheckArgs()
     console.configure(level=args.logging_level)
     manifests: List[InputManifest] = []
@@ -45,14 +55,22 @@ def main() -> int:
     urls_filename = f"{BASE_FILE_PATH}/release_notes_urls-{BUILD_VERSION}.txt"
 
     def check_if_exists_then_delete(file_path: List[str]) -> None:
+        """Check if files exist and delete them if they do.
+        
+        Args:
+            file_path: List of file paths to check and delete
+        """
+        base_dir = os.path.dirname(__file__)
         for file in file_path:
-            if os.path.exists(os.path.join(os.path.dirname(__file__), file)):
-                print(f"file {file} exists. Deleting")
-                os.remove(os.path.join(os.path.dirname(__file__), file))
+            full_path = os.path.join(base_dir, file)
+            if os.path.exists(full_path):
+                print(f"File {file} exists. Deleting")
+                os.remove(full_path)
             else:
                 logging.info(f"The file {file} does not exist, creating new.")
-
+    
     def capitalize_acronyms(formatted_name: str) -> str:
+        """Capitalize common acronyms in component names."""
         acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "ml-commons": "ML Commons",
                     "ml commons": "ML Commons"}
         for acronym, replacement in acronyms.items():
@@ -68,21 +86,15 @@ def main() -> int:
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
         component_name = url[start_index + len("release-notes/"): end_index]
-        if component_name == "opensearch-sql":
-            component_name = "SQL"
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
         return capitalize_acronyms(formatted_name)
 
     def create_urls_file_if_not_exists(manifest_files: List[InputManifest]) -> None:
-
-        release_notes = ReleaseNotes(
-            manifest_files, 
-            args.date, 
-            args.action
-        )
+        base_dir = os.path.dirname(__file__)
+        release_notes = ReleaseNotes(manifest_files, args.date, args.action, args.test_mode)
         table = release_notes.table()
 
-        table_filepath = os.path.join(os.path.dirname(__file__), table_filename)
+        table_filepath = os.path.join(base_dir, table_filename)
         os.makedirs(os.path.dirname(table_filepath), exist_ok=True)
         with open(table_filepath, "a") as table_file:
             table.dump(table_file)
@@ -95,8 +107,7 @@ def main() -> int:
                 logging.info(table_file.read())
 
         urls = [row[-1].strip() for row in table.value_matrix if row[-1]]
-
-        urls_filepath = os.path.join(os.path.dirname(__file__), urls_filename)
+        urls_filepath = os.path.join(base_dir, urls_filename)
         os.makedirs(os.path.dirname(urls_filepath), exist_ok=True)
         with open(urls_filepath, "a") as urls_file:
             urls_file.writelines("\n".join(urls))
@@ -110,112 +121,64 @@ def main() -> int:
         # Generate AI-powered release notes
         check_if_exists_then_delete([table_filename, urls_filename])
         
-        def get_baseline_date_from_github_tag(current_version: str) -> str:
-            """Get baseline date from the last GitHub tag on opensearch-build repository."""
+        def get_date_from_git_tag(current_version: str) -> str:
+            """Get date from git tag."""
+            
+            # Calculate previous version
             try:
-                import subprocess
-                from system.temporary_directory import TemporaryDirectory
-                
-                # Parse current version to get previous version
                 version_parts = current_version.split('.')
                 if len(version_parts) >= 2:
                     major, minor = int(version_parts[0]), int(version_parts[1])
-                    
-                    # Calculate previous version
-                    if minor > 0:
-                        baseline_version = f"{major}.{minor-1}.0"
-                    else:
-                        baseline_version = f"{major-1}.0.0" if major > 0 else "2.0.0"
+                    previous_version = f"{major}.{minor-1}.0" if minor > 0 else f"{major-1}.0.0" if major > 0 else "2.0.0"
                 else:
-                    baseline_version = "3.0.0"
+                    previous_version = "3.0.0"
                 
-                logging.info(f"Looking for tag date for version {baseline_version}")
+                logging.info(f"Looking for tag date for version {previous_version}")
                 
-                # Clone opensearch-build repository temporarily to get tag date
-                try:
-                    with TemporaryDirectory() as temp_dir:
-                        # Clone the opensearch-build repository
-                        clone_cmd = f"git clone --depth 50 https://github.com/opensearch-project/opensearch-build.git {temp_dir.name}/opensearch-build"
-                        clone_result = subprocess.run(clone_cmd, shell=True, capture_output=True, text=True)
-                        
-                        if clone_result.returncode != 0:
-                            logging.warning(f"Failed to clone opensearch-build: {clone_result.stderr}")
-                            raise Exception("Failed to clone repository")
-                        
-                        repo_dir = f"{temp_dir.name}/opensearch-build"
-                        
-                        # Get tag date using git log
-                        tag_cmd = f"git log --tags --simplify-by-decoration --pretty='format:%ai %d' | grep '{baseline_version}'"
-                        tag_result = subprocess.run(tag_cmd, shell=True, capture_output=True, text=True, cwd=repo_dir)
-                        
-                        if tag_result.returncode == 0 and tag_result.stdout.strip():
-                            # Parse the date (format: 2024-06-24 10:30:45 +0000 (tag: 3.1.0))
-                            date_line = tag_result.stdout.strip().split('\n')[0]
-                            date_str = date_line.split()[0]  # Get just the date part
-                            logging.info(f"Found tag date for {baseline_version}: {date_str}")
-                            return date_str
-                        else:
-                            # Try alternative approach - get all tags and find the one we want
-                            all_tags_cmd = "git tag -l --sort=-version:refname"
-                            all_tags_result = subprocess.run(all_tags_cmd, shell=True, capture_output=True, text=True, cwd=repo_dir)
-                            
-                            if all_tags_result.returncode == 0:
-                                tags = all_tags_result.stdout.strip().split('\n')
-                                logging.info(f"Available tags: {tags[:10]}")  # Show first 10 tags
-                                
-                                # Look for exact match or similar version
-                                for tag in tags:
-                                    if baseline_version in tag:
-                                        # Get date for this tag
-                                        tag_date_cmd = f"git log -1 --format=%ai {tag}"
-                                        tag_date_result = subprocess.run(tag_date_cmd, shell=True, capture_output=True, text=True, cwd=repo_dir)
-                                        
-                                        if tag_date_result.returncode == 0:
-                                            date_str = tag_date_result.stdout.strip().split()[0]
-                                            logging.info(f"Found tag date for {tag}: {date_str}")
-                                            return date_str
-                            
-                            raise Exception(f"Tag {baseline_version} not found in repository")
-                            
-                except Exception as e:
-                    logging.warning(f"Failed to get tag date via git: {e}")
+                # Clone and search for tag
+                with TemporaryDirectory() as temp_dir:
+                    repo_dir = f"{temp_dir.name}/opensearch-build"
+                    clone_cmd = f"git clone --depth 50 https://github.com/opensearch-project/opensearch-build.git {repo_dir}"
+                    
+                    if subprocess.run(clone_cmd, shell=True, capture_output=True).returncode != 0:
+                        raise Exception("Failed to clone repository")
+                    
+                    # Direct tag search - this is the approach that works
+                    tag_cmd = f"git log --tags --simplify-by-decoration --pretty='format:%ai %d' | grep '{previous_version}'"
+                    tag_result = subprocess.run(tag_cmd, shell=True, capture_output=True, text=True, cwd=repo_dir)
+                    
+                    if tag_result.returncode == 0 and tag_result.stdout.strip():
+                        date_str = tag_result.stdout.strip().split('\n')[0].split()[0]
+                        logging.info(f"Found tag date for {previous_version}: {date_str}")
+                        return date_str
                 
-                # If we get here, we couldn't find the tag date
-                raise ValueError(f"Could not find tag date for version {baseline_version}. Please use --date to specify the start date.")
+                raise ValueError(f"Tag {previous_version} not found in repository")
                 
-            except ValueError:
-                # Re-raise ValueError as-is
-                raise
             except Exception as e:
-                raise ValueError(f"Failed to determine baseline date: {e}. Please use --date to specify the start date.")
+                raise ValueError(f"Failed to determine date: {e}. Please use --date to specify the start date.")
         
-        # Get baseline date - use provided date or get from GitHub tag
-        current_version = manifests[0].build.version
+        # Get date - use provided date or get from GitHub release
+        current_release_version = manifests[0].build.version
         if args.date:
-            baseline_date = str(args.date)
-            logging.info(f"Using provided baseline date: {baseline_date}")
+            date = str(args.date)
+            logging.info(f"Using provided date: {date}")
         else:
             try:
-                baseline_date = get_baseline_date_from_github_tag(current_version)
+                date = get_date_from_git_tag(current_release_version)
             except ValueError as e:
                 logging.error(str(e))
                 return 1
         
-        logging.info(f"Generating AI release notes for version {current_version} since {baseline_date}")
+        logging.info(f"Generating AI release notes for version {current_release_version} since {date}")
         
-        # Create ReleaseNotes instance with baseline date
-        release_notes = ReleaseNotes(manifests, baseline_date, args.action)
+        # Create ReleaseNotes instance with date
+        release_notes = ReleaseNotes(manifests, date, args.action, args.test_mode)
         
         # Generate AI release notes for each component
         for i, manifest in enumerate(manifests):
             manifest_path = args.manifest[i].name if i < len(args.manifest) else None
-            for component in manifest.components.select():
+            for component in manifest.components.select(focus=args.components, platform='linux'):
                 if hasattr(component, "repository"):
-                    # Filter by component if specified
-                    if args.component and args.component.lower() not in component.name.lower():
-                        logging.debug(f"Skipping {component.name} (not matching --component {args.component})")
-                        continue
-                    
                     logging.info(f"Processing {component.name} for AI release notes generation")
                     try:
                         release_notes.generate(component, manifest.build.version, manifest.build.qualifier, manifest_path)
@@ -225,33 +188,26 @@ def main() -> int:
         logging.info("AI release notes generation completed")
         
         # Print summary of what was processed
-        processed_count = 0
-        failed_count = 0
-        for manifest in manifests:
-            for component in manifest.components.select():
-                if hasattr(component, "repository"):
-                    if args.component and args.component.lower() not in component.name.lower():
-                        continue
-                    processed_count += 1
+        processed_count = sum(1 for manifest in manifests 
+                             for component in manifest.components.select(focus=args.components, platform='linux')
+                             if hasattr(component, "repository"))
         
         if processed_count > 0:
-            print(f"📊 Summary: Processed {processed_count} component(s) matching filter")
-            if args.component:
-                print(f"🔍 Component filter: '{args.component}'")
-            print(f"📅 Baseline date: {baseline_date}")
-            print(f"🏷️  Target version: {current_version}")
+            print(f"📊 Summary: Processed {processed_count} component(s)")
+            if args.components:
+                print(f"🔍 Component filter: {args.components}")
+            print(f"📅 Date: {date}")
+            print(f"🏷️  Target version: {BUILD_VERSION}")
         else:
-            print(f"⚠️  No components found matching filter: '{args.component}'")
+            print(f"⚠️  No components found for processing" + 
+                  (f" matching filter: {args.components}" if args.components else ""))
         
         return 0
 
     elif args.action == "compile":
-        # Import compile-specific dependencies
-        try:
-            import markdownify
-            import mistune
-        except ImportError as e:
-            logging.error(f"Compile action requires additional dependencies: {e}")
+        # Check if compile-specific dependencies are available
+        if markdownify is None or mistune is None:
+            logging.error("Compile action requires additional dependencies")
             logging.error("Please install: pip install markdownify mistune")
             return 1
             
@@ -261,16 +217,7 @@ def main() -> int:
         RELEASENOTES_CATEGORIES = "BREAKING,FEATURES,ENHANCEMENTS,BUG FIXES,INFRASTRUCTURE,DOCUMENTATION,MAINTENANCE,REFACTORING,EXPERIMENTAL"
         RELEASE_NOTE_MD = f"{BASE_FILE_PATH}/release_notes-{BUILD_VERSION}.md"
 
-        # Clean up URLs in the file
-        urls_filepath = os.path.join(os.path.dirname(__file__), urls_filename)
-        with open(urls_filepath, "r") as file:
-            urls = [line.strip() for line in file if line.strip()]
-
-        unique_urls = list(set(urls))
-
-        # store plugin data
-        plugin_data: defaultdict = defaultdict(lambda: defaultdict(list))
-        # handle custom headings
+        # Define heading mappings
         heading_mapping = {
             "Feature": "Features",
             "Feat": "Features",
@@ -279,47 +226,69 @@ def main() -> int:
             "Enhancement": "Enhancements",
             "Bug Fix": "Bug Fixes",
         }
-        unique_headings = set()
-        for url in unique_urls:
-            if not url.startswith("#"):
+        
+        def process_release_notes_urls(urls_file_path: str) -> defaultdict:
+            """Process release notes URLs and extract content."""
+            with open(urls_file_path, "r") as file:
+                urls = [line.strip() for line in file if line.strip()]
+            
+            unique_urls = list(set(urls))
+            plugin_data = defaultdict(lambda: defaultdict(list))
+            
+            for url in unique_urls:
+                if url.startswith("#"):
+                    continue
+                    
                 response = requests.get(url)
-
-                if response.status_code == 200:
-                    content = response.text
-                    plugin_name = format_component_name_from_url(url)
-
-                    # obtain headings (###) from the content
-                    headings = [match.strip() for match in re.findall(r"###.+", content)]
-                    if not headings:
+                if response.status_code != 200:
+                    logging.warning(f"Failed to fetch URL: {url}")
+                    continue
+                    
+                content = response.text
+                plugin_name = format_component_name_from_url(url)
+                
+                # Extract headings
+                headings = [match.strip() for match in re.findall(r"###.+", content)]
+                if not headings:
+                    continue
+                
+                # Process each heading
+                for i, heading_text in enumerate(headings):
+                    # Format heading
+                    heading = heading_text.strip()
+                    if heading.startswith("### "):
+                        heading = heading[4:]
+                    heading = heading.title()
+                    
+                    # Map to standard heading if needed
+                    if heading in heading_mapping:
+                        heading = heading_mapping[heading]
+                    
+                    # Extract content for this heading
+                    content_start = content.find(headings[i])
+                    if content_start == -1:
                         continue
-
-                    # Store content under each heading in respective plugin
-                    for i in range(len(headings)):
-                        heading = headings[i].strip()
-                        if heading.startswith("### "):
-                            heading = heading[4:]
-                        heading = heading.title()
-
-                        if heading in heading_mapping:
-                            heading = heading_mapping[heading]
-                        unique_headings.add(heading)
-
-                        content_start = content.find(headings[i])
-                        if content_start != -1:
-                            if i == len(headings) - 1:
-                                content_to_end = content[content_start:]
-                            else:
-                                content_to_end = content[content_start: content.find(headings[i + 1])]
-                        content_to_end = content_to_end.replace(f"### {heading}", "").lstrip()
-                        parts = content_to_end.split("*", 1)
-                        if len(parts) == 2:
-                            content_to_end = "*" + parts[1]
-                        else:
-                            content_to_end = content_to_end.lstrip().lstrip("-")
-                            if len(content_to_end) > 0:
-                                content_to_end = "* " + content_to_end
-                        plugin_data[plugin_name][heading].append(content_to_end)
-        plugin_data = defaultdict(list, sorted(plugin_data.items()))
+                        
+                    content_end = content.find(headings[i+1]) if i < len(headings)-1 else len(content)
+                    content_to_end = content[content_start:content_end]
+                    
+                    # Format content
+                    content_to_end = content_to_end.replace(f"### {heading}", "").lstrip()
+                    parts = content_to_end.split("*", 1)
+                    if len(parts) == 2:
+                        content_to_end = "*" + parts[1]
+                    else:
+                        content_to_end = content_to_end.lstrip().lstrip("-")
+                        if content_to_end:
+                            content_to_end = "* " + content_to_end
+                            
+                    plugin_data[plugin_name][heading].append(content_to_end)
+            
+            return defaultdict(list, sorted(plugin_data.items()))
+            
+        # Process release notes URLs
+        urls_filepath = os.path.join(os.path.dirname(__file__), urls_filename)
+        plugin_data = process_release_notes_urls(urls_filepath)
         logging.info("Compilation complete.")
 
         # Markdown renderer
