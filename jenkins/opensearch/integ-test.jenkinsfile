@@ -7,24 +7,10 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@9.5.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@10.1.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
-
-def docker_images = [
-    'tar': 'opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1',
-    'rpm': 'opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1',
-    'deb': 'opensearchstaging/ci-runner:ci-runner-ubuntu2404-systemd-base-integtest-v1',
-    'zip': 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1',
-]
-
-def docker_args = [
-    'tar': '-u 1000 --cpus 4 -m 16g',
-    'rpm': '--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --cpus 4 -m 16g',
-    'deb': '--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --cpus 4 -m 16g',
-    'zip': '-u ContainerAdministrator',
-]
 
 def agent_nodes = [
     'linux_x64': 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host',
@@ -97,6 +83,13 @@ pipeline {
                     env.platform = buildManifestObj.build.platform
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     env.AGENT_LABEL = agent_nodes["${env.platform}_${architecture}"]
+
+                    // Get docker information
+                    testDockerAgent = detectTestDockerAgent(
+                        distribution: "${distribution}",
+                        platform: "${platform}"
+                    )
+                    echo("Test Docker Image: ${testDockerAgent.image}, Args: ${testDockerAgent.args}, JavaVersion: ${testDockerAgent.javaVersion}")
                 }
             }
             post {
@@ -208,8 +201,8 @@ pipeline {
                             timeout(time: 4, unit: 'HOURS') {
                                 node(AGENT_LABEL) {
                                     docker.withRegistry('https://public.ecr.aws/') {
-                                        docker.image(docker_images["$distribution"]).pull() // always pull latest
-                                        docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                        docker.image(testDockerAgent.image).pull() // always pull latest
+                                        docker.image(testDockerAgent.image).inside(testDockerAgent.args) {
                                             try {
                                                 stage("${local_component}") {
                                                     // Jenkins tend to not clean up workspace at times even though ws clean is called
@@ -281,7 +274,7 @@ pipeline {
                         retry(5) {
                             node(AGENT_LABEL) {
                                 docker.withRegistry('https://public.ecr.aws/') {
-                                    docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                    docker.image(testDockerAgent.image).inside(testDockerAgent.args) {
                                         checkout scm
                                         sleep 10
                                         downloadBuildManifest(

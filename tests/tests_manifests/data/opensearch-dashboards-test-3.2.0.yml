@@ -1,0 +1,15 @@
+---
+schema-version: '1.1'
+name: OpenSearch Dashboards
+ci:
+  image:
+    linux:
+      tar:
+        name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1
+        args: '-u 1000 --cpus 4 -m 16g -e BROWSER_PATH=electron'
+components:
+  - name: functionalTestDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security

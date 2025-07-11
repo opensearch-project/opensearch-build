@@ -5,62 +5,43 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-"""
-TestManifest contains the test support matrix for any component.
-
-The format for schema version 1.1 is:
-    schema-version: '1.1'
-    name: 'OpenSearch'
-    ci:
-      image:
-        linux (or other platform as key here):
-          tar (or other distribution as key here):
-            name: docker image name to pull
-            args: args to execute builds with, e.g. -e JAVA_HOME=...
-          deb:
-            name: docker image name to pull
-            args: args to execute builds with, e.g. -e JAVA_HOME=...
-          rpm:
-            name: docker image name to pull
-            args: args to execute builds with, e.g. -e JAVA_HOME=...
-        windows:
-          zip:
-            name: docker image name to pull
-            args: args to execute builds with, e.g. -e JAVA_HOME=...
-    components:
-      - name: index-management
-        working-directory: optional relative directory to run commands in
-        integ-test:
-          test-configs:
-            - with-security
-            - without-security
-            - with-less-security
-          additional-cluster-configs:
-            - key : value
-          ci-group: 6
-        bwc-test:
-          test-configs:
-            - with-security
-            - without-security
-        smoke-test:
-          test-spec: spec.yml
-"""
-
-from typing import Dict, Optional
+from typing import Optional
 
 from manifests.component_manifest import Component, ComponentManifest, Components
-from manifests.test.test_manifest_1_0 import TestManifest_1_0
 
 
-class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
+class TestManifest_1_0(ComponentManifest['TestManifest_1_0', 'TestComponents_1_0']):
+    """
+    TestManifest contains the test support matrix for any component.
 
-    VERSIONS = {
-        "1.0": TestManifest_1_0,
-        # "1.1": current
-    }
+    The format for schema version 1.0 is:
+        schema-version: '1.0'
+        name: 'OpenSearch'
+        ci:
+            image:
+                name: docker image name to pull
+                args: args to execute builds with, e.g. -e JAVA_HOME=...
+        components:
+          - name: index-management
+            working-directory: optional relative directory to run commands in
+            integ-test:
+              test-configs:
+                - with-security
+                - without-security
+                - with-less-security
+              additional-cluster-configs:
+                - key : value
+              ci-group: 6
+            bwc-test:
+              test-configs:
+                - with-security
+                - without-security
+            smoke-test:
+              test-spec: spec.yml
+    """
 
     SCHEMA = {
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "name": {"required": True, "type": "string", "allowed": ["OpenSearch", "OpenSearch Dashboards"]},
         "ci": {
             "required": False,
@@ -69,16 +50,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                 "image": {
                     "required": False,
                     "type": "dict",
-                    "valueschema": {
-                        "type": "dict",
-                        "valueschema": {
-                            "type": "dict",
-                            "schema": {
-                                "name": {"required": True, "type": "string"},
-                                "args": {"required": False, "type": "string"},
-                            },
-                        },
-                    },
+                    "schema": {"name": {"required": True, "type": "string"}, "args": {"required": False, "type": "string"}},
                 }
             },
         },
@@ -133,11 +105,11 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
         super().__init__(data)
         self.name = str(data["name"])
         self.ci = self.Ci(data.get("ci", None))
-        self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
+        self.components = TestComponents_1_0(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:
         return {
-            "schema-version": "1.1",
+            "schema-version": "1.0",
             "name": self.name,
             "ci": None if self.ci is None else self.ci.__to_dict__(),
             "components": self.components.__to_dict__()
@@ -145,28 +117,10 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
 
     class Ci:
         def __init__(self, data: dict) -> None:
-            self.image = None if data is None else self.__image_extract__(data.get("image", {}))
-
-        def __image_extract__(self, data: dict) -> Dict[str, Dict[str, 'Image']]:
-            image_dict = {}  # type: ignore[var-annotated]
-            for plat, dists in data.items():
-                image_dict[plat] = {}
-                for dist, img in dists.items():
-                    image_dict[plat][dist] = self.Image(img)
-            return image_dict
+            self.image = None if data is None else self.Image(data.get("image", None))
 
         def __to_dict__(self) -> Optional[dict]:
-            if self.image is None:
-                return None
-            return {
-                "image": {
-                    plat: {
-                        dist: img.__to_dict__()
-                        for dist, img in dists.items()
-                    }
-                    for plat, dists in self.image.items()
-                }
-            }
+            return None if self.image is None else {"image": self.image.__to_dict__()}
 
         class Image:
             def __init__(self, data: dict) -> None:
@@ -180,10 +134,10 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                 }
 
 
-class TestComponents(Components['TestComponent']):
+class TestComponents_1_0(Components['TestComponent_1_0']):
     @classmethod
-    def __create__(self, data: dict) -> 'TestComponent':
-        return TestComponent(data)
+    def __create__(self, data: dict) -> 'TestComponent_1_0':
+        return TestComponent_1_0(data)
 
 
 class ClusterConfig:
@@ -194,7 +148,7 @@ class ClusterConfig:
         assert self.cluster_manager_nodes == 0, "Cluster manager nodes are not supported so use value 0 or skip this parameter"
 
 
-class TestComponentTopology:
+class TestComponentTopology_1_0:
     def __init__(self, data: dict):
         if data is not None:
             self.cluster_configs = []
@@ -208,15 +162,15 @@ class TestComponentTopology:
             self.cluster_configs = [ClusterConfig({'cluster_name': 'cluster1', 'data_nodes': 1, 'cluster_manager_nodes': 0})]  # type: ignore[assignment]
 
 
-class TestComponent(Component):
+class TestComponent_1_0(Component):
     def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.working_directory = data.get("working-directory", None)
         self.integ_test = data.get("integ-test", None)
         self.bwc_test = data.get("bwc-test", None)
         self.smoke_test = data.get("smoke-test", None)
-        self.topology = TestComponentTopology(self.integ_test.get("topology", None)) if self.integ_test is not None else TestComponentTopology(None)
-        self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
+        self.topology = TestComponentTopology_1_0(self.integ_test.get("topology", None)) if self.integ_test is not None else TestComponentTopology_1_0(None)
+        self.components = TestComponents_1_0(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:
         return {
@@ -228,7 +182,7 @@ class TestComponent(Component):
         }
 
 
-TestManifest.VERSIONS = {"1.0": TestManifest_1_0, "1.1": TestManifest}
+TestManifest_1_0.VERSIONS = {"1.0": TestManifest_1_0}
 
-TestComponent.__test__ = False  # type: ignore[attr-defined]
-TestManifest.__test__ = False  # type: ignore[attr-defined]
+TestComponent_1_0.__test__ = False  # type: ignore[attr-defined]
+TestManifest_1_0.__test__ = False  # type: ignore[attr-defined]
