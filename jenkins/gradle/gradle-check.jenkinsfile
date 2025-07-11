@@ -21,7 +21,7 @@ pipeline {
             categories: [],
             limitOneJobWithMatchingParams: false,
             maxConcurrentPerNode: 0,
-            maxConcurrentTotal: 30,
+            maxConcurrentTotal: 45,
             paramsToUseForLimit: '',
             throttleEnabled: true,
             throttleOption: 'project',
@@ -70,9 +70,8 @@ pipeline {
             printPostContent: false
         )
         parameterizedCron '''
-            H 3 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Ubuntu2404-X64-M58xlarge-Single-Host
+            H */2 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Ubuntu2404-X64-M58xlarge-Single-Host
             H 6 * * * %GIT_REFERENCE=2.19;AGENT_LABEL=Jenkins-Agent-Ubuntu2404-X64-M58xlarge-Single-Host
-            H 9 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Ubuntu2404-X64-M58xlarge-Single-Host
         '''
     }
     environment {
