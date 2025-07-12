@@ -33,7 +33,9 @@ def main() -> int:
         manifests.append(InputManifest.from_file(input_manifests))
 
     if len(args.manifest) == 2:
-        if manifests[0].build.version != manifests[1].build.version:
+        if manifests[0].build.version + (("-" + manifests[0].build.qualifier) 
+                    if manifests[0].build.qualifier else None) != manifests[1].build.version + (("-" + manifests[1].build.qualifier) 
+                    if manifests[1].build.qualifier else None) :
             raise ValueError("OS and OSD manifests must be provided for the same release version")
         elif manifests[0].build.name == manifests[1].build.name:
             raise ValueError("Both manifests are for the same product, OS and OSD manifests must be provided")
@@ -41,7 +43,8 @@ def main() -> int:
         raise ValueError("Only two manifests, OS and OSD, can be provided")
 
     #  Assuming that the OS and OSD manifests will be provided for the same release version
-    BUILD_VERSION = manifests[0].build.version
+    BUILD_VERSION = manifests[0].build.version + (("-" + manifests[0].build.qualifier) 
+                    if manifests[0].build.qualifier else None) 
 
     table_filename = f"{BASE_FILE_PATH}/release_notes_table-{BUILD_VERSION}.md"
     urls_filename = f"{BASE_FILE_PATH}/release_notes_urls-{BUILD_VERSION}.txt"
