@@ -60,6 +60,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
                 "id": {"required": True, "type": "string"},
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
+                "qualifier": {"type": "string"}
             },
         },
         "schema-version": {"required": True, "type": "string", "allowed": ["1.2"]},
@@ -104,6 +105,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
         def __init__(self, data: dict) -> None:
             self.name: str = data["name"]
             self.version: str = data["version"]
+            self.qualifier: str = data.get('qualifier', None)
             self.platform: str = data["platform"]
             self.architecture: str = data["architecture"]
             self.distribution: str = data.get('distribution', None)
@@ -113,6 +115,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
             return {
                 "name": self.name,
                 "version": self.version,
+                "qualifier": self.qualifier,
                 "platform": self.platform,
                 "architecture": self.architecture,
                 "distribution": self.distribution,

@@ -104,10 +104,11 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             suffix = self.args.stack_suffix
 
         if self.manifest:
-            self.args.distribution_version = self.manifest.build.version
+            self.args.distribution_version = self.manifest.build.version + (("-" + self.manifest.build.qualifier) 
+                                                                                  if self.manifest.build.qualifier else None)
             artifact_url = self.manifest.build.location if isinstance(self.manifest, BundleManifest) else \
-                f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-" \
-                f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
+                f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.args.distribution_version}/opensearch-min-" \
+                f"{self.args.distribution_version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
         else:
             artifact_url = self.args.distribution_url.strip()
 

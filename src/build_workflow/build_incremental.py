@@ -30,10 +30,10 @@ class BuildIncremental:
         stable_input_manifest = input_manifest.stable()
         stable_input_manifest_version = (
             stable_input_manifest.build.version
-            if not stable_input_manifest.build.qualifier
-            else f"{stable_input_manifest.build.version}-{stable_input_manifest.build.qualifier}"
         )
-        if previous_build_manifest.build.version != stable_input_manifest_version:
+        stable_input_manifest_qualifier = stable_input_manifest.build.qualifier
+        if (previous_build_manifest.build.version != stable_input_manifest_version) or \
+        (previous_build_manifest.build.qualifier != stable_input_manifest_qualifier):
             logging.info("The version of previous build manifest doesn't match the current input manifest. Rebuilding Core.")
             return [input_manifest.build.name.replace(" ", "-")]
         components = []

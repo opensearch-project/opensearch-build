@@ -109,7 +109,8 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
         if os.path.exists(script):
             if len(cluster_endpoints) == 1:
                 single_data_node = cluster_endpoints[0].data_nodes[0]
-                cmd = f"bash {script} -b {single_data_node.endpoint} -p {single_data_node.port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
+                cmd = f"bash {script} -b {single_data_node.endpoint} -p {single_data_node.port} -s {str(security).lower()} -v {self.bundle_manifest.build.version + (("-" + self.bundle_manifest.build.qualifier) 
+                                                                                  if self.bundle_manifest.build.qualifier else None)}"
             else:
                 endpoints_list = []
                 for cluster_details in cluster_endpoints:
@@ -117,7 +118,8 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
                 endpoints_string = json.dumps(endpoints_list, indent=0, default=custom_node_endpoint_encoder).replace("\n", "")
                 cmd = f"bash {script} -e '"
                 cmd = cmd + endpoints_string + "'"
-                cmd = cmd + f" -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
+                cmd = cmd + f" -s {str(security).lower()} -v {self.bundle_manifest.build.version + (("-" + self.bundle_manifest.build.qualifier) 
+                                                                                  if self.bundle_manifest.build.qualifier else None)}"
             self.repo_work_dir = os.path.join(
                 self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
             (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)

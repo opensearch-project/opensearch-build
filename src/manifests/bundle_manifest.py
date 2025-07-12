@@ -47,6 +47,7 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
                 "location": {"required": True, "type": "string"},
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
+                "qualifier": {"type": "string"}
             },
         },
         "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
@@ -82,6 +83,7 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
         def __init__(self, data: Dict[str, str]) -> None:
             self.name = data["name"]
             self.version = data["version"]
+            self.qualifier = data.get('qualifier', None)
             self.platform = data["platform"]
             self.architecture = data["architecture"]
             self.distribution: str = data.get('distribution', None)
@@ -92,6 +94,7 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
             return {
                 "name": self.name,
                 "version": self.version,
+                "qualifier": self.qualifier,
                 "platform": self.platform,
                 "architecture": self.architecture,
                 "distribution": self.distribution,

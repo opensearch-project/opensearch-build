@@ -57,6 +57,7 @@ class TestReportRunner:
     def update_data(self) -> dict:
         self.test_report_data["name"] = self.product_name
         self.test_report_data["version"] = self.bundle_manifest.build.version
+        self.test_report_data["qualifier"] = self.bundle_manifest.build.qualifier
         self.test_report_data["platform"] = self.bundle_manifest.build.platform
         self.test_report_data["architecture"] = self.bundle_manifest.build.architecture
         self.test_report_data["distribution"] = self.bundle_manifest.build.distribution
@@ -105,7 +106,8 @@ class TestReportRunner:
         if self.test_type == "integ-test":
             config_names = [config for config in test_component.__to_dict__().get(self.test_type)["test-configs"]]
         elif self.test_type == "smoke-test":
-            config_names = self.get_spec_path(self.test_report_data["version"], test_component.__to_dict__().get(self.test_type)["test-spec"])
+            config_names = self.get_spec_path(self.test_report_data["version"] + (("-" + self.test_report_data["qualifier"]) 
+                                                                                  if self.test_report_data["qualifier"] else None), test_component.__to_dict__().get(self.test_type)["test-spec"])
         logging.info(f"Configs for {component_name} on {self.test_type} are {config_names}")
         for config in config_names:
             config_dict = {
@@ -151,6 +153,7 @@ class TestReportRunner:
                 "schema-version": "1.1",
                 "name": "",
                 "version": "",
+                "qualifier": "",
                 "platform": "",
                 "architecture": "",
                 "distribution": "",
