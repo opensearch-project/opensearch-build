@@ -239,7 +239,7 @@ pipeline {
                                 node(AGENT_LABEL) {
                                   docker.withRegistry('https://public.ecr.aws/') {
                                     docker.image(testDockerAgent.image).pull() // always pull latest
-                                    docker.image(testDockerAgent.image).inside(testDockerAgent.args]) {
+                                    docker.image(testDockerAgent.image).inside(testDockerAgent.args) {
                                       try {
                                         stage("${local_component}-ci-group-${ciNum}") {
                                           if (isUnix()){

@@ -25,7 +25,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('9.1.2')
+                .defaultVersion('10.1.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -44,7 +44,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
-        binding.setVariable('env', ['BUILD_NUMBER': '234', 'PUBLIC_ARTIFACT_URL': 'DUMMY_PUBLIC_ARTIFACT_URL', 'JOB_NAME': 'dummy_job', 'DOCKER_AGENT':[image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']])
+        binding.setVariable('env', ['BUILD_NUMBER': '234', 'PUBLIC_ARTIFACT_URL': 'DUMMY_PUBLIC_ARTIFACT_URL', 'JOB_NAME': 'dummy_job', 'testDockerAgent':[image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']])
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'DUMMY_BUCKET_NAME')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'DUMMY_AWS_ACCOUNT_PUBLIC')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'DUMMY_ARTIFACT_BUCKET_NAME')
@@ -93,7 +93,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         super.testPipeline('jenkins/opensearch/integ-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch/integ-test.jenkinsfile')
         assert getCommandExecutions('stage', 'validate-artifacts').size() == 1
-        assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component ml-commons  --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
+        assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-21 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component ml-commons  --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
         assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/9010/linux/x64/tar --test-run-id 234 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar --release-candidate 0 '))
         assertThat(getCommandExecutions('echo', 'Testing'), hasItem('Testing components: [ml-commons, anomaly-detection, neural-search, security-analytics, security, k-NN, notifications]'))
         assertCallStack().contains('curl -sSL https://ci.opensearch.org/ci/dbc/integ-test/3.0.0/9010/linux/x64/tar/test-results/234/integ-test/test-report.yml --output test-results-os-234/test-report.yml')
