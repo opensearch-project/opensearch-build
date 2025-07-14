@@ -15,6 +15,7 @@ from manifests_workflow.input_manifests import InputManifests
 
 
 class TestInputManifests(unittest.TestCase):
+    maxDiff = None
 
     def test_manifests_path(self) -> None:
         path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
@@ -61,14 +62,14 @@ class TestInputManifests(unittest.TestCase):
         self.assertEqual(
             input_manifest[1].to_dict(),
             {
-                'schema-version': '1.0',
-                'name': 'OpenSearch',
-                'ci': {'image': {'name': 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3',
-                                 'args': '-e JAVA_HOME=/opt/java/openjdk-11'}},
-                'components': [{'name': 'index-management',
-                                'integ-test': {'build-dependencies': ['job-scheduler'],
-                                               'test-configs': ['with-security', 'without-security'],
-                                               'additional-cluster-configs': {'path.repo': ['/tmp']}}, 'bwc-test': {'test-configs': ['with-security']}}]
+                "schema-version": "1.0",
+                "name": "OpenSearch",
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3",
+                                 "args": "-e JAVA_HOME=/opt/java/openjdk-11"}},
+                "components": [{"name": "index-management",
+                                "integ-test": {"build-dependencies": ["job-scheduler"],
+                                               "test-configs": ["with-security", "without-security"],
+                                               "additional-cluster-configs": {"path.repo": ["/tmp"]}}, "bwc-test": {"test-configs": ["with-security"]}}]
             }
         )
 
@@ -91,15 +92,22 @@ class TestInputManifests(unittest.TestCase):
         self.assertEqual(
             input_manifest[1].to_dict(),
             {
-                'schema-version': '1.0',
-                'name': 'OpenSearch',
-                'ci': {'image': {'name': 'opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1',
-                                 'args': '-e JAVA_HOME=/opt/java/openjdk-24'}},
-                'components': [{'name': 'index-management',
-                                'integ-test': {'build-dependencies': ['job-scheduler'],
-                                               'test-configs': ['with-security', 'without-security'],
-                                               'additional-cluster-configs': {'path.repo': ['/tmp']}}, 'bwc-test': {'test-configs': ['with-security']}}]
+                "schema-version": "1.1",
+                "name": "OpenSearch",
+                "ci": {"image": {"linux": {"tar": {
+                    "name": "opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1",
+                    "args": "-e JAVA_HOME=/opt/java/openjdk-24 -u 1000 --cpus 4 -m 16g"}}}},
+                "components": [{
+                    "name": "index-management",
+                    "integ-test": {
+                        "build-dependencies": ["job-scheduler"],
+                        "test-configs": ["with-security", "without-security"],
+                        "additional-cluster-configs": {"path.repo": ["/tmp"]}
+                    },
+                    "bwc-test": {"test-configs": ["with-security"]}
+                }]
             }
+
         )
 
     def test_create_manifest_opensearch_previous_base_version(self) -> None:
@@ -126,11 +134,11 @@ class TestInputManifests(unittest.TestCase):
         self.assertEqual(
             input_manifest[1].to_dict(),
             {
-                'schema-version': '1.0',
-                'name': 'OpenSearch Dashboards',
-                'ci': {'image': {'name': 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4'}},
-                'components': [{'name': 'indexManagementDashboards',
-                                'integ-test': {'test-configs': ['with-security', 'without-security']}}]
+                "schema-version": "1.0",
+                "name": "OpenSearch Dashboards",
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4"}},
+                "components": [{"name": "indexManagementDashboards",
+                                "integ-test": {"test-configs": ["with-security", "without-security"]}}]
             }
         )
 
@@ -140,9 +148,9 @@ class TestInputManifests(unittest.TestCase):
         self.assertEqual(
             input_manifest[0].to_dict(),
             {
-                "schema-version": "1.1",
+                "schema-version": "1.2",
                 "build": {"name": "OpenSearch Dashboards", "version": "4.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-build-v1"}},
+                "ci": {"image": {"linux": {"tar": {"name": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-build-v1"}}}},
                 "components": [{"name": "OpenSearch-Dashboards",
                                 "repository": "https://github.com/opensearch-project/OpenSearch-Dashboards.git",
                                 "ref": "4.x",
@@ -152,22 +160,20 @@ class TestInputManifests(unittest.TestCase):
         self.assertEqual(
             input_manifest[1].to_dict(),
             {
-                'schema-version': '1.0',
-                'name': 'OpenSearch Dashboards',
-                'ci': {'image': {'name': 'opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1'}},
-                'components': [{'name': 'OpenSearch-Dashboards',
-                                'integ-test': {'test-configs': ['with-security', 'without-security'],
-                                               'additional-cluster-configs': {'vis_builder.enabled': True,
-                                                                              'data_source.enabled': True,
-                                                                              'savedObjects.maxImportPayloadBytes': 10485760,
-                                                                              'server.maxPayloadBytes': 1759977,
-                                                                              'logging.json': False,
-                                                                              'data.search.aggs.shardDelay.enabled': True,
-                                                                              'csp.warnLegacyBrowsers': False},
-                                               'ci-groups': 9}},
-                               {'name': 'indexManagementDashboards',
-                                'integ-test': {'test-configs': ['with-security', 'without-security']}}]
-            }
+                "schema-version": "1.1",
+                "name": "OpenSearch Dashboards",
+                "ci": {"image": {"linux": {"tar": {"name": "opensearchstaging/ci-runner-almalinux8-opensearch-dashboards-integtest-v1",
+                                                   "args": "-u 1000 --cpus 4 -m 16g -e BROWSER_PATH=electron"}}}},
+                "components": [{"name": "OpenSearch-Dashboards",
+                                "integ-test": {"test-configs": ["with-security", "without-security"],
+                                "additional-cluster-configs": {"vis_builder.enabled": True,
+                                                               "data_source.enabled": True,
+                                                               "savedObjects.maxImportPayloadBytes": 10485760,
+                                                               "server.maxPayloadBytes": 1759977,
+                                                               "logging.json": False,
+                                                               "data.search.aggs.shardDelay.enabled": True,
+                                                               "csp.warnLegacyBrowsers": False}, "ci-groups": 9}},
+                               {"name": "indexManagementDashboards", "integ-test": {"test-configs": ["with-security", "without-security"]}}]}
         )
 
     def test_create_manifest_opensearch_dashboards_previous_base_version(self) -> None:
@@ -188,6 +194,8 @@ class TestInputManifests(unittest.TestCase):
         input_manifests.write_manifest('2.12.1000', '2.x', [])
         mock_create_manifest.assert_called_with('2.12.1000', '2.x', [])
         mock_makedirs.assert_called_with(os.path.join(InputManifests.manifests_path(), '2.12.1000'), exist_ok=True)
+        print(mock_to_file.call_args_list[0][0][0])
+        print(mock_to_file.call_args_list[1][0][0])
         self.assertEqual(
             mock_to_file.call_args_list[0][0][0],
             os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests", "2.12.1000", "opensearch-2.12.1000.yml"))

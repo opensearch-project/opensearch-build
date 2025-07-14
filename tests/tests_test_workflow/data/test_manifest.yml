@@ -1,4 +1,5 @@
 ---
+schema-version: '1.1'
 name: OpenSearch
 components:
   - name: job-scheduler
@@ -41,4 +42,3 @@ components:
     bwc-test:
       test-configs:
         - with-security
-schema-version: '1.0'
