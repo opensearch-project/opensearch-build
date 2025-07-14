@@ -8,6 +8,7 @@
 import argparse
 import datetime
 import logging
+import os
 from typing import IO, List
 
 
@@ -19,7 +20,7 @@ class ReleaseNotesCheckArgs:
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Checkout an OpenSearch Bundle and check for CommitID and Release Notes")
-        parser.add_argument("action", choices=["check", "compile"], help="Operation to perform.")
+        parser.add_argument("action", choices=["check", "compile", "generate"], help="Operation to perform.")
         parser.add_argument("manifest", type=argparse.FileType("r"), nargs='+', help="Manifest file.")
         parser.add_argument(
             "-v",
@@ -40,11 +41,38 @@ class ReleaseNotesCheckArgs:
             "--output",
             help="Output file."
         )
+        
+        # AI-powered release notes options
+        parser.add_argument(
+            "--ai-model",
+            default="claude-3-7-sonnet",
+            help="AI model to use for analysis (default: claude-3-7-sonnet)"
+        )
+        parser.add_argument(
+            "--test-mode",
+            action="store_true",
+            help="Test mode: only read from GitHub, no write operations (branches, commits, PRs)"
+        )
+        parser.add_argument(
+            "-c",
+            "--component",
+            dest="components",
+            nargs='*',
+            type=str,
+            help="Process one or more components."
+        )
+        
         args = parser.parse_args()
         self.logging_level = args.logging_level
         self.action = args.action
         self.manifest = args.manifest
         self.date = args.date
         self.output = args.output
+        
+        # AI options
+        self.ai_model = args.ai_model
+        self.test_mode = args.test_mode
+        self.components = args.components
+        
         if self.action == "check" and self.date is None:
             parser.error("check option requires --date argument")
