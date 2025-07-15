@@ -11,6 +11,7 @@ import sys
 from typing import Any, Dict, List
 from pytablewriter import MarkdownTableWriter
 from git.git_repository import GitRepository
+from llms.prompts import AI_RELEASE_NOTES_PROMPT_CHANGELOG
 from manifests.input_manifest import InputComponentFromSource, InputManifest
 from release_notes_workflow.release_notes_component import ReleaseNotesComponents
 from system.temporary_directory import TemporaryDirectory
@@ -95,13 +96,7 @@ class ReleaseNotes:
             # Initialize processor with initial date
             processor = Processor(build_version, self.date)
             baseline_date = self.date
-            try:
-                baseline_date = processor.get_last_tag_date(None, self.date)
-                # Update processor with the final baseline date
-                processor = Processor(build_version, baseline_date)
-            except Exception as e:
-                logging.warning(f"Failed to get last tag date from GitHub API: {e}")
-            
+
             # Initialize AI generator
             ai_generator = AIReleaseNotesGenerator(
                 github_token=None,
@@ -109,28 +104,31 @@ class ReleaseNotes:
                 baseline_date=baseline_date,
                 test_mode=self.test_mode
             )
-            
+
             with GitRepository(
                     component.repository,
                     component.ref,
                     os.path.join(work_dir.name, component.name),
-                    component.working_directory,
-                    fetch_depth=0  # Fetch full history to get all commits
+                    component.working_directory
             ) as repo:
                 release_notes = ReleaseNotesComponents.from_component(component, build_version, build_qualifier, repo.dir)
-                
                 changelog_exist = os.path.isfile(os.path.join(repo.dir, 'CHANGELOG.md'))
                 changelog_path = os.path.join(repo.dir, 'CHANGELOG.md')
                 if changelog_exist:
                     with open(changelog_path, 'r') as f:
                         content = f.read()
-                    processed_data = processor.process(content, component.name)
-                    ai_generator.process(processed_data['formatted_content'], component.name, manifest_path)
-                    return
-                
-                # If no CHANGELOG.md found from GitHub, use commit history
-                logging.info(f"No CHANGELOG.md found for {component.name}, will use commit history")
-                content = processor.get_commit_history_content(repo, baseline_date, component.name)
-                if content:
-                    processed_data = processor.process(content, component.name)
-                    ai_generator.process(processed_data['formatted_content'], component.name, manifest_path)
+                    #processed_data = processor.process(content, component.name)
+                    prompt = AI_RELEASE_NOTES_PROMPT_CHANGELOG.format(
+                        repo_name=component.name,
+                        version=build_version,
+                        repository_url=component.repository
+                    )
+                    print(f"Promt is:\n{prompt}")
+                    #ai_generator.process(processed_data['formatted_content'], component.name, manifest_path)
+                else:
+                    # If no CHANGELOG.md found from GitHub, use commit history
+                    logging.info(f"No CHANGELOG.md found for {component.name}, will use commit history")
+                    content = processor.get_commit_history_content(repo, baseline_date, component.name)
+                    if content:
+                        processed_data = processor.process(content, component.name)
+                        ai_generator.process(processed_data['formatted_content'], component.name, manifest_path)

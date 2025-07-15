@@ -88,8 +88,6 @@ ONLY use the commits that are provided in the formatted_content below.
 - Component: {repo_name}
 - Version: {version}
 - Repository: {repository_url}
-- Start Commit Date: {start_date}
-- End Commit Date: {today_date}
 
 **Actual Commit Data:**
 {formatted_content}
