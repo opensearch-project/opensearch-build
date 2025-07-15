@@ -115,11 +115,11 @@ class AIReleaseNotesGenerator:
             logging.info(f"Using CHANGELOG for {repo_name}, content length: {len(formatted_content)}")
             logging.info(f"CHANGELOG content: {formatted_content[:500]}...")
             
+            # For CHANGELOG, we need to add the content separately since it's not in the prompt template
             prompt = AI_RELEASE_NOTES_PROMPT_CHANGELOG.format(
                 repo_name=repo_name,
                 version=self.version,
-                repository_url=repository_url,
-                formatted_content=formatted_content
+                repository_url=repository_url
             )
             
             # Add the formatted_content to the prompt
@@ -127,6 +127,8 @@ class AIReleaseNotesGenerator:
         else:
             import datetime
             today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            
+            # For commit data, the formatted_content is included in the prompt template
             prompt = AI_RELEASE_NOTES_PROMPT_COMMIT.format(
                 repo_name=repo_name,
                 version=self.version,
