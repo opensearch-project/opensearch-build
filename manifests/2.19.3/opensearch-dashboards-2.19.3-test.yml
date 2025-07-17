@@ -8,7 +8,7 @@ ci:
         name: opensearchstaging/ci-runner-almalinux8-opensearch-dashboards-integtest-v1
         args: '-u 1000 --cpus 4 -m 16g -e BROWSER_PATH=electron'
       deb:
-        name: opensearchstaging/ci-runner:ci-runner-ubuntu2404-opensearch-build-v1
+        name: opensearchstaging/ci-runner:ci-runner-ubuntu2404-systemd-base-integtest-v1
         args: '--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --cpus 4 -m 16g -e BROWSER_PATH=electron'
       rpm:
         name: opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1
