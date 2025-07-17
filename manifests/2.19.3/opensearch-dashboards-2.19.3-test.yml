@@ -1,9 +1,22 @@
 ---
-schema-version: '1.0'
+schema-version: '1.1'
 name: OpenSearch Dashboards
 ci:
   image:
-    name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1
+    linux:
+      tar:
+        name: opensearchstaging/ci-runner-almalinux8-opensearch-dashboards-integtest-v1
+        args: '-u 1000 --cpus 4 -m 16g -e BROWSER_PATH=electron'
+      deb:
+        name: opensearchstaging/ci-runner:ci-runner-ubuntu2404-opensearch-build-v1
+        args: '--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --cpus 4 -m 16g -e BROWSER_PATH=electron'
+      rpm:
+        name: opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1
+        args: '--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --cpus 4 -m 16g -e BROWSER_PATH=electron'
+    windows:
+      zip:
+        name: opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1
+        args: '-u ContainerAdministrator'
 components:
   - name: OpenSearch-Dashboards
     integ-test:
