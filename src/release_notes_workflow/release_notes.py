@@ -8,18 +8,15 @@
 import logging
 import os
 import sys
+import json
 from typing import Any, Dict, List
 from pytablewriter import MarkdownTableWriter
 from git.git_repository import GitRepository
-from llms.prompts import AI_RELEASE_NOTES_PROMPT_CHANGELOG
+from git.git_commit_processor import GitHubCommitProcessor
 from manifests.input_manifest import InputComponentFromSource, InputManifest
 from release_notes_workflow.release_notes_component import ReleaseNotesComponents
 from system.temporary_directory import TemporaryDirectory
 from llms.ai_release_notes_generator import AIReleaseNotesGenerator
-
-# Add the parent directory to sys.path to import process.py
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from process import Processor
 
 
 class ReleaseNotes:
@@ -65,8 +62,7 @@ class ReleaseNotes:
                     component.repository,
                     component.ref,
                     os.path.join(work_dir.name, component.name),
-                    component.working_directory,
-                    fetch_depth=0  # Fetch full history for commit analysis
+                    component.working_directory
             ) as repo:
                 logging.debug(f"Checked out {component.name} into {repo.dir}")
                 release_notes = ReleaseNotesComponents.from_component(component, build_version, build_qualifier, repo.dir)
@@ -93,9 +89,23 @@ class ReleaseNotes:
     def generate(self, component: InputComponentFromSource, build_version: str, build_qualifier: str, manifest_path: str = None) -> None:
         """Generate AI-powered release notes for a component."""
         with TemporaryDirectory(chdir=True) as work_dir:
-            # Initialize processor with initial date
-            processor = Processor(build_version, self.date)
             baseline_date = self.date
+            if self.date:
+                logging.info(f"Using user-provided date as baseline: {baseline_date}")
+            else:
+                try:
+                    with GitRepository(
+                            "https://github.com/opensearch-project/opensearch-build.git",
+                            "main",
+                            os.path.join(work_dir.name, "opensearch-build")
+                    ) as build_repo:
+                        cmd = "git fetch --tags > /dev/null 2>&1 && git for-each-ref --sort=-creatordate --format='%(creatordate:iso8601)' refs/tags --count 1"
+                        last_tag_date = build_repo.output(cmd)
+                        if last_tag_date:
+                            baseline_date = last_tag_date
+                            logging.info(f"Using last tag date as baseline: {baseline_date}")
+                except Exception as e:
+                    logging.warning(f"Failed to get last tag date from opensearch-build: {e}")
 
             # Initialize AI generator
             ai_generator = AIReleaseNotesGenerator(
@@ -111,24 +121,24 @@ class ReleaseNotes:
                     os.path.join(work_dir.name, component.name),
                     component.working_directory
             ) as repo:
-                release_notes = ReleaseNotesComponents.from_component(component, build_version, build_qualifier, repo.dir)
-                changelog_exist = os.path.isfile(os.path.join(repo.dir, 'CHANGELOG.md'))
                 changelog_path = os.path.join(repo.dir, 'CHANGELOG.md')
+                changelog_exist = os.path.isfile(changelog_path)
+                last_tag_date = baseline_date
+                commit_processor = GitHubCommitProcessor(last_tag_date, component)
+                logging.info(f"Using baseline date: {last_tag_date}")
+                
                 if changelog_exist:
                     with open(changelog_path, 'r') as f:
-                        content = f.read()
-                    #processed_data = processor.process(content, component.name)
-                    prompt = AI_RELEASE_NOTES_PROMPT_CHANGELOG.format(
-                        repo_name=component.name,
-                        version=build_version,
-                        repository_url=component.repository
-                    )
-                    print(f"Promt is:\n{prompt}")
-                    #ai_generator.process(processed_data['formatted_content'], component.name, manifest_path)
+                        changelog_content = f.read()
+                    
+                    logging.info(f"Using CHANGELOG.md for {component.name}")
+                    ai_generator.process(changelog_content, component.name, manifest_path)
                 else:
-                    # If no CHANGELOG.md found from GitHub, use commit history
-                    logging.info(f"No CHANGELOG.md found for {component.name}, will use commit history")
-                    content = processor.get_commit_history_content(repo, baseline_date, component.name)
-                    if content:
-                        processed_data = processor.process(content, component.name)
-                        ai_generator.process(processed_data['formatted_content'], component.name, manifest_path)
+                    logging.info(f"No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {last_tag_date}")
+                    commits = commit_processor.get_commit_details()
+                    
+                    if commits:
+                        formatted_commits = json.dumps(commits, indent=2)
+                        ai_generator.process(formatted_commits, component.name, manifest_path)
+                    else:
+                        logging.warning(f"No commits found for {component.name} since {last_tag_date}")
