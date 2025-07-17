@@ -39,7 +39,7 @@ class AIReleaseNotesGenerator:
             
             # Save to file if test_mode is True
             if self.test_mode:
-                self._save_to_file(component_name, ai_result)
+                self._save_to_file(component_name, ai_result, manifest_path)
             
             return {
                 'success': True,
@@ -55,41 +55,46 @@ class AIReleaseNotesGenerator:
                 'component_name': component_name
             }
     
-    def _save_to_file(self, component_name: str, content: str) -> None:
+    def _save_to_file(self, component_name: str, content: str, manifest_path: str = None) -> None:
         """Save AI-generated release notes to a file."""
         try:
-            # Get the absolute path to the project root directory
+            # Get the path to the project root directory
             # This ensures we save to the project root, not a temporary directory
-            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+            project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
             
             # Create output directory if it doesn't exist
             output_dir = os.path.join(project_root, "release-notes")
             os.makedirs(output_dir, exist_ok=True)
             
-            # Determine the appropriate prefix based on the component name
-            comp_name = component_name.lower()
+            print(f"DEBUG: manifest_path={manifest_path}")
             
-            # Special case for OpenSearch and OpenSearch-Dashboards
-            if comp_name == 'opensearch':
-                display_name = 'opensearch'
-            elif comp_name == 'opensearch-dashboards' or comp_name == 'opensearchdashboards':
-                display_name = 'opensearch-dashboards'
-            # If component name already starts with either prefix, don't add it again
-            elif comp_name.startswith('opensearch-') or comp_name.startswith('opensearch-dashboards-'):
-                display_name = comp_name
+            # Extract the manifest name from the command-line arguments
+            manifest_prefix = None
+            
+            # Try to get the manifest name from sys.argv
+            import sys
+            for arg in sys.argv:
+                if arg.endswith('.yml') and ('manifest' in arg or '/3.2.0/' in arg):
+                    manifest_filename = os.path.basename(arg)
+                    # Extract the name from the filename (e.g., "opensearch" from "opensearch-3.2.0.yml")
+                    if manifest_filename.endswith('.yml'):
+                        manifest_prefix = manifest_filename.split('-')[0]
+                        print(f"DEBUG: manifest_prefix={manifest_prefix}")
+                        break
+            
+            # Use the component name for the display name
+            comp_name = component_name.lower()
+            print(f"DEBUG: comp_name={comp_name}")
+            
+            # Combine the manifest prefix and component name
+            if manifest_prefix and manifest_prefix != comp_name:
+                display_name = f"{manifest_prefix}-{comp_name}"
             else:
-                # Default to opensearch- prefix
-                display_name = f"opensearch-{comp_name}"
+                display_name = comp_name
             
             # Create filename
             filename = f"{display_name}.release-notes-{self.version}.md"
             filepath = os.path.join(output_dir, filename)
-            
-            # Debug logging
-            print(f"DEBUG: _save_to_file called with component_name={component_name}, version={self.version}")
-            print(f"DEBUG: test_mode={self.test_mode}")
-            print(f"DEBUG: Creating file {filepath}")
-            print(f"DEBUG: Project root directory: {project_root}")
             
             # Write to file
             with open(filepath, 'w') as f:
@@ -110,7 +115,7 @@ class AIReleaseNotesGenerator:
         repository_url = f"https://github.com/opensearch-project/{repo_name}"
         
         # Determine which prompt to use based on content type
-        if "Changelog" in formatted_content or "CHANGELOG" in formatted_content or "# CHANGELOG" in formatted_content:
+        if "CHANGELOG" in formatted_content:
             # Add debug logging to see what's in the formatted_content
             logging.info(f"Using CHANGELOG for {repo_name}, content length: {len(formatted_content)}")
             logging.info(f"CHANGELOG content: {formatted_content[:500]}...")
@@ -125,17 +130,12 @@ class AIReleaseNotesGenerator:
             # Add the formatted_content to the prompt
             prompt += f"\n\n**CHANGELOG Content:**\n{formatted_content}"
         else:
-            import datetime
-            today_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            
             # For commit data, the formatted_content is included in the prompt template
             prompt = AI_RELEASE_NOTES_PROMPT_COMMIT.format(
                 repo_name=repo_name,
                 version=self.version,
                 repository_url=repository_url,
-                formatted_content=formatted_content,
-                start_date=self.baseline_date or "2025-01-01",
-                today_date=today_date
+                formatted_content=formatted_content
             )
         
         # Try to use AWS Bedrock with retries
@@ -175,9 +175,9 @@ class AIReleaseNotesGenerator:
                 retry_count += 1
                 logging.warning(f"AI analysis attempt {retry_count} failed: {e}")
                 if retry_count < max_retries:
-                    logging.info(f"Retrying in 2 seconds...")
+                    logging.info(f"Retrying in 10 seconds...")
                     import time
-                    time.sleep(2)
+                    time.sleep(10)
                 else:
                     logging.error(f"All AI analysis attempts failed: {e}")
                     return f"AI analysis failed after {max_retries} attempts: {e}"

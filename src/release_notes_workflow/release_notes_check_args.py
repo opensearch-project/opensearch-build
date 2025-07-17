@@ -42,12 +42,6 @@ class ReleaseNotesCheckArgs:
             help="Output file."
         )
         
-        # AI-powered release notes options
-        parser.add_argument(
-            "--ai-model",
-            default="claude-3-7-sonnet",
-            help="AI model to use for analysis (default: claude-3-7-sonnet)"
-        )
         parser.add_argument(
             "--test-mode",
             action="store_true",
