@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 78b8bbbdeffb73af004fe91b734732f49333f5ee
+    ref: b8a3e8b9b06e7599b14673f84456f8deaa3d069e
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: e9493e6a72fb84546c565debb6104fe1f0d51896
@@ -37,7 +37,7 @@ components:
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: e039107762d16413ecf8c8a3fd96ce1f3ee3e007
+    ref: 04b83c7c099cded7de5b83c3a3e954c4b348559e
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 123b16a9511b4d61b05a1f904556ca3b6d56b5cc
+    ref: c7936b0d35e297de3e9618f39a0d288330af4e17
     platforms:
       - linux
       - windows
@@ -158,7 +158,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: d4376e14a727cc4fec3a52ca6138eb96403319b4
+    ref: e6459a9cb85cdaa106f76069855a94eb9e7b4dd7
     platforms:
       - linux
       - windows
@@ -208,7 +208,7 @@ components:
       - neural-search
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: b44cbb6698d5c1042ab37e92182e272e3bf97fb0
+    ref: 88fd933a6d49dc03c9d9c5ec34489aa7371c0682
     platforms:
       - linux
       - windows
