@@ -216,7 +216,7 @@ This project contains [Jenkins pipelines](jenkins) and [Jenkins shared libraries
 
 #### Java
 
-Use Java 11 for Jenkins jobs CI. This means you must have a JDK 11 installed with the environment variable `JAVA_HOME` referencing the path to Java home for your JDK installation, e.g. `JAVA_HOME=/usr/lib/jvm/jdk-11`. Download Java 11 from [here](https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html).
+Use Java 17 for running Jenkins CI tests. Ensure that JDK 17 is installed on your system and that the `JAVA_HOME` environment variable is correctly set to the JDK 17 installation path.
 
 ### Run Tests
 
