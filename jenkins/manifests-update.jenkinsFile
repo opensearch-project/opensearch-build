@@ -7,6 +7,11 @@
  * compatible open source license.
  */
 
+def secret_github_bot = [
+    [envVar: 'GITHUB_USER', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-username'],
+    [envVar: 'GITHUB_TOKEN', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-token']
+]
+
 pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
@@ -29,7 +34,7 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                    withSecrets(secrets: secret_github_bot){
                         try {
                             sh """
                                 set +x

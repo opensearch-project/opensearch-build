@@ -48,6 +48,10 @@ class TestDockerBuild extends BuildPipelineTest {
         binding.setVariable('DOCKER_BUILD_SCRIPT_WITH_COMMANDS', dockerBuildScriptwithCommands)
         binding.setVariable('DOCKER_BUILD_OS', dockerBuildOS)
         helper.registerAllowedMethod('isUnix', [], { true })
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
 
     }
 
@@ -65,12 +69,12 @@ class TestDockerBuild extends BuildPipelineTest {
 
         // Ensure the entire docker command is executed in an external shell script exactly once
         def dockerLoginCommand = getCommands('docker').findAll {
-            shCommand -> shCommand.contains('docker logout && echo DOCKER_PASSWORD | docker login -u DOCKER_USERNAME --password-stdin && eval bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>')
+            shCommand -> shCommand.contains('docker logout && echo dockerPassword | docker login -u dockerUsername --password-stdin && eval bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>')
         }
         assertThat(dockerLoginCommand.size(), equalTo(1))
 
         // Validate the docker-build.sh is called with correct predefined credential
-        assertCallStack().contains("docker-build.sh(echo Account: jenkins-staging-dockerhub-credential)")
+        assertCallStack().contains("docker-build.echo(Account: dockerhub staging)")
 
         // Make sure dockerBuildOS is deciding agent_node docker_nodes docker_args correctly
         assertCallStack().contains("docker-build.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])")

@@ -7,6 +7,11 @@
  * compatible open source license.
  */
 
+def secret_dockerhub_readonly = [
+    [envVar: 'DOCKER_USERNAME', secretRef: 'op://opensearch-infra-secrets/dockerhub-production-readonly-credentials/username'],
+    [envVar: 'DOCKER_PASSWORD', secretRef: 'op://opensearch-infra-secrets/dockerhub-production-readonly-credentials/password']
+]
+
 lib = library(identifier: 'jenkins@8.2.3', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -102,10 +107,9 @@ pipeline {
 
                     def agent_name_array = params.AGENT_LABEL.tokenize('-')
                     def agent_name = agent_name_array[2] + " " + agent_name_array[4]
-                    def CREDENTIAL_ID = 'jenkins-production-dockerhub-credential-readonly'
 
                     echo("Build Cause: ${BUILD_CAUSE}")
-                    withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withSecrets(secrets: secret_dockerhub_readonly){
                         def bwc_checkout_align = "false"
 
                         def dockerLogin = sh(returnStdout: true, script: "set +x && (echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin) || echo docker error").trim()

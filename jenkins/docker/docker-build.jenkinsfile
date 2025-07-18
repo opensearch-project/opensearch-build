@@ -22,6 +22,11 @@ def agent_nodes = [
     "windows": "Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Builder",
 ]
 
+def secret_dockerhub_staging = [
+    [envVar: 'DOCKER_USERNAME', secretRef: 'op://opensearch-infra-secrets/dockerhub-staging-credentials/username'],
+    [envVar: 'DOCKER_PASSWORD', secretRef: 'op://opensearch-infra-secrets/dockerhub-staging-credentials/password']
+]
+
 pipeline {
     options {
         timeout(time: 5, unit: 'HOURS')
@@ -77,9 +82,8 @@ pipeline {
                 script {
                     echo 'The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories'
                     checkout([$class: 'GitSCM', branches: [[name: "${DOCKER_BUILD_GIT_REPOSITORY_REFERENCE}" ]], userRemoteConfigs: [[url: "${DOCKER_BUILD_GIT_REPOSITORY}" ]]])
-                    def CREDENTIAL_ID = "jenkins-staging-dockerhub-credential"
-                    sh("echo Account: ${CREDENTIAL_ID}")
-                    withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    echo "Account: dockerhub staging"
+                    withSecrets(secrets: secret_dockerhub_staging){
                         if (isUnix()){
                             sh """
                                 set -e
