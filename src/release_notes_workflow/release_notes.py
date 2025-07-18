@@ -7,9 +7,8 @@
 
 import logging
 import os
-import sys
 import json
-from typing import Any, Dict, List
+from typing import List
 from pytablewriter import MarkdownTableWriter
 from git.git_repository import GitRepository
 from git.git_commit_processor import GitHubCommitProcessor
@@ -88,25 +87,24 @@ class ReleaseNotes:
 
     def generate(self, component: InputComponentFromSource, build_version: str, build_qualifier: str, manifest_path: str = None) -> None:
         """Generate AI-powered release notes for a component."""
+        baseline_date = self.date
+        if self.date:
+            logging.info(f"Using user-provided date as baseline: {baseline_date}")
+        else:
+            try:
+                with GitRepository(
+                        "https://github.com/opensearch-project/opensearch-build.git",
+                        "main",
+                        os.path.join(work_dir.name, "opensearch-build")
+                ) as build_repo:
+                    cmd = "git fetch --tags > /dev/null 2>&1 && git for-each-ref --sort=-creatordate --format='%(creatordate:iso8601)' refs/tags --count 1"
+                    tag_date = build_repo.output(cmd)
+                    if tag_date:
+                        baseline_date = tag_date
+                        logging.info(f"Using last tag date as baseline: {baseline_date}")
+            except Exception as e:
+                logging.warning(f"Failed to get last tag date from opensearch-build: {e}")
         with TemporaryDirectory(chdir=True) as work_dir:
-            baseline_date = self.date
-            if self.date:
-                logging.info(f"Using user-provided date as baseline: {baseline_date}")
-            else:
-                try:
-                    with GitRepository(
-                            "https://github.com/opensearch-project/opensearch-build.git",
-                            "main",
-                            os.path.join(work_dir.name, "opensearch-build")
-                    ) as build_repo:
-                        cmd = "git fetch --tags > /dev/null 2>&1 && git for-each-ref --sort=-creatordate --format='%(creatordate:iso8601)' refs/tags --count 1"
-                        last_tag_date = build_repo.output(cmd)
-                        if last_tag_date:
-                            baseline_date = last_tag_date
-                            logging.info(f"Using last tag date as baseline: {baseline_date}")
-                except Exception as e:
-                    logging.warning(f"Failed to get last tag date from opensearch-build: {e}")
-
             # Initialize AI generator
             ai_generator = AIReleaseNotesGenerator(
                 github_token=None,
@@ -122,23 +120,20 @@ class ReleaseNotes:
                     component.working_directory
             ) as repo:
                 changelog_path = os.path.join(repo.dir, 'CHANGELOG.md')
-                changelog_exist = os.path.isfile(changelog_path)
-                last_tag_date = baseline_date
-                commit_processor = GitHubCommitProcessor(last_tag_date, component)
-                logging.info(f"Using baseline date: {last_tag_date}")
+                logging.info(f"Using last tag date: {baseline_date}")
                 
-                if changelog_exist:
+                if os.path.isfile(changelog_path):
                     with open(changelog_path, 'r') as f:
                         changelog_content = f.read()
                     
                     logging.info(f"Using CHANGELOG.md for {component.name}")
-                    ai_generator.process(changelog_content, component.name, manifest_path)
+                    ai_generator.process(changelog_content, component.name, manifest_path, repo, component)
                 else:
-                    logging.info(f"No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {last_tag_date}")
-                    commits = commit_processor.get_commit_details()
+                    logging.info(f"No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {baseline_date}")
+                    commits = GitHubCommitProcessor(baseline_date, component).get_commit_details()
                     
                     if commits:
                         formatted_commits = json.dumps(commits, indent=2)
-                        ai_generator.process(formatted_commits, component.name, manifest_path)
+                        ai_generator.process(formatted_commits, component.name, manifest_path, repo, component)
                     else:
-                        logging.warning(f"No commits found for {component.name} since {last_tag_date}")
+                        logging.warning(f"No commits found for {component.name} since {baseline_date}")
