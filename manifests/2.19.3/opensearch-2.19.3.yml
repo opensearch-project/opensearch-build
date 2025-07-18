@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: b8a3e8b9b06e7599b14673f84456f8deaa3d069e
+    ref: 2975205b9fa68d471dfccc1fd9ea87e564d982e8
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: e9493e6a72fb84546c565debb6104fe1f0d51896
@@ -49,7 +49,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: d73c1ab205214a7fc9cab663d6e1ee87243d7164
+    ref: c945b4b1b15afe5ec70295853f210f9ea8564ffa
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: c7936b0d35e297de3e9618f39a0d288330af4e17
+    ref: 01612e5aa52080239109ad2279b73961bdbc5cab
     platforms:
       - linux
       - windows
@@ -89,7 +89,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 2a5ca39646b6b2214b3c7a73b663fe626af510aa
+    ref: a1e1f4acfb65ba416d427d3fa47ded75aeeb90f9
     platforms:
       - linux
       - windows
@@ -219,7 +219,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: dbb66f04a5ee02015e4535fbd58f54af62a949d6
+    ref: 7ea3966ceaf7d2f0a18edb323e31e0f0ac478067
     platforms:
       - linux
       - windows
