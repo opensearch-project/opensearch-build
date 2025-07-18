@@ -18,7 +18,7 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: ec8f8c8d1585143dc436be3ee76a0199f07b633d
+    ref: b91f1440707f07e015ff029f997d94ebb84c8ed3
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '2.19'
