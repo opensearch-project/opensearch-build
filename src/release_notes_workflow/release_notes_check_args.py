@@ -64,7 +64,6 @@ class ReleaseNotesCheckArgs:
         self.output = args.output
         
         # AI options
-        self.ai_model = args.ai_model
         self.test_mode = args.test_mode
         self.components = args.components
         

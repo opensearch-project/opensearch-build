@@ -9,9 +9,10 @@ and returns a list of JSON entries with Message and Labels fields.
 import requests
 import re
 import json
+import os
+import time
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import time
 from manifests.input_manifest import InputComponent
  
 class GitHubCommitProcessor:
@@ -21,15 +22,23 @@ class GitHubCommitProcessor:
  
         Args:
             token: GitHub personal access token (optional but recommended)
+                  If not provided, will check for GITHUB_TOKEN or GH_TOKEN environment variables
         """
+        
         self.base_url = "https://api.github.com"
         self.headers = {
             "Accept": "application/vnd.github.v3+json",
             "User-Agent": "GitHub-Commits-Fetcher/1.0"
         }
  
+        # Use provided token, or check environment variables
         if token:
             self.headers["Authorization"] = f"token {token}"
+        else:
+            env_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+            if env_token:
+                print("Using GitHub token from environment variables")
+                self.headers["Authorization"] = f"token {env_token}"
  
         # Cache for PR data to avoid duplicate API calls
         self.pr_cache = {}
@@ -60,9 +69,8 @@ class GitHubCommitProcessor:
                 break
  
             all_data.extend(data)
- 
-            # Check if there are more pages
-            if len(data) < 100:  # Less than per_page means last page
+
+            if len(data) < 100:
                 break
  
             page += 1
