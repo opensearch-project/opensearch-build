@@ -40,6 +40,12 @@ class TestReleaseNotesCheckAndCompile extends BuildPipelineTest {
         super.setUp()
 
         addParam('RELEASE_VERSION', releaseVersion)
+        binding.setVariable('GITHUB_USER', "GITHUB_USER")
+        binding.setVariable('GITHUB_TOKEN', "GITHUB_TOKEN")
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
     }
 
     @Test
