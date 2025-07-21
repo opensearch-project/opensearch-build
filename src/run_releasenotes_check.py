@@ -232,7 +232,7 @@ def main() -> int:
     elif args.action == "generate":
         for manifest in manifests:
             for component in manifest.components.select(focus=components, platform='linux'):
-                print(f"Components: {component.name}")
+                logging.info(f"Components: {component.name}")
                 release_notes.generate(component, manifest.build.version, manifest.build.qualifier)
  
  

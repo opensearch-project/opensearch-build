@@ -5,10 +5,11 @@ GitHub Commits Since Date with PR Labels
 This script fetches commits from a GitHub repository since a specified date,
 and returns a list of JSON entries with Message and Labels fields.
 """
- 
+
 import requests
 import re
 import time
+import logging
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from manifests.input_manifest import InputComponent
@@ -37,7 +38,7 @@ class GitHubCommitProcessor:
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
-            print(f"Error making request to {url}: {e}")
+            logging.error(f"Error making request to {url}: {e}")
             return None
  
     def _make_paginated_request(self, url: str, params: Dict = None) -> Optional[List[Dict]]:
@@ -181,13 +182,13 @@ class GitHubCommitProcessor:
         if branch:
             params["sha"] = branch
  
-        print(f"Fetching commits since {since_date}" + (f" until {until_date}" if until_date else "") + "...")
+        logging.info(f"Fetching commits since {since_date}" + (f" until {until_date}" if until_date else "") + "...")
         commits = self._make_paginated_request(url, params)
  
         if not commits:
             return []
  
-        print(f"Found {len(commits)} commits. Fetching PR labels...")
+        logging.info(f"Found {len(commits)} commits. Fetching PR labels...")
  
         # Process commits to get message and labels
         result = []
@@ -216,7 +217,7 @@ class GitHubCommitProcessor:
  
                 # Progress indicator
                 if (i + 1) % 10 == 0:
-                    print(f"Processed {i + 1}/{len(commits)} commits...")
+                    logging.info(f"Processed {i + 1}/{len(commits)} commits...")
  
                 # Small delay to be nice to the API
                 time.sleep(1)
@@ -229,7 +230,7 @@ class GitHubCommitProcessor:
     def get_commit_details(self):
         # Use the provided date (which should be the last tag date from release_notes.py)
         iso_since_date = self.after_date
-        print(f"Using baseline date: {iso_since_date}")
+        logging.info(f"Using baseline date: {iso_since_date}")
  
         iso_until_date = None
         url = self.component.repository.rstrip('/').removesuffix('.git')
@@ -241,15 +242,15 @@ class GitHubCommitProcessor:
         commits = self.get_commits_with_labels(owner, repo, iso_since_date, iso_until_date, self.component.ref)
  
         if not commits:
-            print("No commits found since the specified date.")
+            logging.warning("No commits found since the specified date.")
             return
  
         # Debug logging to see what the commit data looks like
-        print(f"DEBUG: Found {len(commits)} commits with labels")
+        logging.debug(f"Found {len(commits)} commits with labels")
         for i, commit in enumerate(commits[:5]):  # Print first 5 commits for debugging
-            print(f"DEBUG: Commit {i+1}:")
-            print(f"  Message: {commit['Message'][:100]}...")
-            print(f"  Labels: {commit['Labels']}")
-            print(f"  PullRequestSubject: {commit['PullRequestSubject'][:100]}...")
+            logging.debug(f"Commit {i+1}:")
+            logging.debug(f"  Message: {commit['Message'][:100]}...")
+            logging.debug(f"  Labels: {commit['Labels']}")
+            logging.debug(f"  PullRequestSubject: {commit['PullRequestSubject'][:100]}...")
         
         return commits

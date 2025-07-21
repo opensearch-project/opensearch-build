@@ -75,7 +75,7 @@ class AIReleaseNotesGenerator:
                     # Extract the name from the filename (e.g., "opensearch" from "opensearch-3.2.0.yml")
                     if manifest_filename.endswith('.yml'):
                         manifest_prefix = manifest_filename.split('-')[0]
-                        print(f"DEBUG: manifest_prefix from command line={manifest_prefix}")
+                        logging.debug(f"manifest_prefix from command line={manifest_prefix}")
                         break
             
             comp_name = component_name.lower()
@@ -92,10 +92,8 @@ class AIReleaseNotesGenerator:
                 f.write(content)
             
             logging.info(f"Saved release notes to {filepath}")
-            print(f"Saved release notes to {filepath}")
         except Exception as e:
             logging.error(f"Failed to save release notes to file: {e}")
-            print(f"ERROR: Failed to save release notes to file: {e}")
     
     def _generate_ai_release_notes(self, repo_name: str, formatted_content: str, component = None) -> str:
         """Generate release notes using AI."""
