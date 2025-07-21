@@ -12,6 +12,11 @@ lib = library(identifier: 'jenkins@6.4.0', retriever: modernSCM([
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
+def secret_github_bot = [
+    [envVar: 'GITHUB_USER', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-username'],
+    [envVar: 'GITHUB_TOKEN', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-token']
+]
+
 pipeline {
     options {
             timeout(time: 2, unit: 'HOURS')
@@ -212,7 +217,7 @@ pipeline {
         stage('Create Pull Request') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                    withSecrets(secrets: secret_github_bot){
                         try {
                             sh """
                                 git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build"
