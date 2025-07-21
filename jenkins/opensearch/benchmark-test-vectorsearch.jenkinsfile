@@ -13,6 +13,10 @@ lib = library(identifier: 'jenkins@9.1.2', retriever: modernSCM([
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
+def secret_aws_account = [
+    [envVar: 'PERF_TEST_ACCOUNT_ID', secretRef: 'op://opensearch-infra-secrets/aws-accounts/perf-test-account-id']
+]
+
 pipeline {
     agent none
     options {
@@ -437,7 +441,7 @@ pipeline {
                              "opensearch-infra-stack-${BUILD_NUMBER}"
                         ]
                     }
-                    withCredentials([string(credentialsId: 'perf-test-account-id', variable: 'PERF_TEST_ACCOUNT_ID')]) {
+                    withSecrets(secrets: secret_aws_account){
                         withAWS(role: 'cfn-set-up', roleAccount: "${PERF_TEST_ACCOUNT_ID}", duration: 900, roleSessionName: 'jenkins-session', region: 'us-east-1') {
                             try {
                                 for (String stackName : stackNames) {
