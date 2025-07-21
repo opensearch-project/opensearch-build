@@ -44,7 +44,10 @@ class TestCompareBenchmarks extends BuildPipelineTest {
                 return helper.callClosure(closure)
         })
         helper.registerAllowedMethod('findFiles', [Map.class], null)
-        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod("downloadBuildManifest", [Map], {
             c -> lib.jenkins.BuildManifest.new(readYaml(file: 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml'))
         })
@@ -65,6 +68,8 @@ class TestCompareBenchmarks extends BuildPipelineTest {
         binding.setVariable('REPOSITORY','opensearch-project/OpenSearch')
         binding.setVariable('BASELINE_TEST_EXECUTION_ID', 'baseline-id')
         binding.setVariable('CONTENDER_TEST_EXECUTION_ID', 'contender-id')
+        binding.setVariable('GITHUB_USER', "GITHUB_USER")
+        binding.setVariable('GITHUB_TOKEN', "GITHUB_TOKEN")
     }
 
     @Test

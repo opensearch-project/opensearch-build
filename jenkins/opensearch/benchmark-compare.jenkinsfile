@@ -8,10 +8,14 @@
  */
 
 lib = library(identifier: 'jenkins@6.8.2', retriever: modernSCM([
-
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
+
+def secret_github_bot = [
+    [envVar: 'GITHUB_USER', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-username'],
+    [envVar: 'GITHUB_TOKEN', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-token']
+]
 
 pipeline {
     agent { label 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test' }
@@ -85,7 +89,7 @@ pipeline {
                     """
                     script {
                         if ("${PULL_REQUEST_NUMBER}" != '' && "${REPOSITORY}" != '') {
-                            withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                            withSecrets(secrets: secret_github_bot){
                                 def pull_request = Integer.parseInt("${PULL_REQUEST_NUMBER}")
                                 sh ("gh pr comment ${pull_request} --repo ${REPOSITORY} --body-file final_result_${BUILD_NUMBER}.md")
                             }
