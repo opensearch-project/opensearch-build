@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 2975205b9fa68d471dfccc1fd9ea87e564d982e8
+    ref: a90f864b8524bc75570a8461ccb569d2a4bfed42
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: e9493e6a72fb84546c565debb6104fe1f0d51896
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 01612e5aa52080239109ad2279b73961bdbc5cab
+    ref: 8fca9cc74426cd7f00a6d77fc7ad42099229b315
     platforms:
       - linux
       - windows
@@ -89,7 +89,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: a1e1f4acfb65ba416d427d3fa47ded75aeeb90f9
+    ref: ea35b39e266fa6aa6fe4df836b8892aa3c06321b
     platforms:
       - linux
       - windows
@@ -149,7 +149,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 0bc2079313a765677d8f0cd0a0e99e309d17f53e
+    ref: 1e015a848a6bffb57ee15175fbc50536a70b0d56
     platforms:
       - linux
       - windows
@@ -158,7 +158,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: e6459a9cb85cdaa106f76069855a94eb9e7b4dd7
+    ref: 0fe7894d74c9cd1c8c96fc92fa81f245281fce50
     platforms:
       - linux
       - windows
@@ -166,7 +166,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: ba5fc21f105bb4e56ecd03128233ed643d24a0f4
+    ref: 1c75d4bbb7eb7e8e6a4fe3877acc8c1f38ac2fa6
     platforms:
       - linux
       - windows
@@ -185,7 +185,7 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 25c536bc2a81ac3ddd19c2c579a677629b8d8bf9
+    ref: 660410a7b3df53c68d78da0c1adcc153e3c271ee
     platforms:
       - linux
   - name: custom-codecs
