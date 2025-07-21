@@ -33,7 +33,7 @@ def main() -> int:
     for input_manifests in args.manifest:
         manifests.append(InputManifest.from_file(input_manifests))
  
-    release_notes = ReleaseNotes(manifests, args.date, args.action, args.test_mode)
+    release_notes = ReleaseNotes(manifests, args.date, args.action)
  
     if len(args.manifest) == 2:
         if manifests[0].build.version != manifests[1].build.version:

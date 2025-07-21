@@ -8,7 +8,6 @@
 import argparse
 import datetime
 import logging
-import os
 from typing import IO, List
 
 
@@ -41,12 +40,6 @@ class ReleaseNotesCheckArgs:
             "--output",
             help="Output file."
         )
-        
-        parser.add_argument(
-            "--test-mode",
-            action="store_true",
-            help="Test mode: only read from GitHub, no write operations (branches, commits, PRs)"
-        )
         parser.add_argument(
             "-c",
             "--component",
@@ -64,7 +57,6 @@ class ReleaseNotesCheckArgs:
         self.output = args.output
         
         # AI options
-        self.test_mode = args.test_mode
         self.components = args.components
         
         if self.action == "check" and self.date is None:

@@ -8,39 +8,24 @@ and returns a list of JSON entries with Message and Labels fields.
  
 import requests
 import re
-import json
-import os
 import time
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from manifests.input_manifest import InputComponent
  
 class GitHubCommitProcessor:
-    def __init__(self, after_date: str, component: InputComponent, token: Optional[str] = None):
+    def __init__(self, after_date: str, component: InputComponent, headers: Dict[str, str]):
         """
         Initialize the GitHub Commits Fetcher
  
         Args:
-            token: GitHub personal access token (optional but recommended)
-                  If not provided, will check for GITHUB_TOKEN or GH_TOKEN environment variables
+            after_date: Date to fetch commits after
+            component: Component to fetch commits for
+            headers: Headers for GitHub API requests
         """
         
         self.base_url = "https://api.github.com"
-        self.headers = {
-            "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "GitHub-Commits-Fetcher/1.0"
-        }
- 
-        # Use provided token, or check environment variables
-        if token:
-            self.headers["Authorization"] = f"token {token}"
-        else:
-            env_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
-            if env_token:
-                print("Using GitHub token from environment variables")
-                self.headers["Authorization"] = f"token {env_token}"
- 
-        # Cache for PR data to avoid duplicate API calls
+        self.headers = headers
         self.pr_cache = {}
         self.after_date = after_date
         self.component = component
@@ -252,41 +237,12 @@ class GitHubCommitProcessor:
         parts = url.split('/')
         owner = parts[-2]
         repo = parts[-1]
-        #if args.until:
-        #    try:
-        #        iso_until_date = parse_date_input(args.until)
-        #    except ValueError as e:
-        #       print(f"Error parsing until date: {e}")
-        #       sys.exit(1)
- 
         # Get all commits with labels
         commits = self.get_commits_with_labels(owner, repo, iso_since_date, iso_until_date, self.component.ref)
  
         if not commits:
             print("No commits found since the specified date.")
             return
- 
-        # Apply filtering if requested
-        # if self.release_notes_args.filter_labels:
-        #    commits = self.filter_commits_by_labels(commits, self.release_notes_args.filter_labels)
-        #    print(f"Filtered to {len(commits)} commits with labels: {', '.join(self.release_notes_args.filter_labels)}")
- 
-        # Group by labels if requested
-        # if args.group_by_labels:
-        #    grouped_commits = fetcher.group_commits_by_labels(commits, args.group_by_labels)
- 
-        #    result = {}
-        #    for label, label_commits in grouped_commits.items():
-        #        if label_commits:
-        #            result[label] = label_commits
- 
-        #    output_data = result
-        #else:
-        # Output the list of commits
-        #    output_data = commits
- 
-        # Convert to JSON string
-        json_output = json.dumps(commits, indent=2)
  
         # Debug logging to see what the commit data looks like
         print(f"DEBUG: Found {len(commits)} commits with labels")
@@ -296,6 +252,4 @@ class GitHubCommitProcessor:
             print(f"  Labels: {commit['Labels']}")
             print(f"  PullRequestSubject: {commit['PullRequestSubject'][:100]}...")
         
-        # Write to file or print to console
-        #print(json_output)
         return commits
