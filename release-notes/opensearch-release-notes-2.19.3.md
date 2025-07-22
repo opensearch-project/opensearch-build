@@ -27,6 +27,13 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Revert "updating PublishFindingsRequest to use a list of findings" ([#842](https://github.com/opensearch-project/common-utils/pull/842))
 
 
+### OpenSearch Flow Framework
+
+
+* Fix ApiSpecFetcher Memory Issues and Exception Handling ([#1192](https://github.com/opensearch-project/flow-framework/pull/1192))
+* Better handling of Workflow Steps with Bad Request status ([#1191](https://github.com/opensearch-project/flow-framework/pull/1191))
+
+
 ### OpenSearch Query Insights
 
 
@@ -62,13 +69,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ## ENHANCEMENTS
-
-
-### OpenSearch Flow Framework
-
-
-* Fix ApiSpecFetcher Memory Issues and Exception Handling ([#1192](https://github.com/opensearch-project/flow-framework/pull/1192))
-* Better handling of Workflow Steps with Bad Request status ([#1191](https://github.com/opensearch-project/flow-framework/pull/1191))
 
 
 ## INFRASTRUCTURE
@@ -107,7 +107,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fixed CVE: babel dependencies & elliptic dependency ([#1329](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/1329))
 
 
-### OpenSearch ML Common
+### OpenSearch ML Commons
 
 
 * Force commons-beanutils to 1.11.0 ([#4000](https://github.com/opensearch-project/ml-commons/pull/4000))
