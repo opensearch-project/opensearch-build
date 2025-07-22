@@ -18,7 +18,7 @@ class BuildIncremental:
     def __init__(self, input_manifest: InputManifest, distribution: str, platform: str):
         self.distribution = distribution
         self.input_manifest = input_manifest
-        #self.platform = platform or current_platform()
+        self.platform = platform or current_platform()
 
     # Given input manifest and return a list of what components changed and added.
     def commits_diff(self, input_manifest: InputManifest) -> List[str]:
