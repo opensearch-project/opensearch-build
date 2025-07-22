@@ -9,16 +9,6 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.19/release-notes/opensearch-dashboards.release-notes-2.19.3.md).
 
 
-## ENHANCEMENTS
-
-
-### OpenSearch Flow Framework
-
-
-* Fix ApiSpecFetcher Memory Issues and Exception Handling ([#1192](https://github.com/opensearch-project/flow-framework/pull/1192))
-* Better handling of Workflow Steps with Bad Request status ([#1191](https://github.com/opensearch-project/flow-framework/pull/1191))
-
-
 ## BUG FIXES
 
 
@@ -26,6 +16,15 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * Backports #1850, #1854, #1856 to 2.19 ([#1858](https://github.com/opensearch-project/common-utils/pull/1858))
+
+
+### Opensearch Common Utils
+
+
+* Validate that index patterns are not allowed in create/update doc level monitor ([#829](https://github.com/opensearch-project/common-utils/pull/829))
+* Fix isDocLevelMonitor check to account for threat intel monitor ([#835](https://github.com/opensearch-project/common-utils/pull/835))
+* Updating PublishFindingsRequest to use a list of findings rather than... ([#832](https://github.com/opensearch-project/common-utils/pull/832))
+* Revert "updating PublishFindingsRequest to use a list of findings" ([#842](https://github.com/opensearch-project/common-utils/pull/842))
 
 
 ### OpenSearch Query Insights
@@ -59,62 +58,30 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix: Date field format parsing for legacy query engine ([#3160](https://github.com/opensearch-project/sql/pull/3160))
 
 
-## INFRASTRUCTURE
-
-
-### OpenSearch SQL
-
-
-* Increment version to 2.19.3-SNAPSHOT ([#3601](https://github.com/opensearch-project/sql/pull/3601))
-
-
 ## DOCUMENTATION
 
 
-### OpenSearch Alerting
+## ENHANCEMENTS
 
 
-* Added 2.19.3.0 release notes. ([#1897](https://github.com/opensearch-project/common-utils/pull/1897))
+### OpenSearch Flow Framework
 
 
-### OpenSearch Alerting Dashboards Plugin
+* Fix ApiSpecFetcher Memory Issues and Exception Handling ([#1192](https://github.com/opensearch-project/flow-framework/pull/1192))
+* Better handling of Workflow Steps with Bad Request status ([#1191](https://github.com/opensearch-project/flow-framework/pull/1191))
 
 
-* Added 2.19.3 release notes. ([#1269](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1269))
-
-
-### OpenSearch Common Utils
-
-
-* Added 2.19.3.0 release notes. ([#854](https://github.com/opensearch-project/common-utils/pull/854))
-
-
-### OpenSearch Query Insights
-
-
-* 2.19.3 Release Notes ([#386](https://github.com/opensearch-project/query-insights/pull/386))
-
-
-### OpenSearch Query Insights Dashboards
-
-
-* 2.19.3 Release Notes ([#280](https://github.com/opensearch-project/query-insights-dashboards/pull/280))
+## INFRASTRUCTURE
 
 
 ## MAINTENANCE
 
 
-### OpenSearch Alerting
+### Opensearch Common Utils
 
 
 * Pinned the commons-beanutils dependency to 1.11.0 version ([#1887](https://github.com/opensearch-project/common-utils/pull/1887))
 * [2.19] Moved the commons-beanutils pinning to the core gradle file ([#1893](https://github.com/OpenSearch-project/common-utils/pull/1893))
-
-
-### Opensearch Alerting Dashboards Plugin
-
-
-* Fix CVE ([#1268](https://github.com/OpenSearch-project/alerting-dashboards-plugin/pull/1268))
 
 
 ### Opensearch Anomaly Detection
@@ -132,29 +99,19 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### Opensearch Common Utils
 
 
-* Increment version to 2.19.3-SNAPSHOT ([#826](https://github.com/OpenSearch-project/common-utils/pull/826))
 * Pinned the commons-beanutils dependency to fix CVE-2025-48734 ([#850](https://github.com/opensearch-project/common-utils/pull/850))
 
 
-## Bug fix
+## MAINTENANCE
+
+### Opensearch Alerting Dashboards Plugin
 
 
-* Validate that index patterns are not allowed in create/update doc level monitor ([#829](https://github.com/opensearch-project/common-utils/pull/829))
-* Fix isDocLevelMonitor check to account for threat intel monitor ([#835](https://github.com/opensearch-project/common-utils/pull/835))
-* Updating PublishFindingsRequest to use a list of findings rather than... ([#832](https://github.com/opensearch-project/common-utils/pull/832))
-* Revert "updating PublishFindingsRequest to use a list of findings" ([#842](https://github.com/opensearch-project/common-utils/pull/842))
-
-
-### OpenSearch Index Management
-
-
-* Increment version to 2.19.3-SNAPSHOT ([#1420](https://github.com/opensearch-project/index-management/pull/1420))
+* Fix CVE ([#1268](https://github.com/OpenSearch-project/alerting-dashboards-plugin/pull/1268))
 
 
 ### OpenSearch Index Management Dashboards Plugin
 
-
-* Increment version to 2.19.3.0 ([#1320](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/1320))
 * Fixed CVE: babel dependencies & elliptic dependency ([#1329](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/1329))
 
 
