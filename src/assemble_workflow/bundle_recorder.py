@@ -31,6 +31,7 @@ class BundleRecorder:
             build.id,
             build.name,
             build.version,
+            build.qualifier,
             build.platform,
             build.architecture,
             build.distribution,
@@ -81,7 +82,7 @@ class BundleRecorder:
             self.data["build"]["id"] = build_id
             self.data["build"]["name"] = name
             self.data["build"]["version"] = str(version)
-            self.date["build"]["qualifier"] = qualifier
+            self.data["build"]["qualifier"] = qualifier
             self.data["build"]["platform"] = platform
             self.data["build"]["architecture"] = architecture
             self.data["build"]["distribution"] = distribution if distribution else "tar"
