@@ -18,7 +18,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Backports #1850, #1854, #1856 to 2.19 ([#1858](https://github.com/opensearch-project/common-utils/pull/1858))
 
 
-### Opensearch Common Utils
+### OpenSearch Common Utils
 
 
 * Validate that index patterns are not allowed in create/update doc level monitor ([#829](https://github.com/opensearch-project/common-utils/pull/829))
@@ -65,37 +65,28 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix: Date field format parsing for legacy query engine ([#3160](https://github.com/opensearch-project/sql/pull/3160))
 
 
-## DOCUMENTATION
-
-
-## ENHANCEMENTS
-
-
-## INFRASTRUCTURE
-
-
 ## MAINTENANCE
 
 
-### Opensearch Alerting Dashboards Plugin
+### OpensSearch Alerting Dashboards Plugin
 
 
 * Fix CVE ([#1268](https://github.com/OpenSearch-project/alerting-dashboards-plugin/pull/1268))
 
 
-### Opensearch Anomaly Detection
+### OpensSearch Anomaly Detection
 
 
 * Migrating from commons-lang2.6 to commons-lang3.18 ([#1526](https://github.com/OpenSearch-project/anomaly-detection/pull/1526))
 
 
-### Opensearch Anomaly Detection Dashboards
+### OpensSearch Anomaly Detection Dashboards
 
 
 * Bump elliptic to 6.6.1 ([#1062](https://github.com/OpenSearch-project/anomaly-detection-dashboards-plugin/pull/1062))
 
 
-### Opensearch Common Utils
+### OpensSearch Common Utils
 
 
 * Pinned the commons-beanutils dependency to fix CVE-2025-48734 ([#850](https://github.com/opensearch-project/common-utils/pull/850))
