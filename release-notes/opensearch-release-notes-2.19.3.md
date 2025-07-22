@@ -77,11 +77,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## MAINTENANCE
 
 
-### Opensearch Common Utils
+### Opensearch Alerting Dashboards Plugin
 
 
-* Pinned the commons-beanutils dependency to 1.11.0 version ([#1887](https://github.com/opensearch-project/common-utils/pull/1887))
-* [2.19] Moved the commons-beanutils pinning to the core gradle file ([#1893](https://github.com/OpenSearch-project/common-utils/pull/1893))
+* Fix CVE ([#1268](https://github.com/OpenSearch-project/alerting-dashboards-plugin/pull/1268))
 
 
 ### Opensearch Anomaly Detection
@@ -102,15 +101,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Pinned the commons-beanutils dependency to fix CVE-2025-48734 ([#850](https://github.com/opensearch-project/common-utils/pull/850))
 
 
-## MAINTENANCE
-
-### Opensearch Alerting Dashboards Plugin
-
-
-* Fix CVE ([#1268](https://github.com/OpenSearch-project/alerting-dashboards-plugin/pull/1268))
-
-
 ### OpenSearch Index Management Dashboards Plugin
+
 
 * Fixed CVE: babel dependencies & elliptic dependency ([#1329](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/1329))
 
