@@ -15,7 +15,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Alerting
 
 
-* Backports #1850, #1854, #1856 to 2.19 ([#1858](https://github.com/opensearch-project/common-utils/pull/1858))
+* Backports #1850, #1854, #1856 to 2.19 ([#1858](https://github.com/opensearch-project/alerting/pull/1858))
 
 
 ### OpenSearch Common Utils
@@ -66,6 +66,13 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ## MAINTENANCE
+
+
+### OpenSearch Alerting
+
+
+* Pinned the commons-beanutils dependency to 1.11.0 version ([#1887](https://github.com/opensearch-project/alerting/pull/1887))
+* [2.19] Moved the commons-beanutils pinning to the core gradle file ([#1893](https://github.com/opensearch-project/alerting/pull/1893))
 
 
 ### OpensSearch Alerting Dashboards Plugin
