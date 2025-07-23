@@ -8,10 +8,18 @@
  */
 
 lib = library(identifier: 'jenkins@9.1.2', retriever: modernSCM([
-
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
+
+def secret_github_bot = [
+    [envVar: 'GITHUB_USER', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-username'],
+    [envVar: 'GITHUB_TOKEN', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-token']
+]
+
+def secret_aws_account = [
+    [envVar: 'PERF_TEST_ACCOUNT_ID', secretRef: 'op://opensearch-infra-secrets/aws-accounts/perf-test-account-id']
+]
 
 pipeline {
     agent {label 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'}
@@ -274,7 +282,7 @@ pipeline {
                       script {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
                             if ("${pull_request_number}" != '' && "${repository}" != '') {
-                                withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                withSecrets(secrets: secret_github_bot){
                                     def pull_request = Integer.parseInt("${pull_request_number}")
                                     sh ("gh pr comment ${pull_request} --repo ${repository} --body-file final_result_${BUILD_NUMBER}.md")
                                 }
@@ -306,7 +314,7 @@ pipeline {
                     script {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
                             if ("${pull_request_number}" != '' && "${repository}" != '') {
-                                withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                withSecrets(secrets: secret_github_bot){
                                     def pull_request = Integer.parseInt("${pull_request_number}")
                                     sh ("gh pr comment ${pull_request} --repo ${repository} --body \"The benchmark job ${BUILD_URL} failed.\n Please see logs to debug.\"")
                                 }
@@ -321,7 +329,7 @@ pipeline {
                       def stackNames = [
                              "opensearch-infra-stack-${BUILD_NUMBER}"
                         ]
-                      withCredentials([string(credentialsId: 'perf-test-account-id', variable: 'PERF_TEST_ACCOUNT_ID')]) {
+                      withSecrets(secrets: secret_aws_account){
                         withAWS(role: 'cfn-set-up', roleAccount: "${PERF_TEST_ACCOUNT_ID}", duration: 900, roleSessionName: 'jenkins-session', region: 'us-east-1') {
                             try {
                                 for (String stackName : stackNames) {

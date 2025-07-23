@@ -12,6 +12,12 @@ lib = library(identifier: 'jenkins@5.11.1', retriever: modernSCM([
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
+def secret_aws = [
+    [envVar: 'ARTIFACT_PROMOTION_ROLE_NAME', secretRef: 'op://opensearch-infra-secrets/aws-iam-roles/jenkins-artifact-promotion-role'],
+    [envVar: 'AWS_ACCOUNT_ARTIFACT', secretRef: 'op://opensearch-infra-secrets/aws-accounts/jenkins-aws-production-account'],
+    [envVar: 'CLOUDFRONT_DISTRIBUTION_ID', secretRef: 'op://opensearch-infra-secrets/aws-resource-arns/cloudfront-distribution-id']
+]
+
 pipeline {
     options {
         timeout(time: 4, unit: 'HOURS')
@@ -443,10 +449,7 @@ pipeline {
                     script {
                         echo 'Invalidating cloudfront'
                         def majorVersion=params.RELEASE_VERSION.find(/\d/)
-                        withCredentials([
-                            string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
-                            string(credentialsId: 'jenkins-aws-production-account', variable: 'AWS_ACCOUNT_ARTIFACT'),
-                            string(credentialsId: 'cloudfront-distribution-id', variable: 'CLOUDFRONT_DISTRIBUTION_ID')]) {
+                        withSecrets(secrets: secret_aws){
                             withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
                                 cfInvalidate(distribution: "${CLOUDFRONT_DISTRIBUTION_ID}", paths: ["/releases/bundle/opensearch/${majorVersion}.x/*", "/releases/bundle/opensearch-dashboards/${majorVersion}.x/*"], waitForCompletion: true)
                             }

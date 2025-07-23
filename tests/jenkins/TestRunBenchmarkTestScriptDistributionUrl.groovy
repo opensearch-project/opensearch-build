@@ -33,6 +33,9 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
                         .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                         .build()
         )
+
+        super.setUp()
+
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("uploadTestResults", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
@@ -43,7 +46,10 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
                 return helper.callClosure(closure)
         })
         helper.registerAllowedMethod('findFiles', [Map.class], null)
-        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod("downloadBuildManifest", [Map], {
             c -> lib.jenkins.BuildManifest.new(readYaml(file: 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml'))
         })
@@ -97,8 +103,8 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
         binding.setVariable('WEBHOOK_URL', 'test://artifact.url')
         binding.setVariable('TELEMETRY_PARAMS', '')
         binding.setVariable('ENABLE_INSTANCE_BASED_STORAGE', 'true')
+        binding.setVariable('PERF_TEST_ACCOUNT_ID', 'PERF_TEST_ACCOUNT_ID')
 
-        super.setUp()
     }
 
     @Test

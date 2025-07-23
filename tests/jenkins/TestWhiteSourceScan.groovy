@@ -30,6 +30,11 @@ class TestWhileSourceScan extends BuildPipelineTest {
                 .build()
             )
         super.setUp()
+        binding.setVariable('wss_apikey', 'wss_apikey')
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
     }
 
     @Test

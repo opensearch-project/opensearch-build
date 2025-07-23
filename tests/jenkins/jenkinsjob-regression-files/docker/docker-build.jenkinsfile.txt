@@ -9,14 +9,13 @@
             docker-build.script(groovy.lang.Closure)
                docker-build.echo(The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories)
                docker-build.checkout({$class=GitSCM, branches=[{name=main}], userRemoteConfigs=[{url=https://github.com/opensearch-project/opensearch-build}]})
-               docker-build.sh(echo Account: jenkins-staging-dockerhub-credential)
-               docker-build.usernamePassword({credentialsId=jenkins-staging-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
-               docker-build.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+               docker-build.echo(Account: dockerhub staging)
+               docker-build.withSecrets({secrets=[{envVar=DOCKER_USERNAME, secretRef=op://opensearch-infra-secrets/dockerhub-staging-credentials/username}, {envVar=DOCKER_PASSWORD, secretRef=op://opensearch-infra-secrets/dockerhub-staging-credentials/password}]}, groovy.lang.Closure)
                   docker-build.isUnix()
                   docker-build.sh(
                                 set -e
                                 set +x
-                                docker logout && echo DOCKER_PASSWORD | docker login -u DOCKER_USERNAME --password-stdin && eval bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>
+                                docker logout && echo dockerPassword | docker login -u dockerUsername --password-stdin && eval bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>
                             )
          docker-build.script(groovy.lang.Closure)
             docker-build.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
