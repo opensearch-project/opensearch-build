@@ -13,7 +13,12 @@ AI_RELEASE_NOTES_PROMPT_CHANGELOG = """Generate OpenSearch plugin release notes 
 - Repository: {repository_url}
 
 **Instructions:**
-1. **Entry Format:**
+1. **Content Selection:**
+   - ONLY use content from the sections labeled like "Unreleased", "number.X", or the section that matches the version number {version}
+   - Ignore all other sections in the changelog
+   - If neither an "Unreleased" section nor a section matching version {version} exists, do not give a response back.
+
+2. **Entry Format:**
    - Use commit message as the main content for each entry
    - Extract PR number from commit message (format: (#123))
    - Format: `* <description> ([#<number>]({repository_url}/pull/<number>))`
@@ -21,19 +26,20 @@ AI_RELEASE_NOTES_PROMPT_CHANGELOG = """Generate OpenSearch plugin release notes 
    - Always wrap PR links in parentheses
    - **IMPORTANT**: Capitalize the first letter of every entry description (after the asterisk and space)
 
-2. **Output Requirements:**
+3. **Output Requirements:**
    - Generate markdown with ## headers for each category
    - Only include categories that have entries
    - Each entry should be a single line with proper PR link formatting
 
-3. **PR Link Format:**
+4. **PR Link Format:**
    - Extract PR number from commit message
    - Format as: `([#<number>]({repository_url}/pull/<number>))`
    - Example: `([#456]({repository_url}/pull/456))`
    
-4. **Important Notes:**
+5. **Important Notes:**
    - Every commit should be categorized into exactly one category
-   - Do not skip any commits - every entry must appear somewhere in the release notes
+   - Do not skip any commits from the selected section - every entry must appear somewhere in the release notes
+   - Remove all emojis
 """
 
 AI_RELEASE_NOTES_PROMPT_COMMIT = """Generate OpenSearch plugin release notes for a single component from the ACTUAL commit data provided below.

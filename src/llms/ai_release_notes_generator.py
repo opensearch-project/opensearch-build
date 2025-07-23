@@ -8,7 +8,6 @@ import json
 import logging
 import os
 import boto3
-import sys
 from typing import Any, Dict
 from llms.prompts import AI_RELEASE_NOTES_PROMPT_CHANGELOG, AI_RELEASE_NOTES_PROMPT_COMMIT
 from release_notes_workflow.release_notes_component import ReleaseNotesComponents
@@ -30,7 +29,7 @@ class AIReleaseNotesGenerator:
             logging.warning("Continuing without Bedrock client - will use mock responses for testing")
             return None
     
-    def process(self, content: str, component_name: str, manifest_path: str = None, repo = None, component = None) -> Dict[str, Any]:
+    def process(self, content: str, component_name: str, component = None) -> Dict[str, Any]:
         """Generate AI-powered release notes from processed content."""
         logging.info(f"Generating AI release notes for {component_name}")
         
@@ -38,7 +37,7 @@ class AIReleaseNotesGenerator:
             # Generate AI-powered release notes
             ai_result = self._generate_ai_release_notes(component_name, content, component)
             
-            self._save_to_file(component_name, ai_result, manifest_path, component)
+            self._save_to_file(ai_result, component)
             return {
                 'success': True,
                 'component_name': component_name,
@@ -53,7 +52,7 @@ class AIReleaseNotesGenerator:
                 'component_name': component_name
             }
     
-    def _save_to_file(self, component_name: str, content: str, manifest_path: str = None, component = None) -> None:
+    def _save_to_file(self, content: str, component = None) -> None:
         """Save AI-generated release notes to a file."""
         try:
             project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -66,24 +65,23 @@ class AIReleaseNotesGenerator:
             release_notes_component = ReleaseNotesComponents.from_component(component, self.version, None, project_root)
             filename_suffix = release_notes_component.filename.lstrip('.')
             
-            # Get the display name for the release notes file
-            manifest_prefix = None
+            # Always start with "opensearch"
+            display_name = "opensearch"
             
-            for arg in sys.argv:
-                if arg.endswith('.yml') and ('manifest' in arg or (self.version and f'/{self.version}/' in arg)):
-                    manifest_filename = os.path.basename(arg)
-                    # Extract the name from the filename (e.g., "opensearch" from "opensearch-3.2.0.yml")
-                    if manifest_filename.endswith('.yml'):
-                        manifest_prefix = manifest_filename.split('-')[0]
-                        logging.debug(f"manifest_prefix from command line={manifest_prefix}")
-                        break
+            # Extract repository name from the component
+            if hasattr(component, 'repository'):
+                # Get the part between the last "/" and ".git" and convert to lowercase
+                repo_name = component.repository.split('/')[-1].removesuffix('.git').lower()
+                
+                if repo_name == "opensearch":
+                    # Don't add the repository name again to avoid "opensearch-opensearch"
+                    pass
+                elif repo_name.startswith("opensearch-"):
+                    repo_name = repo_name[len("opensearch-"):]
+                    display_name += "-" + repo_name
+                else:
+                    display_name += "-" + repo_name
             
-            comp_name = component_name.lower()
-            
-            if manifest_prefix and manifest_prefix != comp_name:
-                display_name = f"{manifest_prefix}-{comp_name}"
-            else:
-                display_name = comp_name
             filename = f"{display_name}.{filename_suffix}"
             filepath = os.path.join(output_dir, filename)
             

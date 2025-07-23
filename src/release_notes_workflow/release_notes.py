@@ -132,13 +132,13 @@ class ReleaseNotes:
                         changelog_content = f.read()
                     
                     logging.info(f"Using CHANGELOG.md for {component.name}")
-                    ai_generator.process(changelog_content, component.name, manifest_path, repo, component)
+                    ai_generator.process(changelog_content, component.name, component)
                 else:
                     logging.info(f"No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {baseline_date}")
                     commits = GitHubCommitProcessor(baseline_date, component, headers).get_commit_details()
                     
                     if commits:
                         formatted_commits = json.dumps(commits, indent=2)
-                        ai_generator.process(formatted_commits, component.name, manifest_path, repo, component)
+                        ai_generator.process(formatted_commits, component.name, component)
                     else:
                         logging.warning(f"No commits found for {component.name} since {baseline_date}")

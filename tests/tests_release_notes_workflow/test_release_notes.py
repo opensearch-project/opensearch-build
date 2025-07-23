@@ -12,8 +12,6 @@ from unittest.mock import patch, MagicMock, mock_open
 
 from manifests.input_manifest import InputComponentFromSource, InputManifest
 from release_notes_workflow.release_notes import ReleaseNotes
-from git.git_commit_processor import GitHubCommitProcessor
-from llms.ai_release_notes_generator import AIReleaseNotesGenerator
 
 
 class TestReleaseNotes(unittest.TestCase):
@@ -100,10 +98,8 @@ class TestReleaseNotes(unittest.TestCase):
         mock_isfile.assert_called_once_with('/mock/repo/dir/CHANGELOG.md')
         mock_ai_generator_class.assert_called_once_with(version=self.build_version, baseline_date="2025-06-24")
         mock_ai_generator.process.assert_called_once_with(
-            mock_file_content, 
-            self.component.name, 
-            None, 
-            mock_repo, 
+            mock_file_content,
+            self.component.name,
             self.component
         )
         

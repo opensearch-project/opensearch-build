@@ -9,7 +9,6 @@ import unittest
 import sys
 import json
 import importlib
-import requests
 from packaging import version
 from unittest.mock import patch, MagicMock, mock_open, call
 
@@ -126,12 +125,12 @@ stu5678 2025-07-04 Initial implementation of feature (#129)'''
         generator.bedrock_client = self.mock_bedrock_client
         component_name = 'test-component'
         content = 'Test commit content'
-        result = generator.process(content, component_name, None, None, self.mock_component)
+        result = generator.process(content, component_name, self.mock_component)
         
         self.assertTrue(result['success'])
         self.assertEqual(result['component_name'], component_name)
         self.assertEqual(result['ai_result'], "## Test Release Notes\n* Test item ([#123](https://github.com/opensearch-project/test-component/pull/123))")
-        mock_save_to_file.assert_called_once_with(component_name, "## Test Release Notes\n* Test item ([#123](https://github.com/opensearch-project/test-component/pull/123))", None, self.mock_component)
+        mock_save_to_file.assert_called_once_with("## Test Release Notes\n* Test item ([#123](https://github.com/opensearch-project/test-component/pull/123))", self.mock_component)
         
     @patch('boto3.client')
     @patch('botocore.config.Config')
@@ -173,7 +172,7 @@ stu5678 2025-07-04 Initial implementation of feature (#129)'''
         
         component_name = 'test-component'
         content = 'Test commit content'
-        result = generator.process(content, component_name, None, None, self.mock_component)
+        result = generator.process(content, component_name, self.mock_component)
         
         self.assertFalse(result['success'])  # The process method should return success=False on exception
         self.assertEqual(result['component_name'], component_name)
@@ -201,15 +200,14 @@ stu5678 2025-07-04 Initial implementation of feature (#129)'''
         # Mock the boto3.client with config
         generator.bedrock_client = self.mock_bedrock_client
         
-        component_name = 'test-component'
         content = "## Test Release Notes\n* Test item"
         
-        generator._save_to_file(component_name, content, None, self.mock_component)
+        generator._save_to_file(content, self.mock_component)
         
         mock_makedirs.assert_called_once_with("/mock/project/root/release-notes", exist_ok=True)
         mock_from_component.assert_called_once_with(self.mock_component, self.version, None, "/mock/project/root")
         mock_file.assert_called_once()
-        mock_file().write.assert_any_call(f"opensearch-{component_name} {self.version} Release Notes\n\n")
+        mock_file().write.assert_any_call(f"opensearch-test-component {self.version} Release Notes\n\n")
         mock_file().write.assert_any_call(content)
         
         # Reset mocks for next test
@@ -224,7 +222,7 @@ stu5678 2025-07-04 Initial implementation of feature (#129)'''
         component_name = 'OpenSearch'
         content = "## Test Release Notes\n* Test item"
         
-        generator._save_to_file(component_name, content, None, mock_opensearch_component)
+        generator._save_to_file(content, mock_opensearch_component)
         
         mock_makedirs.assert_called_once_with("/mock/project/root/release-notes", exist_ok=True)
         mock_from_component.assert_called_once_with(mock_opensearch_component, self.version, None, "/mock/project/root")
@@ -238,7 +236,7 @@ stu5678 2025-07-04 Initial implementation of feature (#129)'''
         component_name = 'test-component'
         content = "## Test Release Notes\n* Test item"
             
-        generator._save_to_file(component_name, content, "manifests/3.2.0/opensearch-3.2.0.yml", self.mock_component)
+        generator._save_to_file(content, self.mock_component)
         
         mock_makedirs.assert_called_once_with("/mock/project/root/release-notes", exist_ok=True)
         mock_from_component.assert_called_once_with(self.mock_component, self.version, None, "/mock/project/root")
@@ -274,11 +272,10 @@ stu5678 2025-07-04 Initial implementation of feature (#129)'''
             baseline_date=self.date
         )
         
-        component_name = 'test-component'
         content = "## Test Release Notes\n* Test item"
         
         # Call the method with no component
-        generator._save_to_file(component_name, content, None, None)
+        generator._save_to_file(content, None)
         mock_logging_error.assert_called_with("Failed to save release notes to file: Component object must be provided")
 
     @patch('boto3.client')
@@ -380,7 +377,7 @@ stu5678 2025-07-04 Initial implementation of feature (#129)'''
             manifest_path = "manifests/opensearch-dashboards-3.2.0.yml"
             
             # Call the method with the manifest path
-            generator._save_to_file(component_name, content, manifest_path, self.mock_component)
+            generator._save_to_file(content, self.mock_component)
             
             mock_makedirs.assert_called_once_with("/mock/project/root/release-notes", exist_ok=True)
             mock_from_component.assert_called_once_with(self.mock_component, self.version, None, "/mock/project/root")
