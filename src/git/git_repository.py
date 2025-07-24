@@ -62,6 +62,57 @@ class GitRepository:
     def stable_ref(self, url: str, ref: str) -> List[str]:
         results = subprocess.check_output(f"git ls-remote {url} {ref}", shell=True).decode().strip().split("\t")
         return results if len(results) > 1 else [ref, ref]
+        
+    @classmethod
+    def _compare_versions(cls, version1: str, version2: str) -> int:
+        """
+        Compare two version strings.
+        
+        Args:
+            version1: First version string (e.g., '2.9.0')
+            version2: Second version string (e.g., '2.10.0')
+            
+        Returns:
+            -1 if version1 < version2, 0 if version1 == version2, 1 if version1 > version2
+        """
+        try:
+            # Split version strings into components
+            v1_parts = version1.split('.')
+            v2_parts = version2.split('.')
+            
+            for i in range(len(v1_parts)):
+                # Extract numeric parts (handle cases like '2.0.0-rc1')
+                v1_num = v1_parts[i].split('-')[0]
+                v2_num = v2_parts[i].split('-')[0]
+                
+                # Convert to integers for comparison
+                try:
+                    v1_int = int(v1_num)
+                    v2_int = int(v2_num)
+                    
+                    if v1_int < v2_int:
+                        return -1
+                    elif v1_int > v2_int:
+                        return 1
+                except ValueError:
+                    # If conversion fails, compare as strings
+                    if v1_num < v2_num:
+                        return -1
+                    elif v1_num > v2_num:
+                        return 1
+                
+                # If numeric parts are equal but one has a suffix like '-rc1'
+                if '-' in v1_parts[i] and '-' not in v2_parts[i]:
+                    return -1  # Version with suffix is considered lower
+                elif '-' not in v1_parts[i] and '-' in v2_parts[i]:
+                    return 1   # Version without suffix is considered higher
+            
+            # All components are equal
+            return 0
+        except Exception as e:
+            logging.warning(f"Error comparing versions {version1} and {version2}: {e}")
+            # Default to string comparison if parsing fails
+            return -1 if version1 < version2 else (0 if version1 == version2 else 1)
 
     def execute_silent(self, command: str, cwd: str = None) -> None:
         cwd = cwd or self.working_directory

@@ -85,7 +85,7 @@ class ReleaseNotes:
                     results.append(None)
         return results
 
-    def generate(self, component: InputComponentFromSource, build_version: str, manifest_path: str = None) -> None:
+    def generate(self, component: InputComponentFromSource, build_version: str) -> None:
         """Generate AI-powered release notes for a component."""
         baseline_date = self.date
         env_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
@@ -100,17 +100,41 @@ class ReleaseNotes:
             logging.info(f"Using user-provided date as baseline: {baseline_date}")
         else:
             try:
-                latest_release_url = "https://api.github.com/repos/opensearch-project/opensearch-build/releases/latest"
+                releases_url = "https://api.github.com/repos/opensearch-project/opensearch-build/releases"
                 
-                response = requests.get(latest_release_url, headers=headers)
+                response = requests.get(releases_url, headers=headers)
                 response.raise_for_status()
-                release_data = response.json()
-                release_date = release_data.get("published_at")
-                if release_date:
-                    baseline_date = release_date
-                    logging.info(f"Using latest release date from GitHub API as baseline: {baseline_date}")
+                releases_data = response.json()
+                
+                # Sort releases by version number (not by release date)
+                # This handles the case where releases are not in ascending order
+                if releases_data and len(releases_data) > 0:
+                    # Extract version from tag_name and compare
+                    current_version = build_version
+                    
+                    # Find the latest release with version less than current version
+                    latest_release = None
+                    for release in releases_data:
+                        tag_name = release.get("tag_name", "")
+                        # Extract version from tag_name (usually in format like 'opensearch-2.9.0')
+                        if tag_name:
+                            version_match = tag_name.split('-')[-1] if '-' in tag_name else tag_name
+                            # Compare versions
+                            if GitRepository._compare_versions(version_match, current_version) < 0:
+                                if latest_release is None or GitRepository._compare_versions(version_match, latest_release.get("tag_name", "").split('-')[-1]) > 0:
+                                    latest_release = release
+                    
+                    if latest_release:
+                        release_date = latest_release.get("published_at")
+                        if release_date:
+                            baseline_date = release_date
+                            logging.info(f"Using release date from GitHub API as baseline: {baseline_date} (tag: {latest_release.get('tag_name')})")
+                    else:
+                        logging.warning("No suitable previous release found. Using current date as baseline.")
+                else:
+                    logging.warning("No releases found from GitHub API. Using current date as baseline.")
             except Exception as e:
-                logging.warning(f"Failed to get last tag date from GitHub API: {e}")
+                logging.warning(f"Failed to get releases from GitHub API: {e}")
         with TemporaryDirectory(chdir=True) as work_dir:
             # Initialize AI generator
             ai_generator = AIReleaseNotesGenerator(
