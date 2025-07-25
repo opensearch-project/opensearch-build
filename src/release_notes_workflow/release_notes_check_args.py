@@ -19,7 +19,7 @@ class ReleaseNotesCheckArgs:
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Checkout an OpenSearch Bundle and check for CommitID and Release Notes")
-        parser.add_argument("action", choices=["check", "compile"], help="Operation to perform.")
+        parser.add_argument("action", choices=["check", "compile", "generate"], help="Operation to perform.")
         parser.add_argument("manifest", type=argparse.FileType("r"), nargs='+', help="Manifest file.")
         parser.add_argument(
             "-v",
@@ -40,11 +40,24 @@ class ReleaseNotesCheckArgs:
             "--output",
             help="Output file."
         )
+        parser.add_argument(
+            "-c",
+            "--component",
+            dest="components",
+            nargs='*',
+            type=str,
+            help="Process one or more components."
+        )
+        
         args = parser.parse_args()
         self.logging_level = args.logging_level
         self.action = args.action
         self.manifest = args.manifest
         self.date = args.date
         self.output = args.output
+        
+        # AI options
+        self.components = args.components
+        
         if self.action == "check" and self.date is None:
             parser.error("check option requires --date argument")

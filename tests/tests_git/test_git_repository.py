@@ -124,3 +124,28 @@ class TestGitRepositoryClassMethods(unittest.TestCase):
         ref, name = GitRepository.stable_ref("https://github.com/opensearch-project/OpenSearch", "sha")
         self.assertEqual(ref, "sha")
         self.assertEqual(name, "sha")
+        
+    def test_compare_versions_simple(self) -> None:
+        # Test simple version comparisons
+        self.assertEqual(GitRepository._compare_versions("1.0.0", "2.0.0"), -1)
+        self.assertEqual(GitRepository._compare_versions("2.0.0", "1.0.0"), 1)
+        self.assertEqual(GitRepository._compare_versions("1.0.0", "1.0.0"), 0)
+        self.assertEqual(GitRepository._compare_versions("1.1.0", "1.2.0"), -1)
+        self.assertEqual(GitRepository._compare_versions("1.2.0", "1.1.0"), 1)
+        self.assertEqual(GitRepository._compare_versions("1.0.1", "1.0.2"), -1)
+        self.assertEqual(GitRepository._compare_versions("1.0.2", "1.0.1"), 1)
+        
+    def test_compare_versions_with_suffixes(self) -> None:
+        # Test versions with release candidate suffixes
+        self.assertEqual(GitRepository._compare_versions("1.0.0-rc1", "1.0.0"), -1)
+        self.assertEqual(GitRepository._compare_versions("1.0.0", "1.0.0-rc1"), 1)
+        self.assertEqual(GitRepository._compare_versions("1.0.0-alpha", "1.0.0-beta"), -1)
+        self.assertEqual(GitRepository._compare_versions("1.0.0-beta", "1.0.0-alpha"), 1)
+        
+    def test_compare_versions_edge_cases(self) -> None:
+        # Test edge cases and error handling
+        self.assertEqual(GitRepository._compare_versions("invalid", "1.0.0"), -1)
+        self.assertEqual(GitRepository._compare_versions("1.0.0", "invalid"), 1)
+        self.assertEqual(GitRepository._compare_versions("invalid1", "invalid2"), -1)
+        self.assertEqual(GitRepository._compare_versions("2.9.0", "2.10.0"), -1)  # Ensure proper numeric comparison
+        self.assertEqual(GitRepository._compare_versions("2.10.0", "2.9.0"), 1)
