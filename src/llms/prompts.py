@@ -14,9 +14,12 @@ AI_RELEASE_NOTES_PROMPT_CHANGELOG = """Generate OpenSearch plugin release notes 
 
 **Instructions:**
 1. **Content Selection:**
-   - If there are multiple versions in the changelog, ONLY use content from the sections labeled like "Unreleased", "number.X", or the section that matches the version number {version}
+   - If there are multiple versions in the changelog, ONLY use content from the sections that:
+      - Contain the word "Unreleased" (e.g., "Unreleased", "Unreleased 3.0", "Unreleased 2.x", etc.) - IMPORTANT: Include ALL sections containing "Unreleased" regardless of any version number that might follow it
+      - OR are labeled like "number.X" (e.g., "2.x", "3.x", etc.)
+      - OR exactly match the version number {version}
       - Ignore all other sections in the changelog
-      - If neither an "Unreleased" section nor a section matching version {version} exists, do not give a response back.
+      - If no section containing "Unreleased" AND no section matching version {version} exists, do not give a response back.
 
 2. **Entry Format:**
    - Use commit message as the main content for each entry
