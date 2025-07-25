@@ -1,161 +1,132 @@
-#!/usr/bin/env python
 # Copyright OpenSearch Contributors
 # SPDX-License-Identifier: Apache-2.0
-
-"""AI-powered release notes generator using AWS Bedrock."""
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
 
 import json
 import logging
-import os
+import sys
+import time
+
 import boto3
-from typing import Any, Dict
-from llms.prompts import AI_RELEASE_NOTES_PROMPT_CHANGELOG, AI_RELEASE_NOTES_PROMPT_COMMIT
-from release_notes_workflow.release_notes_component import ReleaseNotesComponents
+from botocore.exceptions import ClientError, ConnectTimeoutError, NoCredentialsError, ReadTimeoutError
+
+from release_notes_workflow.release_notes_check_args import ReleaseNotesCheckArgs
+
 
 class AIReleaseNotesGenerator:
-    """AI-powered release notes generator using AWS Bedrock."""
-    
-    def __init__(self, version: str = None, baseline_date: str = None):
-        self.version = version
-        self.baseline_date = baseline_date
-        self.bedrock_client = self._create_bedrock_client()
-    
-    def _create_bedrock_client(self):
-        """Create AWS Bedrock client."""
+
+    def __init__(self, args: ReleaseNotesCheckArgs, aws_region: str = 'us-east-1'):
+        self.aws_region = 'us-east-1'
+        self.model_id = args.model_id
+        self.max_tokens_override = args.max_tokens
+        self.max_retries = 3
+        self.base_delay = 1  # Base delay in seconds for exponential backoff
+
         try:
-            return boto3.client('bedrock-runtime', region_name='us-east-1')
-        except Exception as e:
-            logging.error(f"Failed to create Bedrock client: {e}")
-            logging.warning("Continuing without Bedrock client - will use mock responses for testing")
-            return None
-    
-    def process(self, content: str, component_name: str, component = None) -> Dict[str, Any]:
-        """Generate AI-powered release notes from processed content."""
-        logging.info(f"Generating AI release notes for {component_name}")
-        
-        try:
-            # Generate AI-powered release notes
-            ai_result = self._generate_ai_release_notes(component_name, content, component)
-            
-            self._save_to_file(ai_result, component)
-            return {
-                'success': True,
-                'component_name': component_name,
-                'ai_result': ai_result
-            }
-        
-        except Exception as e:
-            logging.error(f"Failed to generate AI release notes for {component_name}: {e}")
-            return {
-                'success': False,
-                'error': str(e),
-                'component_name': component_name
-            }
-    
-    def _save_to_file(self, content: str, component = None) -> None:
-        """Save AI-generated release notes to a file."""
-        try:
-            project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), "../.."))
-            output_dir = os.path.join(project_root, "release-notes")
-            os.makedirs(output_dir, exist_ok=True)
-            
-            if not component:
-                raise ValueError("Component object must be provided")
-            
-            release_notes_component = ReleaseNotesComponents.from_component(component, self.version, None, project_root)
-            filename_suffix = release_notes_component.filename.lstrip('.')
-            
-            # Always start with "opensearch"
-            display_name = "opensearch"
-            
-            # Extract repository name from the component
-            if hasattr(component, 'repository'):
-                # Get the part between the last "/" and ".git" and convert to lowercase
-                repo_name = component.repository.split('/')[-1].removesuffix('.git').lower()
-                
-                if repo_name == "opensearch":
-                    # Don't add the repository name again to avoid "opensearch-opensearch"
-                    pass
-                elif repo_name.startswith("opensearch-"):
-                    repo_name = repo_name[len("opensearch-"):]
-                    display_name += "-" + repo_name
-                else:
-                    display_name += "-" + repo_name
-            
-            filename = f"{display_name}.{filename_suffix}"
-            filepath = os.path.join(output_dir, filename)
-            
-            with open(filepath, 'w') as f:
-                f.write(f"{display_name} {self.version} Release Notes\n\n")
-                f.write(content)
-            
-            logging.info(f"Saved release notes to {filepath}")
-        except Exception as e:
-            logging.error(f"Failed to save release notes to file: {e}")
-    
-    def _generate_ai_release_notes(self, repo_name: str, formatted_content: str, component = None) -> str:
-        """Generate release notes using AI."""
-        if not self.bedrock_client:
-            return "AI analysis not available"
-        
-        # Component must have a repository attribute
-        assert component and hasattr(component, 'repository'), "Component must have a repository attribute"
-        repository_url = component.repository.rstrip('/').removesuffix('.git')
-        
-        # Determine which prompt to use based on content type
-        if "CHANGELOG" in formatted_content:
-            logging.info(f"Using CHANGELOG for {repo_name}, content length: {len(formatted_content)}")
-            
-            prompt = AI_RELEASE_NOTES_PROMPT_CHANGELOG.format(
-                repo_name=repo_name,
-                version=self.version,
-                repository_url=repository_url
-            )
-            
-            prompt += f"\n\n**CHANGELOG Content:**\n{formatted_content}"
-        else:
-            prompt = AI_RELEASE_NOTES_PROMPT_COMMIT.format(
-                repo_name=repo_name,
-                version=self.version,
-                repository_url=repository_url,
-                formatted_content=formatted_content
-            )
-        
-        # Try to use AWS Bedrock with retries
-        max_retries = 3
-        retry_count = 0
-        
-        while retry_count < max_retries:
-            try:
-                body = {
-                    "anthropic_version": "bedrock-2023-05-31",
-                    "max_tokens": 10000,
-                    "messages": [{"role": "user", "content": prompt}],
-                    "temperature": 0
+            self.bedrock_client = boto3.client('bedrock-runtime', region_name=aws_region)
+        except NoCredentialsError:
+            logging.error("Error: AWS credentials not found. Please configure your AWS credentials.")
+            sys.exit(1)
+
+    def _should_retry(self, exception) -> bool:
+        """Determine if the exception warrants a retry"""
+        if isinstance(exception, ClientError):
+            error_code = exception.response['Error']['Code']
+            return error_code in ['ThrottlingException', 'ServiceUnavailable', 'InternalServerError']
+
+        if isinstance(exception, (ReadTimeoutError, ConnectTimeoutError)):
+            return True
+
+        return False
+
+    def _calculate_delay(self, attempt: int) -> float:
+        """Calculate delay using exponential backoff with jitter"""
+        import random
+        delay = self.base_delay * (2 ** attempt)
+        # Add jitter to avoid thundering herd
+        jitter = random.uniform(0.1, 0.5)
+        return delay + jitter
+
+    def call_bedrock_claude(self, prompt: str) -> str:
+        """Call AWS Bedrock Claude Sonnet 3.5 v2 model with retry logic"""
+
+        # Prepare the request body
+        request_body = {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": self.max_tokens_override,
+            "temperature": 0.1,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
                 }
-                
-                # Create a new client with the updated config
-                bedrock_client = boto3.client('bedrock-runtime', region_name='us-east-1')
-                
-                response = bedrock_client.invoke_model(
-                    modelId='us.anthropic.claude-3-7-sonnet-20250219-v1:0',
-                    body=json.dumps(body),
-                    contentType='application/json'
+            ]
+        }
+
+        last_exception = None
+
+        for attempt in range(self.max_retries + 1):
+            try:
+                # Call Bedrock
+                response = self.bedrock_client.invoke_model(
+                    modelId=self.model_id,
+                    body=json.dumps(request_body),
+                    contentType="application/json"
                 )
-                
-                result = json.loads(response['body'].read())
-                return result['content'][0]['text']
-                
-            except Exception as e:
-                retry_count += 1
-                logging.warning(f"AI analysis attempt {retry_count} failed: {e}")
-                if retry_count < max_retries:
-                    logging.info(f"Retrying in 10 seconds...")
-                    import time
-                    time.sleep(10)
+
+                # Parse response
+                response_body = json.loads(response['body'].read())
+                return response_body['content'][0]['text']
+
+            except ClientError as e:
+                error_code = e.response['Error']['Code']
+                error_message = e.response['Error']['Message']
+                last_exception = e
+
+                if not self._should_retry(e):
+                    # Handle non-retryable errors immediately
+                    logging.error(f"AWS Bedrock Error ({error_code}): {error_message}")
+
+                    if error_code == "AccessDeniedException":
+                        logging.error("Make sure you have proper IAM permissions for Bedrock and the model is enabled in your region.")
+                    elif error_code == "ValidationException":
+                        logging.error("Check if the Claude Sonnet 3.5 v2 model is available in your region.")
+
+                    sys.exit(1)
+
+                # Handle retryable errors
+                if attempt < self.max_retries:
+                    delay = self._calculate_delay(attempt)
+                    logging.warning(f"Retryable error ({error_code}): {error_message}. Retrying in {delay:.2f} seconds... (Attempt {attempt + 1}/{self.max_retries})")
+                    time.sleep(delay)
                 else:
-                    logging.error(f"All AI analysis attempts failed: {e}")
-                    return f"AI analysis failed after {max_retries} attempts: {e}"
-        
-        # This should not be reached, but just in case
-        return "AI analysis failed due to unexpected error"
+                    logging.error(f"Max retries ({self.max_retries}) exceeded for AWS Bedrock Error ({error_code}): {error_message}")
+
+            except (ReadTimeoutError, ConnectTimeoutError) as e:
+                last_exception = e
+
+                if attempt < self.max_retries:
+                    delay = self._calculate_delay(attempt)
+                    logging.warning(f"Timeout error: {str(e)}. Retrying in {delay:.2f} seconds... (Attempt {attempt + 1}/{self.max_retries})")
+                    time.sleep(delay)
+                else:
+                    logging.error(f"Max retries ({self.max_retries}) exceeded for timeout error: {str(e)}")
+
+            except Exception as e:
+                # Non-retryable unexpected errors
+                logging.error(f"Unexpected error calling Bedrock: {e}")
+                sys.exit(1)
+
+        # If we get here, all retries have been exhausted
+        logging.error(f"Failed to call Bedrock after {self.max_retries} retries. Last error: {last_exception}")
+        sys.exit(1)
+
+    def generate_release_notes(self, prompt: str) -> str:
+        # Generate release notes using Claude
+        logging.info("Generating release notes using AWS Bedrock Claude Sonnet 3.5 v2...")
+        release_notes = self.call_bedrock_claude(prompt)
+
+        return release_notes

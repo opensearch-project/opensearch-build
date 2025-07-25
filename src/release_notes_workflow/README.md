@@ -45,25 +45,27 @@ The following options are available.
 
 ### AI-Powered Release Notes Generation
 
-This workflow generates AI-powered release notes for components using AWS Bedrock. It analyzes either CHANGELOG.md files or git commit history to create structured release notes.
+This workflow generates AI-powered release notes for components using AWS Bedrock. It analyzes either CHANGELOG.md files or git commit history, depending if the repository has a CHANGELOG.md file, to create structured release notes.
+
+#### Prerequisites
+In order to use the AI-Powered release notes the user needs to have the following, in the environment:
+  - GITHUB token
+  - AWS credentials
 
 #### Usage
 ```
-./release_notes.sh generate manifests/3.2.0/opensearch-3.2.0.yml -c sql --test-mode
+./release_notes.sh generate manifests/3.2.0/opensearch-3.2.0.yml -c sql
 ```
 
 #### Sample Output
 ```
-2025-07-14 17:11:30 INFO     Saved release notes to /local/home/rjerger/opensearch-build-2/release-notes/opensearch-sql.release-notes-3.2.0.md
-Saved release notes to /local/home/rjerger/opensearch-build-2/release-notes/opensearch-sql.release-notes-3.2.0.md
+Saved release notes to /local/home/.../opensearch-build/release-notes/opensearch-sql.release-notes-3.2.0.md
 ```
 
 The workflow uses the following arguments:
 * `--date`: Baseline date for commit analysis (in format yyyy-mm-dd, example 2025-06-24).
 * `--component` or `-c`: Generate release notes for specific components only.
-* `--test-mode`: Run in test mode without creating PRs.
 * `--output`: Save the generated release notes to a specified file.
-* `--ai-model`: Specify the AI model to use (default: claude-3-7-sonnet).
 
 The following options are available.
 

@@ -8,10 +8,11 @@
 import os
 import unittest
 from typing import Any
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import MagicMock, Mock, mock_open, patch
 
 from manifests.input_manifest import InputComponentFromSource, InputManifest
 from release_notes_workflow.release_notes import ReleaseNotes
+from release_notes_workflow.release_notes_check_args import ReleaseNotesCheckArgs
 
 
 class TestReleaseNotes(unittest.TestCase):
@@ -22,6 +23,7 @@ class TestReleaseNotes(unittest.TestCase):
             "..",
             "data",
         )
+
         OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(MANIFESTS, "opensearch-test-main.yml"))
         OPENSEARCH_MANIFEST_QUALIFIER = os.path.realpath(os.path.join(MANIFESTS, "opensearch-test-main-qualifier.yml"))
         self.manifest_file = InputManifest.from_file(open(OPENSEARCH_MANIFEST))
@@ -33,6 +35,10 @@ class TestReleaseNotes(unittest.TestCase):
         self.release_notes = ReleaseNotes([self.manifest_file], "2022-07-26", "compile")
         self.release_notes_qualifier = ReleaseNotes([self.manifest_file_qualifier], "2022-07-26", "compile")
         self.component = InputComponentFromSource({"name": "OpenSearch-test", "repository": "url", "ref": "ref"})
+
+        self.mock_args = Mock(spec=ReleaseNotesCheckArgs)
+        self.mock_args.model_id = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
+        self.mock_args.max_tokens = 2000
 
     @patch("subprocess.check_output", return_value=''.encode())
     @patch("subprocess.check_call")
@@ -69,7 +75,7 @@ class TestReleaseNotes(unittest.TestCase):
 
     @patch('release_notes_workflow.release_notes.GitRepository')
     @patch('release_notes_workflow.release_notes.AIReleaseNotesGenerator')
-    @patch('release_notes_workflow.release_notes.GitHubCommitProcessor')
+    @patch('release_notes_workflow.release_notes.GitHubCommitsProcessor')
     @patch('os.path.isfile')
     def test_generate_with_content_sources(self, mock_isfile, mock_commit_processor_class, mock_ai_generator_class, mock_git_repo_class):
         """Test generate method with different content sources (changelog and commits)."""
@@ -77,144 +83,102 @@ class TestReleaseNotes(unittest.TestCase):
         mock_repo = MagicMock()
         mock_git_repo_class.return_value.__enter__.return_value = mock_repo
         mock_repo.dir = "/mock/repo/dir"
-        
+
         mock_ai_generator = MagicMock()
         mock_ai_generator_class.return_value = mock_ai_generator
         mock_ai_generator.process.return_value = {"success": True}
-        
+
         # Create ReleaseNotes instance
         release_notes = ReleaseNotes([self.manifest_file], "2025-06-24", "generate")
-        
+
         # Test with CHANGELOG.md
         mock_isfile.return_value = True
         mock_file_content = "# CHANGELOG\nTest changelog content"
         mock_open_func = mock_open(read_data=mock_file_content)
-        
+
         with patch('builtins.open', mock_open_func):
-            release_notes.generate(self.component, self.build_version)
-        
+            release_notes.generate(self.mock_args, self.component, self.build_version, '')
+
         # Verify changelog interactions
         mock_git_repo_class.assert_called_once()
         mock_isfile.assert_called_once_with('/mock/repo/dir/CHANGELOG.md')
-        mock_ai_generator_class.assert_called_once_with(version=self.build_version, baseline_date="2025-06-24")
-        mock_ai_generator.process.assert_called_once_with(
-            mock_file_content,
-            self.component.name,
-            self.component
-        )
-        
-        # Reset mocks for commit history test
-        mock_git_repo_class.reset_mock()
-        mock_isfile.reset_mock()
-        mock_ai_generator_class.reset_mock()
-        mock_ai_generator.process.reset_mock()
-        
-        # Test with commit history
+        mock_ai_generator_class.assert_called_once_with(args=self.mock_args)
+
+        mock_ai_generator.generate_release_notes.assert_called_once()
+        call_args = mock_ai_generator.generate_release_notes.call_args[0][0]
+        self.assertIn("OpenSearch-test", call_args)
+        self.assertIn("1.0", call_args)
+        self.assertIn(mock_file_content, call_args)
+
+    @patch('release_notes_workflow.release_notes.TemporaryDirectory')
+    @patch('release_notes_workflow.release_notes.GitRepository')
+    @patch('release_notes_workflow.release_notes.ReleaseNotesComponents')
+    @patch('release_notes_workflow.release_notes.AIReleaseNotesGenerator')
+    @patch('release_notes_workflow.release_notes.GitHubCommitsProcessor')
+    @patch('os.path.isfile')
+    @patch('builtins.open', new_callable=mock_open)
+    @patch('os.getcwd')
+    def test_generate_without_changelog_with_commits(self, mock_getcwd, mock_file_open, mock_isfile,
+                                                     mock_github_commits_class, mock_ai_generator_class,
+                                                     mock_release_notes_components, mock_git_repo, mock_temp_dir):
+        """Test generate method when CHANGELOG.md doesn't exist but commits are available."""
+        # Setup mocks
+        mock_getcwd.return_value = "/test/dir"
+        mock_temp_dir_instance = Mock()
+        mock_temp_dir_instance.name = "/tmp/test"
+        mock_temp_dir.return_value.__enter__.return_value = mock_temp_dir_instance
+
+        mock_repo = Mock()
+        mock_repo.dir = "/tmp/test/test-component"
+        mock_git_repo.return_value.__enter__.return_value = mock_repo
+
+        mock_release_notes = Mock()
+        mock_release_notes.filename = ".release-notes-2.0.0.md"
+        mock_release_notes_components.from_component.return_value = mock_release_notes
+
+        mock_ai_generator = Mock()
+        mock_ai_generator.generate_release_notes.return_value = "Generated release notes from commits"
+        mock_ai_generator_class.return_value = mock_ai_generator
+
+        # Mock no changelog file
         mock_isfile.return_value = False
-        mock_commit_processor = MagicMock()
-        mock_commit_processor_class.return_value = mock_commit_processor
+
+        # Mock GitHub commits
+        mock_commits_processor = Mock()
         mock_commits = [
-            {"sha": "abc123", "commit": {"message": "Fix bug (#123)"}, "Labels": ["bug"], "PullRequestSubject": "Fix bug (#123)"},
-            {"sha": "def456", "commit": {"message": "Add feature (#456)"}, "Labels": ["feature"], "PullRequestSubject": "Add feature (#456)"}
+            {
+                "Message": "Fix critical bug in search",
+                "Labels": ["bug", "critical"],
+                "PullRequestSubject": "Fix search functionality"
+            },
+            {
+                "Message": "Add new feature X",
+                "Labels": ["enhancement"],
+                "PullRequestSubject": "Implement feature X"
+            },
+            {
+                "Message": "Flaky test fix",
+                "Labels": ["flaky-test"],  # This should be filtered out
+                "PullRequestSubject": "Fix flaky test"
+            }
         ]
-        mock_commit_processor.get_commit_details.return_value = mock_commits
-        
-        release_notes.generate(self.component, self.build_version)
-        
-        # Verify commit history interactions
-        mock_git_repo_class.assert_called_once()
-        mock_isfile.assert_called_once_with('/mock/repo/dir/CHANGELOG.md')
-        mock_commit_processor_class.assert_called_once()
-        mock_ai_generator_class.assert_called_once_with(version=self.build_version, baseline_date="2025-06-24")
-        mock_ai_generator.process.assert_called_once()
-        # Check that the commits were passed to the AI generator as JSON
-        args, _ = mock_ai_generator.process.call_args
-        self.assertIsInstance(args[0], str)
-        self.assertIn("abc123", args[0])
-        self.assertIn("def456", args[0])
+        mock_commits_processor.get_commit_details.return_value = mock_commits
+        mock_github_commits_class.return_value = mock_commits_processor
 
-    @patch('release_notes_workflow.release_notes.GitRepository')
-    @patch('release_notes_workflow.release_notes.AIReleaseNotesGenerator')
-    @patch('release_notes_workflow.release_notes.GitHubCommitProcessor')
-    @patch('os.path.isfile')
-    def test_generate_no_commits(self, mock_isfile, mock_commit_processor_class, mock_ai_generator_class, mock_git_repo_class):
-        """Test generate method when no commits are found."""
-        mock_isfile.return_value = False
-        mock_repo = MagicMock()
-        mock_git_repo_class.return_value.__enter__.return_value = mock_repo
-        mock_repo.dir = "/mock/repo/dir"
-        
-        mock_ai_generator = MagicMock()
-        mock_ai_generator_class.return_value = mock_ai_generator
-        
-        mock_commit_processor = MagicMock()
-        mock_commit_processor_class.return_value = mock_commit_processor
-        mock_commit_processor.get_commit_details.return_value = None
-        release_notes = ReleaseNotes([self.manifest_file], "2025-06-24", "generate")
-        
-        release_notes.generate(self.component, self.build_version)
-        
-        # Verify the interactions
-        mock_git_repo_class.assert_called_once()
-        mock_isfile.assert_called_once_with('/mock/repo/dir/CHANGELOG.md')
-        mock_commit_processor_class.assert_called_once()
-        mock_ai_generator.process.assert_not_called()
+        # Execute
+        self.release_notes.generate(self.mock_args, self.component, self.build_version, self.build_qualifier)
 
-    @patch('release_notes_workflow.release_notes.requests.get')
-    @patch('release_notes_workflow.release_notes.GitRepository')
-    @patch('release_notes_workflow.release_notes.AIReleaseNotesGenerator')
-    @patch('os.path.isfile')
-    def test_generate_with_github_api(self, mock_isfile, mock_ai_generator_class, mock_git_repo_class, mock_requests_get):
-        """Test generate method with GitHub API date retrieval (success and error cases)."""
-        mock_isfile.return_value = True
-        mock_repo = MagicMock()
-        mock_git_repo_class.return_value.__enter__.return_value = mock_repo
-        mock_repo.dir = "/mock/repo/dir"
-        
-        mock_ai_generator = MagicMock()
-        mock_ai_generator_class.return_value = mock_ai_generator
-        mock_ai_generator.process.return_value = {"success": True}
-        
-        # Create a mock file content
-        mock_file_content = "# CHANGELOG\nTest changelog content"
-        mock_open_func = mock_open(read_data=mock_file_content)
-        
-        # Test successful GitHub API response
-        mock_response = MagicMock()
-        mock_response.raise_for_status.return_value = None
-        mock_response.json.return_value = {"published_at": "2025-05-15T00:00:00Z"}
-        mock_requests_get.return_value = mock_response
-        
-        # Create ReleaseNotes instance with no date
-        release_notes = ReleaseNotes([self.manifest_file], None, "generate")
-        
-        # Call the generate method
-        with patch('builtins.open', mock_open_func):
-            release_notes.generate(self.component, self.build_version)
-        
-        # Verify the interactions
-        mock_git_repo_class.assert_called_once()
-        mock_requests_get.assert_called_once()
-        mock_ai_generator_class.assert_called_once_with(version=self.build_version, baseline_date="2025-05-15T00:00:00Z")
-        mock_ai_generator.process.assert_called_once()
-        
-        # Reset mocks for API error test
-        mock_git_repo_class.reset_mock()
-        mock_requests_get.reset_mock()
-        mock_ai_generator_class.reset_mock()
-        mock_ai_generator.process.reset_mock()
-        
-        # Test GitHub API error
-        mock_requests_get.side_effect = Exception("API Error")
-        
-        # Call the generate method
-        with patch('builtins.open', mock_open_func):
-            # Should not raise an exception
-            release_notes.generate(self.component, self.build_version)
-        
-        # Verify the interactions
-        mock_git_repo_class.assert_called_once()
-        mock_requests_get.assert_called_once()
-        # Should still create AI generator with None date
-        mock_ai_generator_class.assert_called_once()
-        mock_ai_generator.process.assert_called_once()
+        # Verify
+        mock_ai_generator_class.assert_called_once_with(args=self.mock_args)
+        mock_isfile.assert_called_once_with("/tmp/test/test-component/CHANGELOG.md")
+        mock_github_commits_class.assert_called_once_with("2022-07-26", self.component, None)
+
+        # Verify AI generator was called with commits prompt
+        mock_ai_generator.generate_release_notes.assert_called_once()
+        call_args = mock_ai_generator.generate_release_notes.call_args[0][0]
+        self.assertIn("OpenSearch-test", call_args)
+        self.assertIn("1.0", call_args)
+        self.assertIn("Fix search functionality", call_args)
+        self.assertIn("Implement feature X", call_args)
+        # Verify flaky-test commit was filtered out
+        self.assertNotIn("Fix flaky test", call_args)

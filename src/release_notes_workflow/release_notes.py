@@ -7,16 +7,18 @@
 
 import logging
 import os
-import json
-import requests
 from typing import List
+
 from pytablewriter import MarkdownTableWriter
+
+from git.git_commit_processor import GitHubCommitsProcessor
 from git.git_repository import GitRepository
-from git.git_commit_processor import GitHubCommitProcessor
+from llms.ai_release_notes_generator import AIReleaseNotesGenerator
+from llms.prompts import AI_RELEASE_NOTES_PROMPT_CHANGELOG, AI_RELEASE_NOTES_PROMPT_COMMIT
 from manifests.input_manifest import InputComponentFromSource, InputManifest
+from release_notes_workflow.release_notes_check_args import ReleaseNotesCheckArgs
 from release_notes_workflow.release_notes_component import ReleaseNotesComponents
 from system.temporary_directory import TemporaryDirectory
-from llms.ai_release_notes_generator import AIReleaseNotesGenerator
 
 
 class ReleaseNotes:
@@ -25,6 +27,8 @@ class ReleaseNotes:
         self.manifests = input_manifests  # type: ignore[assignment]
         self.date = date
         self.action_type = action_type
+        self.token = os.getenv('GITHUB_TOKEN')
+        self.filter_commits = ['flaky-test', 'testing']
 
     def table(self) -> MarkdownTableWriter:
         table_result = []
@@ -85,84 +89,65 @@ class ReleaseNotes:
                     results.append(None)
         return results
 
-    def generate(self, component: InputComponentFromSource, build_version: str) -> None:
+    def generate(self, args: ReleaseNotesCheckArgs, component: InputComponentFromSource, build_version: str, build_qualifier: str) -> None:
         """Generate AI-powered release notes for a component."""
-        baseline_date = self.date
-        env_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
-        headers = {
-            "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "GitHub-API-Client/1.0"
-        }
-
-        if env_token:
-            headers["Authorization"] = f"token {env_token}"
-        if self.date:
-            logging.info(f"Using user-provided date as baseline: {baseline_date}")
-        else:
-            try:
-                releases_url = "https://api.github.com/repos/opensearch-project/opensearch-build/releases"
-                
-                response = requests.get(releases_url, headers=headers)
-                response.raise_for_status()
-                releases_data = response.json()
-                
-                # Sort releases by version number (not by release date)
-                # This handles the case where releases are not in ascending order
-                if releases_data and len(releases_data) > 0:
-                    # Extract version from tag_name and compare
-                    current_version = build_version
-                    
-                    # Find the latest release with version less than current version
-                    latest_release = None
-                    for release in releases_data:
-                        tag_name = release.get("tag_name", "")
-                        # Extract version from tag_name (usually in format like 'opensearch-2.9.0')
-                        if tag_name:
-                            version_match = tag_name.split('-')[-1] if '-' in tag_name else tag_name
-                            # Compare versions
-                            if GitRepository._compare_versions(version_match, current_version) < 0:
-                                if latest_release is None or GitRepository._compare_versions(version_match, latest_release.get("tag_name", "").split('-')[-1]) > 0:
-                                    latest_release = release
-                    
-                    if latest_release:
-                        release_date = latest_release.get("published_at")
-                        if release_date:
-                            baseline_date = release_date
-                            logging.info(f"Using release date from GitHub API as baseline: {baseline_date} (tag: {latest_release.get('tag_name')})")
-                    else:
-                        logging.warning("No suitable previous release found. Using current date as baseline.")
-                else:
-                    logging.warning("No releases found from GitHub API. Using current date as baseline.")
-            except Exception as e:
-                logging.warning(f"Failed to get releases from GitHub API: {e}")
+        release_notes_raw = ""
         with TemporaryDirectory(chdir=True) as work_dir:
-            # Initialize AI generator
-            ai_generator = AIReleaseNotesGenerator(
-                version=build_version,
-                baseline_date=baseline_date
-            )
-
             with GitRepository(
                     component.repository,
                     component.ref,
                     os.path.join(work_dir.name, component.name),
                     component.working_directory
             ) as repo:
+                release_notes = ReleaseNotesComponents.from_component(component, build_version, build_qualifier, repo.dir)
+                baseline_date = self.date
                 changelog_path = os.path.join(repo.dir, 'CHANGELOG.md')
-                logging.info(f"Using baseline date: {baseline_date}")
-                
+                logging.info(f"Using baseline date: {self.date}")
+
+                # Initialize AI generator
+                ai_generator = AIReleaseNotesGenerator(
+                    args=args,
+                )
+
                 if os.path.isfile(changelog_path):
                     with open(changelog_path, 'r') as f:
                         changelog_content = f.read()
-                    
+
                     logging.info(f"Using CHANGELOG.md for {component.name}")
-                    ai_generator.process(changelog_content, component.name, component)
+                    prompt = AI_RELEASE_NOTES_PROMPT_CHANGELOG.format(
+                        component_name=component.name,
+                        version=build_version,
+                        repository_url=f"https://github.com/opensearch-project/{component.name}",
+                        changelog_content=changelog_content
+                    )
+                    print(f"PROMPT:\n{prompt}")
+                    release_notes_raw = ai_generator.generate_release_notes(prompt)
                 else:
-                    logging.info(f"No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {baseline_date}")
-                    commits = GitHubCommitProcessor(baseline_date, component, headers).get_commit_details()
-                    
-                    if commits:
-                        formatted_commits = json.dumps(commits, indent=2)
-                        ai_generator.process(formatted_commits, component.name, component)
+                    logging.info(f"No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {self.date}")
+                    github_commits = GitHubCommitsProcessor(baseline_date, component, self.token)
+                    commits = github_commits.get_commit_details()
+
+                    if len(commits) > 0:
+                        final_commits = [doc for doc in commits if not set(doc['Labels']) & set(self.filter_commits)]
+                        commits_text = ""
+                        for i, commit in enumerate(final_commits, 1):
+                            message = commit.get("Message", "")
+                            labels = commit.get("Labels", [])
+                            pr_subject = commit.get("PullRequestSubject", "")
+
+                            commits_text += f"{i}. PR Subject: {pr_subject}\n"
+                            commits_text += f"   Message: {message}\n"
+                            commits_text += f"   Labels: {', '.join(labels) if labels else 'None'}\n\n"
+                        prompt = AI_RELEASE_NOTES_PROMPT_COMMIT.format(
+                            component_name=component.name,
+                            version=build_version,
+                            repository_url=f"https://github.com/opensearch-project/{component.name}",
+                            commits_text=commits_text
+                        )
+                        release_notes_raw = ai_generator.generate_release_notes(prompt)
                     else:
                         logging.warning(f"No commits found for {component.name} since {baseline_date}")
+
+        if release_notes_raw:
+            with open(os.path.join(os.getcwd(), 'release-notes', f"opensearch-{component.name}{release_notes.filename}"), 'w') as f:
+                f.write(release_notes_raw)
