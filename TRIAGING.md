@@ -1,4 +1,4 @@
-<img src="https://docs.opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px">
+<img src="https://opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px">
 
 The maintainers of the OpenSearch-build Repo seek to promote an inclusive and engaged community of contributors. In order to facilitate this, bi-weekly triage meetings are open-to-all and attendance is encouraged for anyone who hopes to contribute, discuss an issue, or learn more about the project. To learn more about contributing to the OpenSearch-build Repo visit the [Contributing](./CONTRIBUTING.md) documentation.
 
