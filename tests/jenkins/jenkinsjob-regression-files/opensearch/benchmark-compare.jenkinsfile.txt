@@ -34,8 +34,7 @@
                         mv temp_result_307.md final_result_307.md
                     )
          benchmark-compare.script(groovy.lang.Closure)
-            benchmark-compare.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
-            benchmark-compare.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+            benchmark-compare.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-infra-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-infra-secrets/github-bot/ci-bot-token}]}, groovy.lang.Closure)
                benchmark-compare.sh(gh pr comment 1234 --repo opensearch-project/OpenSearch --body-file final_result_307.md)
          benchmark-compare.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

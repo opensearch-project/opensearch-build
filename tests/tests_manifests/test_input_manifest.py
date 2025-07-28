@@ -165,7 +165,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "replace")
         self.assertEqual(manifest.ci.image["linux"]["tar"].name, "opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1")
-        self.assertEqual(manifest.ci.image["linux"]["tar"].args, "-e JAVA_HOME=/opt/java/openjdk-21")
+        self.assertEqual(manifest.ci.image["linux"]["tar"].args, "-e JAVA_HOME=/opt/java/openjdk-24")
 
     def test_plugins_depend_on(self) -> None:
         path = os.path.join(self.manifests_path, "templates", "opensearch", "2.x", "os-template-2.12.0.yml")

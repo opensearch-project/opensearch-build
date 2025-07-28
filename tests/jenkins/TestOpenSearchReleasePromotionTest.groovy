@@ -30,6 +30,13 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
             )
 
         super.setUp()
+        binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', "ARTIFACT_PROMOTION_ROLE_NAME")
+        binding.setVariable('AWS_ACCOUNT_ARTIFACT', "AWS_ACCOUNT_ARTIFACT")
+        binding.setVariable('CLOUDFRONT_DISTRIBUTION_ID', "CLOUDFRONT_DISTRIBUTION_ID")
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
 
         helper.registerAllowedMethod('withAWS', [Map, Closure], { args, closure ->
             closure.delegate = delegate

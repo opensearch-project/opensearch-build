@@ -47,7 +47,10 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
                 return helper.callClosure(closure)
         })
         helper.registerAllowedMethod('findFiles', [Map.class], null)
-        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod("downloadBuildManifest", [Map], {
             c -> lib.jenkins.BuildManifest.new(readYaml(file: 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml'))
         })
@@ -106,6 +109,9 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
         binding.setVariable('pull_request', 1234)
         binding.setVariable('baseline_cluster_config', 'test-cluster-config')
         binding.setVariable('repository','opensearch-project/OpenSearch')
+        binding.setVariable('PERF_TEST_ACCOUNT_ID', 'PERF_TEST_ACCOUNT_ID')
+        binding.setVariable('GITHUB_USER', "GITHUB_USER")
+        binding.setVariable('GITHUB_TOKEN', "GITHUB_TOKEN")
 
         helper.registerAllowedMethod("GenericTrigger", [Map], { println 'GenericTrigger called with params: ' + it })
         helper.registerAllowedMethod("sh", [Map.class], { map ->

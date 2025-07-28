@@ -36,7 +36,13 @@ class TestReleaseManifestCommitLock extends BuildPipelineTest {
         addParam('RELEASE_VERSION', '2.0.0')
         addParam('COMPONENTS', 'OpenSearch')
 
-        helper.registerAllowedMethod("withCredentials", [Map])
+        binding.setVariable('GITHUB_USER', "GITHUB_USER")
+        binding.setVariable('GITHUB_TOKEN', "GITHUB_TOKEN")
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+
         def buildManifest = "tests/jenkins/data/opensearch-2.0.0.yml"
         helper.registerAllowedMethod('error', [String], { String message ->
         throw new Exception(message)

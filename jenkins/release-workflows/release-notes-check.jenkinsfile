@@ -12,6 +12,11 @@ lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
+def secret_github_bot = [
+    [envVar: 'GITHUB_USER', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-username'],
+    [envVar: 'GITHUB_TOKEN', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-token']
+]
+
 pipeline {
     options {
             timeout(time: 2, unit: 'HOURS')
@@ -81,7 +86,7 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                    withSecrets(secrets: secret_github_bot){
                         if (params.COMMENT == "ADD") {
                             sh """
                                 #!/bin/bash
@@ -128,7 +133,7 @@ pipeline {
                         set +e
                         ./release_notes.sh compile manifests/${RELEASE_VERSION}/opensearch-${RELEASE_VERSION}.yml manifests/${RELEASE_VERSION}/opensearch-dashboards-${RELEASE_VERSION}.yml --output release-notes/opensearch-release-notes-${RELEASE_VERSION}.md
                     """
-                    withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                    withSecrets(secrets: secret_github_bot){
                         try {
                             sh """
                                 git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build"

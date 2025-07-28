@@ -25,8 +25,7 @@
          release-manifest-commit-lock.echo(Skipping stage UPDATE_TO_RELEASE_BRANCH)
          release-manifest-commit-lock.stage(Create Pull Request, groovy.lang.Closure)
             release-manifest-commit-lock.script(groovy.lang.Closure)
-               release-manifest-commit-lock.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
-               release-manifest-commit-lock.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+               release-manifest-commit-lock.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-infra-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-infra-secrets/github-bot/ci-bot-token}]}, groovy.lang.Closure)
                   release-manifest-commit-lock.sh(
                                 git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/opensearch-build"
                                 git config user.email "opensearch-infra@amazon.com"

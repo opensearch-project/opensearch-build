@@ -44,11 +44,16 @@ class TestReleaseBranch extends BuildPipelineTest {
         binding.setVariable('MANIFEST_FILE', manifestUrl)
         binding.setVariable('SOURCE_BRANCH', "2.x")
         binding.setVariable('TARGET_BRANCH', "2.11")
+        binding.setVariable('GITHUB_USER', "GITHUB_USER")
+        binding.setVariable('GITHUB_TOKEN', "GITHUB_TOKEN")
 
 
         binding.setVariable('BUILD_MANIFEST', buildManifest)
 
-        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             return new Yaml().load((buildManifest as File).text)
         })

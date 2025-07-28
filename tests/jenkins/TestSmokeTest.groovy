@@ -23,7 +23,7 @@ class TestSmokeTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('9.6.1')
+                .defaultVersion('10.1.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -37,7 +37,7 @@ class TestSmokeTest extends BuildPipelineTest {
         def agentLabel = "Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host"
         def bucketName = 'job-s3-bucket-name'
 
-        binding.setVariable('env', ['BUILD_NUMBER': '234', 'PUBLIC_ARTIFACT_URL': 'DUMMY_PUBLIC_ARTIFACT_URL', 'JOB_NAME': 'dummy_job', 'DOCKER_AGENT':[image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']])
+        binding.setVariable('env', ['BUILD_NUMBER': '234', 'PUBLIC_ARTIFACT_URL': 'DUMMY_PUBLIC_ARTIFACT_URL', 'JOB_NAME': 'dummy_job', 'testDockerAgent':[image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']])
         binding.setVariable('BUILD_JOB_NAME', 'dummy_job')
         binding.setVariable('AGENT_LABEL', agentLabel)
         binding.setVariable('BUILD_NUMBER', '234')

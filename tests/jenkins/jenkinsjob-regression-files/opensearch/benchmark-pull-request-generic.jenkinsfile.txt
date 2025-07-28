@@ -55,8 +55,7 @@
                         mv temp_result_307.md final_result_307.md
                       )
          benchmark-pull-request.script(groovy.lang.Closure)
-            benchmark-pull-request.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
-            benchmark-pull-request.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+            benchmark-pull-request.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-infra-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-infra-secrets/github-bot/ci-bot-token}]}, groovy.lang.Closure)
                benchmark-pull-request.sh(gh pr comment 1234 --repo opensearch-project/OpenSearch --body-file final_result_307.md)
             benchmark-pull-request.getCompareBenchmarkIds({baselineClusterConfig=test-cluster-config, distributionVersion=3.0.0-SNAPSHOT, workload=nyc-taxis, pullRequestNumber=1234})
                getCompareBenchmarkIds.string({credentialsId=benchmark-metrics-datastore-user, variable=DATASTORE_USER})
