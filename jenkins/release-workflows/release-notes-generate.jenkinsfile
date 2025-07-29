@@ -1,0 +1,148 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+lib = library(identifier: 'jenkins@main', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    options {
+        timeout(time: 2, unit: 'HOURS')
+    }
+
+    agent none
+
+    parameters {
+        string(
+            name: 'INPUT_MANIFEST',
+            description: 'Release version number to fetch input manifest path',
+            trim: true
+        )
+        string(
+            name: 'GIT_LOG_DATE',
+            description: 'in format yyyy-mm-dd, example 2022-07-26.',
+            trim: true
+        )
+        string(
+            name: 'COMPONENTS',
+            description: 'Optional: If this field contains one or more component names (e.g. OpenSearch common-utils ...), will build with "--component COMPONENT_NAME_HERE ...", else build everything in the INPUT_MANIFEST.',
+            trim: true
+        )
+        string(
+            name: 'MODEL_ID',
+            description: 'AWS Bedrock model id to use, defaults to Anthropic Claude 3.7v2',
+            trim: true
+        )
+        string(
+            name: 'MAX_TOKENS',
+            description: 'Max number of tokens to use for supplied model id, deafults to 2000',
+            trim: true
+        )
+        string(
+            name: 'REF',
+            description: 'Override input component github repo ref, defaults to provided in input manifest file',
+            trim: true
+        )
+    }
+    stages {
+        stage('Parameters Check') {
+            agent { label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host' }
+            steps {
+                script {
+                    if (INPUT_MANIFEST.isEmpty() || GIT_LOG_DATE.isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error('INPUT_MANIFEST or GIT_LOG_DATE parameters cannot be empty!')
+                    }
+                }
+            }
+        }
+        stage('Generate consolidated release notes') {
+            agent { label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host' }
+            steps {
+                script {
+                    def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${params.INPUT_MANIFEST}"))
+                    def componentDefaultList = inputManifestObj.getNames()
+                    def componentList = params.COMPONENTS ? params.COMPONENTS.trim().split(' ') as List : componentDefaultList
+                    println("Component list: ${componentList}")
+                    def componentNotes = [:]
+                    stash includes: '**', name: "release-notes-opensearch-$BUILD_NUMBER"
+
+                    // Method 1: Use eachWithIndex to capture values properly
+                    componentList.eachWithIndex { component, component_index ->
+                        def wait_seconds = component_index * 20
+                        // Capture the values in local variables for the closure
+                        def currentComponent = component
+                        def currentIndex = component_index
+                        def currentWaitSeconds = wait_seconds
+
+                        componentNotes["Release notes for ${currentComponent}"] = {
+                            timeout(time: 4, unit: 'HOURS') {
+                                node('Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host') {
+                                    docker.withRegistry('https://public.ecr.aws/') {
+                                        docker.image('opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1').pull()
+                                        docker.image('opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1').inside('--network=host') {
+                                            try {
+                                                stage("${currentComponent}") {
+                                                    sh("echo ${currentComponent} with index ${currentIndex} will sleep ${currentWaitSeconds} seconds to reduce load && sleep ${currentWaitSeconds}")
+                                                    unstash "release-notes-opensearch-$BUILD_NUMBER"
+                                                    def componentObj = inputManifestObj.components[currentComponent]
+                                                    def version = inputManifestObj.build.version
+                                                    println("Component object: ${componentObj.name}, ${componentObj.ref}, ${componentObj.repository}")
+                                                    echo "Current workspace is $WORKSPACE}"
+                                                    withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                                        sh """
+                                                            #!/bin/bash
+                                                            set +e
+                                                            ./release_notes.sh generate manifests/${params.INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} --ref ${REF}
+
+                                                            ls -ltr $WORKSPACE/release-notes/
+
+                                                            if [ \$? -ne 0 ]; then
+                                                                echo "Release notes generation failed for component ${currentComponent}"
+                                                                exit 1
+                                                            else
+                                                                COMPONENT_REPO_URL="${componentObj.repository}"
+                                                                REPO_NAME=\$(basename "\${COMPONENT_REPO_URL}" .git)
+                                                                #git config user.email "opensearch-infra@amazon.com"
+                                                                #git config user.name "opensearch-ci"
+
+                                                                #echo "${GITHUB_TOKEN}" | gh auth login --with-token
+                                                                #cd ..
+                                                                git clone -b ${componentObj.ref} "\${COMPONENT_REPO_URL}"
+                                                                cd "\${REPO_NAME}"
+                                                                cp $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md release-notes/
+                                                                ls -ltr release-notes/
+                                                            fi
+                                                        """
+                                                    }
+                                                }
+                                            }
+                                            catch (e) {
+                                                throw new Exception("Error running workflow for component ${currentComponent}", e)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    parallel componentNotes
+                }
+            }
+        }
+    }
+    post {
+        always {
+             node('Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host') {
+                postCleanup()
+             }
+        }
+    }
+}
