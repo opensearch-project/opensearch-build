@@ -105,7 +105,6 @@ curl -SL https://github.com/stunnel/static-curl/releases/download/8.6.0-1/curl-l
 tar -xvf curl.tar.xz
 mv -v curl /usr/local/bin/curl
 rm -v curl.tar.xz
-curl --version
 
 # Create user group
 RUN dnf install -y sudo && \
