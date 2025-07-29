@@ -83,7 +83,7 @@ class TestReleaseNotes(unittest.TestCase):
         # Setup common mocks
         mock_repo = MagicMock()
         mock_git_repo_class.return_value.__enter__.return_value = mock_repo
-        mock_repo.dir = "/mock/repo/dir"
+        mock_repo.dir = os.path.join("mock", "repo", "dir")
 
         mock_ai_generator = MagicMock()
         mock_ai_generator_class.return_value = mock_ai_generator
@@ -102,7 +102,7 @@ class TestReleaseNotes(unittest.TestCase):
 
         # Verify changelog interactions
         mock_git_repo_class.assert_called_once()
-        mock_isfile.assert_called_once_with('/mock/repo/dir/CHANGELOG.md')
+        mock_isfile.assert_called_once_with(os.path.join("mock", "repo", "dir", "CHANGELOG.md"))
         mock_ai_generator_class.assert_called_once_with(args=self.mock_args)
 
         mock_ai_generator.generate_release_notes.assert_called_once()
@@ -124,13 +124,13 @@ class TestReleaseNotes(unittest.TestCase):
                                                      mock_release_notes_components: MagicMock, mock_git_repo: MagicMock, mock_temp_dir: MagicMock) -> None:
         """Test generate method when CHANGELOG.md doesn't exist but commits are available."""
         # Setup mocks
-        mock_getcwd.return_value = "/test/dir"
+        mock_getcwd.return_value = os.path.join("test", "dir")
         mock_temp_dir_instance = Mock()
-        mock_temp_dir_instance.name = "/tmp/test"
+        mock_temp_dir_instance.name = os.path.join("tmp", "test")
         mock_temp_dir.return_value.__enter__.return_value = mock_temp_dir_instance
 
         mock_repo = Mock()
-        mock_repo.dir = "/tmp/test/test-component"
+        mock_repo.dir = os.path.join("tmp", "test", "test-component")
         mock_git_repo.return_value.__enter__.return_value = mock_repo
 
         mock_release_notes = Mock()
@@ -171,7 +171,7 @@ class TestReleaseNotes(unittest.TestCase):
 
         # Verify
         mock_ai_generator_class.assert_called_once_with(args=self.mock_args)
-        mock_isfile.assert_called_once_with("/tmp/test/test-component/CHANGELOG.md")
+        mock_isfile.assert_called_once_with(os.path.join("tmp", "test", "test-component", "CHANGELOG.md"))
         mock_github_commits_class.assert_called_once_with("2022-07-26", self.component, None)
 
         # Verify AI generator was called with commits prompt
