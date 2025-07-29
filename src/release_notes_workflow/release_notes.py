@@ -89,7 +89,7 @@ class ReleaseNotes:
                     results.append(None)
         return results
 
-    def generate(self, args: ReleaseNotesCheckArgs, component: InputComponentFromSource, build_version: str, build_qualifier: str) -> None:
+    def generate(self, args: ReleaseNotesCheckArgs, component: InputComponentFromSource, build_version: str, build_qualifier: str, product: str) -> None:
         """Generate AI-powered release notes for a component."""
         release_notes_raw = ""
         with TemporaryDirectory(chdir=True) as work_dir:
@@ -108,6 +108,7 @@ class ReleaseNotes:
                 ai_generator = AIReleaseNotesGenerator(
                     args=args,
                 )
+                filename: str = f"{product}{release_notes.filename}" if component.name in ['OpenSearch', 'OpenSearch-Dashboards'] else f"{product}-{component.name}{release_notes.filename}"
 
                 if os.path.isfile(changelog_path):
                     with open(changelog_path, 'r') as f:
@@ -120,7 +121,6 @@ class ReleaseNotes:
                         repository_url=f"https://github.com/opensearch-project/{component.name}",
                         changelog_content=changelog_content
                     )
-                    print(f"PROMPT:\n{prompt}")
                     release_notes_raw = ai_generator.generate_release_notes(prompt)
                 else:
                     logging.info(f"No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {self.date}")
@@ -149,5 +149,5 @@ class ReleaseNotes:
                         logging.warning(f"No commits found for {component.name} since {baseline_date}")
 
         if release_notes_raw:
-            with open(os.path.join(os.getcwd(), 'release-notes', f"opensearch-{component.name}{release_notes.filename}"), 'w') as f:
+            with open(os.path.join(os.getcwd(), 'release-notes', filename), 'w') as f:
                 f.write(release_notes_raw)

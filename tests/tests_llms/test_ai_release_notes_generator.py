@@ -314,7 +314,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         result = generator.generate_release_notes("Test prompt")
 
         self.assertEqual(result, "Generated release notes")
-        mock_logging.assert_called_once_with("Generating release notes using AWS Bedrock Claude Sonnet 3.5 v2...")
+        mock_logging.assert_called_once_with("Generating release notes using AWS Bedrock Claude Model: us.anthropic.claude-3-7-sonnet-20250219-v1:0 and using 2000 tokens")
 
     @patch('boto3.client')
     def test_call_bedrock_claude_json_parsing(self, mock_boto3_client: MagicMock) -> None:

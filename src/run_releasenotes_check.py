@@ -231,9 +231,14 @@ def main() -> int:
         return 0
     elif args.action == "generate":
         for manifest in manifests:
+            product: str = 'opensearch' if manifest.build.name == 'OpenSearch' else 'opensearch-dashboards'
             for component in manifest.components.select(focus=components, platform='linux'):
-                logging.info(f"Components: {component.name}")
-                release_notes.generate(args, component, manifest.build.version, manifest.build.qualifier)  # type: ignore[arg-type]
+                if component.name != 'OpenSearch-Dashboards':
+                    logging.info(f"Components: {component.name}")
+                    release_notes.generate(args, component, manifest.build.version, manifest.build.qualifier, product)  # type: ignore[arg-type]
+                else:
+                    logging.info("Not executing for OpenSearch Dashboards as they have a running changelog file with all the past version releases "
+                                 "and this will exceed the token limit and cause repeted timeout calls to AWS")
     return 0
 
 

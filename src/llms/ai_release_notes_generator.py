@@ -126,7 +126,6 @@ class AIReleaseNotesGenerator:
 
     def generate_release_notes(self, prompt: str) -> str:
         # Generate release notes using Claude
-        logging.info("Generating release notes using AWS Bedrock Claude Sonnet 3.5 v2...")
+        logging.info(f"Generating release notes using AWS Bedrock Claude Model: {self.model_id} and using {self.max_tokens_override} tokens")
         release_notes = self.call_bedrock_claude(prompt)
-
         return release_notes

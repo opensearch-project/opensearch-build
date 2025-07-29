@@ -98,7 +98,7 @@ class TestReleaseNotes(unittest.TestCase):
         mock_open_func = mock_open(read_data=mock_file_content)
 
         with patch('builtins.open', mock_open_func):
-            release_notes.generate(self.mock_args, self.component, self.build_version, '')
+            release_notes.generate(self.mock_args, self.component, self.build_version, '', 'opensearch')
 
         # Verify changelog interactions
         mock_git_repo_class.assert_called_once()
@@ -167,7 +167,7 @@ class TestReleaseNotes(unittest.TestCase):
         mock_github_commits_class.return_value = mock_commits_processor
 
         # Execute
-        self.release_notes.generate(self.mock_args, self.component, self.build_version, self.build_qualifier)
+        self.release_notes.generate(self.mock_args, self.component, self.build_version, self.build_qualifier, 'opensearch')
 
         # Verify
         mock_ai_generator_class.assert_called_once_with(args=self.mock_args)
