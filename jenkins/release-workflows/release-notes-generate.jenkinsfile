@@ -77,7 +77,7 @@ pipeline {
 
                     // Method 1: Use eachWithIndex to capture values properly
                     componentList.eachWithIndex { component, component_index ->
-                        def wait_seconds = component_index * 20
+                        def wait_seconds = component_index * 30
                         // Capture the values in local variables for the closure
                         def currentComponent = component
                         def currentIndex = component_index
@@ -103,12 +103,11 @@ pipeline {
                                                             set +e
                                                             ./release_notes.sh generate manifests/${params.INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} --ref ${REF}
 
-                                                            ls -ltr $WORKSPACE/release-notes/
-
                                                             if [ \$? -ne 0 ]; then
                                                                 echo "Release notes generation failed for component ${currentComponent}"
                                                                 exit 1
                                                             else
+                                                                ls -ltr $WORKSPACE/release-notes/
                                                                 COMPONENT_REPO_URL="${componentObj.repository}"
                                                                 REPO_NAME=\$(basename "\${COMPONENT_REPO_URL}" .git)
                                                                 #git config user.email "opensearch-infra@amazon.com"
@@ -118,8 +117,22 @@ pipeline {
                                                                 #cd ..
                                                                 git clone -b ${componentObj.ref} "\${COMPONENT_REPO_URL}"
                                                                 cd "\${REPO_NAME}"
+                                                                if [ -f "$WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md" ]; then
+                                                                    cp "$WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md" release-notes/
+                                                                else
+                                                                    echo "Error: File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist"
+                                                                    #exit 1
+                                                                fi
                                                                 cp $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md release-notes/
                                                                 ls -ltr release-notes/
+                                                                #git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
+                                                                #git config user.email "opensearch-infra@amazon.com"
+                                                                #git config user.name "opensearch-ci"
+                                                                #git checkout -b ${version}-release-notes
+                                                                #git add .
+                                                                #git commit -sm "Add release notes for ${version}"
+                                                                #git push origin ${version}-release-notes --force
+                                                                #gh pr create --title 'Add release notes for ${version}' --body 'Add release notes for ${version}' -H ${version}-release-notes -B main
                                                             fi
                                                         """
                                                     }
