@@ -77,7 +77,8 @@ class TestReleaseNotes(unittest.TestCase):
     @patch('release_notes_workflow.release_notes.AIReleaseNotesGenerator')
     @patch('release_notes_workflow.release_notes.GitHubCommitsProcessor')
     @patch('os.path.isfile')
-    def test_generate_with_content_sources(self, mock_isfile, mock_commit_processor_class, mock_ai_generator_class, mock_git_repo_class):
+    def test_generate_with_content_sources(self, mock_isfile: MagicMock, mock_commit_processor_class: MagicMock, mock_ai_generator_class: MagicMock,
+                                           mock_git_repo_class: MagicMock) -> None:
         """Test generate method with different content sources (changelog and commits)."""
         # Setup common mocks
         mock_repo = MagicMock()
@@ -118,9 +119,9 @@ class TestReleaseNotes(unittest.TestCase):
     @patch('os.path.isfile')
     @patch('builtins.open', new_callable=mock_open)
     @patch('os.getcwd')
-    def test_generate_without_changelog_with_commits(self, mock_getcwd, mock_file_open, mock_isfile,
-                                                     mock_github_commits_class, mock_ai_generator_class,
-                                                     mock_release_notes_components, mock_git_repo, mock_temp_dir):
+    def test_generate_without_changelog_with_commits(self, mock_getcwd: MagicMock, mock_file_open: MagicMock, mock_isfile: MagicMock,
+                                                     mock_github_commits_class: MagicMock, mock_ai_generator_class: MagicMock,
+                                                     mock_release_notes_components: MagicMock, mock_git_repo: MagicMock, mock_temp_dir: MagicMock) -> None:
         """Test generate method when CHANGELOG.md doesn't exist but commits are available."""
         # Setup mocks
         mock_getcwd.return_value = "/test/dir"

@@ -17,7 +17,7 @@ from release_notes_workflow.release_notes_check_args import ReleaseNotesCheckArg
 class TestAIReleaseNotesGenerator(unittest.TestCase):
     """Test AI release notes generator."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
         # Create a mock args object
         self.mock_args = MagicMock(spec=ReleaseNotesCheckArgs)
@@ -33,7 +33,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         self.mock_bedrock_client.invoke_model.return_value = self.mock_response
 
     @patch('boto3.client')
-    def test_init_success(self, mock_boto3_client):
+    def test_init_success(self, mock_boto3_client: MagicMock) -> None:
         """Test successful initialization."""
         mock_boto3_client.return_value = self.mock_bedrock_client
 
@@ -48,7 +48,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         mock_boto3_client.assert_called_once_with('bedrock-runtime', region_name='us-east-1')
 
     @patch('boto3.client')
-    def test_init_with_custom_region(self, mock_boto3_client):
+    def test_init_with_custom_region(self, mock_boto3_client: MagicMock) -> None:
         """Test initialization with custom AWS region."""
         mock_boto3_client.return_value = self.mock_bedrock_client
 
@@ -59,7 +59,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
     @patch('boto3.client')
     @patch('sys.exit')
     @patch('logging.error')
-    def test_init_no_credentials(self, mock_logging, mock_sys_exit, mock_boto3_client):
+    def test_init_no_credentials(self, mock_logging: MagicMock, mock_sys_exit: MagicMock, mock_boto3_client: MagicMock) -> None:
         """Test initialization when AWS credentials are not found."""
         mock_boto3_client.side_effect = NoCredentialsError()
 
@@ -68,7 +68,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         mock_logging.assert_called_once_with("Error: AWS credentials not found. Please configure your AWS credentials.")
         mock_sys_exit.assert_called_once_with(1)
 
-    def test_should_retry_client_error_retryable(self):
+    def test_should_retry_client_error_retryable(self) -> None:
         """Test _should_retry with retryable ClientError."""
         generator = AIReleaseNotesGenerator(self.mock_args)
 
@@ -80,7 +80,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
             )
             self.assertTrue(generator._should_retry(client_error))
 
-    def test_should_retry_client_error_non_retryable(self):
+    def test_should_retry_client_error_non_retryable(self) -> None:
         """Test _should_retry with non-retryable ClientError."""
         generator = AIReleaseNotesGenerator(self.mock_args)
 
@@ -90,14 +90,14 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         )
         self.assertFalse(generator._should_retry(client_error))
 
-    def test_should_retry_timeout_errors(self):
+    def test_should_retry_timeout_errors(self) -> None:
         """Test _should_retry with timeout errors."""
         generator = AIReleaseNotesGenerator(self.mock_args)
 
         self.assertTrue(generator._should_retry(ReadTimeoutError(endpoint_url='test')))
         self.assertTrue(generator._should_retry(ConnectTimeoutError(endpoint_url='test')))
 
-    def test_should_retry_other_exceptions(self):
+    def test_should_retry_other_exceptions(self) -> None:
         """Test _should_retry with other exceptions."""
         generator = AIReleaseNotesGenerator(self.mock_args)
 
@@ -105,7 +105,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         self.assertFalse(generator._should_retry(Exception("Test error")))
 
     @patch('random.uniform')
-    def test_calculate_delay(self, mock_random):
+    def test_calculate_delay(self, mock_random: MagicMock) -> None:
         """Test _calculate_delay method."""
         mock_random.return_value = 0.3
         generator = AIReleaseNotesGenerator(self.mock_args)
@@ -118,7 +118,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         mock_random.assert_has_calls([call(0.1, 0.5)] * 3)
 
     @patch('boto3.client')
-    def test_call_bedrock_claude_success(self, mock_boto3_client):
+    def test_call_bedrock_claude_success(self, mock_boto3_client: MagicMock) -> None:
         """Test successful call to Bedrock Claude."""
         mock_boto3_client.return_value = self.mock_bedrock_client
         generator = AIReleaseNotesGenerator(self.mock_args)
@@ -142,7 +142,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
 
     @patch('boto3.client')
     @patch('time.sleep')
-    def test_call_bedrock_claude_retry_success(self, mock_sleep, mock_boto3_client):
+    def test_call_bedrock_claude_retry_success(self, mock_sleep: MagicMock, mock_boto3_client: MagicMock) -> None:
         """Test Bedrock call with retry that eventually succeeds."""
         mock_client = MagicMock()
 
@@ -166,7 +166,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
     @patch('time.sleep')
     @patch('sys.exit')
     @patch('logging.error')
-    def test_call_bedrock_claude_max_retries_exceeded(self, mock_logging, mock_sys_exit, mock_sleep, mock_boto3_client):
+    def test_call_bedrock_claude_max_retries_exceeded(self, mock_logging: MagicMock, mock_sys_exit: MagicMock, mock_sleep: MagicMock, mock_boto3_client: MagicMock) -> None:
         """Test Bedrock call when max retries are exceeded."""
         mock_client = MagicMock()
 
@@ -195,7 +195,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
     @patch('boto3.client')
     @patch('sys.exit')
     @patch('logging.error')
-    def test_call_bedrock_claude_access_denied(self, mock_logging, mock_sys_exit, mock_boto3_client):
+    def test_call_bedrock_claude_access_denied(self, mock_logging: MagicMock, mock_sys_exit: MagicMock, mock_boto3_client: MagicMock) -> None:
         """Test Bedrock call with AccessDeniedException."""
         mock_client = MagicMock()
 
@@ -224,7 +224,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
     @patch('boto3.client')
     @patch('sys.exit')
     @patch('logging.error')
-    def test_call_bedrock_claude_validation_exception(self, mock_logging, mock_sys_exit, mock_boto3_client):
+    def test_call_bedrock_claude_validation_exception(self, mock_logging: MagicMock, mock_sys_exit: MagicMock, mock_boto3_client: MagicMock) -> None:
         """Test Bedrock call with ValidationException."""
         mock_client = MagicMock()
 
@@ -255,7 +255,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
     @patch('sys.exit')
     @patch('logging.error')
     @patch('logging.warning')
-    def test_call_bedrock_claude_timeout_retry(self, mock_warning, mock_error, mock_sys_exit, mock_sleep, mock_boto3_client):
+    def test_call_bedrock_claude_timeout_retry(self, mock_warning: MagicMock, mock_error: MagicMock, mock_sys_exit: MagicMock, mock_sleep: MagicMock, mock_boto3_client: MagicMock) -> None:
         """Test Bedrock call with timeout errors and retry."""
         mock_client = MagicMock()
 
@@ -282,7 +282,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
     @patch('boto3.client')
     @patch('sys.exit')
     @patch('logging.error')
-    def test_call_bedrock_claude_unexpected_error(self, mock_logging, mock_sys_exit, mock_boto3_client):
+    def test_call_bedrock_claude_unexpected_error(self, mock_logging: MagicMock, mock_sys_exit: MagicMock, mock_boto3_client: MagicMock) -> None:
         """Test Bedrock call with unexpected error."""
         mock_client = MagicMock()
 
@@ -306,7 +306,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
 
     @patch('boto3.client')
     @patch('logging.info')
-    def test_generate_release_notes(self, mock_logging, mock_boto3_client):
+    def test_generate_release_notes(self, mock_logging: MagicMock, mock_boto3_client: MagicMock) -> None:
         """Test generate_release_notes method."""
         mock_boto3_client.return_value = self.mock_bedrock_client
         generator = AIReleaseNotesGenerator(self.mock_args)
@@ -317,7 +317,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         mock_logging.assert_called_once_with("Generating release notes using AWS Bedrock Claude Sonnet 3.5 v2...")
 
     @patch('boto3.client')
-    def test_call_bedrock_claude_json_parsing(self, mock_boto3_client):
+    def test_call_bedrock_claude_json_parsing(self, mock_boto3_client: MagicMock) -> None:
         """Test JSON response parsing in call_bedrock_claude."""
         # Test with different response structures
         test_responses = [
@@ -339,7 +339,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
 
                 self.assertEqual(result, response_data['content'][0]['text'])
 
-    def test_initialization_attributes(self):
+    def test_initialization_attributes(self) -> None:
         """Test that all required attributes are properly initialized."""
         generator = AIReleaseNotesGenerator(self.mock_args)
 
@@ -352,7 +352,7 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         self.assertTrue(hasattr(generator, 'bedrock_client'))
 
     @patch('boto3.client')
-    def test_custom_args_parameters(self, mock_boto3_client):
+    def test_custom_args_parameters(self, mock_boto3_client: MagicMock) -> None:
         """Test initialization with custom args parameters."""
         custom_args = MagicMock(spec=ReleaseNotesCheckArgs)
         custom_args.model_id = "custom-model-id"

@@ -146,7 +146,7 @@ class ValidationArgs:
         if args.distribution == "docker":
             if args.osd_build_number != "latest" and "opensearch-dashboards" not in args.projects:
                 raise Exception("--osd_build_number argument cannot be provided without specifying opensearch-dashboards in --projects")
-            if not(args.validate_digest_only) and not(args.using_staging_artifact_only):
+            if not (args.validate_digest_only) and not (args.using_staging_artifact_only):
                 raise Exception("Provide either of --validate-digest-only and --using-staging-artifact-only for Docker Validation")
 
         self.version = args.version

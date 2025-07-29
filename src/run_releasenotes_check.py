@@ -233,7 +233,8 @@ def main() -> int:
         for manifest in manifests:
             for component in manifest.components.select(focus=components, platform='linux'):
                 logging.info(f"Components: {component.name}")
-                release_notes.generate(args, component, manifest.build.version, manifest.build.qualifier)
+                release_notes.generate(args, component, manifest.build.version, manifest.build.qualifier)  # type: ignore[arg-type]
+    return 0
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@
 # compatible open source license.
 
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import requests
 
@@ -28,7 +28,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         self.token = "test-token"
         self.processor = GitHubCommitsProcessor(self.after_date, self.component, self.token)
 
-    def test_init_with_token(self):
+    def test_init_with_token(self) -> None:
         """Test initialization with GitHub token."""
         processor = GitHubCommitsProcessor(self.after_date, self.component, "test-token")
 
@@ -37,7 +37,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         self.assertIn("Authorization", processor.headers)
         self.assertEqual(processor.headers["Authorization"], "token test-token")
 
-    def test_init_without_token(self):
+    def test_init_without_token(self) -> None:
         """Test initialization without GitHub token."""
         processor = GitHubCommitsProcessor(self.after_date, self.component, None)
 
@@ -46,7 +46,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         self.assertNotIn("Authorization", processor.headers)
 
     @patch('requests.get')
-    def test_make_request_success(self, mock_get):
+    def test_make_request_success(self, mock_get: MagicMock) -> None:
         """Test successful API request."""
         mock_response = Mock()
         mock_response.json.return_value = {"test": "data"}
@@ -59,7 +59,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         mock_get.assert_called_once()
 
     @patch('requests.get')
-    def test_make_request_failure(self, mock_get):
+    def test_make_request_failure(self, mock_get: MagicMock) -> None:
         """Test API request failure."""
         mock_get.side_effect = requests.exceptions.RequestException("API Error")
 
@@ -67,7 +67,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
 
         self.assertIsNone(result)
 
-    def test_extract_pr_number_merge_commit(self):
+    def test_extract_pr_number_merge_commit(self) -> None:
         """Test PR number extraction from merge commit."""
         commit = {
             "commit": {
@@ -79,7 +79,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
 
         self.assertEqual(result, 123)
 
-    def test_extract_pr_number_parentheses(self):
+    def test_extract_pr_number_parentheses(self) -> None:
         """Test PR number extraction from commit with PR in parentheses."""
         commit = {
             "commit": {
@@ -91,7 +91,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
 
         self.assertEqual(result, 456)
 
-    def test_extract_pr_number_no_match(self):
+    def test_extract_pr_number_no_match(self) -> None:
         """Test PR number extraction when no PR number exists."""
         commit = {
             "commit": {
@@ -104,7 +104,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         self.assertIsNone(result)
 
     @patch('git.git_commit_processor.GitHubCommitsProcessor._make_request')
-    def test_get_pr_details_with_caching(self, mock_make_request):
+    def test_get_pr_details_with_caching(self, mock_make_request: MagicMock) -> None:
         """Test PR details retrieval with caching."""
         mock_pr_data = {
             "number": 123,
@@ -125,7 +125,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
 
     @patch('git.git_commit_processor.GitHubCommitsProcessor._extract_pr_number_from_commit')
     @patch('git.git_commit_processor.GitHubCommitsProcessor.get_pr_details')
-    def test_get_commit_pr_info_success(self, mock_get_pr_details, mock_extract_pr):
+    def test_get_commit_pr_info_success(self, mock_get_pr_details: MagicMock, mock_extract_pr: MagicMock) -> None:
         """Test successful commit PR info retrieval."""
         mock_extract_pr.return_value = 123
         mock_get_pr_details.return_value = {
@@ -142,7 +142,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
     @patch('git.git_commit_processor.GitHubCommitsProcessor._extract_pr_number_from_commit')
     @patch('git.git_commit_processor.GitHubCommitsProcessor._get_pr_from_commit_api')
     @patch('git.git_commit_processor.GitHubCommitsProcessor.get_pr_details')
-    def test_get_commit_pr_info_fallback_to_api(self, mock_get_pr_details, mock_get_pr_api, mock_extract_pr):
+    def test_get_commit_pr_info_fallback_to_api(self, mock_get_pr_details: MagicMock, mock_get_pr_api: MagicMock, mock_extract_pr: MagicMock) -> None:
         """Test commit PR info retrieval when falling back to API."""
         mock_extract_pr.return_value = None  # No PR in commit message
         mock_get_pr_api.return_value = {"number": 456}
@@ -159,7 +159,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         mock_get_pr_api.assert_called_once_with("owner", "repo", "def456")
 
     @patch('git.git_commit_processor.GitHubCommitsProcessor._extract_pr_number_from_commit')
-    def test_get_commit_pr_info_no_pr_found(self, mock_extract_pr):
+    def test_get_commit_pr_info_no_pr_found(self, mock_extract_pr: MagicMock) -> None:
         """Test commit PR info retrieval when no PR is found."""
         mock_extract_pr.return_value = None
 
@@ -170,7 +170,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
             self.assertEqual(labels, [])
             self.assertEqual(pr_subject, "")
 
-    def test_filter_commits_by_labels(self):
+    def test_filter_commits_by_labels(self) -> None:
         """Test filtering commits by labels."""
         commits = [
             {"Message": "Fix bug", "Labels": ["bug", "critical"], "PullRequestSubject": "Fix bug (#1)"},
@@ -188,7 +188,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         self.assertIn("Another bug fix", messages)
         self.assertNotIn("Update docs", messages)
 
-    def test_group_commits_by_labels(self):
+    def test_group_commits_by_labels(self) -> None:
         """Test grouping commits by labels."""
         commits = [
             {"Message": "Fix bug", "Labels": ["bug"], "PullRequestSubject": "Fix bug (#1)"},
@@ -206,7 +206,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         self.assertEqual(result["enhancement"][0]["Message"], "Add feature")
 
     @patch('git.git_commit_processor.GitHubCommitsProcessor.get_commits_with_labels')
-    def test_get_commit_details_success(self, mock_get_commits):
+    def test_get_commit_details_success(self, mock_get_commits: MagicMock) -> None:
         """Test successful commit details retrieval."""
         mock_commits = [
             {"Message": "Fix bug", "Labels": ["bug"], "PullRequestSubject": "Fix bug (#123)"},
@@ -226,7 +226,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         )
 
     @patch('git.git_commit_processor.GitHubCommitsProcessor.get_commits_with_labels')
-    def test_get_commit_details_no_commits(self, mock_get_commits):
+    def test_get_commit_details_no_commits(self, mock_get_commits: MagicMock) -> None:
         """Test commit details retrieval when no commits are found."""
         mock_get_commits.return_value = []
 
@@ -235,7 +235,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         self.assertEqual(result, [])
 
     @patch('git.git_commit_processor.GitHubCommitsProcessor._make_paginated_request')
-    def test_get_commits_with_labels_empty_response(self, mock_paginated_request):
+    def test_get_commits_with_labels_empty_response(self, mock_paginated_request: MagicMock) -> None:
         """Test get_commits_with_labels with empty response."""
         mock_paginated_request.return_value = None
 
@@ -244,7 +244,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         self.assertEqual(result, [])
 
     @patch('requests.get')
-    def test_get_pr_from_commit_api_success(self, mock_get):
+    def test_get_pr_from_commit_api_success(self, mock_get: MagicMock) -> None:
         """Test successful PR retrieval from commit API."""
         mock_response = Mock()
         mock_response.json.return_value = [{"number": 123, "title": "Test PR"}]
@@ -260,7 +260,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         self.assertEqual(call_args[1]["headers"]["Accept"], "application/vnd.github.groot-preview+json")
 
     @patch('requests.get')
-    def test_get_pr_from_commit_api_failure(self, mock_get):
+    def test_get_pr_from_commit_api_failure(self, mock_get: MagicMock) -> None:
         """Test PR retrieval from commit API failure."""
         mock_get.side_effect = requests.exceptions.RequestException("API Error")
 

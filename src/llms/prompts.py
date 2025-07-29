@@ -18,6 +18,9 @@ AI_RELEASE_NOTES_PROMPT_CHANGELOG = """Generate release notes for {component_nam
    - The main heading with ## should be "version number Release Notes" (e.g., For version 3.2.0 ## Version 3.2.0
    Release Notes followed by a blank line and then "Compatible with OpenSearch and OpenSearch Dashboards version
    <version number>" followed by content)
+
+**Changelog Content:**
+{changelog_content}
 """
 
 AI_RELEASE_NOTES_PROMPT_COMMIT = """I need you to generate OpenSearch component release notes from commit data. Please follow the OpenSearch release notes format exactly.

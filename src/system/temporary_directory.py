@@ -67,4 +67,4 @@ class TemporaryDirectory:
             logging.info(f"Keeping {self.name}")
         else:
             logging.info(f"Removing {self.name}")
-            shutil.rmtree(self.name, ignore_errors=False, onerror=g__handleRemoveReadonly)
+            shutil.rmtree(self.name, ignore_errors=False, onerror=g__handleRemoveReadonly)  # type: ignore[arg-type]

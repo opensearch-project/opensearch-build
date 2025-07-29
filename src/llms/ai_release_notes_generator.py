@@ -31,7 +31,7 @@ class AIReleaseNotesGenerator:
             logging.error("Error: AWS credentials not found. Please configure your AWS credentials.")
             sys.exit(1)
 
-    def _should_retry(self, exception) -> bool:
+    def _should_retry(self, exception: Exception) -> bool:
         """Determine if the exception warrants a retry"""
         if isinstance(exception, ClientError):
             error_code = exception.response['Error']['Code']
@@ -45,9 +45,9 @@ class AIReleaseNotesGenerator:
     def _calculate_delay(self, attempt: int) -> float:
         """Calculate delay using exponential backoff with jitter"""
         import random
-        delay = self.base_delay * (2 ** attempt)
+        delay: float = self.base_delay * (2 ** attempt)
         # Add jitter to avoid thundering herd
-        jitter = random.uniform(0.1, 0.5)
+        jitter: float = random.uniform(0.1, 0.5)
         return delay + jitter
 
     def call_bedrock_claude(self, prompt: str) -> str:
@@ -66,7 +66,7 @@ class AIReleaseNotesGenerator:
             ]
         }
 
-        last_exception = None
+        last_exception: Exception = None
 
         for attempt in range(self.max_retries + 1):
             try:
@@ -79,7 +79,7 @@ class AIReleaseNotesGenerator:
 
                 # Parse response
                 response_body = json.loads(response['body'].read())
-                return response_body['content'][0]['text']
+                return str(response_body['content'][0]['text'])
 
             except ClientError as e:
                 error_code = e.response['Error']['Code']

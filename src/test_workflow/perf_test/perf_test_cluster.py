@@ -102,10 +102,10 @@ class PerfTestCluster(TestCluster):
         logging.info(f'Executing "{command}" in {os.getcwd()}')
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)
 
-    def service(self) -> Service:
+    def service(self) -> Service:  # type: ignore[override]
         return None
 
-    def dependencies(self) -> List[Service]:
+    def dependencies(self) -> List[Service]:  # type: ignore[override]
         return []
 
     def wait_for_processing(self, tries: int = 3, delay: int = 15, backoff: int = 2) -> None:

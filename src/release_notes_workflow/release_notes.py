@@ -79,7 +79,7 @@ class ReleaseNotes:
                     results.append(None)
                 results.append(release_notes.exists())
 
-                if(release_notes.exists()):
+                if (release_notes.exists()):
                     releasenote = os.path.basename(release_notes.full_path)
                     repo_name = component.repository.split("/")[-1].split('.')[0]
                     repo_ref = component.ref.split("/")[-1]

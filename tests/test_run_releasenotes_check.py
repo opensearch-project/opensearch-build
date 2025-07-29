@@ -62,7 +62,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
     @patch('run_releasenotes_check.ReleaseNotes')
     @patch('run_releasenotes_check.InputManifest.from_file')
     @patch('run_releasenotes_check.ReleaseNotesCheckArgs')
-    def test_generate_action(self, mock_args_class, mock_from_file, mock_release_notes_class):
+    def test_generate_action(self, mock_args_class: MagicMock, mock_from_file: MagicMock, mock_release_notes_class: MagicMock) -> None:
         """Test the generate action in run_releasenotes_check.py."""
         # Setup mocks
         mock_args = MagicMock()
@@ -92,7 +92,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
     @patch('run_releasenotes_check.ReleaseNotes')
     @patch('run_releasenotes_check.InputManifest.from_file')
     @patch('run_releasenotes_check.ReleaseNotesCheckArgs')
-    def test_generate_action_with_components(self, mock_args_class, mock_from_file, mock_release_notes_class):
+    def test_generate_action_with_components(self, mock_args_class: MagicMock, mock_from_file: MagicMock, mock_release_notes_class: MagicMock) -> None:
         """Test the generate action with specific components."""
         # Setup mocks
         mock_args = MagicMock()
@@ -126,7 +126,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
     @patch('run_releasenotes_check.ReleaseNotes')
     @patch('run_releasenotes_check.InputManifest.from_file')
     @patch('run_releasenotes_check.ReleaseNotesCheckArgs')
-    def test_generate_action_with_multiple_manifests(self, mock_args_class, mock_from_file, mock_release_notes_class):
+    def test_generate_action_with_multiple_manifests(self, mock_args_class: MagicMock, mock_from_file: MagicMock, mock_release_notes_class: MagicMock) -> None:
         """Test the generate action with multiple manifests."""
         mock_args = MagicMock()
         mock_args.action = "generate"

@@ -43,7 +43,7 @@ class GitHubCommitsProcessor:
             self.headers["Authorization"] = f"token {token}"
 
         # Cache for PR data to avoid duplicate API calls
-        self.pr_cache = {}
+        self.pr_cache: Dict = {}
         self.after_date = after_date
         self.component = component
 
@@ -52,14 +52,14 @@ class GitHubCommitsProcessor:
         try:
             response = requests.get(url, headers=self.headers, params=params)
             response.raise_for_status()
-            return response.json()
+            return response.json()  # type: ignore[no-any-return]
         except requests.exceptions.RequestException as e:
             logger.info(f"Error making request to {url}: {e}")
             return None
 
     def _make_paginated_request(self, url: str, params: Dict = None) -> Optional[List[Dict]]:
         """Make a GET request to GitHub API with pagination support"""
-        all_data = []
+        all_data: List[Dict] = []
         page = 1
 
         while True:
@@ -124,10 +124,10 @@ class GitHubCommitsProcessor:
         try:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
-            prs = response.json()
+            prs = response.json()  # type: ignore[no-any-return]
 
             if prs and len(prs) > 0:
-                return prs[0]  # Return the first (usually only) PR
+                return prs[0]  # type: ignore[no-any-return]
         except requests.exceptions.RequestException:
             pass
 
@@ -136,7 +136,7 @@ class GitHubCommitsProcessor:
     def get_pr_details(self, owner: str, repo: str, pr_number: int) -> Optional[Dict]:
         """Get detailed PR information including labels"""
         if pr_number in self.pr_cache:
-            return self.pr_cache[pr_number]
+            return self.pr_cache[pr_number]  # type: ignore[no-any-return]
 
         url = f"{self.base_url}/repos/{owner}/{repo}/pulls/{pr_number}"
         pr_data = self._make_request(url)
@@ -214,7 +214,7 @@ class GitHubCommitsProcessor:
         # Use threading for faster API calls, but be mindful of rate limits
         max_workers = 5  # Conservative to avoid hitting rate limits
 
-        def process_commit(commit):
+        def process_commit(commit: Dict) -> Dict:
             message = commit["commit"]["message"].replace('\n', ' ').replace('\r', ' ').strip()
             labels, pr_subject = self.get_commit_pr_info(owner, repo, commit)
             return {
@@ -273,7 +273,7 @@ class GitHubCommitsProcessor:
         Returns:
             Dictionary with labels as keys and lists of commits as values
         """
-        grouped = {label: [] for label in target_labels}
+        grouped: Dict = {label: [] for label in target_labels}
         grouped["unlabeled"] = []
 
         for commit in commits:
@@ -291,18 +291,18 @@ class GitHubCommitsProcessor:
 
         return grouped
 
-    def get_commit_details(self):
+    def get_commit_details(self) -> List[Dict]:
         iso_since_date = self.after_date
 
         iso_until_date = None
-        url = self.component.repository.rstrip('/').removesuffix('.git')
+        url = self.component.repository.rstrip('/').removesuffix('.git')  # type: ignore[attr-defined]
         # Split by '/' and get the last two parts
         parts = url.split('/')
         owner = parts[-2]
         repo = parts[-1]
 
         # Get all commits with labels
-        commits = self.get_commits_with_labels(owner, repo, iso_since_date, iso_until_date, self.component.ref)
+        commits = self.get_commits_with_labels(owner, repo, iso_since_date, iso_until_date, self.component.ref)  # type: ignore[attr-defined]
 
         if not commits:
             logger.info("No commits found since the specified date.")
