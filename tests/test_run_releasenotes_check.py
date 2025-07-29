@@ -9,7 +9,7 @@ import datetime
 import os
 import unittest
 from typing import Any
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -58,3 +58,171 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
     @patch("run_releasenotes_check.main", return_value=0)
     def test_main_with_save(self, *mocks: Any) -> None:
         self.assertEqual(ReleaseNotesCheckArgs().output, "test.md")
+
+    @patch('run_releasenotes_check.ReleaseNotes')
+    @patch('run_releasenotes_check.InputManifest.from_file')
+    @patch('run_releasenotes_check.ReleaseNotesCheckArgs')
+    def test_generate_action(self, mock_args_class: MagicMock, mock_from_file: MagicMock, mock_release_notes_class: MagicMock) -> None:
+        """Test the generate action in run_releasenotes_check.py."""
+        # Setup mocks
+        mock_args = MagicMock()
+        mock_args.action = "generate"
+        mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml"]
+        mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.components = None
+        mock_args_class.return_value = mock_args
+
+        mock_manifest = MagicMock()
+        mock_manifest.components.select.return_value = [MagicMock()]
+        mock_manifest.build.version = "3.2.0"
+        mock_manifest.build.qualifier = None
+        mock_from_file.return_value = mock_manifest
+
+        mock_release_notes = MagicMock()
+        mock_release_notes_class.return_value = mock_release_notes
+
+        # Call the main function
+        main()
+
+        # Verify the interactions
+        mock_from_file.assert_called_once_with("manifests/3.2.0/opensearch-3.2.0.yml")
+        mock_release_notes_class.assert_called_once_with([mock_manifest], datetime.date(2025, 6, 24), "generate")
+        mock_release_notes.generate.assert_called_once()
+
+    @patch('run_releasenotes_check.ReleaseNotes')
+    @patch('run_releasenotes_check.InputManifest.from_file')
+    @patch('run_releasenotes_check.ReleaseNotesCheckArgs')
+    def test_generate_action_with_components(self, mock_args_class: MagicMock, mock_from_file: MagicMock, mock_release_notes_class: MagicMock) -> None:
+        """Test the generate action with specific components."""
+        # Setup mocks
+        mock_args = MagicMock()
+        mock_args.action = "generate"
+        mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml"]
+        mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.components = ["component1", "component2"]
+        mock_args_class.return_value = mock_args
+
+        mock_manifest = MagicMock()
+        mock_component1 = MagicMock()
+        mock_component1.name = "component1"
+        mock_component2 = MagicMock()
+        mock_component2.name = "component2"
+        mock_manifest.components.select.return_value = [mock_component1, mock_component2]
+        mock_manifest.build.version = "3.2.0"
+        mock_manifest.build.qualifier = None
+        mock_from_file.return_value = mock_manifest
+
+        mock_release_notes = MagicMock()
+        mock_release_notes_class.return_value = mock_release_notes
+
+        main()
+
+        # Verify the interactions
+        mock_from_file.assert_called_once_with("manifests/3.2.0/opensearch-3.2.0.yml")
+        mock_release_notes_class.assert_called_once_with([mock_manifest], datetime.date(2025, 6, 24), "generate")
+        mock_manifest.components.select.assert_called_once_with(focus=["component1", "component2"], platform='linux')
+        self.assertEqual(mock_release_notes.generate.call_count, 2)
+
+    @patch('run_releasenotes_check.ReleaseNotes')
+    @patch('run_releasenotes_check.InputManifest.from_file')
+    @patch('run_releasenotes_check.ReleaseNotesCheckArgs')
+    def test_generate_action_with_multiple_manifests(self, mock_args_class: MagicMock, mock_from_file: MagicMock, mock_release_notes_class: MagicMock) -> None:
+        """Test the generate action with multiple manifests."""
+        mock_args = MagicMock()
+        mock_args.action = "generate"
+        mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml", "manifests/3.2.0/opensearch-dashboards-3.2.0.yml"]
+        mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.components = None
+        mock_args_class.return_value = mock_args
+
+        mock_manifest1 = MagicMock()
+        mock_manifest1.components.select.return_value = [MagicMock()]
+        mock_manifest1.build.version = "3.2.0"
+        mock_manifest1.build.name = "OpenSearch"
+        mock_manifest1.build.qualifier = None
+
+        mock_manifest2 = MagicMock()
+        mock_manifest2.components.select.return_value = [MagicMock()]
+        mock_manifest2.build.version = "3.2.0"
+        mock_manifest2.build.name = "OpenSearch Dashboards"
+        mock_manifest2.build.qualifier = None
+
+        mock_from_file.side_effect = [mock_manifest1, mock_manifest2]
+
+        mock_release_notes = MagicMock()
+        mock_release_notes_class.return_value = mock_release_notes
+
+        main()
+
+        # Verify the interactions
+        self.assertEqual(mock_from_file.call_count, 2)
+        mock_release_notes_class.assert_called_once_with([mock_manifest1, mock_manifest2], datetime.date(2025, 6, 24), "generate")
+        self.assertEqual(mock_release_notes.generate.call_count, 2)
+
+    @patch('run_releasenotes_check.ReleaseNotes')
+    @patch('run_releasenotes_check.InputManifest.from_file')
+    @patch('run_releasenotes_check.ReleaseNotesCheckArgs')
+    def test_generate_action_with_ref_override(self, mock_args_class: MagicMock, mock_from_file: MagicMock, mock_release_notes_class: MagicMock) -> None:
+        """Test the generate action with ref override."""
+        mock_args = MagicMock()
+        mock_args.action = "generate"
+        mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml"]
+        mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.components = None
+        mock_args.ref = "custom-ref-12345"
+        mock_args_class.return_value = mock_args
+
+        mock_manifest = MagicMock()
+        mock_manifest.build.version = "3.2.0"
+        mock_manifest.build.name = "OpenSearch"
+        mock_manifest.build.qualifier = None
+
+        mock_component = MagicMock()
+        mock_component.name = "test-component"
+        mock_component.ref = "original-ref"
+
+        mock_manifest.components.select.return_value = [mock_component]
+        mock_from_file.return_value = mock_manifest
+
+        mock_release_notes = MagicMock()
+        mock_release_notes_class.return_value = mock_release_notes
+
+        main()
+
+        # Verify component.ref was overridden with args.ref
+        self.assertEqual(mock_component.ref, "custom-ref-12345")
+        mock_release_notes.generate.assert_called_once()
+
+    @patch('run_releasenotes_check.ReleaseNotes')
+    @patch('run_releasenotes_check.InputManifest.from_file')
+    @patch('run_releasenotes_check.ReleaseNotesCheckArgs')
+    def test_generate_action_without_ref_override(self, mock_args_class: MagicMock, mock_from_file: MagicMock, mock_release_notes_class: MagicMock) -> None:
+        """Test the generate action without ref override preserves original ref."""
+        mock_args = MagicMock()
+        mock_args.action = "generate"
+        mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml"]
+        mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.components = None
+        mock_args.ref = None
+        mock_args_class.return_value = mock_args
+
+        mock_manifest = MagicMock()
+        mock_manifest.build.version = "3.2.0"
+        mock_manifest.build.name = "OpenSearch"
+        mock_manifest.build.qualifier = None
+
+        mock_component = MagicMock()
+        mock_component.name = "test-component"
+        mock_component.ref = "original-ref"
+
+        mock_manifest.components.select.return_value = [mock_component]
+        mock_from_file.return_value = mock_manifest
+
+        mock_release_notes = MagicMock()
+        mock_release_notes_class.return_value = mock_release_notes
+
+        main()
+
+        # Verify component.ref was not changed when args.ref is None
+        self.assertEqual(mock_component.ref, "original-ref")
+        mock_release_notes.generate.assert_called_once()

@@ -26,11 +26,14 @@ def main() -> int:
     args = ReleaseNotesCheckArgs()
     console.configure(level=args.logging_level)
     manifests: List[InputManifest] = []
+    components = args.components
     # storing temporary release notes for testing purposes
     BASE_FILE_PATH = "release_notes_workflow/results"
 
     for input_manifests in args.manifest:
         manifests.append(InputManifest.from_file(input_manifests))
+
+    release_notes = ReleaseNotes(manifests, args.date, args.action)
 
     if len(args.manifest) == 2:
         if manifests[0].build.version != manifests[1].build.version:
@@ -76,8 +79,6 @@ def main() -> int:
         return capitalize_acronyms(formatted_name)
 
     def create_urls_file_if_not_exists(manifest_files: List[InputManifest]) -> None:
-
-        release_notes = ReleaseNotes(manifest_files, args.date, args.action)
         table = release_notes.table()
 
         table_filepath = os.path.join(os.path.dirname(__file__), table_filename)
@@ -117,117 +118,128 @@ def main() -> int:
             urls = [line.strip() for line in file if line.strip()]
 
         unique_urls = list(set(urls))
+        # store plugin data
+        plugin_data: defaultdict = defaultdict(lambda: defaultdict(list))
+        # handle custom headings
+        heading_mapping = {
+            "Feature": "Features",
+            "Feat": "Features",
+            "Experimental Features": "Experimental",
+            "Refactor": "Refactoring",
+            "Enhancement": "Enhancements",
+            "Bug Fix": "Bug Fixes",
+        }
+        unique_headings = set()
+        for url in unique_urls:
+            if not url.startswith("#"):
+                response = requests.get(url)
 
-    # store plugin data
-    plugin_data: defaultdict = defaultdict(lambda: defaultdict(list))
-    # handle custom headings
-    heading_mapping = {
-        "Feature": "Features",
-        "Feat": "Features",
-        "Experimental Features": "Experimental",
-        "Refactor": "Refactoring",
-        "Enhancement": "Enhancements",
-        "Bug Fix": "Bug Fixes",
-    }
-    unique_headings = set()
-    for url in unique_urls:
-        if not url.startswith("#"):
-            response = requests.get(url)
+                if response.status_code == 200:
+                    content = response.text
+                    plugin_name = format_component_name_from_url(url)
 
-            if response.status_code == 200:
-                content = response.text
-                plugin_name = format_component_name_from_url(url)
+                    # obtain headings (###) from the content
+                    headings = [match.strip() for match in re.findall(r"###.+", content)]
+                    if not headings:
+                        continue
 
-                # obtain headings (###) from the content
-                headings = [match.strip() for match in re.findall(r"###.+", content)]
-                if not headings:
-                    continue
+                    # Store content under each heading in respective plugin
+                    for i in range(len(headings)):
+                        heading = headings[i].strip()
+                        if heading.startswith("### "):
+                            heading = heading[4:]
+                        heading = heading.title()
 
-                # Store content under each heading in respective plugin
-                for i in range(len(headings)):
-                    heading = headings[i].strip()
-                    if heading.startswith("### "):
-                        heading = heading[4:]
-                    heading = heading.title()
+                        if heading in heading_mapping:
+                            heading = heading_mapping[heading]
+                        unique_headings.add(heading)
 
-                    if heading in heading_mapping:
-                        heading = heading_mapping[heading]
-                    unique_headings.add(heading)
-
-                    content_start = content.find(headings[i])
-                    if content_start != -1:
-                        if i == len(headings) - 1:
-                            content_to_end = content[content_start:]
+                        content_start = content.find(headings[i])
+                        if content_start != -1:
+                            if i == len(headings) - 1:
+                                content_to_end = content[content_start:]
+                            else:
+                                content_to_end = content[content_start: content.find(headings[i + 1])]
+                        content_to_end = content_to_end.replace(f"### {heading}", "").lstrip()
+                        parts = content_to_end.split("*", 1)
+                        if len(parts) == 2:
+                            content_to_end = "*" + parts[1]
                         else:
-                            content_to_end = content[content_start: content.find(headings[i + 1])]
-                    content_to_end = content_to_end.replace(f"### {heading}", "").lstrip()
-                    parts = content_to_end.split("*", 1)
-                    if len(parts) == 2:
-                        content_to_end = "*" + parts[1]
-                    else:
-                        content_to_end = content_to_end.lstrip().lstrip("-")
-                        if len(content_to_end) > 0:
-                            content_to_end = "* " + content_to_end
-                    plugin_data[plugin_name][heading].append(content_to_end)
-    plugin_data = defaultdict(list, sorted(plugin_data.items()))
-    logging.info("Compilation complete.")
+                            content_to_end = content_to_end.lstrip().lstrip("-")
+                            if len(content_to_end) > 0:
+                                content_to_end = "* " + content_to_end
+                        plugin_data[plugin_name][heading].append(content_to_end)
+        plugin_data = defaultdict(list, sorted(plugin_data.items()))
+        logging.info("Compilation complete.")
 
-    # Markdown renderer
-    markdown = mistune.create_markdown()
+        # Markdown renderer
+        markdown = mistune.create_markdown()
 
-    RELEASE_NOTE_MD_PATH = os.path.join(os.path.dirname(__file__), RELEASE_NOTE_MD)
-    os.makedirs(os.path.dirname(RELEASE_NOTE_MD_PATH), exist_ok=True)
+        RELEASE_NOTE_MD_PATH = os.path.join(os.path.dirname(__file__), RELEASE_NOTE_MD)
+        os.makedirs(os.path.dirname(RELEASE_NOTE_MD_PATH), exist_ok=True)
 
-    # Filter content for each category
-    with open(RELEASE_NOTE_MD_PATH, "w") as outfile:
-        outfile.write(markdown(f"# OpenSearch and OpenSearch Dashboards {BUILD_VERSION} Release Notes\n\n"))
+        # Filter content for each category
+        with open(RELEASE_NOTE_MD_PATH, "w") as outfile:
+            outfile.write(markdown(f"# OpenSearch and OpenSearch Dashboards {BUILD_VERSION} Release Notes\n\n"))
 
-        for category in RELEASENOTES_CATEGORIES.split(","):
-            # Discard category content if no data is available
+            for category in RELEASENOTES_CATEGORIES.split(","):
+                # Discard category content if no data is available
+                temp_content = []
+                temp_content.append(markdown(f"\n## {category}\n\n"))
+
+                for plugin, categories in plugin_data.items():
+                    if category.lower() in [cat.lower() for cat in categories.keys()]:
+                        for cat, content_list in categories.items():
+                            if cat.lower() == category.lower():
+                                for content in content_list:
+                                    if content.strip():
+                                        temp_content.append(markdown(f"\n### {plugin}\n\n"))
+                                        temp_content.append(markdown(content))
+
+                if len(temp_content) > 1:
+                    outfile.write("\n".join(temp_content))
+                    outfile.write("\n")
+                else:
+                    logging.info(f"\n## {category} was empty\n\n")
+
+            # Handle unknown categories
             temp_content = []
-            temp_content.append(markdown(f"\n## {category}\n\n"))
-
             for plugin, categories in plugin_data.items():
-                if category.lower() in [cat.lower() for cat in categories.keys()]:
-                    for cat, content_list in categories.items():
-                        if cat.lower() == category.lower():
-                            for content in content_list:
-                                if content.strip():
-                                    temp_content.append(markdown(f"\n### {plugin}\n\n"))
-                                    temp_content.append(markdown(content))
+                for cat, content_list in categories.items():
+                    if cat.lower() not in RELEASENOTES_CATEGORIES.lower():
+                        temp_content.append(f"\n## {cat.upper()}\n\n")
+                        temp_content.append(f"\n### {plugin}\n\n")
+                        temp_content.extend(content_list)
+            if temp_content:
+                outfile.write(markdown("## NON-COMPLIANT"))
+                for item in temp_content:
+                    outfile.write(markdown(item))
 
-            if len(temp_content) > 1:
-                outfile.write("\n".join(temp_content))
-                outfile.write("\n")
-            else:
-                logging.info(f"\n## {category} was empty\n\n")
+        with open(RELEASE_NOTE_MD_PATH, 'r') as f:
+            html_content = f.read()
 
-        # Handle unknown categories
-        temp_content = []
-        for plugin, categories in plugin_data.items():
-            for cat, content_list in categories.items():
-                if cat.lower() not in RELEASENOTES_CATEGORIES.lower():
-                    temp_content.append(f"\n## {cat.upper()}\n\n")
-                    temp_content.append(f"\n### {plugin}\n\n")
-                    temp_content.extend(content_list)
-        if temp_content:
-            outfile.write(markdown("## NON-COMPLIANT"))
-            for item in temp_content:
-                outfile.write(markdown(item))
+        markdown_content = markdownify.markdownify(html_content, heading_style="ATX")
 
-    with open(RELEASE_NOTE_MD_PATH, 'r') as f:
-        html_content = f.read()
+        with open(RELEASE_NOTE_MD_PATH, 'w') as f:
+            f.write(markdown_content)
 
-    markdown_content = markdownify.markdownify(html_content, heading_style="ATX")
-
-    with open(RELEASE_NOTE_MD_PATH, 'w') as f:
-        f.write(markdown_content)
-
-    if args.output is not None:
-        logging.info(f"Moving {RELEASE_NOTE_MD} to {args.output}")
-        shutil.move(RELEASE_NOTE_MD_PATH, args.output)
-    else:
-        logging.info(f"Release notes compiled to {RELEASE_NOTE_MD_PATH}")
+        if args.output is not None:
+            logging.info(f"Moving {RELEASE_NOTE_MD} to {args.output}")
+            shutil.move(RELEASE_NOTE_MD_PATH, args.output)
+        else:
+            logging.info(f"Release notes compiled to {RELEASE_NOTE_MD_PATH}")
+        return 0
+    elif args.action == "generate":
+        for manifest in manifests:
+            product: str = 'opensearch' if manifest.build.name == 'OpenSearch' else 'opensearch-dashboards'
+            for component in manifest.components.select(focus=components, platform='linux'):
+                if component.name != 'OpenSearch-Dashboards':
+                    component.ref = args.ref if args.ref is not None else component.ref  # type: ignore[attr-defined]
+                    logging.info(f"Components: {component.name}")
+                    release_notes.generate(args, component, manifest.build.version, manifest.build.qualifier, product)  # type: ignore[arg-type]
+                else:
+                    logging.info("Not executing for OpenSearch Dashboards as they have a running changelog file with all the past version releases "
+                                 "and this will exceed the token limit and cause repeted timeout calls to AWS")
     return 0
 
 

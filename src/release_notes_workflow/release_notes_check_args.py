@@ -16,10 +16,13 @@ class ReleaseNotesCheckArgs:
     manifest: List[IO]
     date: str
     output: str
+    model_id: str
+    max_tokens: int
+    ref: str
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Checkout an OpenSearch Bundle and check for CommitID and Release Notes")
-        parser.add_argument("action", choices=["check", "compile"], help="Operation to perform.")
+        parser.add_argument("action", choices=["check", "compile", "generate"], help="Operation to perform.")
         parser.add_argument("manifest", type=argparse.FileType("r"), nargs='+', help="Manifest file.")
         parser.add_argument(
             "-v",
@@ -40,11 +43,39 @@ class ReleaseNotesCheckArgs:
             "--output",
             help="Output file."
         )
+        parser.add_argument(
+            "-c",
+            "--component",
+            dest="components",
+            nargs='*',
+            type=str,
+            help="Process one or more components."
+        )
+        parser.add_argument("--model-id",
+                            type=str,
+                            default="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+                            help="AWS Bedrock model ID to use for AI generation.")
+        parser.add_argument("--max-tokens",
+                            type=int,
+                            default=2000,
+                            help="Maximum number of tokens to generate in AI response.")
+        parser.add_argument("--ref",
+                            type=str,
+                            default=None,
+                            help="Override input manifest ref")
+
         args = parser.parse_args()
         self.logging_level = args.logging_level
         self.action = args.action
         self.manifest = args.manifest
         self.date = args.date
         self.output = args.output
-        if self.action == "check" and self.date is None:
+        self.model_id = args.model_id
+        self.max_tokens = args.max_tokens
+        self.ref = args.ref
+
+        # AI options
+        self.components = args.components
+
+        if (self.action == "check" or self.action == 'generate') and self.date is None:
             parser.error("check option requires --date argument")

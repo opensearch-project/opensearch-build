@@ -45,7 +45,7 @@ class ValidateRpm(Validation, DownloadUtils):
             for project in self.args.projects:
                 execute(f'sudo systemctl start {project}', ".")
                 (stdout, stderr, status) = execute(f'sudo systemctl status {project}', ".")
-                if(status == 0):
+                if (status == 0):
                     logging.info(stdout)
                 else:
                     logging.info(stderr)

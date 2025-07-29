@@ -5,10 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
+import sys
 
-class GitCommit:
-
-    def __init__(self, id: str, date: str, message: str = None) -> None:
-        self.id = id
-        self.date = date
-        self.message = message or ""
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../src"))
