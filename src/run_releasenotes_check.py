@@ -234,6 +234,7 @@ def main() -> int:
             product: str = 'opensearch' if manifest.build.name == 'OpenSearch' else 'opensearch-dashboards'
             for component in manifest.components.select(focus=components, platform='linux'):
                 if component.name != 'OpenSearch-Dashboards':
+                    component.ref = args.ref if args.ref is not None else component.ref  # type: ignore[attr-defined]
                     logging.info(f"Components: {component.name}")
                     release_notes.generate(args, component, manifest.build.version, manifest.build.qualifier, product)  # type: ignore[arg-type]
                 else:
