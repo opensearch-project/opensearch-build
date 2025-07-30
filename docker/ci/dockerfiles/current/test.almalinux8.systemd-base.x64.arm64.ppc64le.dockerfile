@@ -102,7 +102,7 @@ RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && \
 # https://github.com/curl/curl/commit/08e8455dddc5e48e58a12ade3815c01ae3da3b64
 # https://curl.se/changes.html#7_75_0
 RUN ARCH=`uname -m`; \
-    if [ "$ARCH" = "ppc64le"]; then ARCH=powerpc64le; fi; \
+    if [ "$ARCH" = "ppc64le" ]; then ARCH=powerpc64le; fi; \
     curl -SfL https://github.com/stunnel/static-curl/releases/download/8.6.0-1/curl-linux-$ARCH-8.6.0.tar.xz -o curl.tar.xz && \
     tar -xvf curl.tar.xz && \
     mv -v curl /usr/local/bin/curl && \
