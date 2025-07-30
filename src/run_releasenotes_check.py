@@ -58,11 +58,9 @@ def main() -> int:
                 logging.info(f"The file {file} does not exist, creating new.")
 
     def capitalize_acronyms(formatted_name: str) -> str:
-        acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "ml-commons": "ML Commons",
-                    "ml commons": "ML Commons"}
+        acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "ml-commons": "ML Commons", "ml commons": "ML Commons"}
         for acronym, replacement in acronyms.items():
-            formatted_name = re.sub(r'\b' + re.escape(acronym) + r'\b', replacement, formatted_name,
-                                    flags=re.IGNORECASE)
+            formatted_name = re.sub(r"\b" + re.escape(acronym) + r"\b", replacement, formatted_name, flags=re.IGNORECASE)
         return formatted_name
 
     def format_component_name_from_url(url: str) -> str:
@@ -72,7 +70,7 @@ def main() -> int:
         end_index = url.find(".release-notes", start_index)
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
-        component_name = url[start_index + len("release-notes/"): end_index]
+        component_name = url[start_index + len("release-notes/") : end_index]
         if component_name == "opensearch-sql":
             component_name = "SQL"
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
@@ -159,7 +157,7 @@ def main() -> int:
                             if i == len(headings) - 1:
                                 content_to_end = content[content_start:]
                             else:
-                                content_to_end = content[content_start: content.find(headings[i + 1])]
+                                content_to_end = content[content_start : content.find(headings[i + 1])]
                         content_to_end = content_to_end.replace(f"### {heading}", "").lstrip()
                         parts = content_to_end.split("*", 1)
                         if len(parts) == 2:
@@ -215,12 +213,12 @@ def main() -> int:
                 for item in temp_content:
                     outfile.write(markdown(item))
 
-        with open(RELEASE_NOTE_MD_PATH, 'r') as f:
+        with open(RELEASE_NOTE_MD_PATH, "r") as f:
             html_content = f.read()
 
         markdown_content = markdownify.markdownify(html_content, heading_style="ATX")
 
-        with open(RELEASE_NOTE_MD_PATH, 'w') as f:
+        with open(RELEASE_NOTE_MD_PATH, "w") as f:
             f.write(markdown_content)
 
         if args.output is not None:
@@ -231,18 +229,19 @@ def main() -> int:
         return 0
     elif args.action == "generate":
         for manifest in manifests:
-            product: str = 'opensearch' if manifest.build.name == 'OpenSearch' else 'opensearch-dashboards'
-            for component in manifest.components.select(focus=components, platform='linux'):
-                if component.name != 'OpenSearch-Dashboards':
+            product: str = "opensearch" if manifest.build.name == "OpenSearch" else "opensearch-dashboards"
+            for component in manifest.components.select(focus=components, platform="linux"):
+                if component.name != "OpenSearch-Dashboards":
                     component.ref = args.ref if args.ref is not None else component.ref  # type: ignore[attr-defined]
                     logging.info(f"Components: {component.name}")
                     release_notes.generate(args, component, manifest.build.version, manifest.build.qualifier, product)  # type: ignore[arg-type]
                 else:
-                    logging.info("Not executing for OpenSearch Dashboards as they have a running changelog file with all the past version releases "
-                                 "and this will exceed the token limit and cause repeted timeout calls to AWS")
+                    logging.info(
+                        "Not executing for OpenSearch Dashboards as they have a running changelog file with all the past version releases "
+                        "and this will exceed the token limit and cause repeted timeout calls to AWS"
+                    )
     return 0
 
 
 if __name__ == "__main__":
     main()
-    

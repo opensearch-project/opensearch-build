@@ -40,14 +40,7 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
         component_test_config: str,
         test_recorder: TestRecorder,
     ) -> None:
-        super().__init__(
-            work_dir,
-            component_name,
-            component_test_config,
-            security_enabled,
-            additional_cluster_config,
-            test_recorder.local_cluster_logs
-        )
+        super().__init__(work_dir, component_name, component_test_config, security_enabled, additional_cluster_config, test_recorder.local_cluster_logs)
 
         self.manifest_opensearch = bundle_manifest_opensearch
         self.manifest_opensearch_dashboards = bundle_manifest_opensearch_dashboards
@@ -56,22 +49,23 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
         self.dependency_installer_opensearch_dashboards = dependency_installer_opensearch_dashboards
 
         self.service_opensearch = ServiceOpenSearch(
-            self.manifest_opensearch.build.version + (("-" + self.manifest_opensearch.build.qualifier) 
-                                                    if self.manifest_opensearch.build.qualifier else None),
+            self.manifest_opensearch.build.version + (("-" + self.manifest_opensearch.build.qualifier) if self.manifest_opensearch.build.qualifier else None),
             self.manifest_opensearch.build.distribution,
             {},
             self.security_enabled,
             self.dependency_installer_opensearch,
-            self.work_dir)
+            self.work_dir,
+        )
 
         self.service_opensearch_dashboards = ServiceOpenSearchDashboards(
-            self.manifest_opensearch_dashboards.build.version + (("-" + self.manifest_opensearch_dashboards.build.qualifier) 
-                                                    if self.manifest_opensearch_dashboards.build.qualifier else None),
+            self.manifest_opensearch_dashboards.build.version
+            + (("-" + self.manifest_opensearch_dashboards.build.qualifier) if self.manifest_opensearch_dashboards.build.qualifier else None),
             self.manifest_opensearch_dashboards.build.distribution,
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer_opensearch_dashboards,
-            self.work_dir)
+            self.work_dir,
+        )
 
     @property
     def endpoint(self) -> str:
@@ -87,6 +81,4 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
 
     @property
     def dependencies(self) -> List[Service]:
-        return [
-            self.service_opensearch
-        ]
+        return [self.service_opensearch]

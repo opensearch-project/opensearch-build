@@ -20,8 +20,8 @@ def main() -> int:
     if args.action == "list":
         for klass in args.manifests:
             for manifest in klass().values():
-                logging.info(f"{manifest.build.name} {manifest.build.version + (("-" + manifest.build.qualifier) 
-                                                                                  if manifest.build.qualifier else None)}")
+                qualifier_extension = "-" + manifest.build.qualifier
+                logging.info(f"{manifest.build.name} {manifest.build.version}" + f"{(qualifier_extension if manifest.build.qualifier else '')}")
     elif args.action == "update":
         for klass in args.manifests:
             klass().update(keep=args.keep)

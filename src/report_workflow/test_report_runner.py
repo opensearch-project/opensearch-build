@@ -46,8 +46,11 @@ class TestReportRunner:
         for k, v in self.args.artifact_paths.items():
             self.artifact_paths = " ".join([self.artifact_paths, k + "=" + v]).strip(" ")
 
-        self.dist_manifest = "/".join([self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml"]) if self.args.artifact_paths[self.name].startswith("https://") \
+        self.dist_manifest = (
+            "/".join([self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml"])
+            if self.args.artifact_paths[self.name].startswith("https://")
             else os.path.join(self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml")
+        )
         self.test_components = self.test_manifest.components
         self.bundle_manifest = BundleManifest.from_urlpath(self.dist_manifest)
         self.bundle_components_list = []
@@ -83,7 +86,7 @@ class TestReportRunner:
             "TestType": self.test_type,
             "TestManifest": self.test_manifest_path,
             "DistributionManifest": self.dist_manifest,
-            "TestID": str(self.test_run_id)
+            "TestID": str(self.test_run_id),
         }
         return test_run_data
 
@@ -106,8 +109,10 @@ class TestReportRunner:
         if self.test_type == "integ-test":
             config_names = [config for config in test_component.__to_dict__().get(self.test_type)["test-configs"]]
         elif self.test_type == "smoke-test":
-            config_names = self.get_spec_path(self.test_report_data["version"] + (("-" + self.test_report_data["qualifier"]) 
-                                                                                  if self.test_report_data["qualifier"] else None), test_component.__to_dict__().get(self.test_type)["test-spec"])
+            config_names = self.get_spec_path(
+                self.test_report_data["version"] + (("-" + self.test_report_data["qualifier"]) if self.test_report_data["qualifier"] else None),
+                test_component.__to_dict__().get(self.test_type)["test-spec"],
+            )
         logging.info(f"Configs for {component_name} on {self.test_type} are {config_names}")
         for config in config_names:
             config_dict = {
@@ -121,7 +126,7 @@ class TestReportRunner:
                     with urllib.request.urlopen(component_yml_ref) as f:
                         component_yml = yaml.safe_load(f.read().decode("utf-8"))
                 else:
-                    with open(component_yml_ref, "r", encoding='utf8') as f:
+                    with open(component_yml_ref, "r", encoding="utf8") as f:
                         component_yml = yaml.safe_load(f)
 
                 test_result = component_yml["test_result"]
@@ -141,8 +146,12 @@ class TestReportRunner:
             config_dict["status"] = test_result
             config_dict["test_stdout"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
             config_dict["test_stderr"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
-            config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
-            config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
+            config_dict["cluster_stdout"] = get_os_cluster_logs(
+                self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name
+            )[0]
+            config_dict["cluster_stderr"] = get_os_cluster_logs(
+                self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name
+            )[1]
             config_dict["failed_test"] = get_failed_tests(self.name, test_result, test_result_files)
             component["configs"].append(config_dict)
         return component
@@ -160,13 +169,9 @@ class TestReportRunner:
                 "id": "",
                 "rc": "",
                 "test-run": {},
-                "components": []
+                "components": [],
             },
-            "component": {
-                "name": "",
-                "command": "",
-                "configs": []
-            }
+            "component": {"name": "", "command": "", "configs": []},
         }
 
         return templates[template_type]
@@ -176,32 +181,29 @@ class TestReportRunner:
         api_paths = []
         spec_paths = [
             os.path.join(os.getcwd(), "src", "test_workflow", "smoke_test", "smoke_tests_spec", f"{version.split('.')[0]}.x", spec_file),
-            os.path.join(os.getcwd(), "src", "test_workflow", "smoke_test", "smoke_tests_spec", "default", spec_file)
+            os.path.join(os.getcwd(), "src", "test_workflow", "smoke_test", "smoke_tests_spec", "default", spec_file),
         ]
         logging.info(f"spec_paths is {spec_paths}")
         for spec_file_path in spec_paths:
             if os.path.exists(spec_file_path):
                 logging.info(f"Loading {spec_file} from {spec_file_path}")
-                with open(spec_file_path, 'r') as file:
+                with open(spec_file_path, "r") as file:
                     data = yaml.safe_load(file)
-                paths = data.get('paths', {})
+                paths = data.get("paths", {})
                 for api_requests, api_details in paths.items():
                     for method in api_details.keys():
-                        api_path = '_'.join([method, api_requests.replace("/", "_")])
+                        api_path = "_".join([method, api_requests.replace("/", "_")])
                         logging.info(f"api_path is {api_path}")
                         api_paths.append(api_path)
                 break
         return api_paths
 
 
-def generate_component_yml_ref(base_path: str, test_number: str, test_type: str, component_name: str,
-                               config: str) -> str:
+def generate_component_yml_ref(base_path: str, test_number: str, test_type: str, component_name: str, config: str) -> str:
     if base_path.startswith("https://"):
-        return "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config,
-                         f"{component_name}.yml"])
+        return "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, f"{component_name}.yml"])
     else:
-        return os.path.join(base_path, "test-results", test_number, test_type, component_name, config,
-                            f"{component_name}.yml")
+        return os.path.join(base_path, "test-results", test_number, test_type, component_name, config, f"{component_name}.yml")
 
 
 def generate_test_command(test_type: str, test_manifest_path: str, artifacts_path: str, component: str = "") -> str:
@@ -212,34 +214,44 @@ def generate_test_command(test_type: str, test_manifest_path: str, artifacts_pat
     return command
 
 
-def get_test_logs(base_path: str, test_number: str, test_type: str, component_name: str, config: str,
-                  product_name: str) -> typing.List[str]:
+def get_test_logs(base_path: str, test_number: str, test_type: str, component_name: str, config: str, product_name: str) -> typing.List[str]:
     if base_path.startswith("https://"):
-        return ["/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "stdout.txt"]),
-                "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "stderr.txt"])]
+        return [
+            "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "stdout.txt"]),
+            "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "stderr.txt"]),
+        ]
     else:
-        return [os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "stdout.txt"),
-                os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "stderr.txt")]
+        return [
+            os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "stdout.txt"),
+            os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "stderr.txt"),
+        ]
 
 
-def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, component_name: str, config: str,
-                        product_name: str) -> typing.List[list]:
+def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, component_name: str, config: str, product_name: str) -> typing.List[list]:
     os_stdout: list = []
     os_stderr: list = []
     cluster_ids: list
     if test_type == "integ-test":
-        if product_name == 'opensearch':
-            cluster_ids = ['id-0'] if config == 'with-security' else ['id-1']
+        if product_name == "opensearch":
+            cluster_ids = ["id-0"] if config == "with-security" else ["id-1"]
         else:
-            cluster_ids = ['id-0', 'id-1'] if config == 'with-security' else ['id-2', 'id-3']
+            cluster_ids = ["id-0", "id-1"] if config == "with-security" else ["id-2", "id-3"]
 
         for ids in cluster_ids:
             if base_path.startswith("https://"):
-                os_stdout.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"]))
-                os_stderr.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"]))
+                os_stdout.append(
+                    "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"])
+                )
+                os_stderr.append(
+                    "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"])
+                )
             else:
-                os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt"))
-                os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt"))
+                os_stdout.append(
+                    os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stdout.txt")
+                )
+                os_stderr.append(
+                    os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs", ids, "stderr.txt")
+                )
     elif test_type == "smoke-test":
         os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, "local-cluster-logs", "stdout.txt"))
         os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, "local-cluster-logs", "stderr.txt"))
@@ -269,13 +281,13 @@ def get_failed_tests(product_name: str, test_result: str, test_result_files: lis
 
     for result_path in result_path_list:
         logging.info(f"Processing {result_path}")
-        result_content: str = ''
+        result_content: str = ""
         try:
             if validators.url(result_path):
                 with urllib.request.urlopen(result_path) as f:
                     result_content = f.read().decode("utf-8")
             else:
-                with open(result_path, "r", encoding='utf8') as f:
+                with open(result_path, "r", encoding="utf8") as f:
                     result_content = f.read()
         except (FileNotFoundError, HTTPError):
             logging.info(f"Test Result File Not Available {result_path}")
@@ -287,7 +299,7 @@ def get_failed_tests(product_name: str, test_result: str, test_result_files: lis
             failed_test_list.append("Test Result File Has No Content")
             return failed_test_list
 
-        if product_name == 'opensearch':
+        if product_name == "opensearch":
             soup = BeautifulSoup(result_content, "html.parser")
             target_header = soup.find("h2", string="Failed tests")
             if target_header:

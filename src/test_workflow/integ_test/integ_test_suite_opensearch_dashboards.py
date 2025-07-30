@@ -43,26 +43,20 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
         build_manifest_opensearch: BuildManifest,
         build_manifest_opensearch_dashboards: BuildManifest,
         work_dir: Path,
-        test_recorder: TestRecorder
+        test_recorder: TestRecorder,
     ) -> None:
 
         super().__init__(
-            work_dir,
-            component,
-            test_config,
-            test_recorder,
-            dependency_installer_opensearch,
-            bundle_manifest_opensearch,
-            build_manifest_opensearch
+            work_dir, component, test_config, test_recorder, dependency_installer_opensearch, bundle_manifest_opensearch, build_manifest_opensearch
         )
 
         # Integ-tests for OSD now clones FunctionalTestDashboards Repository by default and points to integtest.sh from FunctionalTestDashboards for all OSD plugins
 
         self.repo = GitRepository(
-            build_manifest_opensearch_dashboards.components['functionalTestDashboards'].repository,
-            build_manifest_opensearch_dashboards.components['functionalTestDashboards'].ref,
+            build_manifest_opensearch_dashboards.components["functionalTestDashboards"].repository,
+            build_manifest_opensearch_dashboards.components["functionalTestDashboards"].ref,
             os.path.join(self.work_dir, self.component.name),
-            test_config.working_directory
+            test_config.working_directory,
         )
 
         self.dependency_installer_opensearch_dashboards = dependency_installer_opensearch_dashboards
@@ -108,21 +102,16 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
 
         def custom_node_endpoint_encoder(node_endpoint: NodeEndpoint) -> dict:
             return {"endpoint": node_endpoint.endpoint, "port": node_endpoint.port, "transport": node_endpoint.transport}
+
         if os.path.exists(script):
             single_node = cluster_endpoints[0].data_nodes[0]
-            cmd = f"bash {script} -b {single_node.endpoint} -p {single_node.port} -s {str(security).lower()} -t {self.component.name} -v {self.bundle_manifest.build.version + (("-" + self.bundle_manifest.build.qualifier) 
-                                                                                  if self.bundle_manifest.build.qualifier else None)} -o default -r false"
-            self.repo_work_dir = os.path.join(
-                self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
-            (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)
-            test_result_data_local = TestResultData(
-                self.component.name,
-                test_config,
-                status,
-                stdout,
-                stderr,
-                self.test_artifact_files
+            qualifier_extension = "-" + self.bundle_manifest.build.qualifier
+            cmd = f"bash {script} -b {single_node.endpoint} -p {single_node.port} -s {str(security).lower()} -t {self.component.name} -v {self.bundle_manifest.build.version + (qualifier_extension if self.bundle_manifest.build.qualifier else None)} -o default -r false"
+            self.repo_work_dir = (
+                os.path.join(self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
             )
+            (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)
+            test_result_data_local = TestResultData(self.component.name, test_config, status, stdout, stderr, self.test_artifact_files)
             self.save_logs.save_test_result_data(test_result_data_local)
             self.test_result_data.append(test_result_data_local)
             if stderr:
