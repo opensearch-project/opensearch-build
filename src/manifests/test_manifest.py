@@ -5,43 +5,62 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from typing import Optional
+"""
+TestManifest contains the test support matrix for any component.
+
+The format for schema version 1.1 is:
+    schema-version: '1.1'
+    name: 'OpenSearch'
+    ci:
+      image:
+        linux (or other platform as key here):
+          tar (or other distribution as key here):
+            name: docker image name to pull
+            args: args to execute builds with, e.g. -e JAVA_HOME=...
+          deb:
+            name: docker image name to pull
+            args: args to execute builds with, e.g. -e JAVA_HOME=...
+          rpm:
+            name: docker image name to pull
+            args: args to execute builds with, e.g. -e JAVA_HOME=...
+        windows:
+          zip:
+            name: docker image name to pull
+            args: args to execute builds with, e.g. -e JAVA_HOME=...
+    components:
+      - name: index-management
+        working-directory: optional relative directory to run commands in
+        integ-test:
+          test-configs:
+            - with-security
+            - without-security
+            - with-less-security
+          additional-cluster-configs:
+            - key : value
+          ci-group: 6
+        bwc-test:
+          test-configs:
+            - with-security
+            - without-security
+        smoke-test:
+          test-spec: spec.yml
+"""
+
+from typing import Dict, Optional
 
 from manifests.component_manifest import Component, ComponentManifest, Components
+from manifests.test.test_manifest_1_0 import TestManifest_1_0
 
 
 class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
-    """
-    TestManifest contains the test support matrix for any component.
 
-    The format for schema version 1.0 is:
-        schema-version: '1.0'
-        name: 'OpenSearch'
-        ci:
-            image:
-                name: docker image name to pull
-                args: args to execute builds with, e.g. -e JAVA_HOME=...
-        components:
-          - name: index-management
-            working-directory: optional relative directory to run commands in
-            integ-test:
-              test-configs:
-                - with-security
-                - without-security
-                - with-less-security
-              additional-cluster-configs:
-                - key : value
-              ci-group: 6
-            bwc-test:
-              test-configs:
-                - with-security
-                - without-security
-            smoke-test:
-              test-spec: spec.yml
-    """
+    VERSIONS = {
+        "1.0": TestManifest_1_0,
+        # "1.1": current
+    }
 
     SCHEMA = {
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
         "name": {"required": True, "type": "string", "allowed": ["OpenSearch", "OpenSearch Dashboards"]},
         "ci": {
             "required": False,
@@ -50,7 +69,16 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                 "image": {
                     "required": False,
                     "type": "dict",
-                    "schema": {"name": {"required": True, "type": "string"}, "args": {"required": False, "type": "string"}},
+                    "valueschema": {
+                        "type": "dict",
+                        "valueschema": {
+                            "type": "dict",
+                            "schema": {
+                                "name": {"required": True, "type": "string"},
+                                "args": {"required": False, "type": "string"},
+                            },
+                        },
+                    },
                 }
             },
         },
@@ -109,7 +137,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
 
     def __to_dict__(self) -> dict:
         return {
-            "schema-version": "1.0",
+            "schema-version": "1.1",
             "name": self.name,
             "ci": None if self.ci is None else self.ci.__to_dict__(),
             "components": self.components.__to_dict__()
@@ -117,10 +145,28 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
 
     class Ci:
         def __init__(self, data: dict) -> None:
-            self.image = None if data is None else self.Image(data.get("image", None))
+            self.image = None if data is None else self.__image_extract__(data.get("image", {}))
+
+        def __image_extract__(self, data: dict) -> Dict[str, Dict[str, 'Image']]:
+            image_dict = {}  # type: ignore[var-annotated]
+            for plat, dists in data.items():
+                image_dict[plat] = {}
+                for dist, img in dists.items():
+                    image_dict[plat][dist] = self.Image(img)
+            return image_dict
 
         def __to_dict__(self) -> Optional[dict]:
-            return None if self.image is None else {"image": self.image.__to_dict__()}
+            if self.image is None:
+                return None
+            return {
+                "image": {
+                    plat: {
+                        dist: img.__to_dict__()
+                        for dist, img in dists.items()
+                    }
+                    for plat, dists in self.image.items()
+                }
+            }
 
         class Image:
             def __init__(self, data: dict) -> None:
@@ -182,7 +228,7 @@ class TestComponent(Component):
         }
 
 
-TestManifest.VERSIONS = {"1.0": TestManifest}
+TestManifest.VERSIONS = {"1.0": TestManifest_1_0, "1.1": TestManifest}
 
 TestComponent.__test__ = False  # type: ignore[attr-defined]
 TestManifest.__test__ = False  # type: ignore[attr-defined]

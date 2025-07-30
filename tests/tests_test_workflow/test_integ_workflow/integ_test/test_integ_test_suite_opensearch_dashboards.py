@@ -214,7 +214,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
                 "cypress-report": os.path.join("dir", "test_working_directory", "cypress", "results")
             }
         )
-        assert(mock_test_result_data.return_value in suite.result_data)
+        assert (mock_test_result_data.return_value in suite.result_data)
         self.assertEqual(suite.additional_cluster_config, None)
 
     @patch("os.path.exists")

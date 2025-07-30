@@ -26,7 +26,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('9.1.2')
+                .defaultVersion('10.1.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -48,7 +48,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'DUMMY_AWS_ACCOUNT_PUBLIC')
-        binding.setVariable('env', ['BUILD_NUMBER': '215', 'PUBLIC_ARTIFACT_URL': 'DUMMY_PUBLIC_ARTIFACT_URL', 'JOB_NAME': 'dummy_job', 'DOCKER_AGENT':[image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11'] ])
+        binding.setVariable('env', ['BUILD_NUMBER': '215', 'PUBLIC_ARTIFACT_URL': 'DUMMY_PUBLIC_ARTIFACT_URL', 'JOB_NAME': 'dummy_job', 'testDockerAgent':[image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11'] ])
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'DUMMY_BUCKET_NAME')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'DUMMY_ARTIFACT_BUCKET_NAME')
         binding.setVariable('PUBLIC_ARTIFACT_URL', 'DUMMY_PUBLIC_ARTIFACT_URL')
@@ -81,14 +81,19 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         helper.registerAllowedMethod("withCredentials", [Map])
 
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
-            return new Yaml().load((this.testManifest ?: binding.getVariable('TEST_MANIFEST') as File).text)
+            if (args.file == 'manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml') {
+                return new Yaml().load((testManifest as File).text)
+            } else if (args.file == 'tests/jenkins/data/opensearch-dashboards-3.0.0-build.yml') {
+                return new Yaml().load((buildManifest as File).text)
+            } else if (args.file == 'tests/jenkins/data/opensearch-3.0.0-build.yml') {
+                return new Yaml().load((buildManifestOpenSearch as File).text)
+            } else {
+                println("Manifest not found ${args.file}")
+            }
         })
         helper.registerAllowedMethod('isUnix', [], { true })
 
         helper.registerAllowedMethod('parameterizedCron', [String], null)
-        helper.registerAllowedMethod('readYaml', [Map.class], { args ->
-            return new Yaml().load((buildManifest as File).text)
-        })
         helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
@@ -102,14 +107,14 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         helper.registerAllowedMethod('findFiles', [Map.class], null)
         helper.registerAllowedMethod('unstash', [String.class], null)
         helper.registerAllowedMethod("parallel", [Map]) { stages ->
-    println "Mock parallel stages:"
-    stages.each { stageName, stageContent ->
-        println "\nStage: ${stageName}"
-        println "Content: ${stageContent.toString()}"
-        // Execute the stage content to simulate parallel execution
-        stageContent.call()
-    }
-}
+            println "Mock parallel stages:"
+            stages.each { stageName, stageContent ->
+                println "\nStage: ${stageName}"
+                println "Content: ${stageContent.toString()}"
+                // Execute the stage content to simulate parallel execution
+                stageContent.call()
+            }
+        }
     }
 
 ///
@@ -134,7 +139,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
                 'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component OpenSearch-Dashboards --ci-group 8 --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '.toString(),
                 'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component OpenSearch-Dashboards --ci-group 9 --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '.toString()
         ))
-        assertThat(getCommandExecutions('sh', 'report.sh'), hasItems('./report.sh manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/215/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/3.0.0/215/linux/x64/tar --test-run-id 215 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar --release-candidate 0 '))
+        assertThat(getCommandExecutions('sh', 'report.sh'), hasItems('./report.sh manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/9010/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/3.0.0/215/linux/x64/tar --test-run-id 215 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar --release-candidate 0 '))
         assertCallStack().contains('curl -sSL https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/3.0.0/215/linux/x64/tar/test-results/215/integ-test/test-report.yml --output test-results-osd-215/test-report.yml')
         assertCallStack().contains('{distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch-dashboards/detail/distribution-build-opensearch-dashboards/215/pipeline, jobName=dummy_job, testReportManifestYml=test-results-osd-215/test-report.yml}')
         assertCallStack().contains('integ-test.build({job=integ-test-notification, propagate=false, wait=false, parameters=[null, null]})')

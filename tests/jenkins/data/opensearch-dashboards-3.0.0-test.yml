@@ -1,6 +1,9 @@
 ---
 schema-version: '1.0'
 name: OpenSearch Dashboards
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1
 components:
   - name: observabilityDashboards
     integ-test:

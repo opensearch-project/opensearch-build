@@ -32,7 +32,7 @@ class InputManifests(Manifests):
         super().__init__(InputManifest, InputManifests.files(self.prefix))
 
     @classmethod
-    def manifests_path(self) -> str:
+    def manifests_path(self) -> str:  # type: ignore[override]
         return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
 
     @classmethod

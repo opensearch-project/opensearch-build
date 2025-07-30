@@ -147,7 +147,7 @@ class ValidateDocker(Validation):
         except OSError as e:
             logging.error("Error: %s - %s." % (e.filename, e.strerror))
 
-        return('returncode=0' in (str(result)))
+        return ('returncode=0' in (str(result)))
 
     def get_artifact_image_name(self, artifact: str, using_staging_artifact_only: str) -> Any:
         self.image_names = {

@@ -27,6 +27,7 @@ jobs:
   build-repo-issue-check:
     outputs:
       build_repo_issue_exists: ${{ steps.check_if_build_repo_issue_exists.outputs.issues }}
+      build_repo_issue_number: ${{ steps.get_build_repo_issue_number.outputs.issue_number }}
     runs-on: ubuntu-latest
     steps:
       - name: GitHub App token
@@ -47,6 +48,15 @@ jobs:
           token: ${{ steps.github_app_token.outputs.token }}
           issue-state: 'open'
           title-includes: '[RELEASE] Release version ${{ inputs.version }}'
+      - name: Build repo issue number
+        id: get_build_repo_issue_number
+        if: steps.check_if_build_repo_issue_exists.outputs.issues != '[]'
+        run: |
+          issues=$(cat <<EOF
+          ${{ steps.check_if_build_repo_issue_exists.outputs.issues }}
+          EOF
+          )
+          echo "issue_number=$(echo $issues | jq -r '.[0].number')" >> $GITHUB_OUTPUT
 
 
   component-release-issue:
@@ -82,11 +92,7 @@ jobs:
           file_path=".github/ISSUE_TEMPLATE/component_release_template.md"
           RELEASE_VERSION="${{ inputs.version }}"
           RELEASE_BRANCH=$(echo ${{ inputs.version }} | cut -d. -f1-2)
-          BUILD_REPO_ISSUE_OUTPUT=$(cat <<EOF
-          ${{ needs.build-repo-issue-check.outputs.build_repo_issue_exists.outputs.issues }}
-          EOF
-          )
-          RELEASE_ISSUE_NUMBER=$(echo $BUILD_REPO_ISSUE_OUTPUT | jq -r '.[0].number')
+          RELEASE_ISSUE_NUMBER=${{needs.build-repo-issue-check.outputs.build_repo_issue_number}}
           RELEASE_ISSUE="https://github.com/opensearch-project/opensearch-build/issues/${RELEASE_ISSUE_NUMBER}"
           RELEASE_VERSION_X=$(echo "${{ inputs.version }}" | awk -F'.' '{print $1}').x
           sed -e "s|{{RELEASE_VERSION}}|${RELEASE_VERSION}|g" -e "s|{{RELEASE_ISSUE}}|${RELEASE_ISSUE}|g" -e "s|{{RELEASE_BRANCH}}|${RELEASE_BRANCH}|g" -e "s|{{RELEASE_VERSION_X}}|${RELEASE_VERSION_X}|g" "$file_path" > "$file_path.tmp" && mv "$file_path.tmp" "$file_path"

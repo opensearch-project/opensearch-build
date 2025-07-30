@@ -242,7 +242,7 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
             }
         )
 
-        assert(mock_test_result_data.return_value in integ_test_suite.result_data)
+        assert (mock_test_result_data.return_value in integ_test_suite.result_data)
         self.assertEqual(integ_test_suite.additional_cluster_config, None)
 
     @patch("os.path.exists", return_value=True)
