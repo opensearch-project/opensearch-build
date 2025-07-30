@@ -43,13 +43,7 @@ class PerfTestCluster(TestCluster):
     """
 
     def __init__(
-        self,
-        bundle_manifest: BundleManifest,
-        config: dict,
-        stack_name: str,
-        cluster_config: PerfTestClusterConfig,
-        current_workspace: str,
-        work_dir: str
+        self, bundle_manifest: BundleManifest, config: dict, stack_name: str, cluster_config: PerfTestClusterConfig, current_workspace: str, work_dir: str
     ) -> None:
         self.manifest = bundle_manifest
         self.work_dir = work_dir
@@ -109,18 +103,16 @@ class PerfTestCluster(TestCluster):
         return []
 
     def wait_for_processing(self, tries: int = 3, delay: int = 15, backoff: int = 2) -> None:
-        password = 'admin'
+        password = "admin"
         if self.manifest:
-            if semver.compare(self.manifest.build.version + (("-" + self.manifest.build.qualifier) 
-                                                    if self.manifest.build.qualifier else None), '2.12.0') != -1:
-                password = 'myStrongPassword123!'
+            if semver.compare(self.manifest.build.version + (("-" + self.manifest.build.qualifier) if self.manifest.build.qualifier else None), "2.12.0") != -1:
+                password = "myStrongPassword123!"
 
         # Should be invoked only if the endpoint is public.
         assert self.is_endpoint_public, "wait_for_processing should be invoked only when cluster is public"
         logging.info("Waiting for domain to be up")
         url = "".join([self.endpoint_with_port, "/_cluster/health"])
-        retry_call(requests.get, fkwargs={"url": url, "auth": HTTPBasicAuth('admin', password), "verify": False},
-                   tries=tries, delay=delay, backoff=backoff)
+        retry_call(requests.get, fkwargs={"url": url, "auth": HTTPBasicAuth("admin", password), "verify": False}, tries=tries, delay=delay, backoff=backoff)
 
     @abc.abstractmethod
     def setup_cdk_params(self, config: dict) -> dict:

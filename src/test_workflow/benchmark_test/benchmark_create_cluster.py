@@ -34,13 +34,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
     and multi-node clusters
     """
 
-    def __init__(
-            self,
-            args: BenchmarkArgs,
-            bundle_manifest: Union[BundleManifest, BuildManifest],
-            config: dict,
-            current_workspace: str
-    ) -> None:
+    def __init__(self, args: BenchmarkArgs, bundle_manifest: Union[BundleManifest, BuildManifest], config: dict, current_workspace: str) -> None:
         super().__init__(args)
         self.manifest = bundle_manifest
         self.current_workspace = current_workspace
@@ -50,13 +44,13 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
         params_list = []
         for key, value in params_dict.items():
             if value:
-                '''
+                """
                 TODO: To send json input to typescript code from command line it needs to be enclosed in
                 single-quotes, this is a temp fix to achieve that since the quoted string passed from command line in
                 tesh.sh wrapper script gets un-quoted and we need to handle it here.
-                '''
-                if key == 'additionalConfig':
-                    params_list.append(f" -c {key}=\'{value}\'")
+                """
+                if key == "additionalConfig":
+                    params_list.append(f" -c {key}='{value}'")
                 else:
                     params_list.append(f" -c {key}={value}")
         role_params = (
@@ -71,7 +65,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             self.stack_name += f"-{self.manifest.build.id}-{self.manifest.build.architecture}"
 
     def start(self) -> None:
-        command = f"npm install && cdk deploy \"*\" {self.params} --outputs-file {self.output_file}"
+        command = f'npm install && cdk deploy "*" {self.params} --outputs-file {self.output_file}'
 
         logging.info(f'Executing "{command}" in {os.getcwd()}')
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)
@@ -82,7 +76,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
         logging.info("Wait for processing executed")
 
     def create_endpoint(self, cdk_output: dict) -> None:
-        load_balancer_url = cdk_output[self.stack_name].get('loadbalancerurl', None)
+        load_balancer_url = cdk_output[self.stack_name].get("loadbalancerurl", None)
         if load_balancer_url is None:
             raise RuntimeError("Unable to fetch the cluster endpoint from cdk output")
         self.cluster_endpoint = load_balancer_url
@@ -95,20 +89,22 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)
 
     def setup_cdk_params(self, config: dict) -> dict:
-        suffix = ''
+        suffix = ""
         if self.args.stack_suffix and self.manifest:
-            suffix = self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture
+            suffix = self.args.stack_suffix + "-" + self.manifest.build.id + "-" + self.manifest.build.architecture
         elif self.manifest:
-            suffix = self.manifest.build.id + '-' + self.manifest.build.architecture
+            suffix = self.manifest.build.id + "-" + self.manifest.build.architecture
         elif self.args.stack_suffix:
             suffix = self.args.stack_suffix
 
         if self.manifest:
-            self.args.distribution_version = self.manifest.build.version + (("-" + self.manifest.build.qualifier) 
-                                                                                  if self.manifest.build.qualifier else None)
-            artifact_url = self.manifest.build.location if isinstance(self.manifest, BundleManifest) else \
-                f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.args.distribution_version}/opensearch-min-" \
+            self.args.distribution_version = self.manifest.build.version + (("-" + self.manifest.build.qualifier) if self.manifest.build.qualifier else None)
+            artifact_url = (
+                self.manifest.build.location
+                if isinstance(self.manifest, BundleManifest)
+                else f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.args.distribution_version}/opensearch-min-"
                 f"{self.args.distribution_version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
+            )
         else:
             artifact_url = self.args.distribution_url.strip()
 
@@ -120,7 +116,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             "suffix": suffix,
             "securityDisabled": str(self.args.insecure).lower(),
             "adminPassword": None if self.args.insecure else get_password(self.args.distribution_version),
-            "cpuArch": self.manifest.build.architecture if self.manifest else 'x64',
+            "cpuArch": self.manifest.build.architecture if self.manifest else "x64",
             "singleNodeCluster": str(self.args.single_node).lower(),
             "distVersion": self.args.distribution_version,
             "minDistribution": str(self.args.min_distribution).lower(),
@@ -140,7 +136,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             "use50PercentHeap": str(self.args.use_50_percent_heap).lower(),
             "isInternal": config["Constants"]["isInternal"],
             "enableRemoteStore": str(self.args.enable_remote_store).lower(),
-            "customRoleArn": config["Constants"]["IamRoleArn"]
+            "customRoleArn": config["Constants"]["IamRoleArn"],
         }
 
     @classmethod

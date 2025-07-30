@@ -33,9 +33,9 @@ def main() -> int:
         manifests.append(InputManifest.from_file(input_manifests))
 
     if len(args.manifest) == 2:
-        if manifests[0].build.version + (("-" + manifests[0].build.qualifier) 
-                    if manifests[0].build.qualifier else None) != manifests[1].build.version + (("-" + manifests[1].build.qualifier) 
-                    if manifests[1].build.qualifier else None) :
+        if manifests[0].build.version + (("-" + manifests[0].build.qualifier) if manifests[0].build.qualifier else None) != manifests[1].build.version + (
+            ("-" + manifests[1].build.qualifier) if manifests[1].build.qualifier else None
+        ):
             raise ValueError("OS and OSD manifests must be provided for the same release version")
         elif manifests[0].build.name == manifests[1].build.name:
             raise ValueError("Both manifests are for the same product, OS and OSD manifests must be provided")
@@ -43,8 +43,7 @@ def main() -> int:
         raise ValueError("Only two manifests, OS and OSD, can be provided")
 
     #  Assuming that the OS and OSD manifests will be provided for the same release version
-    BUILD_VERSION = manifests[0].build.version + (("-" + manifests[0].build.qualifier) 
-                    if manifests[0].build.qualifier else None) 
+    BUILD_VERSION = manifests[0].build.version + (("-" + manifests[0].build.qualifier) if manifests[0].build.qualifier else None)
 
     table_filename = f"{BASE_FILE_PATH}/release_notes_table-{BUILD_VERSION}.md"
     urls_filename = f"{BASE_FILE_PATH}/release_notes_urls-{BUILD_VERSION}.txt"
@@ -58,11 +57,9 @@ def main() -> int:
                 logging.info(f"The file {file} does not exist, creating new.")
 
     def capitalize_acronyms(formatted_name: str) -> str:
-        acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "ml-commons": "ML Commons",
-                    "ml commons": "ML Commons"}
+        acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "ml-commons": "ML Commons", "ml commons": "ML Commons"}
         for acronym, replacement in acronyms.items():
-            formatted_name = re.sub(r'\b' + re.escape(acronym) + r'\b', replacement, formatted_name,
-                                    flags=re.IGNORECASE)
+            formatted_name = re.sub(r"\b" + re.escape(acronym) + r"\b", replacement, formatted_name, flags=re.IGNORECASE)
         return formatted_name
 
     def format_component_name_from_url(url: str) -> str:
@@ -72,7 +69,7 @@ def main() -> int:
         end_index = url.find(".release-notes", start_index)
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
-        component_name = url[start_index + len("release-notes/"): end_index]
+        component_name = url[start_index + len("release-notes/") : end_index]
         if component_name == "opensearch-sql":
             component_name = "SQL"
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
@@ -162,7 +159,7 @@ def main() -> int:
                         if i == len(headings) - 1:
                             content_to_end = content[content_start:]
                         else:
-                            content_to_end = content[content_start: content.find(headings[i + 1])]
+                            content_to_end = content[content_start : content.find(headings[i + 1])]
                     content_to_end = content_to_end.replace(f"### {heading}", "").lstrip()
                     parts = content_to_end.split("*", 1)
                     if len(parts) == 2:
@@ -218,12 +215,12 @@ def main() -> int:
             for item in temp_content:
                 outfile.write(markdown(item))
 
-    with open(RELEASE_NOTE_MD_PATH, 'r') as f:
+    with open(RELEASE_NOTE_MD_PATH, "r") as f:
         html_content = f.read()
 
     markdown_content = markdownify.markdownify(html_content, heading_style="ATX")
 
-    with open(RELEASE_NOTE_MD_PATH, 'w') as f:
+    with open(RELEASE_NOTE_MD_PATH, "w") as f:
         f.write(markdown_content)
 
     if args.output is not None:
