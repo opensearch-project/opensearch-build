@@ -166,7 +166,7 @@ class InputManifests(Manifests):
         manifest_dir = os.path.join(self.manifests_path(), version)
         os.makedirs(manifest_dir, exist_ok=True)
         for manifest in manifests:
-            if manifest.__class__.__name__ == 'TestManifest' or manifest.__class__.__name__ == 'TestManifest_1_0':
+            if manifest.__class__.__name__.startswith('TestManifest'):
                 manifest_path = os.path.join(manifest_dir, f"{self.prefix}-{version}-test.yml")
                 logging.info(f"Wrote {manifest_path} as the new test manifest")
             else:
