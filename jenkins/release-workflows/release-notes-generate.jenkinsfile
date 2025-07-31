@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@main', retriever: modernSCM([
+lib = library(identifier: 'jenkins@10.2.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -71,7 +71,7 @@ pipeline {
                     def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${params.INPUT_MANIFEST}"))
                     def componentDefaultList = inputManifestObj.getNames()
                     def product = inputManifestObj.build.name
-                    def componentList = params.COMPONENTS ? params.COMPONENTS.trim().split(' ') as List : componentDefaultList
+                    def componentList = COMPONENTS ? COMPONENTS.trim().split(' ') as List : componentDefaultList
                     println("Component list: ${componentList}")
                     def componentNotes = [:]
                     stash includes: '**', name: "release-notes-opensearch-$BUILD_NUMBER"

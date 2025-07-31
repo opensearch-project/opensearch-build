@@ -1,0 +1,104 @@
+   release-notes-generate.run()
+      release-notes-generate.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      release-notes-generate.library({identifier=jenkins@10.2.2, retriever=null})
+      release-notes-generate.pipeline(groovy.lang.Closure)
+         release-notes-generate.timeout({time=2, unit=HOURS})
+         release-notes-generate.echo(Executing on agent [label:none])
+         release-notes-generate.stage(Parameters Check, groovy.lang.Closure)
+            release-notes-generate.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host])
+            release-notes-generate.script(groovy.lang.Closure)
+         release-notes-generate.stage(Generate consolidated release notes, groovy.lang.Closure)
+            release-notes-generate.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host])
+            release-notes-generate.script(groovy.lang.Closure)
+               release-notes-generate.readYaml({file=manifests/null})
+               InputManifest.asBoolean()
+               InputManifest.getNames()
+               release-notes-generate.stash({includes=**, name=release-notes-opensearch-12345})
+               release-notes-generate.parallel({Release notes for OpenSearch=groovy.lang.Closure, Release notes for sql=groovy.lang.Closure})
+                  release-notes-generate.timeout({time=4, unit=HOURS}, groovy.lang.Closure)
+                     release-notes-generate.node(Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, groovy.lang.Closure)
+                        release-notes-generate.sh(echo OpenSearch with index 0 will sleep 0 seconds to reduce load && sleep 0)
+                        release-notes-generate.unstash(release-notes-opensearch-12345)
+                        release-notes-generate.echo(Current workspace is /tmp/workspace})
+                        release-notes-generate.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
+                        release-notes-generate.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                           release-notes-generate.sh(
+                                                                #!/bin/bash
+                                                                set +e
+                                                                ./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --ref main
+
+                                                                if [ $? -ne 0 ]; then
+                                                                    echo "Release notes generation failed for component OpenSearch"
+                                                                    exit 1
+                                                                else
+                                                                    COMPONENT_REPO_URL="https://github.com/opensearch-project/OpenSearch.git"
+                                                                    REPO_NAME=$(basename "${COMPONENT_REPO_URL}" .git)
+
+                                                                    git clone -b 2.2 "${COMPONENT_REPO_URL}"
+                                                                    cd "${REPO_NAME}"
+
+                                                                    if [ -f "/tmp/workspace/release-notes/opensearch.release-notes-2.2.0.md" ]; then
+                                                                        cp "/tmp/workspace/release-notes/opensearch.release-notes-2.2.0.md" release-notes/
+                                                                        if [ -z "$(git status --porcelain)" ]; then
+                                                                             echo "No changes to commit for component ${REPO_NAME}. Skipping PR creation."
+                                                                        else
+                                                                            git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/$REPO_NAME"
+                                                                            git config user.email "opensearch-infra@amazon.com"
+                                                                            git config user.name "opensearch-ci"
+                                                                            git checkout -b release/release-notes-2.2.0
+                                                                            git add .
+                                                                            git commit -sm "Add release notes for 2.2.0"
+                                                                            git push origin release/release-notes-2.2.0 --force
+                                                                            gh pr create --title 'Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release/release-notes-2.2.0 -B main
+                                                                        fi
+                                                                    else
+                                                                        echo "Error: File /tmp/workspace/release-notes/opensearch-${REPO_NAME}.release-notes-2.2.0.0.md does not exist"
+                                                                        exit 1
+                                                                    fi
+                                                                fi
+                                                            )
+                  release-notes-generate.timeout({time=4, unit=HOURS}, groovy.lang.Closure)
+                     release-notes-generate.node(Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, groovy.lang.Closure)
+                        release-notes-generate.sh(echo sql with index 1 will sleep 30 seconds to reduce load && sleep 30)
+                        release-notes-generate.unstash(release-notes-opensearch-12345)
+                        release-notes-generate.echo(Current workspace is /tmp/workspace})
+                        release-notes-generate.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
+                        release-notes-generate.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                           release-notes-generate.sh(
+                                                                #!/bin/bash
+                                                                set +e
+                                                                ./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000 --ref main
+
+                                                                if [ $? -ne 0 ]; then
+                                                                    echo "Release notes generation failed for component sql"
+                                                                    exit 1
+                                                                else
+                                                                    COMPONENT_REPO_URL="https://github.com/opensearch-project/sql.git"
+                                                                    REPO_NAME=$(basename "${COMPONENT_REPO_URL}" .git)
+
+                                                                    git clone -b 2.2 "${COMPONENT_REPO_URL}"
+                                                                    cd "${REPO_NAME}"
+
+                                                                    if [ -f "/tmp/workspace/release-notes/opensearch-sql.release-notes-2.2.0.0.md" ]; then
+                                                                        cp "/tmp/workspace/release-notes/opensearch-sql.release-notes-2.2.0.0.md" release-notes/
+                                                                        if [ -z "$(git status --porcelain)" ]; then
+                                                                             echo "No changes to commit for component ${REPO_NAME}. Skipping PR creation."
+                                                                        else
+                                                                            git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/$REPO_NAME"
+                                                                            git config user.email "opensearch-infra@amazon.com"
+                                                                            git config user.name "opensearch-ci"
+                                                                            git checkout -b release/release-notes-2.2.0
+                                                                            git add .
+                                                                            git commit -sm "Add release notes for 2.2.0"
+                                                                            git push origin release/release-notes-2.2.0 --force
+                                                                            gh pr create --title 'Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release/release-notes-2.2.0 -B main
+                                                                        fi
+                                                                    else
+                                                                        echo "Error: File /tmp/workspace/release-notes/opensearch-${REPO_NAME}.release-notes-2.2.0.0.md does not exist"
+                                                                        exit 1
+                                                                    fi
+                                                                fi
+                                                            )
+         release-notes-generate.node(Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, groovy.lang.Closure)
+            release-notes-generate.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
