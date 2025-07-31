@@ -70,6 +70,7 @@ pipeline {
                 script {
                     def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${params.INPUT_MANIFEST}"))
                     def componentDefaultList = inputManifestObj.getNames()
+                    def product = inputManifestObj.build.name
                     def componentList = params.COMPONENTS ? params.COMPONENTS.trim().split(' ') as List : componentDefaultList
                     println("Component list: ${componentList}")
                     def componentNotes = [:]
@@ -96,6 +97,14 @@ pipeline {
                                                         unstash "release-notes-opensearch-$BUILD_NUMBER"
                                                         def componentObj = inputManifestObj.components[currentComponent]
                                                         def version = inputManifestObj.build.version
+                                                        def productName = ['opensearch': 'opensearch', 'opensearch dashboards': 'opensearch-dashboards'][product.toLowerCase()]
+                                                        def filename
+                                                        if (currentComponent.toLowerCase() in ['opensearch', 'opensearch-dashboards']) {
+                                                            filename = "${productName}.release-notes-${version}.md"
+                                                        } else {
+                                                            filename = "${productName}-${currentComponent}.release-notes-${version}.0.md"
+                                                        }
+                                                        println("Filename is ${filename}")
                                                         println("Component object: ${componentObj.name}, ${componentObj.ref}, ${componentObj.repository}")
                                                         echo "Current workspace is $WORKSPACE}"
                                                         withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
@@ -111,29 +120,28 @@ pipeline {
                                                                     ls -ltr $WORKSPACE/release-notes/
                                                                     COMPONENT_REPO_URL="${componentObj.repository}"
                                                                     REPO_NAME=\$(basename "\${COMPONENT_REPO_URL}" .git)
-                                                                    #git config user.email "opensearch-infra@amazon.com"
-                                                                    #git config user.name "opensearch-ci"
 
-                                                                    #echo "${GITHUB_TOKEN}" | gh auth login --with-token
-                                                                    #cd ..
                                                                     git clone -b ${componentObj.ref} "\${COMPONENT_REPO_URL}"
                                                                     cd "\${REPO_NAME}"
-                                                                    if [ -f "$WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md" ]; then
-                                                                        cp "$WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md" release-notes/
+
+                                                                    if [ -f "$WORKSPACE/release-notes/${filename}" ]; then
+                                                                        cp "$WORKSPACE/release-notes/${filename}" release-notes/
+                                                                        if [ -z "\$(git status --porcelain)" ]; then
+                                                                             echo "No changes to commit for component \${REPO_NAME}. Skipping PR creation."
+                                                                        else
+                                                                            git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
+                                                                            git config user.email "opensearch-infra@amazon.com"
+                                                                            git config user.name "opensearch-ci"
+                                                                            git checkout -b ${version}-release-notes
+                                                                            git add .
+                                                                            git commit -sm "Add release notes for ${version}"
+                                                                            git push origin ${version}-release-notes --force
+                                                                            gh pr create --title 'Add release notes for ${version}' --body 'Add release notes for ${version}' -H ${version}-release-notes -B main
+                                                                        fi
                                                                     else
                                                                         echo "Error: File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist"
-                                                                        #exit 1
+                                                                        exit 1
                                                                     fi
-                                                                    cp $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md release-notes/
-                                                                    ls -ltr release-notes/
-                                                                    #git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
-                                                                    #git config user.email "opensearch-infra@amazon.com"
-                                                                    #git config user.name "opensearch-ci"
-                                                                    #git checkout -b ${version}-release-notes
-                                                                    #git add .
-                                                                    #git commit -sm "Add release notes for ${version}"
-                                                                    #git push origin ${version}-release-notes --force
-                                                                    #gh pr create --title 'Add release notes for ${version}' --body 'Add release notes for ${version}' -H ${version}-release-notes -B main
                                                                 fi
                                                             """
                                                         }
