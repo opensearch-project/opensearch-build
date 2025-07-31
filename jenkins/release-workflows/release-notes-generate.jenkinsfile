@@ -84,7 +84,7 @@ pipeline {
                         def currentIndex = component_index
                         def currentWaitSeconds = wait_seconds
 
-                        if (currentComponent != 'notifications-core') {
+                        if (!(currentComponent in ['notifications-core', 'functionalTestDashboards'])) {
                             componentNotes["Release notes for ${currentComponent}"] = {
                                 timeout(time: 4, unit: 'HOURS') {
                                     node('Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host') {
@@ -111,13 +111,12 @@ pipeline {
                                                             sh """
                                                                 #!/bin/bash
                                                                 set +e
-                                                                ./release_notes.sh generate manifests/${params.INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} --ref ${REF}
+                                                                ./release_notes.sh generate manifests/${INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} --ref ${REF}
 
                                                                 if [ \$? -ne 0 ]; then
                                                                     echo "Release notes generation failed for component ${currentComponent}"
                                                                     exit 1
                                                                 else
-                                                                    ls -ltr $WORKSPACE/release-notes/
                                                                     COMPONENT_REPO_URL="${componentObj.repository}"
                                                                     REPO_NAME=\$(basename "\${COMPONENT_REPO_URL}" .git)
 
@@ -132,11 +131,11 @@ pipeline {
                                                                             git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
                                                                             git config user.email "opensearch-infra@amazon.com"
                                                                             git config user.name "opensearch-ci"
-                                                                            git checkout -b ${version}-release-notes
+                                                                            git checkout -b release/release-notes-${version}
                                                                             git add .
                                                                             git commit -sm "Add release notes for ${version}"
-                                                                            git push origin ${version}-release-notes --force
-                                                                            gh pr create --title 'Add release notes for ${version}' --body 'Add release notes for ${version}' -H ${version}-release-notes -B main
+                                                                            git push origin release/release-notes-${version} --force
+                                                                            gh pr create --title 'Add release notes for ${version}' --body 'Add release notes for ${version}' -H release/release-notes-${version} -B main
                                                                         fi
                                                                     else
                                                                         echo "Error: File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist"
