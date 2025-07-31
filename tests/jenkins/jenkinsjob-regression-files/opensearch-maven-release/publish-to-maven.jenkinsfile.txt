@@ -1,6 +1,6 @@
    publish-to-maven.run()
       publish-to-maven.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      publish-to-maven.library({identifier=jenkins@10.2.0, retriever=null})
+      publish-to-maven.library({identifier=jenkins@10.2.2, retriever=null})
       publish-to-maven.pipeline(groovy.lang.Closure)
          publish-to-maven.credentials(jenkins-artifact-bucket-name)
          publish-to-maven.echo(Executing on agent [docker:[alwaysPull:true, args:-e JAVA_HOME=/opt/java/openjdk-11, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
@@ -17,7 +17,7 @@
                publish-to-maven.echo(Signing email is opensearch@amazon.com)
                publish-to-maven.publishToMaven({signingArtifactsPath=/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/manifest.yml, mavenArtifactsPath=/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/maven, autoPublish=true, email=opensearch@amazon.com})
                   publishToMaven.legacySCM(groovy.lang.Closure)
-                  publishToMaven.library({identifier=jenkins@10.2.0, retriever=null})
+                  publishToMaven.library({identifier=jenkins@10.2.2, retriever=null})
                   publishToMaven.loadCustomScript({scriptPath=publish/stage-maven-release.sh, scriptName=stage-maven-release.sh})
                      loadCustomScript.libraryResource(publish/stage-maven-release.sh)
                      loadCustomScript.writeFile({file=stage-maven-release.sh, text=#!/bin/bash
@@ -133,20 +133,21 @@ EOF
 }
 
 create_maven_settings
-
 echo "AUTO_PUBLISH variable is set to: '$AUTO_PUBLISH'"
 echo "==========================================="
 echo "Deploying artifacts under ${ARTIFACT_DIRECTORY} to Staging Repository."
 echo "==========================================="
 
 deployment=$(mvn --settings="${mvn_settings}" \
-  org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:deploy-staged-repository \
+  org.sonatype.plugins:nexus-staging-maven-plugin:1.7.0:deploy-staged-repository \
   -DrepositoryDirectory="${ARTIFACT_DIRECTORY}" \
   -DnexusUrl="https://ossrh-staging-api.central.sonatype.com" \
   -DserverId=central \
   -DautoReleaseAfterClose=false \
   -DstagingProgressTimeoutMinutes=30 \
-  -DstagingProfileId="${STAGING_PROFILE_ID}" | tee /dev/stderr)
+  -DstagingProfileId="${STAGING_PROFILE_ID}")
+
+echo $deployment
 
 if echo "$deployment" | grep "BUILD SUCCESS"; then
   DEPLOYED_STAGING_REPO_ID=$(grep "Closing staging repository with ID" <<< "$deployment" | grep -o "\"[^\"]*\"" | tr -d '"')
@@ -174,19 +175,19 @@ if [ "$AUTO_PUBLISH" = true ] && [ -n "$DEPLOYED_STAGING_REPO_ID" ] ; then
     JSON_DATA="{
         \"stagedRepositoryIds\": [\"${DEPLOYED_STAGING_REPO_ID}\"], 
         \"autoDropAfterRelease\": true, 
-        \"description\": \"Releasing ${DEPLOYED_STAGING_REPO_ID}\"}
+        \"description\": \"Releasing ${DEPLOYED_STAGING_REPO_ID}\"
       }"
       
-    RESPONSE_CODE=$(curl -o /tmp/out.txt -w "%{http_code}\n" -X POST "${PROMOTION_URL}" \
+    RESPONSE_CODE=$(curl -w "%{http_code}\n" -X POST "${PROMOTION_URL}" \
       -u "${SONATYPE_USERNAME}:${SONATYPE_PASSWORD}" \
       -H "Content-Type: application/json" \
       -H "Accept: application/json" \
       -d "{\"data\": ${JSON_DATA}}")
-    
+
     if [[ ${RESPONSE_CODE} != 200 ]]; then
         echo "Failed to close and release staging repository ${DEPLOYED_STAGING_REPO_ID}. Response code: ${RESPONSE_CODE}"
-        echo "Response: $(cat /tmp/out.txt)"
         echo "Please release the staging repository manually via Sonatype portal https://central.sonatype.com/publishing ."
+        exit 1
     else
         echo "Staging repository ${DEPLOYED_STAGING_REPO_ID} released successfully."
     fi
@@ -195,9 +196,10 @@ if [ "$AUTO_PUBLISH" = true ] && [ -n "$DEPLOYED_STAGING_REPO_ID" ] ; then
     echo "Done."
     echo "==========================================="
 else 
-    echo "Skipping auto-release of staging repository ${DEPLOYED_STAGING_REPO_ID} as AUTO_PUBLISH is set to false or DEPLOYED_STAGING_REPO_ID is empty."
+    echo "Skipping auto-release of staging repository ${DEPLOYED_STAGING_REPO_ID} as AUTO_PUBLISH might be set false or unable to retrieve DEPLOYED_STAGING_REPO_ID."
     echo "Please release the staging repository manually via Sonatype portal https://central.sonatype.com/publishing ."
-fi})
+fi
+})
                      loadCustomScript.sh(chmod a+x ./stage-maven-release.sh)
                   publishToMaven.signArtifacts({artifactPath=/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/manifest.yml, type=maven, platform=linux, sigtype=.asc, email=opensearch@amazon.com})
                      signArtifacts.fileExists(/tmp/workspace/sign.sh)
