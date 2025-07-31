@@ -78,7 +78,10 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         env['JOB_NAME'] = 'dummy_job'
 
         helper.registerAllowedMethod("s3Download", [Map])
-        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
 
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             if (args.file == 'manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml') {
