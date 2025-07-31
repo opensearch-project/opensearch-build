@@ -83,63 +83,65 @@ pipeline {
                         def currentIndex = component_index
                         def currentWaitSeconds = wait_seconds
 
-                        componentNotes["Release notes for ${currentComponent}"] = {
-                            timeout(time: 4, unit: 'HOURS') {
-                                node('Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host') {
-                                    docker.withRegistry('https://public.ecr.aws/') {
-                                        docker.image('opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1').pull()
-                                        docker.image('opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1').inside('--network=host') {
-                                            try {
-                                                stage("${currentComponent}") {
-                                                    sh("echo ${currentComponent} with index ${currentIndex} will sleep ${currentWaitSeconds} seconds to reduce load && sleep ${currentWaitSeconds}")
-                                                    unstash "release-notes-opensearch-$BUILD_NUMBER"
-                                                    def componentObj = inputManifestObj.components[currentComponent]
-                                                    def version = inputManifestObj.build.version
-                                                    println("Component object: ${componentObj.name}, ${componentObj.ref}, ${componentObj.repository}")
-                                                    echo "Current workspace is $WORKSPACE}"
-                                                    withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
-                                                        sh """
-                                                            #!/bin/bash
-                                                            set +e
-                                                            ./release_notes.sh generate manifests/${params.INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} --ref ${REF}
+                        if (currentComponent != 'notifications-core') {
+                            componentNotes["Release notes for ${currentComponent}"] = {
+                                timeout(time: 4, unit: 'HOURS') {
+                                    node('Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host') {
+                                        docker.withRegistry('https://public.ecr.aws/') {
+                                            docker.image('opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1').pull()
+                                            docker.image('opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1').inside('--network=host') {
+                                                try {
+                                                    stage("${currentComponent}") {
+                                                        sh("echo ${currentComponent} with index ${currentIndex} will sleep ${currentWaitSeconds} seconds to reduce load && sleep ${currentWaitSeconds}")
+                                                        unstash "release-notes-opensearch-$BUILD_NUMBER"
+                                                        def componentObj = inputManifestObj.components[currentComponent]
+                                                        def version = inputManifestObj.build.version
+                                                        println("Component object: ${componentObj.name}, ${componentObj.ref}, ${componentObj.repository}")
+                                                        echo "Current workspace is $WORKSPACE}"
+                                                        withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                                            sh """
+                                                                #!/bin/bash
+                                                                set +e
+                                                                ./release_notes.sh generate manifests/${params.INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} --ref ${REF}
 
-                                                            if [ \$? -ne 0 ]; then
-                                                                echo "Release notes generation failed for component ${currentComponent}"
-                                                                exit 1
-                                                            else
-                                                                ls -ltr $WORKSPACE/release-notes/
-                                                                COMPONENT_REPO_URL="${componentObj.repository}"
-                                                                REPO_NAME=\$(basename "\${COMPONENT_REPO_URL}" .git)
-                                                                #git config user.email "opensearch-infra@amazon.com"
-                                                                #git config user.name "opensearch-ci"
-
-                                                                #echo "${GITHUB_TOKEN}" | gh auth login --with-token
-                                                                #cd ..
-                                                                git clone -b ${componentObj.ref} "\${COMPONENT_REPO_URL}"
-                                                                cd "\${REPO_NAME}"
-                                                                if [ -f "$WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md" ]; then
-                                                                    cp "$WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md" release-notes/
+                                                                if [ \$? -ne 0 ]; then
+                                                                    echo "Release notes generation failed for component ${currentComponent}"
+                                                                    exit 1
                                                                 else
-                                                                    echo "Error: File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist"
-                                                                    #exit 1
+                                                                    ls -ltr $WORKSPACE/release-notes/
+                                                                    COMPONENT_REPO_URL="${componentObj.repository}"
+                                                                    REPO_NAME=\$(basename "\${COMPONENT_REPO_URL}" .git)
+                                                                    #git config user.email "opensearch-infra@amazon.com"
+                                                                    #git config user.name "opensearch-ci"
+
+                                                                    #echo "${GITHUB_TOKEN}" | gh auth login --with-token
+                                                                    #cd ..
+                                                                    git clone -b ${componentObj.ref} "\${COMPONENT_REPO_URL}"
+                                                                    cd "\${REPO_NAME}"
+                                                                    if [ -f "$WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md" ]; then
+                                                                        cp "$WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md" release-notes/
+                                                                    else
+                                                                        echo "Error: File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist"
+                                                                        #exit 1
+                                                                    fi
+                                                                    cp $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md release-notes/
+                                                                    ls -ltr release-notes/
+                                                                    #git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
+                                                                    #git config user.email "opensearch-infra@amazon.com"
+                                                                    #git config user.name "opensearch-ci"
+                                                                    #git checkout -b ${version}-release-notes
+                                                                    #git add .
+                                                                    #git commit -sm "Add release notes for ${version}"
+                                                                    #git push origin ${version}-release-notes --force
+                                                                    #gh pr create --title 'Add release notes for ${version}' --body 'Add release notes for ${version}' -H ${version}-release-notes -B main
                                                                 fi
-                                                                cp $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md release-notes/
-                                                                ls -ltr release-notes/
-                                                                #git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
-                                                                #git config user.email "opensearch-infra@amazon.com"
-                                                                #git config user.name "opensearch-ci"
-                                                                #git checkout -b ${version}-release-notes
-                                                                #git add .
-                                                                #git commit -sm "Add release notes for ${version}"
-                                                                #git push origin ${version}-release-notes --force
-                                                                #gh pr create --title 'Add release notes for ${version}' --body 'Add release notes for ${version}' -H ${version}-release-notes -B main
-                                                            fi
-                                                        """
+                                                            """
+                                                        }
                                                     }
                                                 }
-                                            }
-                                            catch (e) {
-                                                throw new Exception("Error running workflow for component ${currentComponent}", e)
+                                                catch (e) {
+                                                    throw new Exception("Error running workflow for component ${currentComponent}", e)
+                                                }
                                             }
                                         }
                                     }
