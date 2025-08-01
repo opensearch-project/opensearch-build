@@ -37,7 +37,6 @@ class TestReleaseNotesGenerate extends BuildPipelineTest {
         binding.setVariable('INPUT_MANIFEST', 'tests/jenkins/data/opensearch-2.2.0.yml')
         binding.setVariable('GITHUB_USER', "GITHUB_USER")
         binding.setVariable('GITHUB_TOKEN', "GITHUB_TOKEN")
-        //binding.setVariable('COMPONENTS', 'OpenSearch')
         binding.setVariable('MODEL_ID', 'test-model-id')
         binding.setVariable('MAX_TOKENS', '10000')
         binding.setVariable('BUILD_NUMBER', '12345')

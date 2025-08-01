@@ -22,7 +22,7 @@ pipeline {
     parameters {
         string(
             name: 'INPUT_MANIFEST',
-            description: 'Release version number to fetch input manifest path',
+            description: 'Required: Input manifest under the manifests folder, e.g. 3.0.0/opensearch-3.0.0.yml.',
             trim: true
         )
         string(
@@ -84,7 +84,7 @@ pipeline {
                         def currentIndex = component_index
                         def currentWaitSeconds = wait_seconds
 
-                        if (!(currentComponent in ['notifications-core', 'functionalTestDashboards'])) {
+                        if (!(currentComponent in ['notifications-core', 'functionalTestDashboards', 'OpenSearch-Dashboards'])) {
                             componentNotes["Release notes for ${currentComponent}"] = {
                                 timeout(time: 1, unit: 'HOURS') {
                                     node('Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host') {
@@ -104,9 +104,6 @@ pipeline {
                                                         } else {
                                                             filename = "${productName}-${currentComponent}.release-notes-${version}.0.md"
                                                         }
-                                                        println("Filename is ${filename}")
-                                                        println("Component object: ${componentObj.name}, ${componentObj.ref}, ${componentObj.repository}")
-                                                        echo "Current workspace is $WORKSPACE}"
                                                         withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                                                             sh """
                                                                 #!/bin/bash
@@ -131,11 +128,11 @@ pipeline {
                                                                             git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
                                                                             git config user.email "opensearch-infra@amazon.com"
                                                                             git config user.name "opensearch-ci"
-                                                                            git checkout -b release/release-notes-${version}
+                                                                            git checkout -b release-chores/release-notes-${version}
                                                                             git add .
                                                                             git commit -sm "Add release notes for ${version}"
-                                                                            git push origin release/release-notes-${version} --force
-                                                                            gh pr create --title '[AUTO] Add release notes for ${version}' --body 'Add release notes for ${version}' -H release/release-notes-${version} -B main
+                                                                            git push origin release-chores/release-notes-${version} --force
+                                                                            gh pr create --title '[AUTO] Add release notes for ${version}' --body 'Add release notes for ${version}' -H release-chores/release-notes-${version} -B main
                                                                         fi
                                                                     else
                                                                         echo "Error: File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist"
@@ -148,6 +145,10 @@ pipeline {
                                                 }
                                                 catch (e) {
                                                     throw new Exception("Error running workflow for component ${currentComponent}", e)
+                                                }
+                                                finally {
+                                                    echo "Completed running release-notes-generate job for component ${currentComponent}"
+                                                    postCleanup()
                                                 }
                                             }
                                         }
