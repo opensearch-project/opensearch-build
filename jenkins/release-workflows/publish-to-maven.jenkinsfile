@@ -12,6 +12,10 @@ lib = library(identifier: 'jenkins@10.2.2', retriever: modernSCM([
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
+def secret_artifacts = [
+    [envVar: 'ARTIFACT_BUCKET_NAME', secretRef: 'op://opensearch-infra-secrets/aws-resource-arns/jenkins-artifact-bucket-name']
+]
+
 pipeline {
     agent {
         docker {
@@ -36,7 +40,6 @@ pipeline {
     }
     environment {
         ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/tar/builds"
-        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
         REPO_URL = "https://aws.oss.sonatype.org/"
         STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
         BUILD_ID = "${BUILD_ID}"
@@ -46,14 +49,16 @@ pipeline {
             steps {
                 script {
                     echo "Downloading from S3."
-                    downloadFromS3(
-                        localPath: "$WORKSPACE/artifacts",
-                        bucketName: "${ARTIFACT_BUCKET_NAME}",
-                        downloadPath: "${ARTIFACT_PATH}/",
-                        roleAccountNumberCred: 'jenkins-aws-account-public',
-                        assumedRoleName: 'opensearch-bundle',
-                        force: true
-                    )
+                    withSecrets(secrets: secret_artifacts) {
+                        downloadFromS3(
+                            localPath: "$WORKSPACE/artifacts",
+                            bucketName: "${ARTIFACT_BUCKET_NAME}",
+                            downloadPath: "${ARTIFACT_PATH}/",
+                            roleAccountNumberCred: 'jenkins-aws-account-public',
+                            assumedRoleName: 'opensearch-bundle',
+                            force: true
+                        )
+                    }
                     echo "Signing, Staging and Publishing Maven artifacts."
                     String majorVersion = "${VERSION}".tokenize('.')[0]
                     echo "Major version is ${majorVersion}"

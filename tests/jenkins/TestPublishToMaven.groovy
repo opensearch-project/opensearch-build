@@ -40,6 +40,10 @@ class TestPublishToMaven extends BuildPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("git", [Map])
     }

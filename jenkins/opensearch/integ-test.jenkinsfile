@@ -18,6 +18,10 @@ def agent_nodes = [
     'windows_x64': 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host',
 ]
 
+def secret_artifacts = [
+    [envVar: 'ARTIFACT_BUCKET_NAME', secretRef: 'op://opensearch-infra-secrets/aws-resource-arns/jenkins-artifact-bucket-name']
+]
+
 pipeline {
     options {
         timeout(time: 7, unit: 'HOURS')
@@ -27,7 +31,6 @@ pipeline {
     environment {
         BUILD_MANIFEST = 'build-manifest.yml'
         BUILD_JOB_NAME = 'distribution-build-opensearch'
-        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
     parameters {
         string(
@@ -167,14 +170,16 @@ pipeline {
 
                     if (env.platform != 'windows') {
                         echo "Downloading from ${artifactPath} and stashing both artifacts and repository"
-                        downloadFromS3(
-                            assumedRoleName: 'opensearch-bundle',
-                            roleAccountNumberCred: 'jenkins-aws-account-public',
-                            downloadPath: "${artifactPath}/",
-                            bucketName: "${ARTIFACT_BUCKET_NAME}",
-                            localPath: "${WORKSPACE}/artifacts",
-                            force: true
-                          )
+                        withSecrets(secrets: secret_artifacts) {
+                            downloadFromS3(
+                                assumedRoleName: 'opensearch-bundle',
+                                roleAccountNumberCred: 'jenkins-aws-account-public',
+                                downloadPath: "${artifactPath}/",
+                                bucketName: "${ARTIFACT_BUCKET_NAME}",
+                                localPath: "${WORKSPACE}/artifacts",
+                                force: true
+                              )
+                        }
                         sh("rm -rf $WORKSPACE/$distribution && mv -v $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
                     }
                     else {
@@ -219,14 +224,16 @@ pipeline {
                                                     unstash "integtest-opensearch-$BUILD_NUMBER"
                                                     if (env.platform == 'windows') {
                                                         echo "Unstashing the repository and downloading the artifacts from S3: ${artifactPath}"
-                                                        downloadFromS3(
-                                                            assumedRoleName: 'opensearch-bundle',
-                                                            roleAccountNumberCred: 'jenkins-aws-account-public',
-                                                            downloadPath: "${artifactPath}/",
-                                                            bucketName: "${ARTIFACT_BUCKET_NAME}",
-                                                            localPath: "${WORKSPACE}/artifacts",
-                                                            force: true
-                                                          )
+                                                        withSecrets(secrets: secret_artifacts) {
+                                                            downloadFromS3(
+                                                                assumedRoleName: 'opensearch-bundle',
+                                                                roleAccountNumberCred: 'jenkins-aws-account-public',
+                                                                downloadPath: "${artifactPath}/",
+                                                                bucketName: "${ARTIFACT_BUCKET_NAME}",
+                                                                localPath: "${WORKSPACE}/artifacts",
+                                                                force: true
+                                                              )
+                                                        }
                                                         bat"""
                                                             bash -c "rm -rf $WORKSPACE/$distribution && mv -v $WORKSPACE/artifacts/${artifactPath} $WORKSPACE"
                                                         """
