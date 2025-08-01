@@ -135,7 +135,7 @@ pipeline {
                                                                             git add .
                                                                             git commit -sm "Add release notes for ${version}"
                                                                             git push origin release/release-notes-${version} --force
-                                                                            gh pr create --title 'Add release notes for ${version}' --body 'Add release notes for ${version}' -H release/release-notes-${version} -B main
+                                                                            gh pr create --title '[AUTO] Add release notes for ${version}' --body 'Add release notes for ${version}' -H release/release-notes-${version} -B main
                                                                         fi
                                                                     else
                                                                         echo "Error: File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist"
