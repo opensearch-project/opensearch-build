@@ -86,7 +86,7 @@ pipeline {
 
                         if (!(currentComponent in ['notifications-core', 'functionalTestDashboards'])) {
                             componentNotes["Release notes for ${currentComponent}"] = {
-                                timeout(time: 4, unit: 'HOURS') {
+                                timeout(time: 1, unit: 'HOURS') {
                                     node('Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host') {
                                         docker.withRegistry('https://public.ecr.aws/') {
                                             docker.image('opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1').pull()
