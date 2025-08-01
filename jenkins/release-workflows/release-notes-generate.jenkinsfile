@@ -42,7 +42,7 @@ pipeline {
         )
         string(
             name: 'MAX_TOKENS',
-            description: 'Max number of tokens to use for supplied model id, deafults to 2000',
+            description: 'Max number of tokens to use for supplied model id, defaults to 2000',
             trim: true
         )
         string(
