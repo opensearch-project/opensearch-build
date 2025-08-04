@@ -29,6 +29,7 @@ class TestRunAssemble(unittest.TestCase):
         self.assertTrue(out.startswith("usage:"))
 
     BUILD_MANIFEST = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml")
+    BUILD_MANIFEST_QUALIFIER = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-2.0.0-rc1.yml")
 
     @patch("os.makedirs")
     @patch("os.getcwd", return_value="curdir")
@@ -46,10 +47,32 @@ class TestRunAssemble(unittest.TestCase):
 
         mock_bundle.package.assert_called_with(os.path.join("curdir", "tar", "dist", "opensearch"))
 
-        mock_recorder.return_value.write_manifest.assert_has_calls([
-            call("path"),
-            call(os.path.join("curdir", "tar", "dist", "opensearch"))
-        ])  # manifest included in package
+        mock_recorder.return_value.write_manifest.assert_has_calls(
+            [call("path"), call(os.path.join("curdir", "tar", "dist", "opensearch"))]
+        )  # manifest included in package
+
+        self.assertTrue(getcwd.called)
+        makeDirs.assert_called_once_with(ANY, exist_ok=True)
+
+    @patch("os.makedirs")
+    @patch("os.getcwd", return_value="curdir")
+    @patch("argparse._sys.argv", ["run_assemble.py", BUILD_MANIFEST_QUALIFIER])
+    @patch("run_assemble.Bundles.create")
+    @patch("run_assemble.BundleRecorder", return_value=MagicMock())
+    def test_main_qualifier(self, mock_recorder: Mock, mock_bundles: Mock, getcwd: Mock, makeDirs: Mock) -> None:
+        mock_bundle = MagicMock(min_dist=MagicMock(archive_path="path"))
+        mock_bundles.return_value.__enter__.return_value = mock_bundle
+
+        main()
+
+        mock_bundle.install_min.assert_called()
+        mock_bundle.install_components.assert_called()
+
+        mock_bundle.package.assert_called_with(os.path.join("curdir", "tar", "dist", "opensearch"))
+
+        mock_recorder.return_value.write_manifest.assert_has_calls(
+            [call("path"), call(os.path.join("curdir", "tar", "dist", "opensearch"))]
+        )  # manifest included in package
 
         self.assertTrue(getcwd.called)
         makeDirs.assert_called_once_with(ANY, exist_ok=True)
