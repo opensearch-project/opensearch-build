@@ -57,7 +57,7 @@ class ReleaseNotesCheckArgs:
                             help="AWS Bedrock model ID to use for AI generation.")
         parser.add_argument("--max-tokens",
                             type=int,
-                            default=2000,
+                            default=15000,
                             help="Maximum number of tokens to generate in AI response.")
         parser.add_argument("--ref",
                             type=str,
