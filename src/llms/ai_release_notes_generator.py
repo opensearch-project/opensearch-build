@@ -9,8 +9,10 @@ import json
 import logging
 import sys
 import time
+import random
 
 import boto3
+from botocore.config import Config
 from botocore.exceptions import ClientError, ConnectTimeoutError, NoCredentialsError, ReadTimeoutError
 
 from release_notes_workflow.release_notes_check_args import ReleaseNotesCheckArgs
@@ -26,7 +28,9 @@ class AIReleaseNotesGenerator:
         self.base_delay = 1  # Base delay in seconds for exponential backoff
 
         try:
-            self.bedrock_client = boto3.client('bedrock-runtime', region_name=aws_region)
+            # Configure the timeout within the Boto3 client
+            config = Config(read_timeout=1000)  # 1000 seconds read timeout
+            self.bedrock_client = boto3.client('bedrock-runtime', region_name=aws_region, config=config)
         except NoCredentialsError:
             logging.error("Error: AWS credentials not found. Please configure your AWS credentials.")
             sys.exit(1)
@@ -44,7 +48,6 @@ class AIReleaseNotesGenerator:
 
     def _calculate_delay(self, attempt: int) -> float:
         """Calculate delay using exponential backoff with jitter"""
-        import random
         delay: float = self.base_delay * (2 ** attempt)
         # Add jitter to avoid thundering herd
         jitter: float = random.uniform(0.1, 0.5)
