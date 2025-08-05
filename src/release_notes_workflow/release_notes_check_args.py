@@ -61,7 +61,6 @@ class ReleaseNotesCheckArgs:
                             help="Maximum number of tokens to generate in AI response.")
         parser.add_argument("--ref",
                             type=str,
-                            default=None,
                             help="Override input manifest ref")
 
         args = parser.parse_args()
