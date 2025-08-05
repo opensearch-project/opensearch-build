@@ -7,9 +7,9 @@
 
 import json
 import logging
+import random
 import sys
 import time
-import random
 
 import boto3
 from botocore.config import Config
