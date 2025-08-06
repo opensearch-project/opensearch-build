@@ -35,6 +35,12 @@
 
                                                                     git clone -b 2.2 "${COMPONENT_REPO_URL}"
                                                                     cd "${REPO_NAME}"
+                                                                    git ls-remote --heads origin release-chores/release-notes-2.2.0 | grep -q release-chores/release-notes-2.2.0
+                                                                    if [ $? -ne 0 ]; then
+                                                                        git checkout -b release-chores/release-notes-2.2.0
+                                                                    else
+                                                                        git checkout release-chores/release-notes-2.2.0
+                                                                    fi
 
                                                                     if [ -f "/tmp/workspace/release-notes/opensearch.release-notes-2.2.0.md" ]; then
                                                                         cp "/tmp/workspace/release-notes/opensearch.release-notes-2.2.0.md" release-notes/
@@ -44,19 +50,18 @@
                                                                             git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/$REPO_NAME"
                                                                             git config user.email "opensearch-infra@amazon.com"
                                                                             git config user.name "opensearch-ci"
-                                                                            git ls-remote --heads origin release-chores/release-notes-2.2.0 | grep -q release-chores/release-notes-2.2.0
-                                                                            if [ $? -ne 0 ]; then
-                                                                                git checkout -b release-chores/release-notes-2.2.0
-                                                                            else
-                                                                                git checkout release-chores/release-notes-2.2.0
-                                                                            fi
                                                                             git add .
                                                                             git commit -sm "Add release notes for 2.2.0"
                                                                             git push origin release-chores/release-notes-2.2.0 --force
-                                                                            gh pr create --title '[AUTO] Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release-chores/release-notes-2.2.0 -B main
+                                                                            EXISTING_PR=$(gh pr list --head release-chores/release-notes-2.2.0 --state open --json number --jq '.[0].number')
+                                                                            if [ -n "$EXISTING_PR" ]; then
+                                                                                echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
+                                                                            else
+                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release-chores/release-notes-2.2.0 -B main
+                                                                            fi
                                                                         fi
                                                                     else
-                                                                        echo "Error: File /tmp/workspace/release-notes/opensearch-${REPO_NAME}.release-notes-2.2.0.0.md does not exist"
+                                                                        echo "File /tmp/workspace/release-notes/opensearch-${REPO_NAME}.release-notes-2.2.0.0.md does not exist as there are no commits since 2025-06-24."
                                                                         exit 1
                                                                     fi
                                                                 fi
@@ -84,6 +89,12 @@
 
                                                                     git clone -b 2.2 "${COMPONENT_REPO_URL}"
                                                                     cd "${REPO_NAME}"
+                                                                    git ls-remote --heads origin release-chores/release-notes-2.2.0 | grep -q release-chores/release-notes-2.2.0
+                                                                    if [ $? -ne 0 ]; then
+                                                                        git checkout -b release-chores/release-notes-2.2.0
+                                                                    else
+                                                                        git checkout release-chores/release-notes-2.2.0
+                                                                    fi
 
                                                                     if [ -f "/tmp/workspace/release-notes/opensearch-sql.release-notes-2.2.0.0.md" ]; then
                                                                         cp "/tmp/workspace/release-notes/opensearch-sql.release-notes-2.2.0.0.md" release-notes/
@@ -93,19 +104,18 @@
                                                                             git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/$REPO_NAME"
                                                                             git config user.email "opensearch-infra@amazon.com"
                                                                             git config user.name "opensearch-ci"
-                                                                            git ls-remote --heads origin release-chores/release-notes-2.2.0 | grep -q release-chores/release-notes-2.2.0
-                                                                            if [ $? -ne 0 ]; then
-                                                                                git checkout -b release-chores/release-notes-2.2.0
-                                                                            else
-                                                                                git checkout release-chores/release-notes-2.2.0
-                                                                            fi
                                                                             git add .
                                                                             git commit -sm "Add release notes for 2.2.0"
                                                                             git push origin release-chores/release-notes-2.2.0 --force
-                                                                            gh pr create --title '[AUTO] Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release-chores/release-notes-2.2.0 -B main
+                                                                            EXISTING_PR=$(gh pr list --head release-chores/release-notes-2.2.0 --state open --json number --jq '.[0].number')
+                                                                            if [ -n "$EXISTING_PR" ]; then
+                                                                                echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
+                                                                            else
+                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release-chores/release-notes-2.2.0 -B main
+                                                                            fi
                                                                         fi
                                                                     else
-                                                                        echo "Error: File /tmp/workspace/release-notes/opensearch-${REPO_NAME}.release-notes-2.2.0.0.md does not exist"
+                                                                        echo "File /tmp/workspace/release-notes/opensearch-${REPO_NAME}.release-notes-2.2.0.0.md does not exist as there are no commits since 2025-06-24."
                                                                         exit 1
                                                                     fi
                                                                 fi

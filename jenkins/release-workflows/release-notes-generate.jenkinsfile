@@ -119,6 +119,12 @@ pipeline {
 
                                                                     git clone -b ${componentObj.ref} "\${COMPONENT_REPO_URL}"
                                                                     cd "\${REPO_NAME}"
+                                                                    git ls-remote --heads origin release-chores/release-notes-${version} | grep -q release-chores/release-notes-${version}
+                                                                    if [ \$? -ne 0 ]; then
+                                                                        git checkout -b release-chores/release-notes-${version}
+                                                                    else
+                                                                        git checkout release-chores/release-notes-${version}
+                                                                    fi
 
                                                                     if [ -f "$WORKSPACE/release-notes/${filename}" ]; then
                                                                         cp "$WORKSPACE/release-notes/${filename}" release-notes/
@@ -128,19 +134,18 @@ pipeline {
                                                                             git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
                                                                             git config user.email "opensearch-infra@amazon.com"
                                                                             git config user.name "opensearch-ci"
-                                                                            git ls-remote --heads origin release-chores/release-notes-${version} | grep -q release-chores/release-notes-${version}
-                                                                            if [ \$? -ne 0 ]; then
-                                                                                git checkout -b release-chores/release-notes-${version}
-                                                                            else
-                                                                                git checkout release-chores/release-notes-${version}
-                                                                            fi
                                                                             git add .
                                                                             git commit -sm "Add release notes for ${version}"
                                                                             git push origin release-chores/release-notes-${version} --force
-                                                                            gh pr create --title '[AUTO] Add release notes for ${version}' --body 'Add release notes for ${version}' -H release-chores/release-notes-${version} -B main
+                                                                            EXISTING_PR=\$(gh pr list --head release-chores/release-notes-${version} --state open --json number --jq '.[0].number')
+                                                                            if [ -n "\$EXISTING_PR" ]; then
+                                                                                echo "Updating existing PR #\${EXISTING_PR} for component \${REPO_NAME} with new release notes."
+                                                                            else
+                                                                                gh pr create --title '[AUTO] Add release notes for ${version}' --body 'Add release notes for ${version}' -H release-chores/release-notes-${version} -B main
+                                                                            fi
                                                                         fi
                                                                     else
-                                                                        echo "Error: File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist"
+                                                                        echo "File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist as there are no commits since ${GIT_LOG_DATE}."
                                                                         exit 1
                                                                     fi
                                                                 fi
