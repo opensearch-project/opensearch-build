@@ -45,7 +45,12 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         self.assertEqual(generator.max_retries, 3)
         self.assertEqual(generator.base_delay, 1)
         self.assertEqual(generator.bedrock_client, self.mock_bedrock_client)
-        mock_boto3_client.assert_called_once_with('bedrock-runtime', region_name='us-east-1')
+        mock_boto3_client.assert_called_once()
+        args, kwargs = mock_boto3_client.call_args
+        self.assertEqual(args[0], 'bedrock-runtime')
+        self.assertEqual(kwargs['region_name'], 'us-east-1')
+        self.assertIn('config', kwargs)
+        self.assertEqual(kwargs['config'].read_timeout, 1000)
 
     @patch('boto3.client')
     def test_init_with_custom_region(self, mock_boto3_client: MagicMock) -> None:
@@ -54,7 +59,12 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
 
         AIReleaseNotesGenerator(self.mock_args, aws_region='eu-west-1')
 
-        mock_boto3_client.assert_called_once_with('bedrock-runtime', region_name='eu-west-1')
+        mock_boto3_client.assert_called_once()
+        args, kwargs = mock_boto3_client.call_args
+        self.assertEqual(args[0], 'bedrock-runtime')
+        self.assertEqual(kwargs['region_name'], 'eu-west-1')
+        self.assertIn('config', kwargs)
+        self.assertEqual(kwargs['config'].read_timeout, 1000)
 
     @patch('boto3.client')
     @patch('sys.exit')
