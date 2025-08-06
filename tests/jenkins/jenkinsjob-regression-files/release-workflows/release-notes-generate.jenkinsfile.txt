@@ -44,7 +44,12 @@
                                                                             git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/$REPO_NAME"
                                                                             git config user.email "opensearch-infra@amazon.com"
                                                                             git config user.name "opensearch-ci"
-                                                                            git checkout -b release-chores/release-notes-2.2.0
+                                                                            git ls-remote --heads origin release-chores/release-notes-2.2.0 | grep -q release-chores/release-notes-2.2.0
+                                                                            if [ $? -ne 0 ]; then
+                                                                                git checkout -b release-chores/release-notes-2.2.0
+                                                                            else
+                                                                                git checkout release-chores/release-notes-2.2.0
+                                                                            fi
                                                                             git add .
                                                                             git commit -sm "Add release notes for 2.2.0"
                                                                             git push origin release-chores/release-notes-2.2.0 --force
@@ -88,7 +93,12 @@
                                                                             git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/$REPO_NAME"
                                                                             git config user.email "opensearch-infra@amazon.com"
                                                                             git config user.name "opensearch-ci"
-                                                                            git checkout -b release-chores/release-notes-2.2.0
+                                                                            git ls-remote --heads origin release-chores/release-notes-2.2.0 | grep -q release-chores/release-notes-2.2.0
+                                                                            if [ $? -ne 0 ]; then
+                                                                                git checkout -b release-chores/release-notes-2.2.0
+                                                                            else
+                                                                                git checkout release-chores/release-notes-2.2.0
+                                                                            fi
                                                                             git add .
                                                                             git commit -sm "Add release notes for 2.2.0"
                                                                             git push origin release-chores/release-notes-2.2.0 --force

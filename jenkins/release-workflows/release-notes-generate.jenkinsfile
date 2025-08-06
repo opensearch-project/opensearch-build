@@ -128,7 +128,12 @@ pipeline {
                                                                             git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
                                                                             git config user.email "opensearch-infra@amazon.com"
                                                                             git config user.name "opensearch-ci"
-                                                                            git checkout -b release-chores/release-notes-${version}
+                                                                            git ls-remote --heads origin release-chores/release-notes-${version} | grep -q release-chores/release-notes-${version}
+                                                                            if [ \$? -ne 0 ]; then
+                                                                                git checkout -b release-chores/release-notes-${version}
+                                                                            else
+                                                                                git checkout release-chores/release-notes-${version}
+                                                                            fi
                                                                             git add .
                                                                             git commit -sm "Add release notes for ${version}"
                                                                             git push origin release-chores/release-notes-${version} --force
