@@ -241,7 +241,7 @@ class GitHubCommitsProcessor:
                 time.sleep(0.1)
 
         # Sort by commit message for consistent output
-        result.sort(key=lambda x: str(x["Message"]))
+        result.sort(key=lambda x: x["Message"])
 
         return result
 
