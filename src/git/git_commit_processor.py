@@ -52,7 +52,7 @@ class GitHubCommitsProcessor:
         try:
             response = requests.get(url, headers=self.headers, params=params)
             response.raise_for_status()
-            return dict(response.json())  # Explicitly cast to Dict
+            return response.json()  # type: ignore[no-any-return]
         except requests.exceptions.RequestException as e:
             logger.info(f"Error making request to {url}: {e}")
             return None
@@ -124,10 +124,10 @@ class GitHubCommitsProcessor:
         try:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
-            prs = list(response.json())  # Convert to List
+            prs = response.json()  # type: ignore[no-any-return]
 
             if prs and len(prs) > 0:
-                return dict(prs[0])  # Convert to Dict
+                return prs[0]  # type: ignore[no-any-return]
         except requests.exceptions.RequestException:
             pass
 
@@ -136,7 +136,7 @@ class GitHubCommitsProcessor:
     def get_pr_details(self, owner: str, repo: str, pr_number: int) -> Optional[Dict]:
         """Get detailed PR information including labels"""
         if pr_number in self.pr_cache:
-            return dict(self.pr_cache[pr_number])  # Explicitly cast to Dict
+            return self.pr_cache[pr_number]  # type: ignore[no-any-return]
 
         url = f"{self.base_url}/repos/{owner}/{repo}/pulls/{pr_number}"
         pr_data = self._make_request(url)
