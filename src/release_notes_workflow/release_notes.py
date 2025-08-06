@@ -118,7 +118,7 @@ class ReleaseNotes:
                     prompt = AI_RELEASE_NOTES_PROMPT_CHANGELOG.format(
                         component_name=component.name,
                         version=build_version,
-                        repository_url=f"https://github.com/opensearch-project/{component.name}",
+                        repository_url=component.repository.removesuffix('.git'),
                         changelog_content=changelog_content
                     )
                     release_notes_raw = ai_generator.generate_release_notes(prompt)
@@ -141,7 +141,7 @@ class ReleaseNotes:
                         prompt = AI_RELEASE_NOTES_PROMPT_COMMIT.format(
                             component_name=component.name,
                             version=build_version,
-                            repository_url=f"https://github.com/opensearch-project/{component.name}",
+                            repository_url=component.repository.removesuffix('.git'),
                             commits_text=commits_text
                         )
                         release_notes_raw = ai_generator.generate_release_notes(prompt)

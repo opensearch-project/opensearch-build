@@ -73,7 +73,6 @@ The following options are available.
 |--------------------|-------------------------------------------------------------------------|
 | --date             | Baseline date for commit analysis.                                      |
 | --component, -c    | Generate release notes for specific components only.                    |
-| --test-mode        | Run in test mode without creating PRs.                                  |
 | --output           | Saves the generated release notes to user specified file.               |
 | --ai-model         | AI model to use for analysis (default: claude-3-7-sonnet).              |
 | -v, --verbose      | Show more verbose output.                                               |
