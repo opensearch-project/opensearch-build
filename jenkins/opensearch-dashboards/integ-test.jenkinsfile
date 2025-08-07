@@ -232,7 +232,7 @@ pipeline {
                         // Changes to run OpenSearch-Dashboards ci-groups in parallel.
                         // There are total 9 ci-groups
                         if (component == "OpenSearch-Dashboards") {
-                          for (int i = 1; i <= 9; i++) {
+                          for (int i = 1; i <= 14; i++) {
                             def local_component = 'OpenSearch-Dashboards'
                             def wait_seconds = i * 20
                             def ciNum = i.toString()
