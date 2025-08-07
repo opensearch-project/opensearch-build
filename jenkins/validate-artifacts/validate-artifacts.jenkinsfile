@@ -233,8 +233,8 @@ pipeline {
                                         }
                                     } else {
                                         node(agent_nodes["${local_platform}_${local_architecture}"]) {
-                                            docker.image(docker_images["$local_distribution"]).pull() // always pull latest
                                             docker.withRegistry('https://public.ecr.aws/') {
+                                                docker.image(docker_images["$local_distribution"]).pull() // always pull latest
                                                 docker.image(docker_images["$local_distribution"]).inside(docker_args["$local_distribution"]) {
                                                     try {
                                                         stage("${local_distribution}") {
