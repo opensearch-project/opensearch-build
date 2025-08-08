@@ -22,6 +22,7 @@ class BundleRecorder:
         self.build_id = build.id
         self.bundle_location = bundle_location
         self.version = build.version
+        self.qualifier = build.qualifier
         self.distribution = build.distribution
         self.package_name = self.__get_package_name(build)
         self.artifacts_dir = artifacts_dir
@@ -30,6 +31,7 @@ class BundleRecorder:
             build.id,
             build.name,
             build.version,
+            build.qualifier,
             build.platform,
             build.architecture,
             build.distribution,
@@ -40,6 +42,7 @@ class BundleRecorder:
         parts = [
             build.filename,
             build.version,
+            build.qualifier,
             build.platform,
             build.architecture,
         ]
@@ -73,12 +76,13 @@ class BundleRecorder:
         self.get_manifest().to_file(manifest_path)
 
     class BundleManifestBuilder:
-        def __init__(self, build_id: str, name: str, version: str, platform: str, architecture: str, distribution: str, location: str) -> None:
+        def __init__(self, build_id: str, name: str, version: str, qualifier: str, platform: str, architecture: str, distribution: str, location: str) -> None:
             self.data: Dict[str, Any] = {}
             self.data["build"] = {}
             self.data["build"]["id"] = build_id
             self.data["build"]["name"] = name
             self.data["build"]["version"] = str(version)
+            self.data["build"]["qualifier"] = qualifier
             self.data["build"]["platform"] = platform
             self.data["build"]["architecture"] = architecture
             self.data["build"]["distribution"] = distribution if distribution else "tar"

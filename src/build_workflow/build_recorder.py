@@ -66,7 +66,8 @@ class BuildRecorder:
                 self.data["build"] = {}
                 self.data["build"]["id"] = target.build_id
                 self.data["build"]["name"] = target.name
-                self.data["build"]["version"] = target.opensearch_version
+                self.data["build"]["version"] = target.version
+                self.data["build"]["qualifier"] = target.qualifier
                 self.data["build"]["platform"] = target.platform
                 self.data["build"]["architecture"] = target.architecture
                 self.data["build"]["distribution"] = target.distribution if target.distribution else "tar"
