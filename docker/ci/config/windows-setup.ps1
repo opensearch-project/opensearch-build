@@ -22,6 +22,9 @@ iex "& {$(irm https://raw.githubusercontent.com/peterzhuamazon/scoop-Install/ref
 # Use static path in environment variable
 scoop config no_junction true
 
+# Install curl (to avoid ssl stall issues later on)
+scoop install curl
+
 # Install git
 scoop install git
 git --version
@@ -182,6 +185,7 @@ yarn --version
 #     volta install "cypress@$cypressVersion"
 #     cypress --version
 # }
+
 $userenv2 = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
 $nodePathFixed = "C:\\Users\\ContainerAdministrator\\scoop\\persist\\volta\\appdata\\bin"
 [System.Environment]::SetEnvironmentVariable("PATH", $userenv2 + ";$nodePathFixed", [System.EnvironmentVariableTarget]::User)
