@@ -85,6 +85,8 @@ class BenchmarkArgs:
                                          help="Username for the cluster")
         execute_test_parser.add_argument("--password", dest="password",
                                          help="Password for the cluster")
+        execute_test_parser.add_argument("--sigv4", dest="sigv4", action="store_true",
+                                         help="Use SigV4 authentication for the benchmark")
         execute_test_parser.add_argument("--component", dest="component", default="OpenSearch",
                                          help="Component name that needs to be performance tested")
         execute_test_parser.add_argument("--config", type=argparse.FileType("r"),
@@ -179,6 +181,7 @@ class BenchmarkArgs:
             self.insecure = args.insecure
             self.username = args.username if args.username else "admin"
             self.password = args.password if args.password else None
+            self.sigv4 = args.sigv4 if args.sigv4 else False
             self.manager_node_count = args.manager_node_count if args.manager_node_count else None
             self.data_node_count = args.data_node_count if args.data_node_count else None
             self.client_node_count = args.client_node_count if args.client_node_count else None

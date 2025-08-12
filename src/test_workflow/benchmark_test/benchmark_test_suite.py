@@ -19,10 +19,12 @@ class BenchmarkTestSuite(ABC):
             args: BenchmarkArgs,
             endpoint: Any = None,
             security: bool = False,
+            sigv4: bool = False,
             password: str = ''
     ) -> None:
         self.endpoint = endpoint
         self.security = security
+        self.sigv4 = sigv4
         self.args = args
         self.password = password
 

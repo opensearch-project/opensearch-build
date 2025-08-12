@@ -43,6 +43,11 @@ parameters {
             description: 'Enter password for the cluster endpoint',
             defaultValue: ''
         )
+        booleanParam(
+            name: 'SIGV4_ENABLED',
+            description: 'Mention if the test will run using AWS Signature Version 4 authentication.',
+            defaultValue: false,
+        )
         string(
             name: 'TEST_WORKLOAD',
             description: 'The workload name from OpenSearch Benchmark Workloads.',
@@ -120,6 +125,7 @@ parameters {
                         insecure: !(params.SECURITY_ENABLED),
                         username: USERNAME,
                         password: PASSWORD,
+                        sigv4: SIGV4,
                         workload: TEST_WORKLOAD,
                         userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
                         suffix: "${BUILD_NUMBER}",

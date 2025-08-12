@@ -24,6 +24,7 @@ class BenchmarkTestSuiteRunners:
         args: BenchmarkArgs,
         endpoint: str = None,
         security: bool = False,
+        sigv4: bool = False,
         password: str = ''
     ) -> Union[BenchmarkTestSuiteExecute, BenchmarkTestSuiteCompare]:
         test_class = cls.SUITES.get(args.command)
@@ -31,7 +32,7 @@ class BenchmarkTestSuiteRunners:
             raise ValueError(f"Unknown command: {args.command}")
 
         if issubclass(test_class, BenchmarkTestSuiteExecute):
-            return test_class(endpoint, security, args, password)
+            return test_class(endpoint, security, sigv4, args, password)
         elif issubclass(test_class, BenchmarkTestSuiteCompare):
             return test_class(args)
         else:
