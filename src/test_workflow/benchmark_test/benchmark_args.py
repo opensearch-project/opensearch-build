@@ -87,6 +87,10 @@ class BenchmarkArgs:
                                          help="Password for the cluster")
         execute_test_parser.add_argument("--sigv4", dest="sigv4", action="store_true",
                                          help="Use SigV4 authentication for the benchmark")
+        execute_test_parser.add_argument("--region", dest="region",
+                                         help="AWS region for SigV4 authentication (e.g., us-west-2)")
+        execute_test_parser.add_argument("--service", dest="service", default="es", choices=["es", "aoss"],
+                                        help="AWS service to sign for (es = OpenSearch Service, aoss = OpenSearch Serverless)")
         execute_test_parser.add_argument("--component", dest="component", default="OpenSearch",
                                          help="Component name that needs to be performance tested")
         execute_test_parser.add_argument("--config", type=argparse.FileType("r"),
@@ -182,6 +186,8 @@ class BenchmarkArgs:
             self.username = args.username if args.username else "admin"
             self.password = args.password if args.password else None
             self.sigv4 = args.sigv4 if args.sigv4 else False
+            self.region = args.region if args.region else None
+            self.service = args.service if args.service else None
             self.manager_node_count = args.manager_node_count if args.manager_node_count else None
             self.data_node_count = args.data_node_count if args.data_node_count else None
             self.client_node_count = args.client_node_count if args.client_node_count else None
