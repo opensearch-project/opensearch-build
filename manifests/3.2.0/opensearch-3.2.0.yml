@@ -25,7 +25,7 @@ components:
     ref: 6adc0bf476e1624190564d7fbe4aba00ccf49ad8
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 43c2278ea412c5d0c5788fb2a3a7a94de7ede65d
+    ref: a3aa6dda639f63c9039085ed6622041f76066bf9
     platforms:
       - linux
       - windows
@@ -37,7 +37,7 @@ components:
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: 8f7ce22ae4750507cb6a2757dd1b55bbe402bf76
+    ref: 797049f0ea92d06f9d3fcfd95838a91ace4e43fc
     platforms:
       - linux
       - windows
@@ -49,7 +49,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 25e8bb4082c4a7a6d477ea1bc8c8e4893e6552ae
+    ref: 1d2ea3aa4ad9fcd19e7e615c3bc3f4028063a43b
     platforms:
       - linux
       - windows
@@ -71,7 +71,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 8ee4115e343e5bd20722d4e5ae24193d1d60b6da
+    ref: fa6c968be7e1a116e835624e05e1165cd00411b0
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: d1a8fb0f82287ee8fc95bee8a9d04d0170db6cab
+    ref: a36ae5afb7ad3943c8f432a8bccad8b7b7c33fb3
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 9a31eb4f34acb24560fd0daeffec6f1c95350245
+    ref: 395a5b518a1aae3510af5d4169825e4f9e6340ce
     platforms:
       - linux
       - windows
@@ -186,7 +186,7 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 0ef2c0baeaf3f1d34d4a1bf2647d52aec32007ca
+    ref: f1a999c96d9124b876c3297c83d1b1da58ae8a65
     platforms:
       - linux
   - name: custom-codecs
@@ -209,7 +209,7 @@ components:
       - neural-search
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: bc4d9ca5c3d447f9c860d936a8987c1473c99861
+    ref: dcfae390e7bc5fcfd0c6166f303168292fcd5d02
     platforms:
       - linux
       - windows
@@ -232,7 +232,7 @@ components:
       - windows
   - name: user-behavior-insights
     repository: https://github.com/opensearch-project/user-behavior-insights.git
-    ref: 921395f7672842ad04aa9cc66ba6783e0d4d9160
+    ref: 31b575b592f56bd95e6dba143b11643d63835f35
     platforms:
       - linux
       - windows
