@@ -27,7 +27,7 @@ components:
     ref: 23f156db0b346be12d8cc306e1bbed22e01f4a83
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 2e940f94ad8ed49400a0aa3c018bec759d1be38e
+    ref: 1104e7a88fd01f94d56c3ec47363d43bebeb1d79
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: 381d31ad4a5fa6b7b785b68240597bb373716c41
@@ -36,7 +36,7 @@ components:
     ref: 0e28d01a09eb4657cd9cfde958d83219cc041db5
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin.git
-    ref: ef4c0f7f61282484a5e52bbc14838ff5863586a7
+    ref: 4e7cb6fd5f41e8d134186f699ad889baf5859890
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
     ref: fc949b0aeec5ed8f94ed8c5ff764b51576dd97b6
@@ -48,13 +48,13 @@ components:
     ref: d118d58d81fbfd312f93e155b2f229b1fd2da66a
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 0108ee5d7903e161afd3f280e087e3759066f980
+    ref: 71388dbbd398f3fba4494a9fffbb2566329233ff
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: 455ac653e87b3b7ba34ed9574f1fda1733806490
+    ref: 5ec653701dd928eec224bbdbcfd90a500747466b
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: fdf91cb68d64f396d8b5a74bbf7d10535084edbf
+    ref: b1797c77325c1d45ad1fa3b220f63445abf87ec2
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: 6944a2fa563f37ba58e5c0f399ee74b6734e99cc
@@ -66,4 +66,4 @@ components:
     ref: 0914759342f513ebdfbb6edce542eaf2a3de04ba
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
-    ref: de047410bc57a9003941c7da55846563e83cad34
+    ref: dd66d7a97160d386b4fe26931bde011719c8387b
