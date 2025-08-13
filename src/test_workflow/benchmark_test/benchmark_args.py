@@ -90,7 +90,7 @@ class BenchmarkArgs:
         execute_test_parser.add_argument("--region", dest="region",
                                          help="AWS region for SigV4 authentication (e.g., us-west-2)")
         execute_test_parser.add_argument("--service", dest="service", default="es", choices=["es", "aoss"],
-                                        help="AWS service to sign for (es = OpenSearch Service, aoss = OpenSearch Serverless)")
+                                         help="AWS service to sign for (es = OpenSearch Service, aoss = OpenSearch Serverless)")
         execute_test_parser.add_argument("--component", dest="component", default="OpenSearch",
                                          help="Component name that needs to be performance tested")
         execute_test_parser.add_argument("--config", type=argparse.FileType("r"),
