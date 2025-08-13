@@ -44,9 +44,20 @@ parameters {
             defaultValue: ''
         )
         booleanParam(
-            name: 'SIGV4_ENABLED',
+            name: 'SIGV4',
             description: 'Mention if the test will run using AWS Signature Version 4 authentication.',
             defaultValue: false,
+        )
+        string(
+            name: 'REGION',
+            description: 'AWS region for signing (e.g. us-west-2).',
+            defaultValue: 'us-west-2',
+            trim: true
+        )
+        choice(
+            name: 'SERVICE',
+            choices: ['es', 'aoss'],
+            description: 'AWS service for SigV4'
         )
         string(
             name: 'TEST_WORKLOAD',
@@ -126,6 +137,8 @@ parameters {
                         username: USERNAME,
                         password: PASSWORD,
                         sigv4: SIGV4,
+                        region: REGION,
+                        service: SERVICE,
                         workload: TEST_WORKLOAD,
                         userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
                         suffix: "${BUILD_NUMBER}",
