@@ -63,7 +63,7 @@ components:
       - common-utils
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: fb89cb246acdaee377d155419272fc9806cd1bc6
+    ref: 761c85233321f1e1f6caf638728c36b7425ad462
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 56b5bafd81710aa9e920a631999d808a4855df02
+    ref: 5b69b5b7d8d10fd5199f3b880dd6ac30c22095d1
     platforms:
       - linux
       - windows
@@ -98,7 +98,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 903c81c62bdedaa92d3ec77496c0e4405453a9dc
+    ref: 16c26805593bb14c21c9ad365092d913a5e8119e
     working_directory: notifications
     platforms:
       - linux
@@ -107,7 +107,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 903c81c62bdedaa92d3ec77496c0e4405453a9dc
+    ref: 16c26805593bb14c21c9ad365092d913a5e8119e
     working_directory: notifications
     platforms:
       - linux
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: a36ae5afb7ad3943c8f432a8bccad8b7b7c33fb3
+    ref: c296c43cac7bba3d41751689f11731a96525c44e
     platforms:
       - linux
       - windows
