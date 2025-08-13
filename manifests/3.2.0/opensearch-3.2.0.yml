@@ -31,7 +31,7 @@ components:
       - windows
   - name: opensearch-learning-to-rank-base
     repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
-    ref: 167aac89970e037f05332d9b1eb6b248c6d6ff7d
+    ref: e04760d8184cfa1e4d61e44bc106071e8c139d9a
     platforms:
       - linux
       - windows
@@ -49,7 +49,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 1d2ea3aa4ad9fcd19e7e615c3bc3f4028063a43b
+    ref: d9369b6bcb010456b1e9db05c64ac4b171123ff8
     platforms:
       - linux
       - windows
@@ -63,7 +63,7 @@ components:
       - common-utils
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 4e1b55cbeaa79e1087bd94b4ea61850c48be445c
+    ref: 761c85233321f1e1f6caf638728c36b7425ad462
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 03a87e78a54b1ed4ed38bd0e5571c7b2bfe981ee
+    ref: 5b69b5b7d8d10fd5199f3b880dd6ac30c22095d1
     platforms:
       - linux
       - windows
@@ -89,7 +89,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 74f6e3885665044c197033b2fe917ecefa35c017
+    ref: 68b6c85de7964be95fbc4c53859da3ea58443e7a
     platforms:
       - linux
       - windows
@@ -98,7 +98,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 903c81c62bdedaa92d3ec77496c0e4405453a9dc
+    ref: 16c26805593bb14c21c9ad365092d913a5e8119e
     working_directory: notifications
     platforms:
       - linux
@@ -107,7 +107,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 903c81c62bdedaa92d3ec77496c0e4405453a9dc
+    ref: 16c26805593bb14c21c9ad365092d913a5e8119e
     working_directory: notifications
     platforms:
       - linux
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: a36ae5afb7ad3943c8f432a8bccad8b7b7c33fb3
+    ref: c296c43cac7bba3d41751689f11731a96525c44e
     platforms:
       - linux
       - windows
@@ -177,7 +177,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: a87190c7b07ba63047df850b094b4033debbb498
+    ref: add78605e3bf7280313ee6c31689233adbde4a6d
     platforms:
       - linux
       - windows

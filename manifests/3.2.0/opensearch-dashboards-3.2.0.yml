@@ -36,7 +36,7 @@ components:
     ref: 0e28d01a09eb4657cd9cfde958d83219cc041db5
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin.git
-    ref: 4e7cb6fd5f41e8d134186f699ad889baf5859890
+    ref: 7429e49ae4657db0c15c9b001359f127dd1e0b97
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
     ref: fc949b0aeec5ed8f94ed8c5ff764b51576dd97b6
@@ -60,7 +60,7 @@ components:
     ref: 6944a2fa563f37ba58e5c0f399ee74b6734e99cc
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
-    ref: 33815ed45b073feb4443d3cb08a2a731e67edb76
+    ref: 26b890ab3dfbf6865d6e3e8e2da446ab6b129bd5
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
     ref: 0914759342f513ebdfbb6edce542eaf2a3de04ba
