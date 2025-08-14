@@ -1,5 +1,18 @@
 # OpenSearch and OpenSearch Dashboards 3.2.0 Release Notes
 
+## Release Highlights
+
+### New and Updated Features
+### Experimental Features
+
+
+## Release Details
+[OpenSearch and OpenSearch Dashboards 3.2.0](https://opensearch.org/artifacts/by-version/#release-3-2-0) includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.2.0.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.2.0.md).
+
 
 ## FEATURES
 
