@@ -27,7 +27,7 @@ components:
     ref: 23f156db0b346be12d8cc306e1bbed22e01f4a83
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 1104e7a88fd01f94d56c3ec47363d43bebeb1d79
+    ref: 0161adacfe2e44b29c15c11b27d4c8ea2281bf0f
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: 381d31ad4a5fa6b7b785b68240597bb373716c41
@@ -60,7 +60,7 @@ components:
     ref: 6944a2fa563f37ba58e5c0f399ee74b6734e99cc
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
-    ref: 26b890ab3dfbf6865d6e3e8e2da446ab6b129bd5
+    ref: 055723f31e10fb2364343c6e9f8dfce364a82c3e
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
     ref: 0914759342f513ebdfbb6edce542eaf2a3de04ba

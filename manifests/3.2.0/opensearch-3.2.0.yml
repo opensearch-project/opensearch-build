@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 5b69b5b7d8d10fd5199f3b880dd6ac30c22095d1
+    ref: 96778c0b22178631973ba78651412b864e224532
     platforms:
       - linux
       - windows
@@ -209,7 +209,7 @@ components:
       - neural-search
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: dcfae390e7bc5fcfd0c6166f303168292fcd5d02
+    ref: 532ef69b50ce14bd205cb9b23335370b06ba8f2e
     platforms:
       - linux
       - windows
