@@ -4,19 +4,19 @@
 ## FEATURES
 
 
-### Opensearch Common Utils
+### OpenSearch Common Utils
 
 
 * Add Seconds as a supported unit for IntervalSchedule ([#849](https://github.com/opensearch-project/common-utils/pull/849))
 
 
-### Opensearch Custom Codecs
+### OpenSearch Custom Codecs
 
 
 * Adding support for composite index ([#263](https://github.com/opensearch-project/custom-codecs/pull/263))
 
 
-### Opensearch Dashboards Search Relevance
+### OpenSearch Search Relevance Dashboards
 
 
 * Use Dashboards to visualize results of Evaluation and Hybrid Experiments ([#570](https://github.com/opensearch-project/dashboards-search-relevance/pull/570))
@@ -26,20 +26,20 @@
 * Change default UI to the new SRW interface, preserve opt out option ([#614](https://github.com/opensearch-project/dashboards-search-relevance/pull/614))
 
 
-### Opensearch Flow Framework
+### OpenSearch Flow Framework
 
 
 * Add JsonToJson Recommender as a utility function ([#1168](https://github.com/opensearch-project/flow-framework/pull/1168))
 * Add JsonToJson Transformer as a utility function ([#1176](https://github.com/opensearch-project/flow-framework/pull/1176))
 
 
-### Opensearch Index Management
+### OpenSearch Index Management
 
 
 * Support for no\_alias and min\_state\_age in ISM TransitionsFeature/ism enhancement ([#1440](https://github.com/opensearch-project/index-management/pull/1440))
 
 
-### Opensearch Job Scheduler
+### OpenSearch Job Scheduler
 
 
 * Adds REST API to list jobs with an option to list them per node ([#786](https://github.com/opensearch-project/job-scheduler/pull/786))
@@ -47,7 +47,7 @@
 * Rest API to list all locks with option to get a specific lock ([#802](https://github.com/opensearch-project/job-scheduler/pull/802))
 
 
-### Opensearch K Nn
+### OpenSearch k-NN
 
 
 * Support GPU indexing for FP16, Byte and Binary [#2819](https://github.com/opensearch-project/k-NN/pull/2819)
@@ -56,7 +56,7 @@
 * Extend transport-grpc module to support GRPC KNN queries [#2817](https://github.com/opensearch-project/k-NN/pull/2817)
 
 
-### Opensearch ML Common
+### OpenSearch ML Commons
 
 
 * Initiate query planning tool ([#4006](https://github.com/opensearch-project/ml-commons/pull/4006))
@@ -68,20 +68,20 @@
 * GET memory API ([#4069](https://github.com/opensearch-project/ml-commons/pull/4069))
 
 
-### Opensearch Neural Search
+### OpenSearch Neural Search
 
 
 * [Hybrid Query] Add upper bound parameter for min-max normalization technique ([#1431](https://github.com/opensearch-project/neural-search/pull/1431))
 * [Experimental] Adds agentic search query clause and agentic query translator search request processor for agentic search ([#1484](https://github.com/opensearch-project/neural-search/pull/1484))
 
 
-### Opensearch Opensearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Add support to handle missing values for XGBoost models ([#206](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/206))
 
 
-### Opensearch Security
+### OpenSearch Security
 
 
 * Introduced new experimental versioned security configuration management feature ([#5357](https://github.com/opensearch-project/security/pull/5357))
@@ -95,45 +95,45 @@
 ## ENHANCEMENTS
 
 
-### Opensearch Anomaly Detection
+### OpenSearch Anomaly Detection
 
 
 * Support >1 hr intervals ([#1513](https://github.com/opensearch-project/anomaly-detection/pull/1513))
 * Onboards to centralized resource access control for detectors and forecasters ([#1533](https://github.com/opensearch-project/anomaly-detection/pull/1533))
 
 
-### Opensearch Common Utils
+### OpenSearch Common Utils
 
 
 * Add tenancy access info to serialized user in threadcontext ([#857](https://github.com/opensearch-project/common-utils/pull/857))
 
 
-### Opensearch Dashboards Assistantdashboards
+### OpenSearch Dashboards Assistant
 
 
 * Update dashboards-assistant so natural language visualization can be display in the new dashboard ingress ([#589](https://github.com/opensearch-project/dashboards-assistant/pull/589))
 
 
-### Opensearch Dashboards Flowframeworkdashboards
+### OpenSearch Flow Framework Dashboards
 
 
 * Cleanly handle error states for backend connection issues ([#757](https://github.com/opensearch-project/dashboards-flow-framework/pull/757))
 
 
-### Opensearch Dashboards Observabilitydashboards
+### OpenSearch Observability Dashboards
 
 
 * [Traces] Make service map max nodes and max edges values user-configurable ([#2472](https://github.com/opensearch-project/dashboards-observability/pull/2472))
 
 
-### Opensearch Dashboards Queryinsightsdashboards
+### OpenSearch Query Insights Dashboards
 
 
 * [IMPROVEMENT] MDS support for Inflight Queries ([#217](https://github.com/opensearch-project/query-insights-dashboards/pull/217))
 * Change Live Queries page default auto refresh to 30 seconds ([#304](https://github.com/opensearch-project/query-insights-dashboards/pull/304))
 
 
-### Opensearch Dashboards Search Relevance
+### OpenSearch Search Relevance Dashboards
 
 
 * Fetch models from ml-commons and add validation ([#568](https://github.com/opensearch-project/dashboards-search-relevance/pull/568))
@@ -144,21 +144,21 @@
 * Publish metrics stats without authorization to make it accessible to monitoring systems ([#593](https://github.com/opensearch-project/dashboards-search-relevance/pull/593))
 
 
-### Opensearch Dashboards Securitydashboards
+### OpenSearch Security Dashboards
 
 
 * Changes to show all index patterns in index permission panel in role view ([#1303](https://github.com/opensearch-project/security-dashboards-plugin/issues/1303), [#1891](https://github.com/opensearch-project/security-dashboards-plugin/issues/1891))
 * Added missing index permissions in the list ([#1969](https://github.com/opensearch-project/security-dashboards-plugin/issues/1969))
 
 
-### Opensearch Job Scheduler
+### OpenSearch Job Scheduler
 
 
 * Make Lock service not final ([#792](https://github.com/opensearch-project/job-scheduler/pull/792))
 * Move info about delay to the the schedule portion in List Jobs API ([#801](https://github.com/opensearch-project/job-scheduler/pull/801))
 
 
-### Opensearch K Nn
+### OpenSearch k-NN
 
 
 * Add KNN timing info to core profiler [#2785](https://github.com/opensearch-project/k-NN/pull/2785)
@@ -167,7 +167,7 @@
 * Added dynamic index thread quantity defaults based on processor sizes [#2806](https://github.com/opensearch-project/k-NN/pull/2806)
 
 
-### Opensearch ML Common
+### OpenSearch ML Commons
 
 
 * Add Default System Prompt for the query Planner tool ([#4046](https://github.com/opensearch-project/ml-commons/pull/4046))
@@ -185,7 +185,7 @@
 * Add feature flag to delete mem container ([#4072](https://github.com/opensearch-project/ml-commons/pull/4072))
 
 
-### Opensearch Neural Search
+### OpenSearch Neural Search
 
 
 * [Semantic Field] Support configuring the auto-generated knn\_vector field through the semantic field. ([#1420](https://github.com/opensearch-project/neural-search/pull/1420))
@@ -197,13 +197,13 @@
 * Add setting for number of documents stored by HybridCollapsingTopDocsCollector ([#1471](https://github.com/opensearch-project/neural-search/pull/1471))
 
 
-### Opensearch Query Insights
+### OpenSearch Query Insights
 
 
 * Increase reader search limit to 500 and fix sort by metric type ([#381](https://github.com/opensearch-project/query-insights/pull/381))
 
 
-### Opensearch Search Relevance
+### OpenSearch Search Relevance
 
 
 * Added date filtering for UBI events in implicit judgment calculations. ([#165](https://github.com/opensearch-project/search-relevance/pull/165))
@@ -212,7 +212,7 @@
 * Enabled tasks scheduling for pointwise experiments ([#167](https://github.com/opensearch-project/search-relevance/pull/167))
 
 
-### Opensearch Security
+### OpenSearch Security
 
 
 * Create a mechanism for plugins to explicitly declare actions they need to perform with their assigned PluginSubject ([#5341](https://github.com/opensearch-project/security/pull/5341))
@@ -227,14 +227,14 @@
 * Integration with stream transport ([#5530](https://github.com/opensearch-project/security/pull/5530))
 
 
-### Opensearch Skills
+### OpenSearch Skills
 
 
 * Merge index schema meta ([#596](https://github.com/opensearch-project/skills/pull/596))
 * Mask error message in PPLTool ([#609](https://github.com/opensearch-project/skills/pull/609))
 
 
-### Opensearch User Behavior Insights
+### OpenSearch User Behavior Insights
 
 
 * [Enhancement] Adding a field to store the A/B TDI configs per event in the data generator. ([#102](https://github.com/opensearch-project/user-behavior-insights/pull/102))
@@ -267,14 +267,14 @@
 ## BUG FIXES
 
 
-### Opensearch Alerting
+### OpenSearch Alerting
 
 
 * Fix MGet bug, randomize fan out distribution ([#1885](https://github.com/opensearch-project/alerting/pull/1885))
 * Refactored consistent responses and fixed unrelated exceptions ([#1818](https://github.com/opensearch-project/alerting/pull/1818))
 
 
-### Opensearch Anomaly Detection
+### OpenSearch Anomaly Detection
 
 
 * Fixing concurrency bug on writer ([#1508](https://github.com/opensearch-project/anomaly-detection/pull/1508))
@@ -282,7 +282,7 @@
 * Changing search calls on interval calculation ([#1535](https://github.com/opensearch-project/anomaly-detection/pull/1535))
 
 
-### Opensearch Anomaly Detection Dashboards
+### OpenSearch Anomaly Detection Dashboards
 
 
 * Improve indicator helper, fix zero-value plotting etc ([#1058](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1058))
@@ -295,33 +295,33 @@
 * fix: fetch full forecaster list, and fix delete bug ([#1068](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1068))
 
 
-### Opensearch Common Utils
+### OpenSearch Common Utils
 
 
 * Pinned the commons-beanutils dependency to fix CVE-2025-48734 ([#850](https://github.com/opensearch-project/common-utils/pull/850))
 * Revert "updating PublishFindingsRequest to use a list of findings rather than… ([#847](https://github.com/opensearch-project/common-utils/pull/847))
 
 
-### Opensearch Cross Cluster Replication
+### OpenSearch Cross Cluster Replication
 
 
 * Add missing method for RemoteClusterRepository class ([#1564](https://github.com/opensearch-project/cross-cluster-replication/pull/1564))
 
 
-### Opensearch Dashboards Assistantdashboards
+### OpenSearch Dashboards Assistant
 
 
 * Fix failed unit tests due to missing Worker ([#593](https://github.com/opensearch-project/dashboards-assistant/pull/593))
 
 
-### Opensearch Dashboards Observabilitydashboards
+### OpenSearch Observability Dashboards
 
 
 * [Bug] Traces error display ([#2475](https://github.com/opensearch-project/dashboards-observability/pull/2475))
 * [Bug]fixed metrics viz not showing up ([#2478](https://github.com/opensearch-project/dashboards-observability/pull/2478))
 
 
-### Opensearch Dashboards Queryinsightsdashboards
+### OpenSearch Query Insights Dashboards
 
 
 * Fix-query-details-verbose-param ([#217](https://github.com/opensearch-project/query-insights-dashboards/pull/217))
@@ -333,13 +333,13 @@
 * Removed search bar Cypress ([#306](https://github.com/opensearch-project/query-insights-dashboards/pull/306))
 
 
-### Opensearch Dashboards Reportsdashboards
+### OpenSearch Dashboards Reportsdashboards
 
 
 * Fix for tenant issue when redirecting from discover ([#599](https://github.com/opensearch-project/dashboards-reporting/pull/599))
 
 
-### Opensearch Dashboards Search Relevance
+### OpenSearch Search Relevance Dashboards
 
 
 * Improve messaging when backend plugin is disabled ([#578](https://github.com/opensearch-project/dashboards-search-relevance/pull/578))
@@ -349,14 +349,14 @@
 * Bug fixes for error messages not render correctly for toast notifications ([#612](https://github.com/opensearch-project/dashboards-search-relevance/pull/612))
 
 
-### Opensearch Dashboards Securityanalyticsdashboards
+### OpenSearch Dashboards Securityanalyticsdashboards
 
 
 * Remove correlated findings bar chart that uses vega ([#1313](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1313))
 * Update API call to get IOC types ([#1312](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1312))
 
 
-### Opensearch Flow Framework
+### OpenSearch Flow Framework
 
 
 * Fix ApiSpecFetcher Memory Issues and Exception Handling ([#1185](https://github.com/opensearch-project/flow-framework/pull/1185))
@@ -366,33 +366,33 @@
 * Fixing connector name in default use case ([#1205](https://github.com/opensearch-project/flow-framework/pull/1205))
 
 
-### Opensearch Geospatial
+### OpenSearch Geospatial
 
 
 * Block redirect in IP2Geo and move validation to transport action ([#782](https://github.com/opensearch-project/geospatial/pull/782))
 
 
-### Opensearch Index Management
+### OpenSearch Index Management
 
 
 * Add history index pattern to list of System Index descriptors ([#1444](https://github.com/opensearch-project/index-management/pull/1444))
 * Fix Integration test and lint errors ([#1442](https://github.com/opensearch-project/index-management/pull/1442))
 
 
-### Opensearch Job Scheduler
+### OpenSearch Job Scheduler
 
 
 * Ensure that dates are serialized in TransportGetScheduledInfoAction.nodeOperation ([#793](https://github.com/opensearch-project/job-scheduler/pull/793))
 
 
-### Opensearch K Nn
+### OpenSearch k-NN
 
 
 * [Remote Vector Index Build] Don't fall back to CPU on terminal failures [#2773](https://github.com/opensearch-project/k-NN/pull/2773)
 * Fix @ collision in NativeMemoryCacheKeyHelper for vector index filenames containing @ characters [#2810](https://github.com/opensearch-project/k-NN/pull/2810)
 
 
-### Opensearch ML Common
+### OpenSearch ML Commons
 
 
 * Fix class cast exception for execute API ([#4010](https://github.com/opensearch-project/ml-commons/pull/4010))
@@ -407,7 +407,7 @@
 * Ensure chat agent returns response when max iterations are reached ([#4031](https://github.com/opensearch-project/ml-commons/pull/4031))
 
 
-### Opensearch Neural Search
+### OpenSearch Neural Search
 
 
 * Fix for collapse bug with knn query not deduplicating results ([#1413](https://github.com/opensearch-project/neural-search/pull/1413))
@@ -417,13 +417,13 @@
 * Fix the minimal supported version for neural sparse query analyzer field ([#1475](https://github.com/opensearch-project/neural-search/pull/1475))
 
 
-### Opensearch Opensearch Reports
+### OpenSearch Opensearch Reports
 
 
 * Create the report definitions and instances indices in the system context to avoid permissions issues ([#1108](https://github.com/opensearch-project/reporting/pull/1108))
 
 
-### Opensearch Search Relevance
+### OpenSearch Search Relevance
 
 
 * Bug fix on rest APIs error status for creations ([#176](https://github.com/opensearch-project/search-relevance/pull/176))
@@ -431,7 +431,7 @@
 * Added queryText and referenceAnswer text validation from manual input ([#177](https://github.com/opensearch-project/search-relevance/pull/177))
 
 
-### Opensearch Security
+### OpenSearch Security
 
 
 * Fix compilation issue after change to Subject interface in core and bump to 3.2.0 ([#5423](https://github.com/opensearch-project/security/pull/5423))
@@ -443,7 +443,7 @@
 * [Resource Sharing] Restores client accessor pattern to fix compilation issues when security plugin is not installed ([#5541](https://github.com/opensearch-project/security/pull/5541))
 
 
-### Opensearch Skills
+### OpenSearch Skills
 
 
 * Update parameter handling of tools ([#618](https://github.com/opensearch-project/skills/pull/618))
@@ -470,52 +470,52 @@
 ## INFRASTRUCTURE
 
 
-### Opensearch Alerting
+### OpenSearch Alerting
 
 
 * Update the maven snapshot publish endpoint and credential ([#1869](https://github.com/opensearch-project/alerting/pull/1869))
 
 
-### Opensearch Anomaly Detection
+### OpenSearch Anomaly Detection
 
 
 * Bumping gradle and nebula versions ([#1537](https://github.com/opensearch-project/anomaly-detection/pull/1537))
 
 
-### Opensearch Asynchronous Search
+### OpenSearch Asynchronous Search
 
 
 * Bump gradle to 8.14.3 and use jdk 24 in ci workflow ([#754](https://github.com/opensearch-project/asynchronous-search/pull/754))
 * Update the maven snapshot publish endpoint and credential ([#748](https://github.com/opensearch-project/asynchronous-search/pull/748))
 
 
-### Opensearch Common Utils
+### OpenSearch Common Utils
 
 
 * Switch gradle to 8.14 and JDK to 24 ([#848](https://github.com/opensearch-project/common-utils/pull/848))
 * Update Maven snapshots publishing endpoint and credential retrieval ([#841](https://github.com/opensearch-project/common-utils/pull/841))
 
 
-### Opensearch Cross Cluster Replication
+### OpenSearch Cross Cluster Replication
 
 
 * Bump gradle to 8.14, fix backport-deletion and support JDK24 ([#1563](https://github.com/opensearch-project/cross-cluster-replication/pull/1563))
 
 
-### Opensearch Custom Codecs
+### OpenSearch Custom Codecs
 
 
 * Report code coverage to codecov ([#267](https://github.com/opensearch-project/custom-codecs/pull/267))
 * Bump gradle to 8.14, fix backport-deletion and support JDK24 ([#266](https://github.com/opensearch-project/custom-codecs/pull/266))
 
 
-### Opensearch Index Management
+### OpenSearch Index Management
 
 
 * Bump gradle to 8.14, kotlin to 2.2.0 and use jdk 24 in ci workflow ([#1445](https://github.com/opensearch-project/index-management/pull/1445))
 
 
-### Opensearch Job Scheduler
+### OpenSearch Job Scheduler
 
 
 * Add new Github workflow to run sample plugin tests in cluster with multiple nodes ([#795](https://github.com/opensearch-project/job-scheduler/pull/795))
@@ -523,7 +523,7 @@
 * Bump gradle to 8.14 and use jdk 24 in ci workflow ([#798](https://github.com/opensearch-project/job-scheduler/pull/798))
 
 
-### Opensearch K Nn
+### OpenSearch k-NN
 
 
 * Bump JDK version to 24, gradle to 8.14 [#2792](https://github.com/opensearch-project/k-NN/pull/2792)
@@ -532,7 +532,7 @@
 * Bump Gradle to 8.14.3 [#2828](https://github.com/opensearch-project/k-NN/pull/2828)
 
 
-### Opensearch ML Common
+### OpenSearch ML Commons
 
 
 * Bump gradle to 8.14 and update JDK to 24 ([#3983](https://github.com/opensearch-project/ml-commons/pull/3983))
@@ -540,20 +540,20 @@
 * [FIX] Update lombok version for jdk24 ([#4026](https://github.com/opensearch-project/ml-commons/pull/4026))
 
 
-### Opensearch Neural Search
+### OpenSearch Neural Search
 
 
 * Support multi node integration testing ([#1320](https://github.com/opensearch-project/neural-search/pull/1320))
 
 
-### Opensearch Opensearch Learning To Rank Base
+### OpenSearch Opensearch Learning To Rank Base
 
 
 * Adding codecov config file ([#204](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/204))
 * Update CI to upload code coverage report ([#201](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/201))
 
 
-### Opensearch Opensearch Reports
+### OpenSearch Opensearch Reports
 
 
 * Add a PR check to run integ tests with security ([#1110](https://github.com/opensearch-project/reporting/pull/1110))
@@ -562,20 +562,20 @@
 * Update the maven snapshot publish endpoint and credential ([#1103](https://github.com/opensearch-project/reporting/pull/1103))
 
 
-### Opensearch Opensearch System Templates
+### OpenSearch Opensearch System Templates
 
 
 * Update the maven snapshot publish endpoint and credential ([#83](https://github.com/opensearch-project/opensearch-system-templates/pull/83))
 * Bump gradle to 8.14, fix backport-deletion and support JDK24 ([#89](https://github.com/opensearch-project/opensearch-system-templates/pull/89))
 
 
-### Opensearch Performance Analyzer
+### OpenSearch Performance Analyzer
 
 
 * Bump gradle to 8.14, fix backport-deletion and support JDK24 ([#831](https://github.com/opensearch-project/performance-analyzer/pull/831))
 
 
-### Opensearch Query Insights
+### OpenSearch Query Insights
 
 
 * Update the maven endpoint and bump up gradle, java version ([#392](https://github.com/opensearch-project/query-insights/pull/392))
@@ -583,7 +583,7 @@
 * Use codecov v3 ([#394](https://github.com/opensearch-project/query-insights/pull/394))
 
 
-### Opensearch Search Relevance
+### OpenSearch Search Relevance
 
 
 * Added end to end integration tests for experiments ([#154](https://github.com/opensearch-project/search-relevance/pull/154))
@@ -591,14 +591,14 @@
 * Upgrade gradle to 8.14 and higher JDK version to 24 ([#188](https://github.com/opensearch-project/search-relevance/pull/188))
 
 
-### Opensearch Security Analytics
+### OpenSearch Security Analytics
 
 
 * Upgrade gradle to 8.14 and run CI with JDK 24 ([#1560](https://github.com/opensearch-project/security-analytics/pull/1560))
 * Update the maven snapshot publish endpoint and credential ([#1544](https://github.com/opensearch-project/security-analytics/pull/1544))
 
 
-### Opensearch User Behavior Insights
+### OpenSearch User Behavior Insights
 
 
 * Added end to end integration tests for experiments ([#154](https://github.com/opensearch-project/search-relevance/pull/154))
@@ -616,7 +616,7 @@
 ## DOCUMENTATION
 
 
-### Opensearch ML Common
+### OpenSearch ML Commons
 
 
 * Add multi modal tutorial using ml inference processor ([#3576](https://github.com/opensearch-project/ml-commons/pull/3576))
@@ -638,7 +638,7 @@
 ## MAINTENANCE
 
 
-### Opensearch Alerting
+### OpenSearch Alerting
 
 
 * Bumped gradle to 8.14, support JDK 24; fixed backport branch deletion ([#1911](https://github.com/opensearch-project/alerting/pull/1911))
@@ -648,55 +648,55 @@
 * Pinned the commons-beanutils dependency to 1.11.0 version ([#1887](https://github.com/opensearch-project/alerting/pull/1887))
 
 
-### Opensearch Asynchronous Search
+### OpenSearch Asynchronous Search
 
 
 * [AUTO] Increment version to 3.2.0-SNAPSHOT ([#751](https://github.com/opensearch-project/asynchronous-search/pull/751))
 
 
-### Opensearch Custom Codecs
+### OpenSearch Custom Codecs
 
 
 * [AUTO] Increment version to 3.2.0-SNAPSHOT ([#262](https://github.com/opensearch-project/custom-codecs/pull/262))
 
 
-### Opensearch Dashboards Alertingdashboards
+### OpenSearch Alerting Dashboards Plugin
 
 
 * Increment version to 3.2.0.0 ([#1271](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1271))
 
 
-### Opensearch Dashboards Flowframeworkdashboards
+### OpenSearch Flow Framework Dashboards
 
 
 * Change jsonpath dep to jsonpath-plus ([#756](https://github.com/opensearch-project/dashboards-flow-framework/pull/756))
 
 
-### Opensearch Dashboards Indexmanagementdashboards
+### OpenSearch Dashboards Indexmanagementdashboards
 
 
 * Increment version to 3.2.0.0 ([#1332](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/1332))
 
 
-### Opensearch Dashboards Mlcommonsdashboards
+### OpenSearch ML Commons Dashboards
 
 
 * Increment version to 3.2.0.0 ([#437](https://github.com/opensearch-project/ml-commons-dashboards/pull/437))
 
 
-### Opensearch Dashboards Notificationsdashboards
+### OpenSearch Notifications Dashboards
 
 
 * [AUTO] Increment version to 3.2.0.0 ([#365](https://github.com/opensearch-project/dashboards-notifications/pull/365))
 
 
-### Opensearch Dashboards Observabilitydashboards
+### OpenSearch Observability Dashboards
 
 
 * Increment version to 3.2.0.0 + Snapshots update ([#2481](https://github.com/opensearch-project/dashboards-observability/pull/2481))
 
 
-### Opensearch Dashboards Queryinsightsdashboards
+### OpenSearch Query Insights Dashboards
 
 
 * CVE-2020-28469 Updated package.json and yarn.lock ([#270](https://github.com/opensearch-project/query-insights-dashboards/pull/270))
@@ -706,19 +706,19 @@
 * CVE-2025-7783 and CVE-2025-6545 Updated package.json and yarn.lock ([#309](https://github.com/opensearch-project/query-insights-dashboards/pull/309))
 
 
-### Opensearch Dashboards Queryworkbenchdashboards
+### OpenSearch Dashboards Queryworkbenchdashboards
 
 
 * Increment version to 3.2.0.0 ([#485](https://github.com/opensearch-project/dashboards-query-workbench/pull/485))
 
 
-### Opensearch Dashboards Reportsdashboards
+### OpenSearch Dashboards Reportsdashboards
 
 
 * Increment version to 3.2.0.0 ([#603](https://github.com/opensearch-project/dashboards-reporting/pull/603))
 
 
-### Opensearch Dashboards Search Relevance
+### OpenSearch Search Relevance Dashboards
 
 
 * Adding @fen-qin and @epugh as maintainers ([#569](https://github.com/opensearch-project/dashboards-search-relevance/pull/569))
@@ -726,13 +726,13 @@
 * Add issue template and codecov to add test coverage reports ([#601](https://github.com/opensearch-project/dashboards-search-relevance/pull/601))
 
 
-### Opensearch Dashboards Securityanalyticsdashboards
+### OpenSearch Dashboards Securityanalyticsdashboards
 
 
 * [AUTO] Increment version to 3.2.0.0 ([#1316](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1316))
 
 
-### Opensearch Dashboards Securitydashboards
+### OpenSearch Security Dashboards
 
 
 * Bump `actions/checkout` from 2 to 4 ([#2260](https://github.com/opensearch-project/security-dashboards-plugin/pull/2260))
@@ -744,19 +744,19 @@
 * Bump `derek-ho/start-opensearch` from 6 to 7 ([#2267](https://github.com/opensearch-project/security-dashboards-plugin/pull/2267))
 
 
-### Opensearch Geospatial
+### OpenSearch Geospatial
 
 
 * Upgrade gradle to 8.14.3 and run CI checks with JDK24 ([#776](https://github.com/opensearch-project/geospatial/pull/776))
 
 
-### Opensearch Index Management
+### OpenSearch Index Management
 
 
 * [AUTO] Increment version to 3.2.0-SNAPSHOT ([#1435](https://github.com/opensearch-project/index-management/pull/1435))
 
 
-### Opensearch ML Common
+### OpenSearch ML Commons
 
 
 * Increase mcp code coverage and address comments in PR: #3883 ([#3908](https://github.com/opensearch-project/ml-commons/pull/3908))
@@ -767,13 +767,13 @@
 * CVE fix: beanutils ([#4062](https://github.com/opensearch-project/ml-commons/pull/4062))
 
 
-### Opensearch Notifications
+### OpenSearch Notifications
 
 
 * Updated gradle, jdk and other dependencies ([#1057](https://github.com/opensearch-project/notifications/pull/1057))
 
 
-### Opensearch Opensearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Bump gradle to 8.14, codecov to v5 and support JDK24 ([#202](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/202))
@@ -781,7 +781,7 @@
 * [AUTO] Increment version to 3.2.0-SNAPSHOT ([#191](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/191))
 
 
-### Opensearch Opensearch Observability
+### OpenSearch Observability
 
 
 * [AUTO] Increment version to 3.2.0-SNAPSHOT ([#1933](https://github.com/opensearch-project/opensearch-observability/pull/1933))
@@ -789,45 +789,45 @@
 * Upgrade gradle to 8.14.3 and run CI checks with JDK24 ([#1937](https://github.com/opensearch-project/opensearch-observability/pull/1937))
 
 
-### Opensearch Opensearch Reports
+### OpenSearch Reports
 
 
 * [AUTO] Increment version to 3.2.0-SNAPSHOT ([#1105](https://github.com/opensearch-project/reporting/pull/1105))
 
 
-### Opensearch Opensearch System Templates
+### OpenSearch System Templates
 
 
 * [AUTO] Increment version to 3.2.0-SNAPSHOT ([#86](https://github.com/opensearch-project/opensearch-system-templates/pull/86))
 
 
-### Opensearch Performance Analyzer
+### OpenSearch Performance Analyzer
 
 
 * Bump spotbug to 6.2.2 and checkstyle 10.26.1 ([#826](https://github.com/opensearch-project/performance-analyzer/pull/826))
 * Increment version to 3.2.0-SNAPSHOT ([#823](https://github.com/opensearch-project/performance-analyzer/pull/823))
 
 
-### Opensearch Query Insights
+### OpenSearch Query Insights
 
 
 * [AUTO] Increment version to 3.2.0-SNAPSHOT ([#380](https://github.com/opensearch-project/query-insights/pull/380))
 * [AUTO] Add release notes for 3.2.0 ([#395](https://github.com/opensearch-project/query-insights/pull/395))
 
 
-### Opensearch Search Relevance
+### OpenSearch Search Relevance
 
 
 * Adding template for feature technical design ([#201](https://github.com/opensearch-project/search-relevance/issues/201))
 
 
-### Opensearch Security Analytics
+### OpenSearch Security Analytics
 
 
 * [AUTO] Increment version to 3.2.0-SNAPSHOT ([#1552](https://github.com/opensearch-project/security-analytics/pull/1552))
 
 
-### Opensearch Skills
+### OpenSearch Skills
 
 
 * Update the maven snapshot publish endpoint and credential ([#601](https://github.com/opensearch-project/skills/pull/601))
@@ -847,7 +847,7 @@
 ## REFACTORING
 
 
-### Opensearch Dashboards Search Relevance
+### OpenSearch Search Relevance Dashboards
 
 
 * Code refactors + Unit tests for query\_set\_create ([#580](https://github.com/opensearch-project/dashboards-search-relevance/pull/580))
@@ -858,19 +858,19 @@
 * Code Refactor + Unit Tests for experiment ([#613](https://github.com/opensearch-project/dashboards-search-relevance/pull/613))
 
 
-### Opensearch Geospatial
+### OpenSearch Geospatial
 
 
 * Replace usages of ThreadContext.stashContext with pluginSubject.runAs ([#715](https://github.com/opensearch-project/geospatial/pull/715))
 
 
-### Opensearch Job Scheduler
+### OpenSearch Job Scheduler
 
 
 * Use Text Blocks when defining multi-line strings ([#790](https://github.com/opensearch-project/job-scheduler/pull/790))
 
 
-### Opensearch Security
+### OpenSearch Security
 
 
 * Refactor JWT Vendor to take a claims builder and rename oboEnabled to be enabled ([#5436](https://github.com/opensearch-project/security/pull/5436))
@@ -879,9 +879,7 @@
 * Add tenancy access info to serialized user in threadcontext ([#5519](https://github.com/opensearch-project/security/pull/5519))
 
 
-### Opensearch Security Analytics
+### OpenSearch Security Analytics
 
 
 * Use instance of LockService instantiated in JobScheduler through Guice ([#1555](https://github.com/opensearch-project/security-analytics/pull/1555))
-
-
