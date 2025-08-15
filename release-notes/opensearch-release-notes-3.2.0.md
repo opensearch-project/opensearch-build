@@ -299,8 +299,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * Improve indicator helper, fix zero-value plotting etc ([#1058](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1058))
-
-
 * Allow stopping forecaster from FORECAST\_FAILURE state and minor cleanups ([#1054](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1054))
 * Restrict Suggest anomaly detector to only show for OpenSearch datasets ([#1001](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1001))
 * Wrap data filter in detector creation ([#1060](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1060))
@@ -863,9 +861,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Search Relevance Dashboards
 
 
-* Code refactors + Unit tests for query\_set\_create ([#580](https://github.com/opensearch-project/dashboards-search-relevance/pull/580))
-* Code refactors + Unit tests for search\_configuration\_create ([#587](https://github.com/opensearch-project/dashboards-search-relevance/pull/587))
-* Code refactors + Unit tests for judgment\_create ([#588](https://github.com/opensearch-project/dashboards-search-relevance/pull/588))
+* Code Refactor + Unit tests for query\_set\_create ([#580](https://github.com/opensearch-project/dashboards-search-relevance/pull/580))
+* Code Refactor + Unit tests for search\_configuration\_create ([#587](https://github.com/opensearch-project/dashboards-search-relevance/pull/587))
+* Code Refactor + Unit tests for judgment\_create ([#588](https://github.com/opensearch-project/dashboards-search-relevance/pull/588))
 * Code Refactor + Unit Tests for query\_set\_listing and query\_set\_view ([#595](https://github.com/opensearch-project/dashboards-search-relevance/pull/595))
 * Code Refactor + Unit Tests for search\_configuration and judgment ([#602](https://github.com/opensearch-project/dashboards-search-relevance/pull/602))
 * Code Refactor + Unit Tests for experiment ([#613](https://github.com/opensearch-project/dashboards-search-relevance/pull/613))
