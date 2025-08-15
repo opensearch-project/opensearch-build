@@ -2,8 +2,47 @@
 
 ## Release Highlights
 
+OpenSearch 3.2 delivers an array of upgrades to help you increase indexing performance, improve search results, dig deeper into your observability data, build more powerful agentic AI solutions, and more. 
+
 ### New and Updated Features
-### Experimental Features
+
+**GRPC Integration**
+In OpenSearch 3.2, gRPC transport enters GA for bulk ingestion of documents, offering expanded search API functionality, KNN query support and encryption in transit. The gRPC module transmits Protobuf over the wire, reducing the payload size and improving the performance of bulk ingestion. 
+
+**Boost Recall for On-Disk Vector Search**
+Asymmetric distance calculation maintains full-precision query vectors and simultaneously compares against compressed document vectors, preserving critical search information without memory overhead. Random rotation redistributes variance across vector dimensions, preventing information loss during the 32x compression process. When used together, these opt-in features can greatly increase recall on challenging datasets.
+
+**Optimize semantic search for your specific data, performance, and relevance needs**
+The semantic field in the neural search plug-in  now supports fine-tune dense embedding field parameters (e.g. engine, mode, compression_level, method). Users can customize text chunking with multiple algorithms and settings, and configure sparse embedding generation and utilize new batch size options.
+
+**Improve resource distribution with streaming aggregation**
+Streaming aggregation enables segment-level partial aggregation responses to be streamed back to the coordinator node instead of returning a single response per shard. Moving the memory-intensive reduce logic from data nodes to the coordinator allows better scalability for high-cardinality aggregations.
+
+**Expanded GPU Support**
+Starting with version 3.2, GPU indexing fully supports FP16, Byte, and Binary types. These additional representations use less memory than FP32 vectors which allows for more storage in memory and reduced GPU and CPU data transfers. This leads to more efficient and scalable use of resources and potential for a broader range of applications to be built using GPU-accelerated indexing.
+
+**Performance improvements for approximate query**
+Approximate query capabilities now support all numeric field types (HALF_FLOAT, FLOAT, DOUBLE, INTEGER, BYTE, SHORT and UNSIGNED_LONG). In addition, the approximation framework now supports search_after queries which previously used Lucene traversal. These changes unlock substantial improvements in real-time and time series data analysis workloads across multiple use case areas.
+
+**Trace Analytics:  Improved OpenTelemetry Compatibility and Service Map Controls**
+The Trace Analytics plugin now supports Data Prepper’s new OTel output format in Data Prepper 2.11. A new service map enhancement has also been added. 
+
+**OpenSearch Prometheus Exporter**
+The Prometheus exporter plugin has been transitioned to the OpenSearch project and is being released in parallel with OpenSearch 3.2 and its release cadence has been updated to match the OpenSearch Project’s release schedule. Existing Prometheus scraping workflows remain compatible and metrics continue to be exposed at /_prometheus/metrics. Thanks to Aiven for supporting the transition.
+
+**PPL Calcite updates**
+OpenSearch 3.2 delivers performance and query flexibility improvements PPL functionality. A Calcite based script engine enables aggregation functions and a wide range of pushdown functions. New features include function argument coercion, improved date handling, and QUERY_SIZE_LIMIT enforcement. These updates collectively boost performance, correctness, and usability for complex queries across OpenSearch data sources.
+
+**New functionality in star-tree**
+Search via star-tree, which went GA in 3.1, now also supports aggregations with queries on the IP field as well.  Also, basic metrics related to queries resolved via star-tree are also now included as part of index/node/shard stats. View options include total queries which are resolved using star-tree, current running queries which are using star-tree and total time spent in resolving queries using star-tree.
+
+ 
+### Experimental features
+ 
+OpenSearch 3.2 includes the following experimental functionality. Experimental features are disabled by default. For instructions on how to enable them, refer to the documentation for the feature.
+
+* Use agent-driven workflows for query understanding, planning, execution and summarization. Agentic Search, experimental in OpenSearch 3.2, is a user friendly interface that crafts query language from human questions. Instead of hand-crafting DSL, you supply a natural language question and agent-driven workflows produces the equivalent OpenSearch DSL and displays the most relevant results.
+
 
 
 ## Release Details
