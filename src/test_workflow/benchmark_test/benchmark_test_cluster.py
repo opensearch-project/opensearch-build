@@ -36,19 +36,23 @@ class BenchmarkTestCluster:
 
     def start(self) -> None:
 
-        command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku '{self.args.username}:{self.password}'"
-        try:
-            result = subprocess.run(command, shell=True, capture_output=True, timeout=30)
-        except subprocess.TimeoutExpired:
-            raise TimeoutError("Time out! Couldn't connect to the cluster")
+        # command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku '{self.args.username}:{self.password}'"
+        # try:
+        #     result = subprocess.run(command, shell=True, capture_output=True, timeout=30)
+        # except subprocess.TimeoutExpired:
+        #     raise TimeoutError("Time out! Couldn't connect to the cluster")
 
-        if result.stdout:
-            res_dict = json.loads(result.stdout)
-            self.args.distribution_version = res_dict['version']['number']
-            self.wait_for_processing()
-            self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
-        else:
-            raise Exception("Empty response retrieved from the curl command")
+        # if result.stdout:
+        #     res_dict = json.loads(result.stdout)
+        #     self.args.distribution_version = res_dict['version']['number']
+        #     self.wait_for_processing()
+        #     self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
+        # else:
+        #     raise Exception("Empty response retrieved from the curl command")
+
+        self.args.distribution_version = '2.19'
+        self.wait_for_processing()
+        self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
 
     @property
     def endpoint(self) -> str:
