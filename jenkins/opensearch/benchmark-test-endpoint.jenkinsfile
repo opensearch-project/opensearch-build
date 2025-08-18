@@ -50,8 +50,8 @@ parameters {
         )
         string(
             name: 'REGION',
-            description: 'AWS region for signing (e.g. us-west-2).',
-            defaultValue: 'us-west-2',
+            description: 'AWS region for signing (e.g. us-east-1).',
+            defaultValue: 'us-east-1',
             trim: true
         )
         choice(

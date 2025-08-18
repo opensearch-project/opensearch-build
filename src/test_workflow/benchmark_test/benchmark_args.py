@@ -87,8 +87,8 @@ class BenchmarkArgs:
                                          help="Password for the cluster")
         execute_test_parser.add_argument("--sigv4", dest="sigv4", action="store_true",
                                          help="Use SigV4 authentication for the benchmark")
-        execute_test_parser.add_argument("--region", dest="region",
-                                         help="AWS region for SigV4 authentication (e.g., us-west-2)")
+        execute_test_parser.add_argument("--region", dest="region", default="us-east-1",
+                                         help="AWS region for SigV4 authentication (e.g., us-east-1)")
         execute_test_parser.add_argument("--service", dest="service", default="es", choices=["es", "aoss"],
                                          help="AWS service to sign for (es = OpenSearch Service, aoss = OpenSearch Serverless)")
         execute_test_parser.add_argument("--component", dest="component", default="OpenSearch",

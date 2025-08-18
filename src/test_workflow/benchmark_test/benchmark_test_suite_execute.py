@@ -37,9 +37,13 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
     def form_command(self) -> str:
         # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
         self.command = f'docker run --name docker-container-{self.args.stack_suffix}'
+
+        if self.security and self.args.sigv4:
+            self.command += ' -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN'
+
         if self.args.benchmark_config:
             self.command += f" -v {self.args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini"
-        self.command += f" opensearchproject/opensearch-benchmark:1.13.0 execute-test --workload={self.args.workload} " \
+        self.command += f" opensearchproject/opensearch-benchmark:1.15.0 execute-test --workload={self.args.workload} " \
                         f"--pipeline=benchmark-only --target-hosts={self.endpoint}"
 
         if self.args.workload_params:
