@@ -35,24 +35,24 @@ class BenchmarkTestCluster:
         self.password = self.args.password if self.args.password else get_password('2.12.0')
 
     def start(self) -> None:
+        if self.args.sigv4:
+            # For SigV4, skip username/password authentication
+            command = f"curl https://{self.cluster_endpoint}"
+        else:
+            command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku '{self.args.username}:{self.password}'"
 
-        # command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku '{self.args.username}:{self.password}'"
-        # try:
-        #     result = subprocess.run(command, shell=True, capture_output=True, timeout=30)
-        # except subprocess.TimeoutExpired:
-        #     raise TimeoutError("Time out! Couldn't connect to the cluster")
+        try:
+            result = subprocess.run(command, shell=True, capture_output=True, timeout=30)
+        except subprocess.TimeoutExpired:
+            raise TimeoutError("Time out! Couldn't connect to the cluster")
 
-        # if result.stdout:
-        #     res_dict = json.loads(result.stdout)
-        #     self.args.distribution_version = res_dict['version']['number']
-        #     self.wait_for_processing()
-        #     self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
-        # else:
-        #     raise Exception("Empty response retrieved from the curl command")
-
-        self.args.distribution_version = '2.19'
-        self.wait_for_processing()
-        self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
+        if result.stdout:
+            res_dict = json.loads(result.stdout)
+            self.args.distribution_version = res_dict['version']['number']
+            self.wait_for_processing()
+            self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
+        else:
+            raise Exception("Empty response retrieved from the curl command")
 
     @property
     def endpoint(self) -> str:
@@ -73,6 +73,17 @@ class BenchmarkTestCluster:
         logging.info("Waiting for domain ******* to be up")
         protocol = "http://" if self.args.insecure else "https://"
         url = "".join([protocol, self.endpoint, "/_cluster/health"])
-        request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth(self.args.username, self.password),  # type: ignore
-                                                                "verify": False}  # type: ignore
-        retry_call(requests.get, fkwargs=request_args, tries=tries, delay=delay, backoff=backoff)
+
+        try:
+            if self.args.sigv4:
+                request_args = {"url": url, "verify": False}
+            else:
+                request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth(self.args.username, self.password), "verify": False}
+
+            retry_call(requests.get, fkwargs=request_args, tries=tries, delay=delay, backoff=backoff)
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                logging.info("Detected serverless cluster (404 on health check), skipping health checks")
+                return
+            else:
+                raise
