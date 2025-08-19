@@ -75,15 +75,17 @@ class BenchmarkTestCluster:
         url = "".join([protocol, self.endpoint, "/_cluster/health"])
 
         try:
-            if self.args.sigv4:
-                request_args = {"url": url, "verify": False}
+            if hasattr(self.args, 'sigv4') and self.args.sigv4:
+                request_args = {"url": url}
+            elif self.args.insecure:
+                request_args = {"url": url}
             else:
-                request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth(self.args.username, self.password), "verify": False}
+                request_args = {"url": url, "auth": HTTPBasicAuth(self.args.username, self.password), "verify": False}
 
             retry_call(requests.get, fkwargs=request_args, tries=tries, delay=delay, backoff=backoff)
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
-                logging.info("Detected serverless cluster (404 on health check), skipping health checks")
+                logging.info("404 response indicates serverless collection, skipping health checks")
                 return
             else:
                 raise
