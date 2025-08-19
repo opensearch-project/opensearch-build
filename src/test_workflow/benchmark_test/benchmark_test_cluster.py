@@ -8,10 +8,12 @@
 
 import json
 import logging
+import os
 import subprocess
 
 import requests
 from requests.auth import HTTPBasicAuth
+from requests_aws4auth import AWS4Auth
 from retry.api import retry_call  # type: ignore
 
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
@@ -76,11 +78,13 @@ class BenchmarkTestCluster:
 
         try:
             if hasattr(self.args, 'sigv4') and self.args.sigv4:
-                request_args = {"url": url}
+                auth = AWS4Auth(os.getenv('AWS_ACCESS_KEY_ID'), os.getenv('AWS_SECRET_ACCESS_KEY'), self.args.region, self.args.service)
+                request_args = {"url": url, "auth": auth, "verify": False}
             elif self.args.insecure:
                 request_args = {"url": url}
             else:
-                request_args = {"url": url, "auth": HTTPBasicAuth(self.args.username, self.password), "verify": False}
+                request_args = {"url": url, "auth": HTTPBasicAuth(self.args.username, self.password),  # type: ignore
+                                "verify": False}  # type: ignore
 
             retry_call(requests.get, fkwargs=request_args, tries=tries, delay=delay, backoff=backoff)
         except requests.exceptions.HTTPError as e:
