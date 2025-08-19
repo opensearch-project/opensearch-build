@@ -13,7 +13,6 @@ import subprocess
 
 import requests
 from requests.auth import HTTPBasicAuth
-from requests_aws4auth import AWS4Auth
 from retry.api import retry_call  # type: ignore
 
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
@@ -37,24 +36,23 @@ class BenchmarkTestCluster:
         self.password = self.args.password if self.args.password else get_password('2.12.0')
 
     def start(self) -> None:
-        if self.args.sigv4:
-            # For SigV4, skip username/password authentication
-            command = f"curl https://{self.cluster_endpoint}"
-        else:
+        if not self.args.sigv4:
             command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku '{self.args.username}:{self.password}'"
+            try:
+                result = subprocess.run(command, shell=True, capture_output=True, timeout=30)
+            except subprocess.TimeoutExpired:
+                raise TimeoutError("Time out! Couldn't connect to the cluster")
 
-        try:
-            result = subprocess.run(command, shell=True, capture_output=True, timeout=30)
-        except subprocess.TimeoutExpired:
-            raise TimeoutError("Time out! Couldn't connect to the cluster")
-
-        if result.stdout:
-            res_dict = json.loads(result.stdout)
-            self.args.distribution_version = res_dict['version']['number']
-            self.wait_for_processing()
-            self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
+            if result.stdout:
+                res_dict = json.loads(result.stdout)
+                self.args.distribution_version = res_dict['version']['number']
+                self.wait_for_processing()
+                self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
+            else:
+                raise Exception("Empty response retrieved from the curl command")
         else:
-            raise Exception("Empty response retrieved from the curl command")
+            self.args.distribution_version = "2.17.0"
+            self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
 
     @property
     def endpoint(self) -> str:
@@ -75,21 +73,6 @@ class BenchmarkTestCluster:
         logging.info("Waiting for domain ******* to be up")
         protocol = "http://" if self.args.insecure else "https://"
         url = "".join([protocol, self.endpoint, "/_cluster/health"])
-
-        try:
-            if hasattr(self.args, 'sigv4') and self.args.sigv4:
-                auth = AWS4Auth(os.getenv('AWS_ACCESS_KEY_ID'), os.getenv('AWS_SECRET_ACCESS_KEY'), self.args.region, self.args.service)
-                request_args = {"url": url, "auth": auth, "verify": False}
-            elif self.args.insecure:
-                request_args = {"url": url}
-            else:
-                request_args = {"url": url, "auth": HTTPBasicAuth(self.args.username, self.password),  # type: ignore
-                                "verify": False}  # type: ignore
-
-            retry_call(requests.get, fkwargs=request_args, tries=tries, delay=delay, backoff=backoff)
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 404:
-                logging.info("404 response indicates serverless collection, skipping health checks")
-                return
-            else:
-                raise
+        request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth(self.args.username, self.password),  # type: ignore
+                                                                "verify": False}  # type: ignore
+        retry_call(requests.get, fkwargs=request_args, tries=tries, delay=delay, backoff=backoff)
