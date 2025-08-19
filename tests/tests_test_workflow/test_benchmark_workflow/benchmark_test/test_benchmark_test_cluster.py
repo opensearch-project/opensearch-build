@@ -9,8 +9,6 @@ import subprocess
 import unittest
 from unittest.mock import MagicMock, Mock, patch
 
-import requests
-
 from test_workflow.benchmark_test.benchmark_test_cluster import BenchmarkTestCluster
 
 
