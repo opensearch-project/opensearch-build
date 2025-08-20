@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@9.3.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@10.3.0', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -56,7 +56,7 @@ parameters {
         )
         choice(
             name: 'SERVICE',
-            choices: ['es', 'aoss'],
+            choices: ['','es', 'aoss'],
             description: 'AWS service for SigV4'
         )
         string(

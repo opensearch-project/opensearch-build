@@ -26,7 +26,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('6.8.0')
+                        .defaultVersion('10.3.0')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -69,19 +69,25 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
         binding.setVariable('STAGE_NAME', 'test_stage')
         binding.setVariable('TEST_WORKLOAD', 'nyc-taxis')
         binding.setVariable('TELEMETRY_PARAMS', '{"telemetry_setting":"value"}')
-
         super.setUp()
     }
 
     @Test
     public void testRunSecureBenchmarkTestScript_verifyPipeline() {
         addParam('SECURITY_ENABLED', true)
+        addParam('SIGV4', 'false')
+        addParam('REGION', '')
+        addParam('SERVICE', '')
         super.testPipeline("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test-endpoint-secure.jenkinsfile")
     }
 
     @Test
     void testRunSecureBenchmarkTestScript_verifyArtifactDownloads() {
+        addParam('SECURITY_ENABLED', true)
+        addParam('SIGV4', 'false')
+        addParam('REGION', '')
+        addParam('SERVICE', '')
         runScript("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile")
 
         def curlCommands = getCommandExecutions('sh', 'curl').findAll {
@@ -102,6 +108,9 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
     @Test
     void testRunSecureBenchmarkTestScript_verifyScriptExecutions() {
         addParam('SECURITY_ENABLED', true)
+        addParam('SIGV4', 'false')
+        addParam('REGION', '')
+        addParam('SERVICE', '')
 
         runScript("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile")
 
@@ -111,12 +120,46 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "set +x && ./test.sh benchmark-test execute-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:true          --suffix 307        --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'"
+                "set +x && ./test.sh benchmark-test execute-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:true              --suffix 307        --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'"
         ))
     }
+
+    @Test
+    public void testRunSecureSigv4BenchmarkTestScript_verifyPipeline() {
+        addParam('SECURITY_ENABLED', true)
+        addParam('SIGV4', 'true')
+        addParam('REGION', 'us-east-1')
+        addParam('SERVICE', 'es')
+        super.testPipeline("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile",
+                "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test-endpoint-secure-sigv4.jenkinsfile")
+    }
+
+    @Test
+    void testRunSecureSigv4BenchmarkTestScript_verifyScriptExecutions() {
+        addParam('SECURITY_ENABLED', true)
+        addParam('SIGV4', 'true')
+        addParam('REGION', 'us-east-1')
+        addParam('SERVICE', 'es')
+
+        runScript("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile")
+
+        def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {
+            shCommand -> shCommand.contains('./test.sh')
+        }
+
+        assertThat(testScriptCommands.size(), equalTo(1))
+        assertThat(testScriptCommands, hasItems(
+                "set +x && ./test.sh benchmark-test execute-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:true  --sigv4 --region us-east-1 --service es          --suffix 307        --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'"
+        ))
+    }
+
     @Test
     public void testRunSecureBenchmarkTestWithoutSecurity_verifyPipeline() {
         addParam('SECURITY_ENABLED', true)
+        addParam('SIGV4', 'false')
+        addParam('REGION', '')
+        addParam('SERVICE', '')
+
         super.testPipeline("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test-endpoint-insecure.jenkinsfile")
     }
@@ -124,6 +167,9 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
     @Test
     void testRunSecureBenchmarkTestScript_verifyWithoutSecurity() {
         addParam('SECURITY_ENABLED', false)
+        addParam('SIGV4', 'false')
+        addParam('REGION', '')
+        addParam('SERVICE', '')
         runScript("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile")
 
         def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {
@@ -132,7 +178,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "set +x && ./test.sh benchmark-test execute-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security         --suffix 307        --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'"
+                "set +x && ./test.sh benchmark-test execute-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security             --suffix 307        --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'"
         ))
     }
 
