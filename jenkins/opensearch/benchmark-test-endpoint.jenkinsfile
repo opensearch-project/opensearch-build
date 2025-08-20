@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.8.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@10.3.0', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -42,6 +42,22 @@ parameters {
             name: 'PASSWORD',
             description: 'Enter password for the cluster endpoint',
             defaultValue: ''
+        )
+        booleanParam(
+            name: 'SIGV4',
+            description: 'Mention if the test will run using AWS Signature Version 4 authentication.',
+            defaultValue: false,
+        )
+        string(
+            name: 'REGION',
+            description: 'AWS region for signing (e.g. us-east-1).',
+            defaultValue: 'us-east-1',
+            trim: true
+        )
+        choice(
+            name: 'SERVICE',
+            choices: ['','es', 'aoss'],
+            description: 'AWS service for SigV4'
         )
         string(
             name: 'TEST_WORKLOAD',
@@ -120,6 +136,9 @@ parameters {
                         insecure: !(params.SECURITY_ENABLED),
                         username: USERNAME,
                         password: PASSWORD,
+                        sigv4: SIGV4,
+                        region: REGION,
+                        service: SERVICE,
                         workload: TEST_WORKLOAD,
                         userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
                         suffix: "${BUILD_NUMBER}",

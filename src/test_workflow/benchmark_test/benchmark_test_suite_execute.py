@@ -37,9 +37,13 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
     def form_command(self) -> str:
         # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
         self.command = f'docker run --name docker-container-{self.args.stack_suffix}'
+
+        if self.security and self.args.sigv4:
+            self.command += ' -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN'
+
         if self.args.benchmark_config:
             self.command += f" -v {self.args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini"
-        self.command += f" opensearchproject/opensearch-benchmark:1.13.0 execute-test --workload={self.args.workload} " \
+        self.command += f" opensearchproject/opensearch-benchmark:1.15.0 execute-test --workload={self.args.workload} " \
                         f"--pipeline=benchmark-only --target-hosts={self.endpoint}"
 
         if self.args.workload_params:
@@ -66,7 +70,9 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
             if self.args.telemetry_params:
                 self.command += f" --telemetry-params '{self.args.telemetry_params}'"
 
-        if self.security:
+        if self.security and self.args.sigv4:
+            self.command += f' --client-options="timeout:300,amazon_aws_log_in:session,region:{self.args.region},service:{self.args.service}" --results-file=final_result.md'
+        elif self.security:
             self.command += (f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\','
                              f'basic_auth_password:\'{self.password}\'" --results-file=final_result.md')
         else:
