@@ -240,24 +240,22 @@ pipeline {
 
                                                             retry(2) {
                                                                 if (VERSION) {
-                                                                    // validateArtifacts(
-                                                                    //     version: "$VERSION",
-                                                                    //     distribution: "${local_distribution}",
-                                                                    //     arch: "${local_architecture}",
-                                                                    //     platform: "${local_platform}",
-                                                                    //     os_build_number: "$OS_BUILD_NUMBER",
-                                                                    //     osd_build_number: "$OSD_BUILD_NUMBER",
-                                                                    //     projects: "$PROJECTS",
-                                                                    //     artifact_type: "$ARTIFACT_TYPE",
-                                                                    //     allow_http: params.ALLOW_HTTP
-                                                                    // )
-                                                                    echo "distribution: ${local_distribution} arch: ${local_architecture} platform: ${local_platform}"
+                                                                    validateArtifacts(
+                                                                        version: "$VERSION",
+                                                                        distribution: "${local_distribution}",
+                                                                        arch: "${local_architecture}",
+                                                                        platform: "${local_platform}",
+                                                                        os_build_number: "$OS_BUILD_NUMBER",
+                                                                        osd_build_number: "$OSD_BUILD_NUMBER",
+                                                                        projects: "$PROJECTS",
+                                                                        artifact_type: "$ARTIFACT_TYPE",
+                                                                        allow_http: params.ALLOW_HTTP
+                                                                    )
                                                                 } else {
-                                                                    // validateArtifacts(
-                                                                    //     file_path: "$FILEPATH",
-                                                                    //     allow_http: params.ALLOW_HTTP
-                                                                    // )
-                                                                    echo "file_path: ${FILEPATH}"
+                                                                    validateArtifacts(
+                                                                        file_path: "$FILEPATH",
+                                                                        allow_http: params.ALLOW_HTTP
+                                                                    )
                                                                 }
                                                             }
                                                         }
