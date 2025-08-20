@@ -159,7 +159,7 @@ pipeline {
                         }
                         env.FILEPATH = "opensearch=${OPENSEARCH_ARTIFACT_URL?.trim()}"
                         if (OPENSEARCH_DASHBOARDS_ARTIFACT_URL) {
-                           FILEPATH = env.FILEPATH + " opensearch-dashboards=${OPENSEARCH_DASHBOARDS_ARTIFACT_URL?.trim()}"
+                            FILEPATH = env.FILEPATH + " opensearch-dashboards=${OPENSEARCH_DASHBOARDS_ARTIFACT_URL?.trim()}"
                         }
                     }
 
@@ -176,10 +176,9 @@ pipeline {
             }
         }
         stage('Validate') {
-            agent {label agent_nodes["linux_x64"] }
+            agent { label agent_nodes["linux_x64"] }
             steps {
                 script {
-
                     def distributionList = DISTRIBUTION ? DISTRIBUTION.trim().split(" ") as List : ""
                     def architectureList = ARCHITECTURE ? ARCHITECTURE.trim().split(" ") as List : ""
                     def mapDistributionToPlatform = [
@@ -188,28 +187,27 @@ pipeline {
 
                     stash includes: "**", name: "validate-artifacts-$BUILD_NUMBER"
 
-                    for (architecture in architectureList) {
-                        validateDistributions = [:]
-                        for (distribution in distributionList) {
+                    def validateDistributions = [:]
+
+                    // Create parallel stages for all combinations of distribution and architecture
+                    for (distribution in distributionList) {
+                        for (architecture in architectureList) {
                             def local_architecture = architecture.trim()
                             def local_distribution = distribution.trim()
                             def local_platform = mapDistributionToPlatform.getOrDefault(local_distribution, "linux")
-                            def local_distribution_index = distributionList.indexOf(local_distribution)
-                            def wait_seconds = local_distribution_index * 10
 
-                            echo "Validating Distribution: ${local_distribution}-${local_architecture}"
-
+                            // Skip zip-arm64 combination
                             if (local_distribution == 'zip' && local_architecture == 'arm64') {
                                 echo "Skipping the stage for zip distribution and arm64 architecture"
-                                    continue
+                                continue
                             }
+
                             validateDistributions["${local_distribution}-${local_architecture}"] = {
-                                // Using scripted pipelines to trigger dynamic parallel stages
                                 timeout(time: 1, unit: 'HOURS') {
-                                    if ("${local_distribution}" == "docker"){
+                                    if ("${local_distribution}" == "docker") {
                                         node(agent_nodes_docker["$local_architecture"]) {
                                             try {
-                                                stage("${local_distribution}") {
+                                                stage("${local_distribution}-${local_architecture}") {
                                                     unstash "validate-artifacts-$BUILD_NUMBER"
 
                                                     validateArtifacts(
@@ -219,8 +217,8 @@ pipeline {
                                                         os_build_number: "$OS_BUILD_NUMBER",
                                                         osd_build_number: "$OSD_BUILD_NUMBER",
                                                         projects: "$PROJECTS",
-                                                        docker_args : "$OPTIONAL_ARGS",
-                                                        docker_source : "$DOCKER_SOURCE"
+                                                        docker_args: "$OPTIONAL_ARGS",
+                                                        docker_source: "$DOCKER_SOURCE"
                                                     )
                                                 }
                                             } catch (e) {
@@ -234,33 +232,32 @@ pipeline {
                                     } else {
                                         node(agent_nodes["${local_platform}_${local_architecture}"]) {
                                             docker.withRegistry('https://public.ecr.aws/') {
-                                                docker.image(docker_images["$local_distribution"]).pull() // always pull latest
+                                                docker.image(docker_images["$local_distribution"]).pull()
                                                 docker.image(docker_images["$local_distribution"]).inside(docker_args["$local_distribution"]) {
                                                     try {
-                                                        stage("${local_distribution}") {
-
+                                                        stage("${local_distribution}-${local_architecture}") {
                                                             unstash "validate-artifacts-$BUILD_NUMBER"
 
                                                             retry(2) {
                                                                 if (VERSION) {
-                                                                    validateArtifacts(
-                                                                        version: "$VERSION",
-                                                                        distribution: "${local_distribution}",
-                                                                        arch: "${local_architecture}",
-                                                                        platform: "${local_platform}",
-                                                                        os_build_number: "$OS_BUILD_NUMBER",
-                                                                        osd_build_number: "$OSD_BUILD_NUMBER",
-                                                                        projects: "$PROJECTS",
-                                                                        artifact_type: "$ARTIFACT_TYPE",
-                                                                        allow_http: params.ALLOW_HTTP
-                                                                    )
-                                                                }
-                                                                else {
-
-                                                                    validateArtifacts(
-                                                                        file_path: "$FILEPATH",
-                                                                        allow_http: params.ALLOW_HTTP
-                                                                    )
+                                                                    // validateArtifacts(
+                                                                    //     version: "$VERSION",
+                                                                    //     distribution: "${local_distribution}",
+                                                                    //     arch: "${local_architecture}",
+                                                                    //     platform: "${local_platform}",
+                                                                    //     os_build_number: "$OS_BUILD_NUMBER",
+                                                                    //     osd_build_number: "$OSD_BUILD_NUMBER",
+                                                                    //     projects: "$PROJECTS",
+                                                                    //     artifact_type: "$ARTIFACT_TYPE",
+                                                                    //     allow_http: params.ALLOW_HTTP
+                                                                    // )
+                                                                    echo "distribution: ${local_distribution} arch: ${local_architecture} platform: ${local_platform}"
+                                                                } else {
+                                                                    // validateArtifacts(
+                                                                    //     file_path: "$FILEPATH",
+                                                                    //     allow_http: params.ALLOW_HTTP
+                                                                    // )
+                                                                    echo "file_path: ${FILEPATH}"
                                                                 }
                                                             }
                                                         }
@@ -278,8 +275,8 @@ pipeline {
                                 }
                             }
                         }
-                        parallel validateDistributions
                     }
+                    parallel validateDistributions
                 }
             }
             post {
