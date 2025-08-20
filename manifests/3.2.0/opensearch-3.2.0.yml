@@ -22,40 +22,40 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 6adc0bf476e1624190564d7fbe4aba00ccf49ad8
+    ref: tags/3.2.0
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: a3aa6dda639f63c9039085ed6622041f76066bf9
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
   - name: opensearch-learning-to-rank-base
     repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
-    ref: e04760d8184cfa1e4d61e44bc106071e8c139d9a
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: 797049f0ea92d06f9d3fcfd95838a91ace4e43fc
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: edeb3a383719d36eeb4736fedbb2e552b60fd6ae
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: d9369b6bcb010456b1e9db05c64ac4b171123ff8
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 28e878a50cf7d49cef12df20dbb6e1e87cde67c8
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -63,7 +63,7 @@ components:
       - common-utils
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 761c85233321f1e1f6caf638728c36b7425ad462
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -71,7 +71,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: fa6c968be7e1a116e835624e05e1165cd00411b0
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 96778c0b22178631973ba78651412b864e224532
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -89,7 +89,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 68b6c85de7964be95fbc4c53859da3ea58443e7a
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -98,7 +98,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 16c26805593bb14c21c9ad365092d913a5e8119e
+    ref: tags/3.2.0.0
     working_directory: notifications
     platforms:
       - linux
@@ -107,7 +107,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 16c26805593bb14c21c9ad365092d913a5e8119e
+    ref: tags/3.2.0.0
     working_directory: notifications
     platforms:
       - linux
@@ -116,7 +116,7 @@ components:
       - common-utils
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: f773931423c2d464e24a47d3f55bdf4da662cbcc
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -124,7 +124,7 @@ components:
       - common-utils
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: a7ea6af825ff01c3f0ddfc21184bdb28e0cf59ba
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: c296c43cac7bba3d41751689f11731a96525c44e
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -142,7 +142,7 @@ components:
       - geospatial
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: b9dacc62d727f0a8bf4718d1bf877fbfea4a97d0
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 395a5b518a1aae3510af5d4169825e4f9e6340ce
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -159,7 +159,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: a990ded8c08dac5e339627b512e3cf3e440f414e
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -167,7 +167,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 96a5ca2670e7434e3fcd11c2f85c095d40f12e8d
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -177,7 +177,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: add78605e3bf7280313ee6c31689233adbde4a6d
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -186,18 +186,18 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: f1a999c96d9124b876c3297c83d1b1da58ae8a65
+    ref: tags/3.2.0.0
     platforms:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: b493073fba3eb7143fecc19e070cf916c8435030
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: ed28a27a866af319e75eccb7bb900438a4741f00
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -209,7 +209,7 @@ components:
       - neural-search
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: 532ef69b50ce14bd205cb9b23335370b06ba8f2e
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
@@ -220,25 +220,25 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: 5364c7b47278c3d2617c3cdf5b0d582daad53a3d
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
   - name: opensearch-system-templates
     repository: https://github.com/opensearch-project/opensearch-system-templates.git
-    ref: a8313b2dadd2d9e542a6379a62904e34ca415e72
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
   - name: user-behavior-insights
     repository: https://github.com/opensearch-project/user-behavior-insights.git
-    ref: 31b575b592f56bd95e6dba143b11643d63835f35
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
   - name: search-relevance
     repository: https://github.com/opensearch-project/search-relevance.git
-    ref: 59d4996375aaafdb985aed4503e9ac7c08764721
+    ref: tags/3.2.0.0
     platforms:
       - linux
       - windows
