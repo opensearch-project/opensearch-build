@@ -23,88 +23,95 @@ pipeline {
         AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'
         JOB_NAME = 'benchmark-test'
     }
-parameters {
-        password(
-            name: 'CLUSTER_ENDPOINT',
-            description: 'Provide an endpoint to a cluster for running benchmark tests against it.',
-        )
-        booleanParam(
-            name: 'SECURITY_ENABLED',
-            description: 'Mention if the cluster is secured or insecured.',
-            defaultValue: false,
-        )
-        password(
-            name: 'USERNAME',
-            description: 'Enter username for the cluster endpoint',
-            defaultValue: ''
-        )
-        password(
-            name: 'PASSWORD',
-            description: 'Enter password for the cluster endpoint',
-            defaultValue: ''
-        )
-        booleanParam(
-            name: 'SIGV4',
-            description: 'Mention if the test will run using AWS Signature Version 4 authentication.',
-            defaultValue: false,
-        )
-        string(
-            name: 'REGION',
-            description: 'AWS region for signing (e.g. us-east-1).',
-            defaultValue: 'us-east-1',
-            trim: true
-        )
-        choice(
-            name: 'SERVICE',
-            choices: ['','es', 'aoss'],
-            description: 'AWS service for SigV4'
-        )
-        string(
-            name: 'TEST_WORKLOAD',
-            description: 'The workload name from OpenSearch Benchmark Workloads.',
-            defaultValue: 'nyc_taxis',
-            trim: true
-        )
-        string(
-            name: 'USER_TAGS',
-            description: 'Attach arbitrary text to the meta-data of each benchmark metric record, without any spaces. e.g., `run-type:adhoc,segrep:enabled,arch:x64`. ',
-            trim: true
-        )
-        string(
-            name: 'WORKLOAD_PARAMS',
-            description: 'With this parameter you can inject variables into workloads. Use json type. e.g., `{"number_of_replicas":"1","number_of_shards":"5"}`',
-            trim: true
-        )
-        string(
-            name: 'TEST_PROCEDURE',
-            description: 'Defines a test procedure to use. e.g., `append-no-conflicts,significant-text`',
-            trim: true
-        )
-        string(
-            name: 'EXCLUDE_TASKS',
-            description: 'Defines a comma-separated list of test procedure tasks not to run. Default runs all. e.g., `type:search,delete-index`',
-            trim: true
-        )
-        string(
-            name: 'INCLUDE_TASKS',
-            description: 'Defines a comma-separated list of test procedure tasks to run. Default runs all. e.g., `type:search,delete-index`',
-            trim: true
-        )
-        booleanParam(
-            name: 'CAPTURE_NODE_STAT',
-            description: 'Enable opensearch-benchmark node-stats telemetry to capture system level metrics.',
-            defaultValue: false
-        )
-        booleanParam(
-            name: 'CAPTURE_SEGMENT_REPLICATION_STAT',
-            description: 'Enable opensearch-benchmark segment-replication-stats telemetry to capture metrics such as replication lag.',
-            defaultValue: false
-        )
-        string(
-            name: 'TELEMETRY_PARAMS',
-            description: 'Allows to set parameters for telemetry devices. Use json type. e.g.,{"node-stats-include-indices":"true","node-stats-include-indices-metrics":"segments"}',
-            trim: true
-        )
+    parameters {
+            password(
+                name: 'CLUSTER_ENDPOINT',
+                description: 'Provide an endpoint to a cluster for running benchmark tests against it.',
+            )
+            booleanParam(
+                name: 'SECURITY_ENABLED',
+                description: 'Mention if the cluster is secured or insecured.',
+                defaultValue: false,
+            )
+            password(
+                name: 'USERNAME',
+                description: 'Enter username for the cluster endpoint',
+                defaultValue: ''
+            )
+            password(
+                name: 'PASSWORD',
+                description: 'Enter password for the cluster endpoint',
+                defaultValue: ''
+            )
+            booleanParam(
+                name: 'SIGV4',
+                description: 'Mention if the test will run using AWS Signature Version 4 authentication.',
+                defaultValue: false,
+            )
+            string(
+                name: 'REGION',
+                description: 'AWS region for signing (e.g. us-east-1).',
+                defaultValue: 'us-east-1',
+                trim: true
+            )
+            choice(
+                name: 'SERVICE',
+                choices: ['','es', 'aoss'],
+                description: 'AWS service for SigV4'
+            )
+            string(
+                name: 'TEST_WORKLOAD',
+                description: 'The workload name from OpenSearch Benchmark Workloads.',
+                defaultValue: 'nyc_taxis',
+                trim: true
+            )
+            string(
+                name: 'USER_TAGS',
+                description: 'Attach arbitrary text to the meta-data of each benchmark metric record, without any spaces. e.g., `run-type:adhoc,segrep:enabled,arch:x64`. ',
+                trim: true
+            )
+            string(
+                name: 'WORKLOAD_PARAMS',
+                description: 'With this parameter you can inject variables into workloads. Use json type. e.g., `{"number_of_replicas":"1","number_of_shards":"5"}`',
+                trim: true
+            )
+            string(
+                name: 'TEST_PROCEDURE',
+                description: 'Defines a test procedure to use. e.g., `append-no-conflicts,significant-text`',
+                trim: true
+            )
+            string(
+                name: 'EXCLUDE_TASKS',
+                description: 'Defines a comma-separated list of test procedure tasks not to run. Default runs all. e.g., `type:search,delete-index`',
+                trim: true
+            )
+            string(
+                name: 'INCLUDE_TASKS',
+                description: 'Defines a comma-separated list of test procedure tasks to run. Default runs all. e.g., `type:search,delete-index`',
+                trim: true
+            )
+            booleanParam(
+                name: 'CAPTURE_NODE_STAT',
+                description: 'Enable opensearch-benchmark node-stats telemetry to capture system level metrics.',
+                defaultValue: false
+            )
+            booleanParam(
+                name: 'CAPTURE_SEGMENT_REPLICATION_STAT',
+                description: 'Enable opensearch-benchmark segment-replication-stats telemetry to capture metrics such as replication lag.',
+                defaultValue: false
+            )
+            string(
+                name: 'TELEMETRY_PARAMS',
+                description: 'Allows to set parameters for telemetry devices. Use json type. e.g.,{"node-stats-include-indices":"true","node-stats-include-indices-metrics":"segments"}',
+                trim: true
+            )
+    }
+
+    triggers{
+        parameterizedCron '''
+            H 10 * * * %CLUSTER_ENDPOINT=vpc-aos-2-19-big5-cczkhj6jqnqncozqwweqt6true.us-east-1.es.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=es;TEST_WORKLOAD=big5;USER_TAG=run-type:nightly,arch:x64,instance-type:c5.2xlarge,service:aos,cluster-config:x64-c5.2xlarge-single-node-1-shards-0-replica-aos-219;INCLUDE_TASKS=type:search;CAPTURE_NODE_STAT=true
+            H 10 * * * %CLUSTER_ENDPOINT=vpc-aos-2-17-big5-lmjc6dl2lct537wgud56l4uexm.us-east-1.es.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=es;TEST_WORKLOAD=big5;USER_TAG=run-type:nightly,arch:x64,instance-type:c5.2xlarge,service:aos,cluster-config:x64-c5.2xlarge-single-node-1-shards-0-replica-aos-217;INCLUDE_TASKS=type:search;CAPTURE_NODE_STAT=true
+        '''
     }
 
     stages {
