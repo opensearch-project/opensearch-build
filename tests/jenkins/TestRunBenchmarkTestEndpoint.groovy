@@ -33,6 +33,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
                         .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                         .build()
         )
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("uploadTestResults", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
