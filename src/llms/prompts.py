@@ -16,11 +16,13 @@ AI_RELEASE_NOTES_PROMPT_CHANGELOG = """Generate release notes for {component_nam
 
 **Output Requirements:**
    - The main heading with ## should be "version number Release Notes" (e.g., For version 3.2.0 ## Version 3.2.0
-   Release Notes followed by a blank line and then "Compatible with OpenSearch and OpenSearch Dashboards version
-   <version number>" followed by content)
+   Release Notes followed by a blank line and then "Compatible with OpenSearch and OpenSearch Dashboards
+   version <version number>" followed by content)
 
 **Entry Format:**
    - Each entry Format: `* <description> ([#<number>]({repository_url}/pull/<number>))`
+   - If the line has multiple links format: `* <description> ([#<number>]({repository_url}/pull/<number>),
+     [#<number>]({repository_url}/pull/<number>))` - Note: Only one set of outer parentheses should be used for all PR links.
    - Always use asterisk (*) for bullet points
    - Always wrap PR links in parentheses
    - Make sure first character of each entry is capitalized.
@@ -83,8 +85,8 @@ AI_RELEASE_NOTES_PROMPT_COMMIT = """I need you to generate OpenSearch component 
 
 4. **Output Requirements:**
    - The main heading with ## should be "version number Release Notes" (e.g., For version 3.2.0 ## Version 3.2.0
-   Release Notes followed by a blank line and then "Compatible with OpenSearch and OpenSearch Dashboards version
-   <version number>" followed by content)
+   Release Notes followed by a blank line and then "Compatible with OpenSearch and OpenSearch Dashboards
+   version <version number>" followed by content)
    - Generate markdown with ### headers for each category
    - Only include categories that have entries
    - Sort categories in this order: Breaking Changes, Features, Enhancements, Bug Fixes, Infrastructure, Documentation,

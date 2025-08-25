@@ -37,10 +37,6 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
         // this.registerLibTester(new SignArtifactsLibTester(sigtype, platform, artifactPath, null, null))
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
         helper.registerAllowedMethod('git', [Map])
-        helper.registerAllowedMethod('withCredentials', [Map, Closure], { args, closure ->
-            closure.delegate = delegate
-            return helper.callClosure(closure)
-        })
         helper.registerAllowedMethod('withAWS', [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
@@ -52,7 +48,7 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'dummy_bucket_name')
         helper.registerAllowedMethod("s3Upload", [Map])
-        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
         })

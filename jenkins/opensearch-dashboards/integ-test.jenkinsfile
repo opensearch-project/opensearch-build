@@ -18,6 +18,10 @@ def agent_nodes = [
     "windows_x64": "Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host",
 ]
 
+def secret_artifacts = [
+    [envVar: 'ARTIFACT_BUCKET_NAME', secretRef: 'op://opensearch-infra-secrets/aws-resource-arns/jenkins-artifact-bucket-name']
+]
+
 pipeline {
     options {
         timeout(time: 7, unit: 'HOURS')
@@ -29,7 +33,6 @@ pipeline {
         BUILD_MANIFEST_OPENSEARCH = "build-manifest-opensearch.yml"
         BUILD_JOB_NAME = "distribution-build-opensearch-dashboards"
         BUILD_JOB_NAME_OPENSEARCH = "distribution-build-opensearch"
-        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
     parameters {
         string(
@@ -186,25 +189,27 @@ pipeline {
                     if (env.platform != 'windows') {
                         echo "Not on Windows, stash repository+artifacts"
                         echo "Downloading from S3: ${artifactPathOpenSearch}"
-                        downloadFromS3(
-                            assumedRoleName: 'opensearch-bundle',
-                            roleAccountNumberCred: 'jenkins-aws-account-public',
-                            downloadPath: "${artifactPathOpenSearch}/",
-                            bucketName: "${ARTIFACT_BUCKET_NAME}",
-                            localPath: "${WORKSPACE}/artifacts",
-                            force: true
-                          )
-                        sh("cp -a $WORKSPACE/artifacts/${artifactPathOpenSearch} $WORKSPACE")
+                        withSecrets(secrets: secret_artifacts) {
+                            downloadFromS3(
+                                assumedRoleName: 'opensearch-bundle',
+                                roleAccountNumberCred: 'jenkins-aws-account-public',
+                                downloadPath: "${artifactPathOpenSearch}/",
+                                bucketName: "${ARTIFACT_BUCKET_NAME}",
+                                localPath: "${WORKSPACE}/artifacts",
+                                force: true
+                              )
+                            sh("cp -a $WORKSPACE/artifacts/${artifactPathOpenSearch} $WORKSPACE")
 
-                        echo "Downloading from S3: ${artifactPath}"
-                        downloadFromS3(
-                            assumedRoleName: 'opensearch-bundle',
-                            roleAccountNumberCred: 'jenkins-aws-account-public',
-                            downloadPath: "${artifactPath}/",
-                            bucketName: "${ARTIFACT_BUCKET_NAME}",
-                            localPath: "${WORKSPACE}/artifacts",
-                            force: true
-                          )
+                            echo "Downloading from S3: ${artifactPath}"
+                            downloadFromS3(
+                                assumedRoleName: 'opensearch-bundle',
+                                roleAccountNumberCred: 'jenkins-aws-account-public',
+                                downloadPath: "${artifactPath}/",
+                                bucketName: "${ARTIFACT_BUCKET_NAME}",
+                                localPath: "${WORKSPACE}/artifacts",
+                                force: true
+                              )
+                        }
                         sh("cp -a $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
                         sh("rm -rf $WORKSPACE/artifacts")
 
@@ -250,17 +255,19 @@ pipeline {
                                             """
                                           }
 
-                                          runIntegTestScriptForOSD(
-                                            localComponent: "${local_component}",
-                                            switchUserNonRoot: "${switch_user_non_root}",
-                                            ciGroup: "${ciNum}",
-                                            artifactPathOpenSearch: "${artifactPathOpenSearch}",
-                                            artifactPath: "${artifactPath}",
-                                            artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
-                                            distribution: "${distribution}",
-                                            buildManifest: "${BUILD_MANIFEST}",
-                                            testManifest: "manifests/${TEST_MANIFEST}"
-                                          )
+                                          withSecrets(secrets: secret_artifacts) {
+                                              runIntegTestScriptForOSD(
+                                                localComponent: "${local_component}",
+                                                switchUserNonRoot: "${switch_user_non_root}",
+                                                ciGroup: "${ciNum}",
+                                                artifactPathOpenSearch: "${artifactPathOpenSearch}",
+                                                artifactPath: "${artifactPath}",
+                                                artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
+                                                distribution: "${distribution}",
+                                                buildManifest: "${BUILD_MANIFEST}",
+                                                testManifest: "manifests/${TEST_MANIFEST}"
+                                              )
+                                          }
                                         }
                                       } catch (e) {
                                         throw new Exception("Error running integtest for component ${local_component}-ci-group-${ciNum}", e)
@@ -304,17 +311,19 @@ pipeline {
                                                                 bash -c "echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}"
                                                             """
                                                         }
-                                                        runIntegTestScriptForOSD(
-                                                            localComponent: local_component,
-                                                            switchUserNonRoot: switch_user_non_root,
-                                                            ciGroup: "",
-                                                            artifactPathOpenSearch: "${artifactPathOpenSearch}",
-                                                            artifactPath: "${artifactPath}",
-                                                            artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
-                                                            distribution: "${distribution}",
-                                                            buildManifest: "${BUILD_MANIFEST}",
-                                                            testManifest: "manifests/${TEST_MANIFEST}"
-                                                        )
+                                                        withSecrets(secrets: secret_artifacts) {
+                                                            runIntegTestScriptForOSD(
+                                                                localComponent: local_component,
+                                                                switchUserNonRoot: switch_user_non_root,
+                                                                ciGroup: "",
+                                                                artifactPathOpenSearch: "${artifactPathOpenSearch}",
+                                                                artifactPath: "${artifactPath}",
+                                                                artifactBucketName:  "${ARTIFACT_BUCKET_NAME}",
+                                                                distribution: "${distribution}",
+                                                                buildManifest: "${BUILD_MANIFEST}",
+                                                                testManifest: "manifests/${TEST_MANIFEST}"
+                                                            )
+                                                        }
                                                     }
                                                 } catch (e) {
                                                     throw new Exception("Error running integtest for component ${local_component}", e)

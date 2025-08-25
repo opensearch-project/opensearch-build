@@ -243,6 +243,39 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
 
         self.assertEqual(result, [])
 
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._make_paginated_request')
+    @patch('git.git_commit_processor.GitHubCommitsProcessor.get_commit_pr_info')
+    @patch('time.sleep')  # Mock sleep to speed up test
+    def test_get_commits_with_labels_sorting(self, mock_sleep: MagicMock, mock_get_pr_info: MagicMock, mock_paginated_request: MagicMock) -> None:
+        """Test sorting functionality in get_commits_with_labels method."""
+        mock_paginated_request.return_value = [
+            {"sha": "abc123", "commit": {"message": "Fix bug"}},
+            {"sha": "def456", "commit": {"message": "Add feature"}},
+            {"sha": "ghi789", "commit": {"message": "123 Numeric prefix"}},
+            {"sha": "jkl012", "commit": {"message": ""}}
+        ]
+# Mock the PR info retrieval
+        mock_get_pr_info.side_effect = [
+            (["bug"], "Fix bug (#123)"),
+            (["enhancement"], "Add feature (#456)"),
+            (["documentation"], "123 Numeric prefix (#789)"),
+            ([], "Empty message (#012)")
+        ]
+        test_data = [
+            {"Message": "Fix bug", "Labels": ["bug"]},
+            {"Message": "Add feature", "Labels": ["enhancement"]},
+            {"Message": "123 Numeric prefix", "Labels": ["documentation"]},
+            {"Message": "", "Labels": []}
+        ]
+        # Manually sort using str() to match the implementation
+        expected_order = sorted(test_data, key=lambda x: str(x["Message"]))
+        expected_messages = [item["Message"] for item in expected_order]
+        # Now test the actual method
+        result = self.processor.get_commits_with_labels("owner", "repo", "2022-01-01")
+        # Verify the result is sorted by message (as strings)
+        actual_messages = [commit["Message"] for commit in result]
+        self.assertEqual(actual_messages, expected_messages)
+
     @patch('requests.get')
     def test_get_pr_from_commit_api_success(self, mock_get: MagicMock) -> None:
         """Test successful PR retrieval from commit API."""

@@ -12,6 +12,10 @@ lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
+def secret_artifacts = [
+    [envVar: 'ARTIFACT_BUCKET_NAME', secretRef: 'op://opensearch-infra-secrets/aws-resource-arns/jenkins-artifact-bucket-name']
+]
+
 pipeline {
     agent {
         docker {
@@ -42,9 +46,6 @@ pipeline {
                 name: 'SIGNATURE_TYPE',
                 description: 'What is signature file type? Required only for linux signing.'
         )
-    }
-    environment {
-        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
     stages {
         stage('sign') {
@@ -88,11 +89,13 @@ pipeline {
                     ].join('/'))
 
                     // uploading artifacts with signatures on s3
-                    uploadToS3(
-                            sourcePath: "$WORKSPACE/artifacts",
-                            bucket: "${ARTIFACT_BUCKET_NAME}",
-                            path: finalUploadPath
-                    )
+                    withSecrets(secrets: secret_artifacts) {
+                        uploadToS3(
+                                sourcePath: "$WORKSPACE/artifacts",
+                                bucket: "${ARTIFACT_BUCKET_NAME}",
+                                path: finalUploadPath
+                        )
+                    }
 
                     printArtifactDownloadUrlsForStaging(
                             artifactFileNames: filenamesForUrls,

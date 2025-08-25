@@ -69,7 +69,10 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
-        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod('parameterizedCron', [String], null)
         helper.registerAllowedMethod("readYaml", [Map.class], { args ->
             if (args.file == 'manifests/tests/jenkins/data/opensearch-3.0.0-test.yml') {

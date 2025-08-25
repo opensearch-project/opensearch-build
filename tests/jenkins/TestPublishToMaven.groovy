@@ -22,7 +22,7 @@ class TestPublishToMaven extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('10.2.0')
+                .defaultVersion('10.2.2')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -37,6 +37,10 @@ class TestPublishToMaven extends BuildPipelineTest {
         binding.setVariable("GITHUB_BOT_TOKEN_NAME", "dummy_token")
         binding.setVariable("SONATYPE_STAGING_PROFILE_ID", "stag_abcd")
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
         })

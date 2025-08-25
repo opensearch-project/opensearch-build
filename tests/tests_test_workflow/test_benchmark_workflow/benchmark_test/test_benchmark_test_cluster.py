@@ -19,6 +19,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
 
             self.args = Mock()
             self.args.insecure = False
+            self.args.sigv4 = False
             self.args.cluster_endpoint = "opensearch-cluster.amazon.com"
             self.args.password = None
             self.benchmark_test_cluster = BenchmarkTestCluster(self.args)
