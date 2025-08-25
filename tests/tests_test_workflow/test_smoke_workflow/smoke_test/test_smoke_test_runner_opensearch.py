@@ -7,6 +7,7 @@
 import logging
 import os.path
 import unittest
+import re
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, mock_open, patch
 
@@ -166,7 +167,7 @@ class TestSmokeTestRunnerOpenSearch(unittest.TestCase):
 
         runner.record_test_result(component, test_api, api_action, stdout, stderr)
 
-        test_config = f"{api_action}_{test_api.replace('/', '_')}"
+        test_config = f"{api_action}_{re.sub(r'[^a-zA-Z0-9]', '_', test_api)}"
         mock_recorder._create_base_folder_structure.assert_called_once_with(component, test_config)
         mock_recorder._generate_std_files.assert_called_once()
 
@@ -202,3 +203,21 @@ class TestSmokeTestRunnerOpenSearch(unittest.TestCase):
 
         assert info_handler not in logger.handlers
         assert error_handler not in logger.handlers
+        
+    @patch("requests.get")
+    @patch("test_workflow.smoke_test.smoke_test_runner.TestRecorder")
+    def test_non_alphanumeric_string_replacement(self, mock_recorder: Mock, mock_requests: Mock) -> None:
+        """Test that non-alphanumeric characters are correctly replaced with underscores in bulk API with query parameters."""
+        runner = SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
+        runner.test_recorder = MagicMock()
+        
+        test_api = "/_bulk?refresh=true"
+        api_action = "POST"
+        stdout = "test output"
+        stderr = "test error"
+        
+        runner.record_test_result("test_component", test_api, api_action, stdout, stderr)
+        
+        expected_test_config = "POST___bulk_refresh_true"
+        runner.test_recorder._create_base_folder_structure.assert_called_once_with("test_component", expected_test_config)
+        runner.test_recorder._generate_std_files.assert_called_once()
