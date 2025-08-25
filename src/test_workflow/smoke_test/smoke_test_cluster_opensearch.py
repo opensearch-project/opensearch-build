@@ -36,7 +36,7 @@ class SmokeTestClusterOpenSearch:
         self.path = args.paths.get(self.product)
         self.build_manifest = BuildManifest.from_urlpath(os.path.join(self.path, "builds", f"{self.product}", "manifest.yml"))
         self.bundle_manifest = BundleManifest.from_urlpath(os.path.join(self.path, "dist", f"{self.product}", "manifest.yml"))
-        self.version = self.bundle_manifest.build.version + (("-" + self.bundle_manifest.build.qualifier) if self.bundle_manifest.build.qualifier else None)
+        self.version = self.bundle_manifest.build.version
         self.platform = self.bundle_manifest.build.platform
         self.arch = self.bundle_manifest.build.architecture
         self.dist = self.bundle_manifest.build.distribution

@@ -29,7 +29,7 @@ class TestRunAssemble(unittest.TestCase):
         self.assertTrue(out.startswith("usage:"))
 
     BUILD_MANIFEST = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml")
-    BUILD_MANIFEST_QUALIFIER = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-2.0.0-rc1.yml")
+    BUILD_MANIFEST_QUALIFIER = os.path.join(os.path.dirname(__file__), "tests_assemble_workflow", "data", "opensearch-build-rpm-2.0.0-alpha1.yml")
 
     @patch("os.makedirs")
     @patch("os.getcwd", return_value="curdir")
@@ -68,10 +68,10 @@ class TestRunAssemble(unittest.TestCase):
         mock_bundle.install_min.assert_called()
         mock_bundle.install_components.assert_called()
 
-        mock_bundle.package.assert_called_with(os.path.join("curdir", "tar", "dist", "opensearch"))
+        mock_bundle.package.assert_called_with(os.path.join("curdir", "rpm", "dist", "opensearch"))
 
         mock_recorder.return_value.write_manifest.assert_has_calls(
-            [call("path"), call(os.path.join("curdir", "tar", "dist", "opensearch"))]
+            [call("path"), call(os.path.join("curdir", "rpm", "dist", "opensearch"))]
         )  # manifest included in package
 
         self.assertTrue(getcwd.called)

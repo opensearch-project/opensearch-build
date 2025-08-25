@@ -66,8 +66,8 @@ class BuildRecorder:
                 self.data["build"] = {}
                 self.data["build"]["id"] = target.build_id
                 self.data["build"]["name"] = target.name
-                self.data["build"]["version"] = target.version
-                self.data["build"]["qualifier"] = target.qualifier
+                self.data["build"]["version"] = target.opensearch_snapshot_only_version
+                self.data["build"]["qualifier"] = target.qualifier if target.qualifier else ""
                 self.data["build"]["platform"] = target.platform
                 self.data["build"]["architecture"] = target.architecture
                 self.data["build"]["distribution"] = target.distribution if target.distribution else "tar"
@@ -92,7 +92,7 @@ class BuildRecorder:
                 artifacts[type] = list
             list.append(path)
 
-        def to_manifest(self) -> 'BuildManifest':
+        def to_manifest(self) -> "BuildManifest":
             # The build manifest expects `components` to be a list, not a hash, so we need to munge things a bit
             components = self.components_hash.values()
             if len(components):

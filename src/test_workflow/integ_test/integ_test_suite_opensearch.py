@@ -38,22 +38,13 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
         bundle_manifest_opensearch: BundleManifest,
         build_manifest_opensearch: BuildManifest,
         work_dir: Path,
-        test_recorder: TestRecorder
+        test_recorder: TestRecorder,
     ) -> None:
         super().__init__(
-            work_dir,
-            component,
-            test_config,
-            test_recorder,
-            dependency_installer_opensearch,
-            bundle_manifest_opensearch,
-            build_manifest_opensearch
+            work_dir, component, test_config, test_recorder, dependency_installer_opensearch, bundle_manifest_opensearch, build_manifest_opensearch
         )
         self.repo = GitRepository(
-            self.component.repository,
-            self.component.commit_id,
-            os.path.join(self.work_dir, self.component.name),
-            test_config.working_directory
+            self.component.repository, self.component.commit_id, os.path.join(self.work_dir, self.component.name), test_config.working_directory
         )
 
     def execute_tests(self) -> TestComponentResults:
@@ -95,7 +86,7 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             self.bundle_manifest,
             security,
             config,
-            self.test_recorder
+            self.test_recorder,
         ) as (endpoints):
             os.chdir(self.work_dir)
             self.pretty_print_message("Running integration tests for " + self.component.name + " " + config)
@@ -106,12 +97,11 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
 
         def custom_node_endpoint_encoder(node_endpoint: NodeEndpoint) -> dict:
             return {"endpoint": node_endpoint.endpoint, "port": node_endpoint.port, "transport": node_endpoint.transport}
+
         if os.path.exists(script):
             if len(cluster_endpoints) == 1:
                 single_data_node = cluster_endpoints[0].data_nodes[0]
-                qualifier_extension = '-' + self.bundle_manifest.build.qualifier
-                cmd = f"bash {script} -b {single_data_node.endpoint} -p {single_data_node.port} -s {str(security).lower()} -v {self.bundle_manifest.build.version + ((qualifier_extension) 
-                                                                                  if self.bundle_manifest.build.qualifier else None)}"
+                cmd = f"bash {script} -b {single_data_node.endpoint} -p {single_data_node.port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
             else:
                 endpoints_list = []
                 for cluster_details in cluster_endpoints:
@@ -119,19 +109,12 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
                 endpoints_string = json.dumps(endpoints_list, indent=0, default=custom_node_endpoint_encoder).replace("\n", "")
                 cmd = f"bash {script} -e '"
                 cmd = cmd + endpoints_string + "'"
-                cmd = cmd + f" -s {str(security).lower()} -v {self.bundle_manifest.build.version + (("-" + self.bundle_manifest.build.qualifier)
-                                                                                  if self.bundle_manifest.build.qualifier else None)}"
-            self.repo_work_dir = os.path.join(
-                self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
-            (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)
-            test_result_data_local = TestResultData(
-                self.component.name,
-                test_config,
-                status,
-                stdout,
-                stderr,
-                self.test_artifact_files
+                cmd = cmd + f" -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
+            self.repo_work_dir = (
+                os.path.join(self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
             )
+            (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)
+            test_result_data_local = TestResultData(self.component.name, test_config, status, stdout, stderr, self.test_artifact_files)
             self.save_logs.save_test_result_data(test_result_data_local)
             self.test_result_data.append(test_result_data_local)
             if stderr:

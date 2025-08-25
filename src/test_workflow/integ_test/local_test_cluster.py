@@ -46,7 +46,7 @@ class LocalTestCluster(TestCluster):
         self.dependency_installer = dependency_installer
 
         self.service_opensearch = ServiceOpenSearch(
-            self.manifest.build.version + (("-" + self.manifest.build.qualifier) if self.manifest.build.qualifier else None),
+            self.manifest.build.version,
             self.manifest.build.distribution,
             self.additional_cluster_config,
             self.security_enabled,

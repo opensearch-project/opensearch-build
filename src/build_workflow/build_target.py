@@ -49,11 +49,11 @@ class BuildTarget:
 
     @property
     def opensearch_version(self) -> str:
-        return BuildTarget.__qualify_version(
-            self.version,
-            self.qualifier,
-            self.snapshot
-        )
+        return BuildTarget.__qualify_version(self.version, self.qualifier, self.snapshot)
+
+    @property
+    def opensearch_snapshot_only_version(self) -> str:
+        return BuildTarget.__snapshot_version(self.version, self.qualifier, self.snapshot)
 
     @property
     def compatible_min_versions(self) -> List[str]:
@@ -66,11 +66,7 @@ class BuildTarget:
     @property
     def component_version(self) -> str:
         # BUG: the 4th digit is dictated by the component, it's not .0, this will break for 1.1.0.1
-        return BuildTarget.__qualify_version(
-            self.version + ".0",
-            self.qualifier,
-            self.snapshot
-        )
+        return BuildTarget.__qualify_version(self.version + ".0", self.qualifier, self.snapshot)
 
     @property
     def compatible_component_versions(self) -> List[str]:
@@ -91,6 +87,13 @@ class BuildTarget:
         version = unqualified_version
         if qualifier:
             version += f"-{qualifier}"
+        if snapshot:
+            version += "-SNAPSHOT"
+        return version
+
+    @classmethod
+    def __snapshot_version(cls, unqualified_version: str, qualifier: str = None, snapshot: bool = False) -> str:
+        version = unqualified_version
         if snapshot:
             version += "-SNAPSHOT"
         return version

@@ -105,7 +105,7 @@ class PerfTestCluster(TestCluster):
     def wait_for_processing(self, tries: int = 3, delay: int = 15, backoff: int = 2) -> None:
         password = "admin"
         if self.manifest:
-            if semver.compare(self.manifest.build.version + (("-" + self.manifest.build.qualifier) if self.manifest.build.qualifier else None), "2.12.0") != -1:
+            if semver.compare(self.manifest.build.version, "2.12.0") != -1:
                 password = "myStrongPassword123!"
 
         # Should be invoked only if the endpoint is public.

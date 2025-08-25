@@ -33,6 +33,20 @@ class TestBuildRecorder(unittest.TestCase):
             )
         )
 
+    def __mock_qualifier(self, snapshot: bool = True) -> BuildRecorder:
+        return BuildRecorder(
+            BuildTarget(
+                build_id="1",
+                output_dir="output_dir",
+                name="OpenSearch",
+                version="3.0.0",
+                qualifier="beta1",
+                platform="linux",
+                architecture="x64",
+                snapshot=snapshot,
+            )
+        )
+
     def __mock_with_manifest(self, snapshot: bool = True) -> BuildRecorder:
         build_manifest_path = os.path.join("tests", "tests_build_workflow", "data", "opensearch-build-tar-2.12.0.yml")
         build_manifest = BuildManifest.from_path(build_manifest_path)
@@ -46,7 +60,24 @@ class TestBuildRecorder(unittest.TestCase):
                 architecture="x64",
                 snapshot=snapshot,
             ),
-            build_manifest
+            build_manifest,
+        )
+
+    def __mock_with_manifest_qualifier(self, snapshot: bool = True) -> BuildRecorder:
+        build_manifest_path = os.path.join("tests", "tests_build_workflow", "data", "opensearch-build-tar-3.0.0-beta1.yml")
+        build_manifest = BuildManifest.from_path(build_manifest_path)
+        return BuildRecorder(
+            BuildTarget(
+                build_id="1",
+                output_dir="output_dir",
+                name="OpenSearch",
+                version="3.0.0",
+                qualifier="beta1",
+                platform="darwin",
+                architecture="arm64",
+                snapshot=snapshot,
+            ),
+            build_manifest,
         )
 
     def __mock_distribution(self, snapshot: bool = True) -> BuildRecorder:
@@ -175,6 +206,25 @@ class TestBuildRecorder(unittest.TestCase):
             },
         )
 
+    def test_get_manifest_qualifier(self) -> None:
+        manifest = self.__mock_qualifier(snapshot=False).get_manifest()
+        self.assertIs(type(manifest), BuildManifest)
+        self.assertEqual(
+            manifest.to_dict(),
+            {
+                "build": {
+                    "platform": "linux",
+                    "architecture": "x64",
+                    "distribution": "tar",
+                    "id": "1",
+                    "name": "OpenSearch",
+                    "version": "3.0.0",
+                    "qualifier": "beta1",
+                },
+                "schema-version": "1.2",
+            },
+        )
+
     def test_get_manifest_distribution(self) -> None:
         manifest = self.__mock_distribution(snapshot=False).get_manifest()
         self.assertIs(type(manifest), BuildManifest)
@@ -207,8 +257,7 @@ class TestBuildRecorder(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("os.makedirs")
     @patch.object(BuildArtifactOpenSearchCheckPlugin, "check")
-    def test_record_artifact_check_plugin_version_properties(self, mock_plugin_check: Mock, mock_makedirs: Mock,
-                                                             mock_copyfile: Mock) -> None:
+    def test_record_artifact_check_plugin_version_properties(self, mock_plugin_check: Mock, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
         mock = self.__mock(snapshot=False)
         mock.record_component(
             "security",
@@ -229,8 +278,29 @@ class TestBuildRecorder(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("os.makedirs")
     @patch.object(BuildArtifactOpenSearchCheckPlugin, "check")
-    def test_record_artifact_check_plugin_version_properties_snapshot(self, mock_plugin_check: Mock,
-                                                                      mock_makedirs: Mock, mock_copyfile: Mock) -> None:
+    def test_record_artifact_check_plugin_version_properties_qualifier(self, mock_plugin_check: Mock, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
+        mock = self.__mock_qualifier(snapshot=False)
+        mock.record_component(
+            "security",
+            MagicMock(
+                url="https://github.com/opensearch-project/security",
+                ref="main",
+                sha="3913d7097934cbfe1fdcf919347f22a597d00b76",
+            ),
+        )
+        mock.record_artifact("security", "plugins", "../file1.zip", "valid-3.0.0.0.zip")
+        manifest_dict = mock.get_manifest().to_dict()
+        self.assertEqual(manifest_dict["build"]["version"], "3.0.0")
+        self.assertEqual(manifest_dict["build"]["qualifier"], "beta1")
+        self.assertEqual(manifest_dict["components"][0]["version"], "3.0.0.0-beta1")
+        mock_plugin_check.assert_called()
+        mock_copyfile.assert_called()
+        mock_makedirs.assert_called()
+
+    @patch("shutil.copyfile")
+    @patch("os.makedirs")
+    @patch.object(BuildArtifactOpenSearchCheckPlugin, "check")
+    def test_record_artifact_check_plugin_version_properties_snapshot(self, mock_plugin_check: Mock, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
         mock = self.__mock(snapshot=True)
         mock.record_component(
             "security",
@@ -251,14 +321,10 @@ class TestBuildRecorder(unittest.TestCase):
     def test_append_component_with_existing_manifest(self) -> None:
         mock = self.__mock_with_manifest(snapshot=False)
 
-        self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("commit_id"),
-                         "aaf09b0211df15dd74ff2756f2590c360b03486b")
-        self.assertEqual(mock.build_manifest.components_hash.get("geospatial").get("commit_id"),
-                         "8776900f2f26312b4d3a08e4343f3e3f7bdde536")
-        self.assertEqual(mock.build_manifest.components_hash.get("geospatial").get("repository"),
-                         "https://github.com/opensearch-project/geospatial.git")
-        self.assertEqual(mock.build_manifest.components_hash.get("security").get("commit_id"),
-                         "e3c8902dea26fd20f56a6f144042b2623f652e3e")
+        self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("commit_id"), "aaf09b0211df15dd74ff2756f2590c360b03486b")
+        self.assertEqual(mock.build_manifest.components_hash.get("geospatial").get("commit_id"), "8776900f2f26312b4d3a08e4343f3e3f7bdde536")
+        self.assertEqual(mock.build_manifest.components_hash.get("geospatial").get("repository"), "https://github.com/opensearch-project/geospatial.git")
+        self.assertEqual(mock.build_manifest.components_hash.get("security").get("commit_id"), "e3c8902dea26fd20f56a6f144042b2623f652e3e")
         self.assertEqual(mock.build_manifest.components_hash.get("security").get("version"), "2.12.0.0")
 
         self.assertEqual(mock.build_manifest.data.get("build").get("id"), "1")
@@ -274,9 +340,6 @@ class TestBuildRecorder(unittest.TestCase):
 
         self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("commit_id"), "mockcommitid")
         self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("ref"), "2.12")
-        self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("repository"),
-                         "https://github.com/opensearch-project/job-scheduler.git")
-        self.assertEqual(mock.build_manifest.components_hash.get("geospatial").get("commit_id"),
-                         "8776900f2f26312b4d3a08e4343f3e3f7bdde536")
-        self.assertEqual(mock.build_manifest.components_hash.get("security").get("commit_id"),
-                         "e3c8902dea26fd20f56a6f144042b2623f652e3e")
+        self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("repository"), "https://github.com/opensearch-project/job-scheduler.git")
+        self.assertEqual(mock.build_manifest.components_hash.get("geospatial").get("commit_id"), "8776900f2f26312b4d3a08e4343f3e3f7bdde536")
+        self.assertEqual(mock.build_manifest.components_hash.get("security").get("commit_id"), "e3c8902dea26fd20f56a6f144042b2623f652e3e")

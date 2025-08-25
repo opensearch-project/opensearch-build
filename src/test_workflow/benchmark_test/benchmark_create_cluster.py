@@ -98,7 +98,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             suffix = self.args.stack_suffix
 
         if self.manifest:
-            self.args.distribution_version = self.manifest.build.version + (("-" + self.manifest.build.qualifier) if self.manifest.build.qualifier else None)
+            self.args.distribution_version = self.manifest.build.version
             artifact_url = (
                 self.manifest.build.location
                 if isinstance(self.manifest, BundleManifest)

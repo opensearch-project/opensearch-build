@@ -22,7 +22,7 @@ class BundleRecorder:
         self.build_id = build.id
         self.bundle_location = bundle_location
         self.version = build.version
-        self.qualifier = build.qualifier
+        self.qualifier = build.qualifier if build.qualifier else ""
         self.distribution = build.distribution
         self.package_name = self.__get_package_name(build)
         self.artifacts_dir = artifacts_dir
@@ -39,14 +39,16 @@ class BundleRecorder:
         )
 
     def __get_package_name(self, build: BuildManifest.Build) -> str:
-        parts = [
-            build.filename,
-            build.version,
-            build.qualifier,
-            build.platform,
-            build.architecture,
-        ]
-        extension = Dists.DISTRIBUTIONS_MAP[self.distribution].extension if self.distribution else Dists.DISTRIBUTIONS_MAP['tar'].extension
+        parts = [build.filename, build.version]
+        if build.qualifier:
+            parts.append(build.qualifier)
+        parts.extend(
+            [
+                build.platform,
+                build.architecture,
+            ]
+        )
+        extension = Dists.DISTRIBUTIONS_MAP[self.distribution].extension if self.distribution else Dists.DISTRIBUTIONS_MAP["tar"].extension
         return "-".join(parts) + extension
 
     # Assembled output are expected to be served from a separate "dist" folder
@@ -82,7 +84,7 @@ class BundleRecorder:
             self.data["build"]["id"] = build_id
             self.data["build"]["name"] = name
             self.data["build"]["version"] = str(version)
-            self.data["build"]["qualifier"] = qualifier
+            self.data["build"]["qualifier"] = qualifier if qualifier else ""
             self.data["build"]["platform"] = platform
             self.data["build"]["architecture"] = architecture
             self.data["build"]["distribution"] = distribution if distribution else "tar"
@@ -93,13 +95,15 @@ class BundleRecorder:
             self.data["components"] = []
 
         def append_component(self, name: str, repository_url: str, ref: str, commit_id: str, location: str = None) -> None:
-            component = Manifest.compact({
-                "name": name,
-                "repository": repository_url,
-                "ref": ref,
-                "commit_id": commit_id,
-                "location": location,
-            })
+            component = Manifest.compact(
+                {
+                    "name": name,
+                    "repository": repository_url,
+                    "ref": ref,
+                    "commit_id": commit_id,
+                    "location": location,
+                }
+            )
             self.data["components"].append(component)
 
         def to_manifest(self) -> BundleManifest:

@@ -27,7 +27,15 @@ class TestBundleRecorder(unittest.TestCase):
 
         manifest_distribution_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-windows-1.3.0.yml")
         self.manifest_distribution = BuildManifest.from_path(manifest_distribution_path)
-        self.bundle_recorder_distribution = BundleRecorder(self.manifest_distribution.build, "output_dir", "artifacts_dir", BundleFileLocation("bundle_output_dir", "opensearch", "tar"))
+        self.bundle_recorder_distribution = BundleRecorder(
+            self.manifest_distribution.build, "output_dir", "artifacts_dir", BundleFileLocation("bundle_output_dir", "opensearch", "tar")
+        )
+
+        manifest_qualifier_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-tar-3.0.0-beta1.yml")
+        self.manifest_qualifier = BuildManifest.from_path(manifest_qualifier_path)
+        self.bundle_recorder_qualifier = BundleRecorder(
+            self.manifest_qualifier.build, "output_dir", "artifacts_dir", BundleFileLocation("bundle_output_dir", "opensearch", "tar")
+        )
 
     def test_record_component(self) -> None:
         component = BuildComponent(
@@ -105,6 +113,26 @@ class TestBundleRecorder(unittest.TestCase):
             },
         )
 
+    def test_get_manifest_qualifier(self) -> None:
+        manifest = self.bundle_recorder_qualifier.get_manifest()
+        self.assertIs(type(manifest), BundleManifest)
+        self.assertEqual(
+            manifest.to_dict(),
+            {
+                "build": {
+                    "platform": "darwin",
+                    "architecture": "arm64",
+                    "distribution": "tar",
+                    "id": "9c02f9dee69346299de065f783f132c7",
+                    "location": os.path.join("bundle_output_dir", "tar", "dist", "opensearch", "opensearch-3.0.0-beta1-darwin-arm64.tar.gz"),
+                    "name": "OpenSearch",
+                    "version": "3.0.0",
+                    "qualifier": "beta1",
+                },
+                "schema-version": "1.1",
+            },
+        )
+
     def test_write_manifest(self) -> None:
         with TemporaryDirectory() as dest_dir:
             self.bundle_recorder.write_manifest(dest_dir.name)
@@ -119,11 +147,7 @@ class TestBundleRecorder(unittest.TestCase):
             self.manifest.build,
             "output_dir",
             "artifacts_dir",
-            BundleUrlLocation(
-                "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/",
-                "opensearch",
-                "tar"
-            )
+            BundleUrlLocation("https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/", "opensearch", "tar"),
         )
 
         component = BuildComponent(
@@ -147,16 +171,17 @@ class TestBundleRecorder(unittest.TestCase):
                     "architecture": "x64",
                     "distribution": "tar",
                     "id": "c3ff7a232d25403fa8cc14c97799c323",
-                    "location": ("https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/tar/"
-                                 "dist/opensearch/opensearch-1.1.0-linux-x64.tar.gz"),
+                    "location": (
+                        "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/tar/"
+                        "dist/opensearch/opensearch-1.1.0-linux-x64.tar.gz"
+                    ),
                     "name": "OpenSearch",
                     "version": "1.1.0",
                 },
                 "components": [
                     {
                         "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
-                        "location":
-                            "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/tar/builds/opensearch/plugins",
+                        "location": "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/tar/builds/opensearch/plugins",
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/job_scheduler",
@@ -176,19 +201,13 @@ class TestBundleRecorderDashboards(unittest.TestCase):
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-build-1.1.0.yml")
         self.manifest = BuildManifest.from_path(manifest_path)
         self.bundle_recorder = BundleRecorder(
-            self.manifest.build,
-            "output_dir",
-            "artifacts_dir",
-            BundleFileLocation("bundle_output_dir", "opensearch-dashboards", "tar")
+            self.manifest.build, "output_dir", "artifacts_dir", BundleFileLocation("bundle_output_dir", "opensearch-dashboards", "tar")
         )
 
         manifest_distribution_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-build-windows-1.3.0.yml")
         self.manifest_distribution = BuildManifest.from_path(manifest_distribution_path)
         self.bundle_recorder_distribution = BundleRecorder(
-            self.manifest_distribution.build,
-            "output_dir",
-            "artifacts_dir",
-            BundleFileLocation("bundle_output_dir", "opensearch-dashboards", "tar")
+            self.manifest_distribution.build, "output_dir", "artifacts_dir", BundleFileLocation("bundle_output_dir", "opensearch-dashboards", "tar")
         )
 
     def test_record_component(self) -> None:
@@ -282,10 +301,8 @@ class TestBundleRecorderDashboards(unittest.TestCase):
             "output_dir",
             "artifacts_dir",
             BundleUrlLocation(
-                "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/",
-                "opensearch-dashboards",
-                "tar"
-            )
+                "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/", "opensearch-dashboards", "tar"
+            ),
         )
 
         component = BuildComponent(
@@ -308,17 +325,20 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                     "architecture": "x64",
                     "distribution": "tar",
                     "id": "c94ebec444a94ada86a230c9297b1d73",
-                    "location": ("https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/tar/"
-                                 "dist/opensearch-dashboards/opensearch-dashboards-1.1.0-linux-x64.tar.gz"),
+                    "location": (
+                        "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/tar/"
+                        "dist/opensearch-dashboards/opensearch-dashboards-1.1.0-linux-x64.tar.gz"
+                    ),
                     "name": "OpenSearch Dashboards",
                     "version": "1.1.0",
                 },
                 "components": [
                     {
                         "commit_id": "ae789280740d7000d1f13245019414abeedfc286",
-                        "location":
-                            ("https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/tar/"
-                             "builds/opensearch-dashboards/plugins"),
+                        "location": (
+                            "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/tar/"
+                            "builds/opensearch-dashboards/plugins"
+                        ),
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/alerting-dashboards-plugin",

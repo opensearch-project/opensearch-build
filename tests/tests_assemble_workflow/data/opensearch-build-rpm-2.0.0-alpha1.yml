@@ -5,7 +5,8 @@ build:
   distribution: rpm
   id: c3ff7a232d25403fa8cc14c97799c323
   name: OpenSearch
-  version: 2.0.0-alpha1
+  version: 2.0.0
+  qualifier: alpha1
 components:
   - artifacts:
       dist:
