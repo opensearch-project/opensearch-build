@@ -1065,7 +1065,8 @@ def triggerSmokeTests(String buildManifestUrl, String platform, String distribut
                 wait: false,
                 parameters: [
                     string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
+                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                    string(name: 'RC_NUMBER', value: RC_NUMBER)
                 ]
     }
 }
