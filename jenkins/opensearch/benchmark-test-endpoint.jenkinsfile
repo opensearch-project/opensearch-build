@@ -111,6 +111,8 @@ pipeline {
         parameterizedCron '''
             H 10 * * * %CLUSTER_ENDPOINT=vpc-aos-2-19-big5-cczkhj6jqnqncozqwweqt6true.us-east-1.es.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=es;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,arch:x64,instance-type:c5.2xlarge,service:aos,cluster-config:x64-c5.2xlarge-single-node-1-shards-0-replica-aos-219;INCLUDE_TASKS=type:search;CAPTURE_NODE_STAT=true
             H 10 * * * %CLUSTER_ENDPOINT=vpc-aos-2-17-big5-lmjc6dl2lct537wgud56l4uexm.us-east-1.es.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=es;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,arch:x64,instance-type:c5.2xlarge,service:aos,cluster-config:x64-c5.2xlarge-single-node-1-shards-0-replica-aos-217;INCLUDE_TASKS=type:search;CAPTURE_NODE_STAT=true
+            H 10 * * * %CLUSTER_ENDPOINT=g6h917k6rrc2hxkis97g.us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,arch:x64,instance-type:c5.2xlarge,service:aoss,cluster-config:x64-c5.2xlarge-single-node-1-shards-0-replica-aoss-217;INCLUDE_TASKS=type:search
+
         '''
     }
 
