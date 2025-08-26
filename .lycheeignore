@@ -14,3 +14,4 @@ https://www.dummy.com/*
 https://playground.opensearch.org/*
 file://*
 https://build.ci.opensearch.org/generic-webhook-trigger/invoke*
+https://aws.oss.sonatype.org/*
