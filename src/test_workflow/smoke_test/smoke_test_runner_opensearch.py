@@ -8,6 +8,7 @@
 import io
 import logging
 import os
+import re
 from logging import Handler
 from pathlib import Path
 from typing import Any, Tuple
@@ -68,7 +69,7 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
         logging.info("Response is validated.")
 
     def record_test_result(self, component: str, test_api: str, api_action: str, stdout: str, stderr: str) -> None:
-        test_config = f"{api_action}_{test_api.replace('/', '_')}"
+        test_config = f"{api_action}_{re.sub(r'[^a-zA-Z0-9]', '_', test_api)}"
         logging.info(f"Recording test result for {component} component, config {test_config}")
         file_path = self.test_recorder._create_base_folder_structure(component, test_config)
         self.test_recorder._generate_std_files(stdout, stderr, file_path)
@@ -129,7 +130,7 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
                             test_result = TestResult(component.name, ' '.join([api_requests, method]), status)  # type: ignore
                             test_result_data_local = TestResultData(
                                 component.name,
-                                f"{method}_{api_requests.replace('/', '_')}",
+                                f"{method}_{re.sub(r'[^a-zA-Z0-9]', '_', api_requests)}",
                                 status,
                                 info_buffer.getvalue(),
                                 error_buffer.getvalue(),

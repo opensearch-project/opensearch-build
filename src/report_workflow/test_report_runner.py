@@ -7,6 +7,7 @@
 
 import logging
 import os
+import re
 import typing
 import urllib.request
 from typing import Any
@@ -190,7 +191,7 @@ class TestReportRunner:
                 paths = data.get("paths", {})
                 for api_requests, api_details in paths.items():
                     for method in api_details.keys():
-                        api_path = "_".join([method, api_requests.replace("/", "_")])
+                        api_path = '_'.join([method, re.sub(r'[^a-zA-Z0-9]', '_', api_requests)])
                         logging.info(f"api_path is {api_path}")
                         api_paths.append(api_path)
                 break
