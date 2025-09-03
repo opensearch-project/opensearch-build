@@ -22,16 +22,11 @@ from test_workflow.test_args import TestArgs
 from test_workflow.test_recorder.test_recorder import TestRecorder
 
 
-class SmokeTestClusterOpenSearch():
+class SmokeTestClusterOpenSearch:
     # dependency_installer: DependencyInstallerOpenSearch
     repo: GitRepository
 
-    def __init__(
-        self,
-        args: TestArgs,
-        work_dir: str,
-        test_recorder: TestRecorder
-    ) -> None:
+    def __init__(self, args: TestArgs, work_dir: str, test_recorder: TestRecorder) -> None:
         self.args = args
         self.work_dir = work_dir
         self.test_recorder = test_recorder
@@ -53,9 +48,11 @@ class SmokeTestClusterOpenSearch():
     def download_or_copy_bundle(self, work_dir: str) -> str:
         extension = "tar.gz" if self.dist == "tar" else self.dist
         artifact_name = f"{self.product}-{self.version}-{self.platform}-{self.arch}.{extension}"
-        src_path = '/'.join([self.path.rstrip("/"), "dist", f"{self.product}", f"{artifact_name}"]) \
-            if self.path.startswith("https://") else os.path.join(self.path, "dist",
-                                                                  f"{self.product}", f"{artifact_name}")
+        src_path = (
+            "/".join([self.path.rstrip("/"), "dist", f"{self.product}", f"{artifact_name}"])
+            if self.path.startswith("https://")
+            else os.path.join(self.path, "dist", f"{self.product}", f"{artifact_name}")
+        )
         dest_path = os.path.join(work_dir, artifact_name)
 
         if src_path.startswith("https://"):
@@ -100,9 +97,7 @@ class SmokeTestClusterOpenSearch():
     def __save_local_cluster_logs__(self) -> None:
         dest_directory = os.path.join(self.test_recorder.location, "local-cluster-logs")
         os.makedirs(dest_directory, exist_ok=True)
-        logging.info(
-            f"Recording local cluster logs for at {dest_directory}"
-        )
+        logging.info(f"Recording local cluster logs for at {dest_directory}")
 
         self.test_recorder._generate_std_files(
             self.process_handler.stdout_data,
