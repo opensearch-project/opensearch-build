@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: lychee Link Checker
         id: lychee
-        uses: lycheeverse/lychee-action@v1
+        uses: lycheeverse/lychee-action@v2.0.2
         with:
           args: --verbose --max-retries 5 --retry-wait-time 10 --accept=200,403,429 --exclude-path tests/ --exclude-path release-notes/ ./
           fail: true
