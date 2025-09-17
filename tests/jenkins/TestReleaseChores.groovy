@@ -25,7 +25,7 @@ class TestReleaseChores extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('9.6.0')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -39,7 +39,11 @@ class TestReleaseChores extends BuildPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
-        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        binding.setVariable('METRICS_HOST_ACCOUNT', "METRICS_HOST_ACCOUNT")
         super.setUp()
     }
 

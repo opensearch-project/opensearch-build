@@ -20,7 +20,7 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('1.0.4')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -36,6 +36,10 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
 
         // this.registerLibTester(new SignArtifactsLibTester(sigtype, platform, artifactPath, null, null))
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
+        binding.setVariable('SIGNER_CLIENT_ROLE', 'SIGNER_CLIENT_ROLE')
+        binding.setVariable('SIGNER_CLIENT_EXTERNAL_ID', 'SIGNER_CLIENT_EXTERNAL_ID')
+        binding.setVariable('SIGNER_CLIENT_UNSIGNED_BUCKET', 'SIGNER_CLIENT_UNSIGNED_BUCKET')
+        binding.setVariable('SIGNER_CLIENT_SIGNED_BUCKET', 'SIGNER_CLIENT_SIGNED_BUCKET')
         helper.registerAllowedMethod('git', [Map])
         helper.registerAllowedMethod('withAWS', [Map, Closure], { args, closure ->
             closure.delegate = delegate

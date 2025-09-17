@@ -19,7 +19,7 @@ class TestOpenSearchDashboardsBwcTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('10.1.0')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -56,15 +56,13 @@ class TestOpenSearchDashboardsBwcTest extends BuildPipelineTest {
         env['DOCKER_AGENT'] = [image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
         
-        helper.registerAllowedMethod("withCredentials", [Map])
-
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             return new Yaml().load((this.testManifest ?: binding.getVariable('TEST_MANIFEST') as File).text)
         })
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             return new Yaml().load((buildManifest as File).text)
         })
-        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
         })

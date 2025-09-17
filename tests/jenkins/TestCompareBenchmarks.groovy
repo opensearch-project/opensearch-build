@@ -28,7 +28,7 @@ class TestCompareBenchmarks extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('6.8.2')
+                        .defaultVersion('11.0.1')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -70,6 +70,10 @@ class TestCompareBenchmarks extends BuildPipelineTest {
         binding.setVariable('CONTENDER_TEST_EXECUTION_ID', 'contender-id')
         binding.setVariable('GITHUB_USER', "GITHUB_USER")
         binding.setVariable('GITHUB_TOKEN', "GITHUB_TOKEN")
+        binding.setVariable('DATASTORE_USER', 'DATASTORE_USER')
+        binding.setVariable('DATASTORE_PASSWORD', 'DATASTORE_PASSWORD')
+        binding.setVariable('DATASTORE_ENDPOINT', 'DATASTORE_ENDPOINT')
+        binding.setVariable('PERF_TEST_ACCOUNT_ID', 'PERF_TEST_ACCOUNT_ID')
     }
 
     @Test

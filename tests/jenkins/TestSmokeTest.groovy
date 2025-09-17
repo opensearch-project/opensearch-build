@@ -23,7 +23,7 @@ class TestSmokeTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('10.1.0')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -49,12 +49,17 @@ class TestSmokeTest extends BuildPipelineTest {
         binding.setVariable('AGENT_LABEL', agentLabel)
         binding.setVariable('BUILD_NUMBER', '234')
         binding.setVariable('ARTIFACT_BUCKET_NAME', bucketName)
+        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'AWS_ACCOUNT_PUBLIC')
         binding.setVariable('RUN_DISPLAY_URL', 'https://some/url/redirect')
         binding.setVariable('COMPONENT_NAME', '' )
         binding.setVariable('RC_NUMBER', '0')
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
@@ -87,7 +92,7 @@ class TestSmokeTest extends BuildPipelineTest {
         super.testPipeline('jenkins/opensearch/smoke-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch/smoke-test.jenkinsfile')
         assertThat(getCommandExecutions('sh', 'test.sh'), hasItem(' ./test.sh smoke-test manifests/tests/jenkins/data/opensearch-2.19.0-test.yml --test-run-id 234 --paths opensearch=https://ci.opensearch.org/ci/dbc/dummy_job/2.19.0/10545/linux/x64/tar '))
-        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=dummy_job/2.19.0/10545/linux/x64/tar/test-results}'))
+        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=job-s3-bucket-name, path=dummy_job/2.19.0/10545/linux/x64/tar/test-results}'))
         assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-2.19.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.0/10545/linux/x64/tar --test-run-id 234 --test-type smoke-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/2.19.0/10545/linux/x64/tar --release-candidate 0 '))
         assertCallStack().contains('smoke-test.publishSmokeTestResults({distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch/detail/distribution-build-opensearch/10545/pipeline, jobName=dummy_job, testReportManifestYml=test-report.yml})')
 
@@ -117,7 +122,7 @@ class TestSmokeTest extends BuildPipelineTest {
         super.testPipeline('jenkins/opensearch/smoke-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch/smoke-test-rpm.jenkinsfile')
         assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('su `id -un 1000` -c \" ./test.sh smoke-test manifests/tests/jenkins/data/opensearch-2.19.0-test.yml --test-run-id 234 --paths opensearch=https://ci.opensearch.org/ci/dbc/dummy_job/2.19.0/10691/linux/arm64/rpm \"'))
-        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=/tmp/workspace/test-report.yml, bucket=ARTIFACT_BUCKET_NAME, path=dummy_job/2.19.0/10691/linux/arm64/rpm/test-results/234/smoke-test/test-report.yml}'))
+        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=/tmp/workspace/test-report.yml, bucket=job-s3-bucket-name, path=dummy_job/2.19.0/10691/linux/arm64/rpm/test-results/234/smoke-test/test-report.yml}'))
         assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-2.19.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.0/10691/linux/arm64/rpm --test-run-id 234 --test-type smoke-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/2.19.0/10691/linux/arm64/rpm --release-candidate 0 '))
         assertCallStack().contains('smoke-test.publishSmokeTestResults({distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch/detail/distribution-build-opensearch/10691/pipeline, jobName=dummy_job, testReportManifestYml=test-report.yml})')
     }

@@ -25,7 +25,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('10.1.0')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -63,6 +63,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         binding.setVariable('distribution', 'tar' )
         binding.setVariable('COMPONENT_NAME', '' )
         binding.setVariable('RC_NUMBER', '0')
+        binding.setVariable('AWS_ACCOUNT_NUMBER', 'AWS_ACCOUNT_NUMBER')
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
@@ -109,7 +110,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
     @Test
     void checkUploadResults() {
         runScript('jenkins/opensearch/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=dummy_job/3.0.0/9010/linux/x64/tar/test-results}'))
+        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=job-s3-bucket-name, path=dummy_job/3.0.0/9010/linux/x64/tar/test-results}'))
     }
 
     @Test

@@ -29,7 +29,7 @@ class TestDockerCopy extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('5.2.0')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -44,6 +44,12 @@ class TestDockerCopy extends BuildPipelineTest {
         binding.setVariable('SOURCE_IMAGE', sourceImage)
         binding.setVariable('DESTINATION_IMAGE_REGISTRY', destinationImageRegistry)
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
+        binding.setVariable('DOCKER_USERNAME', 'DOCKER_USERNAME')
+        binding.setVariable('DOCKER_PASSWORD', 'DOCKER_PASSWORD')
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
 
     }
 

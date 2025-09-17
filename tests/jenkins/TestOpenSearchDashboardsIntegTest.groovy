@@ -26,7 +26,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('10.1.0')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -72,6 +72,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         binding.setVariable('COMPONENT_NAME', '' )
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
         binding.setVariable('RC_NUMBER', '0')
+        binding.setVariable('AWS_ACCOUNT_NUMBER', 'AWS_ACCOUNT_NUMBER')
         def env = binding.getVariable('env')
         env['DOCKER_AGENT'] = [image:'opensearchstaging/opensearchstaging/ci-runner:ci-runner-almallinux8-opensearch-dashboards-integtest-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']
         env['PUBLIC_ARTIFACT_URL'] = 'DUMMY_PUBLIC_ARTIFACT_URL'
@@ -97,10 +98,6 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         helper.registerAllowedMethod('isUnix', [], { true })
 
         helper.registerAllowedMethod('parameterizedCron', [String], null)
-        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
-            closure.delegate = delegate
-            return helper.callClosure(closure)
-        })
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
@@ -153,7 +150,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
     @Test
     void checkUploadResults() {
         runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=dummy_job/3.0.0/215/linux/x64/tar/test-results}'))
+        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=job-s3-bucket-name, path=dummy_job/3.0.0/215/linux/x64/tar/test-results}'))
     }
 
     @Test
