@@ -27,7 +27,7 @@ class TestReleaseTag extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('1.0.4')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -37,11 +37,16 @@ class TestReleaseTag extends BuildPipelineTest {
         super.setUp()
         addParam('VERSION', releaseVersion)
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
+        binding.setVariable('GITHUB_TOKEN', 'GITHUB_TOKEN')
         binding.setVariable('env', [
             'VERSION': releaseVersion,
             'OS_DISTRIBUTION_MANIFEST': 'opensearch-2.16.0/manifest.yml',
             'OSD_DISTRIBUTION_MANIFEST': 'opensearch-dashboards-2.16.0/manifest.yml'
             ])
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             if (args.file == 'opensearch-2.16.0/manifest.yml') {
                 return new Yaml().load(('tests/jenkins/data/opensearch-dist-2.16.0.yml' as File).text)

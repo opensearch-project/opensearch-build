@@ -12,7 +12,7 @@ def secret_dockerhub_readonly = [
     [envVar: 'DOCKER_PASSWORD', secretRef: 'op://opensearch-infra-secrets/dockerhub-production-readonly-credentials/password']
 ]
 
-lib = library(identifier: 'jenkins@8.2.3', retriever: modernSCM([
+lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))

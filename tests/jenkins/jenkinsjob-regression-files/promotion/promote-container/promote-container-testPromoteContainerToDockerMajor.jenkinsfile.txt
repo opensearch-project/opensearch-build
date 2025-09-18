@@ -1,6 +1,6 @@
    promote-docker-ecr.run()
       promote-docker-ecr.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      promote-docker-ecr.library({identifier=jenkins@1.0.4, retriever=null})
+      promote-docker-ecr.library({identifier=jenkins@11.0.1, retriever=null})
       promote-docker-ecr.pipeline(groovy.lang.Closure)
          promote-docker-ecr.timeout({time=1, unit=HOURS})
          promote-docker-ecr.echo(Executing on agent [docker:[alwaysPull:false, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])

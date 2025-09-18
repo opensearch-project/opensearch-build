@@ -22,7 +22,7 @@ class TestPublishToMaven extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('10.2.2')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -35,6 +35,11 @@ class TestPublishToMaven extends BuildPipelineTest {
         binding.setVariable("ARTIFACT_BUCKET_NAME", "dummy-prod-bucket")
         binding.setVariable("BUILD_NUMBER", "234")
         binding.setVariable("GITHUB_BOT_TOKEN_NAME", "dummy_token")
+        binding.setVariable("AWS_ACCOUNT_NUMBER", "AWS_ACCOUNT_NUMBER")
+        binding.setVariable('SIGNER_CLIENT_ROLE', 'SIGNER_CLIENT_ROLE')
+        binding.setVariable('SIGNER_CLIENT_EXTERNAL_ID', 'SIGNER_CLIENT_EXTERNAL_ID')
+        binding.setVariable('SIGNER_CLIENT_UNSIGNED_BUCKET', 'SIGNER_CLIENT_UNSIGNED_BUCKET')
+        binding.setVariable('SIGNER_CLIENT_SIGNED_BUCKET', 'SIGNER_CLIENT_SIGNED_BUCKET')
         binding.setVariable("SONATYPE_STAGING_PROFILE_ID", "stag_abcd")
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate

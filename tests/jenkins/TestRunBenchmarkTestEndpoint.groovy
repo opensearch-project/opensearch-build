@@ -26,7 +26,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('10.3.0')
+                        .defaultVersion('11.0.1')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -44,8 +44,11 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
                 closure.delegate = delegate
                 return helper.callClosure(closure)
         })
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod('findFiles', [Map.class], null)
-        helper.registerAllowedMethod("withCredentials", [Map])
         binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
         binding.setVariable('ARCHITECTURE', 'x64')
@@ -70,6 +73,9 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
         binding.setVariable('STAGE_NAME', 'test_stage')
         binding.setVariable('TEST_WORKLOAD', 'nyc-taxis')
         binding.setVariable('TELEMETRY_PARAMS', '{"telemetry_setting":"value"}')
+        binding.setVariable('DATASTORE_USER', 'DATASTORE_USER')
+        binding.setVariable('DATASTORE_PASSWORD', 'DATASTORE_PASSWORD')
+        binding.setVariable('PERF_TEST_ACCOUNT_ID', 'PERF_TEST_ACCOUNT_ID')
         super.setUp()
     }
 
@@ -101,7 +107,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
 
         assertThat(s3DownloadCommands.size(), equalTo(1))
         assertThat(s3DownloadCommands, hasItems(
-                "{file=benchmark.ini, bucket=ARTIFACT_BUCKET_NAME, path=test_config/benchmark.ini, force=true}".toString()
+                "{file=benchmark.ini, bucket=test_bucket, path=test_config/benchmark.ini, force=true}"
         ))
     }
 

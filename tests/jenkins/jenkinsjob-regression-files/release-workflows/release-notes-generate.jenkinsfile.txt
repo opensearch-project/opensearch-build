@@ -1,6 +1,6 @@
    release-notes-generate.run()
       release-notes-generate.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      release-notes-generate.library({identifier=jenkins@10.2.2, retriever=null})
+      release-notes-generate.library({identifier=jenkins@11.0.1, retriever=null})
       release-notes-generate.pipeline(groovy.lang.Closure)
          release-notes-generate.timeout({time=2, unit=HOURS})
          release-notes-generate.echo(Executing on agent [label:none])

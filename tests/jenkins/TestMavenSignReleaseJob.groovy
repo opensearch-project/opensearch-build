@@ -19,7 +19,7 @@ import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('9.1.2')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')

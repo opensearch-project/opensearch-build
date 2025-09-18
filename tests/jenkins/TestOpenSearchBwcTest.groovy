@@ -19,7 +19,7 @@ class TestOpenSearchBwcTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('10.1.0')
+                .defaultVersion('11.0.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -62,7 +62,7 @@ class TestOpenSearchBwcTest extends BuildPipelineTest {
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             return new Yaml().load((buildManifest as File).text)
         })
-        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+        helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
         })

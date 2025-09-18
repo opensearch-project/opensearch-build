@@ -1,6 +1,6 @@
    validate-artifacts.run()
       validate-artifacts.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      validate-artifacts.library({identifier=jenkins@6.3.2, retriever=null})
+      validate-artifacts.library({identifier=jenkins@11.0.1, retriever=null})
       validate-artifacts.pipeline(groovy.lang.Closure)
          validate-artifacts.timeout({time=1, unit=HOURS})
          validate-artifacts.echo(Executing on agent [label:none])
