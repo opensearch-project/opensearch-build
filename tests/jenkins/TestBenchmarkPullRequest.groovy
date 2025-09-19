@@ -28,7 +28,7 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('11.0.1')
+                        .defaultVersion('9.1.2')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -75,9 +75,6 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'bot_token_name')
         binding.setVariable('GITHUB_USER', 'test_user')
         binding.setVariable('GITHUB_TOKEN', 'test_token')
-        binding.setVariable('DATASTORE_USER', 'DATASTORE_USER')
-        binding.setVariable('DATASTORE_PASSWORD', 'DATASTORE_PASSWORD')
-        binding.setVariable('DATASTORE_ENDPOINT', 'DATASTORE_ENDPOINT')
         binding.setVariable('HAS_SECURITY', 'false')
         binding.setVariable('SINGLE_NODE_CLUSTER', 'true')
         binding.setVariable('MIN_DISTRIBUTION', 'true')
@@ -155,7 +152,7 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
         }
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "set +x && ./test.sh benchmark-test execute-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security      --single-node --min-distribution --use-50-percent-heap     --suffix 307      --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100"
+                "set +x && ./test.sh benchmark-test execute-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security   --single-node --min-distribution --use-50-percent-heap     --suffix 307      --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100".toString()
         ))
 
         def testGhCliCommand = getCommandExecutions('sh', 'gh').findAll {
