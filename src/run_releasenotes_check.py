@@ -70,7 +70,7 @@ def main() -> int:
         end_index = url.find(".release-notes", start_index)
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
-        component_name = url[start_index + len("release-notes/") : end_index]
+        component_name = url[start_index + len("release-notes/"): end_index]
         if component_name == "opensearch-sql":
             component_name = "SQL"
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
@@ -157,7 +157,7 @@ def main() -> int:
                             if i == len(headings) - 1:
                                 content_to_end = content[content_start:]
                             else:
-                                content_to_end = content[content_start : content.find(headings[i + 1])]
+                                content_to_end = content[content_start: content.find(headings[i + 1])]
                         content_to_end = content_to_end.replace(f"### {heading}", "").lstrip()
                         parts = content_to_end.split("*", 1)
                         if len(parts) == 2:
