@@ -35,16 +35,10 @@ class LocalTestCluster(TestCluster):
         security_enabled: bool,
         component_test_config: str,
         test_recorder: TestRecorder,
-        cluster_port: int = 9200
+        cluster_port: int = 9200,
     ) -> None:
         super().__init__(
-            work_dir,
-            component_name,
-            component_test_config,
-            security_enabled,
-            additional_cluster_config,
-            test_recorder.local_cluster_logs,
-            cluster_port
+            work_dir, component_name, component_test_config, security_enabled, additional_cluster_config, test_recorder.local_cluster_logs, cluster_port
         )
 
         self.cluster_port = cluster_port
@@ -58,7 +52,7 @@ class LocalTestCluster(TestCluster):
             self.security_enabled,
             self.dependency_installer,
             self.work_dir,
-            self.cluster_port
+            self.cluster_port,
         )
 
     @property
