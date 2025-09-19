@@ -108,7 +108,8 @@ class ReleaseNotes:
                 ai_generator = AIReleaseNotesGenerator(
                     args=args,
                 )
-                filename: str = f"{product}{release_notes.filename}" if component.name in ['OpenSearch', 'OpenSearch-Dashboards'] else f"{product}-{component.name}{release_notes.filename}"
+                repo_name = component.repository.split("/")[-1].split('.')[0]
+                filename: str = f"{product}{release_notes.filename}" if component.name in ['OpenSearch', 'OpenSearch-Dashboards'] else f"opensearch-{repo_name}{release_notes.filename}"
 
                 if os.path.isfile(changelog_path):
                     with open(changelog_path, 'r') as f:
