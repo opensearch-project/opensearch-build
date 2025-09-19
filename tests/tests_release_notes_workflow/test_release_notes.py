@@ -192,8 +192,8 @@ class TestReleaseNotes(unittest.TestCase):
     @patch('builtins.open', new_callable=mock_open)
     @patch('os.getcwd')
     def test_filename_generation(self, mock_getcwd: MagicMock, mock_file_open: MagicMock, mock_isfile: MagicMock,
-                              mock_ai_generator_class: MagicMock, mock_release_notes_components: MagicMock,
-                              mock_git_repo: MagicMock, mock_temp_dir: MagicMock) -> None:
+                                 mock_ai_generator_class: MagicMock, mock_release_notes_components: MagicMock,
+                                 mock_git_repo: MagicMock, mock_temp_dir: MagicMock) -> None:
         """Test the filename generation logic for release notes, specifically the updated repo name extraction."""
         # Setup mocks
         mock_getcwd.return_value = os.path.join("test", "dir")
