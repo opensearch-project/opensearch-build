@@ -203,6 +203,8 @@ components:
       test-configs:
         - with-security
         - without-security
+    smoke-test:
+      test-spec: ubi.yml
   - name: search-relevance
     integ-test:
       test-configs:
