@@ -6,10 +6,10 @@
 # compatible open source license.
 
 import os
+from pathlib import Path
 
 from assemble_workflow.bundle import Bundle
 from manifests.build_manifest import BuildComponent
-from pathlib import Path
 from system.os import current_platform
 
 
