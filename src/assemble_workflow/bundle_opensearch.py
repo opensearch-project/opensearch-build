@@ -6,6 +6,7 @@
 # compatible open source license.
 
 import os
+from pathlib import Path
 
 from assemble_workflow.bundle import Bundle
 from manifests.build_manifest import BuildComponent
@@ -20,5 +21,6 @@ class BundleOpenSearch(Bundle):
     def install_plugin(self, plugin: BuildComponent) -> None:
         tmp_path = self._copy_component(plugin, "plugins")
         cli_path = os.path.join(self.min_dist.archive_path, "bin", self.install_plugin_script)
-        self._execute(f"{cli_path} install --batch file:{tmp_path}")
+        uri = Path(tmp_path).as_uri()
+        self._execute(f"{cli_path} install --batch {uri}")
         super().install_plugin(plugin)
