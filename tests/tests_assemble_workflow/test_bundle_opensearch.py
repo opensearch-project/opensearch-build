@@ -8,6 +8,7 @@
 import os
 import unittest
 import zipfile
+from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, patch
 
 from assemble_workflow.bundle_opensearch import BundleOpenSearch
@@ -193,7 +194,7 @@ class TestBundleOpenSearch(unittest.TestCase):
                 mock_check_call.assert_has_calls(
                     [
                         call(
-                            f'{install_plugin_bin} install --batch file:{os.path.join(bundle.tmp_dir.name, "opensearch-job-scheduler-1.1.0.0.zip")}',
+                            f'{install_plugin_bin} install --batch {Path(os.path.join(bundle.tmp_dir.name, "opensearch-job-scheduler-1.1.0.0.zip")).as_uri()}',
                             cwd=bundle.min_dist.archive_path,
                             shell=True,
                         ),
