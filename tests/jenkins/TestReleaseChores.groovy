@@ -25,7 +25,7 @@ class TestReleaseChores extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('11.0.1')
+                .defaultVersion('11.1.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -62,7 +62,7 @@ class TestReleaseChores extends BuildPipelineTest {
         addParam('ACTION', 'check')
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
-        assertCallStack().contains('release-chores.groovyScript({fallbackScript={classpath=[], oldScript=, sandbox=true, script=return ["Unknown chore"]}, script={classpath=[], oldScript=, sandbox=true, script=return [ "checkReleaseOwners", "checkDocumentation", "checkCodeCoverage", "checkReleaseNotes", "checkReleaseIssues", "addRcDetailsComment", "checkDocumentationPullRequests", "checkIntegTestResultsOverview" ]}})',
+        assertCallStack().contains('release-chores.groovyScript({fallbackScript={classpath=[], oldScript=, sandbox=true, script=return ["Unknown chore"]}, script={classpath=[], oldScript=, sandbox=true, script=return [ "checkReleaseOwners", "checkDocumentation", "checkCodeCoverage", "checkReleaseNotes", "checkReleaseIssues", "buildRC", "addRcDetailsComment", "checkDocumentationPullRequests", "checkIntegTestResultsOverview" ]}})',
         'release-chores.activeChoice({name=RELEASE_CHORE, choiceType=PT_SINGLE_SELECT, description=Release chore to carry out, filterLength=1, filterable=false, randomName=choice-parameter-338807851658059, script=null})',
         'release-chores.groovyScript({fallbackScript={classpath=[], oldScript=, sandbox=true, script= return ["Unknown action"]}, script={classpath=[], oldScript=, sandbox=true, script=if (RELEASE_CHORE == "checkReleaseOwners") {\n' +
                 '                    return ["check", "request", "assign" ]\n' +
@@ -80,8 +80,9 @@ class TestReleaseChores extends BuildPipelineTest {
                 '                    return ["check"]\n' +
                 '                    } else if (RELEASE_CHORE == "addRcDetailsComment") {\n' +
                 '                    return ["add"]\n' +
-                '                    }\n' +
-                '                    else {\n' +
+                '                    } else if (RELEASE_CHORE == "buildRC") {\n' +
+                '                    return ["both", "opensearch", "opensearch-dashboards"]\n' +
+                '                    } else {\n' +
                 '                    return ["Unknown chore"]\n' +
                 '                    }}})',
         'release-chores.reactiveChoice({name=ACTION, choiceType=PT_SINGLE_SELECT, description=Release chore action, filterLength=1, filterable=false, randomName=choice-parameter-338807853238106, referencedParameters=RELEASE_CHORE, script=null})')
