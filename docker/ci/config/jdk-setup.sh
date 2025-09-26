@@ -29,6 +29,7 @@ case "${ARCH}" in
        JDKS+="e184dc29a6712c1f78754ab36fb48866583665fa345324f1a79e569c064f95e9@https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jdk_aarch64_linux_hotspot_21.0.1_12.tar.gz "
        JDKS+="e8043d1bd9c4f42c5cf7883aca1fc3ef6bcccf4a664f378818ac0fd4fb987b7e@https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jdk_aarch64_linux_hotspot_23_37.tar.gz "
        JDKS+="a598260e340028d9b2383c23df16aa286769a661bd3bf28a52e8c1a5774b1110@https://github.com/adoptium/temurin24-binaries/releases/download/jdk-24.0.1%2B9/OpenJDK24U-jdk_aarch64_linux_hotspot_24.0.1_9.tar.gz "
+       JDKS+="pending "
        ;;
    amd64|x86_64)
        # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
@@ -41,6 +42,7 @@ case "${ARCH}" in
        JDKS+="1a6fa8abda4c5caed915cfbeeb176e7fbd12eb6b222f26e290ee45808b529aa1@https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz "
        JDKS+="630c4f3870056e7e005736ec1edc34ee63a9b45e2027582c52f53a9bf44314b8@https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jdk_x64_linux_hotspot_23_37.tar.gz "
        JDKS+="78832cb5ea4074f2215cde0d01d6192d09c87636fc24b36647aea61fb23b8272@https://github.com/adoptium/temurin24-binaries/releases/download/jdk-24.0.1%2B9/OpenJDK24U-jdk_x64_linux_hotspot_24.0.1_9.tar.gz "
+       JDKS+="ee04de95ab9da7287d40bd2173076ecc2a6dd662f007bedfc6eb0380c0ef90e8@https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25%2B36/OpenJDK25U-jdk_x64_linux_hotspot_25_36.tar.gz "
        ;;
    ppc64le)
        # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
@@ -52,6 +54,7 @@ case "${ARCH}" in
        JDKS+="45dde71faf8cbb78fab3c976894259655c8d3de827347f23e0ebe5710921dded@https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20%2B36/OpenJDK20U-jdk_ppc64le_linux_hotspot_20_36.tar.gz "
        JDKS+="4d3b0609c783dea1f6a899bfc8c84b4000d1f48f39e2489d70050bbf2c7f7d9c@https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jdk_ppc64le_linux_hotspot_23_37.tar.gz "
        JDKS+="770e7e506d5ea3baf6c4c9004a82648e29508a1c731d8425acded34906e91b09@https://github.com/adoptium/temurin24-binaries/releases/download/jdk-24.0.1%2B9/OpenJDK24U-jdk_ppc64le_linux_hotspot_24.0.1_9.tar.gz "
+       JDKS+="b060bb12b3a192a0599f03ebb9495492f78c48cb61e291e336a8b00e7798ffb0@https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25%2B36/OpenJDK25U-jdk_ppc64le_linux_hotspot_25_36.tar.gz "
        ;;
    *)
        echo "Unsupported arch: ${ARCH}"
