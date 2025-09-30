@@ -53,7 +53,7 @@ parameters {
                     } else if (RELEASE_CHORE == "checkCodeCoverage") {
                     return ["check", "notify"]
                     } else if (RELEASE_CHORE == "checkReleaseNotes") {
-                    return ["check", "notify"]
+                    return ["check", "create", "compile", "notify"]
                     } else if (RELEASE_CHORE == "checkReleaseIssues") {
                     return ["check", "create"]
                     } else if (RELEASE_CHORE == "checkDocumentationPullRequests") {
@@ -155,20 +155,52 @@ parameters {
             }
             steps {
                 script {
-                    if (params.GIT_LOG_DATE.isEmpty()) {
-                        currentBuild.result = 'ABORTED'
-                        error('GIT_LOG_DATE parameter cannot be empty for checkReleaseNotes')
+                    switch(params.ACTION) {
+                        case 'check':
+                            echo "Checking release notes"
+                            checkAndNotifyReleaseNotes()
+                            break
+                        case 'create':
+                            if (params.GIT_LOG_DATE.isEmpty()) {
+                                currentBuild.result = 'ABORTED'
+                                error('GIT_LOG_DATE parameter cannot be empty for checkReleaseNotes')
+                            }
+                            echo "Creating release notes for all components by triggering release-notes-generate job"
+                            build job: 'release-notes-generate', 
+                            propagate: true,
+                            wait: true,
+                            parameters: [
+                                string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
+                                string(name: 'GIT_LOG_DATE', value: "${params.GIT_LOG_DATE}")
+                            ]
+
+                            build job: 'release-notes-generate', 
+                            propagate: true,
+                            wait: true,
+                            parameters: [
+                                string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                string(name: 'GIT_LOG_DATE', value: "${params.GIT_LOG_DATE}")
+                            ]
+                            break
+                        case 'compile':
+                            echo "Creating consolidated release notes by triggering release-notes-tracker job"
+                            build job: 'release-notes-tracker', 
+                            propagate: true,
+                            wait: true,
+                            parameters: [
+                                string(name: 'RELEASE_VERSION', value: "${params.RELEASE_VERSION}"),
+                                string(name: 'ACTION', value: 'compile'),
+                                string(name: 'GIT_LOG_DATE', value: "${params.GIT_LOG_DATE}")
+                            ]
+                            break
+                        case 'notify':
+                            echo "Notifying release notes"
+                            checkAndNotifyReleaseNotes()
+                            break
+                        default:
+                            currentBuild.result = 'ABORTED'
+                            error("Unknown action ${params.ACTION} for checkReleaseNotes")
                     }
-                    sh """
-                        #!/bin/bash
-                        set +e
-                        ./release_notes.sh check manifests/${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml manifests/${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml --date ${params.GIT_LOG_DATE} --output ${WORKSPACE}/table.md
-                    """
-                    checkReleaseNotes(
-                        version: "${params.RELEASE_VERSION}",
-                        dataTable: "${WORKSPACE}/table.md",
-                        action: "${params.ACTION}"
-                        )
                 }
             }
         }
@@ -243,4 +275,21 @@ parameters {
             }
         }
     }
+}
+
+def checkAndNotifyReleaseNotes() {
+        if (params.GIT_LOG_DATE.isEmpty()) {
+            currentBuild.result = 'ABORTED'
+            error('GIT_LOG_DATE parameter cannot be empty for checkReleaseNotes')
+        }                    
+        sh """
+            #!/bin/bash
+            set +e
+            ./release_notes.sh check manifests/${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml manifests/${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml --date ${params.GIT_LOG_DATE} --output ${WORKSPACE}/table.md
+        """
+        checkReleaseNotes(
+            version: "${params.RELEASE_VERSION}",
+            dataTable: "${WORKSPACE}/table.md",
+            action: "${params.ACTION}"
+            )
 }
