@@ -47,7 +47,6 @@ pipeline {
         )
         string(
             name: 'REF',
-            defaultValue: 'main',
             description: 'Override input component github repo ref, defaults to provided in input manifest file',
             trim: true
         )
