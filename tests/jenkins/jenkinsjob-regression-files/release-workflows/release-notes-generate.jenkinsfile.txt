@@ -7,7 +7,7 @@
          release-notes-generate.stage(Parameters Check, groovy.lang.Closure)
             release-notes-generate.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host])
             release-notes-generate.script(groovy.lang.Closure)
-         release-notes-generate.stage(Generate consolidated release notes, groovy.lang.Closure)
+         release-notes-generate.stage(Generate release notes, groovy.lang.Closure)
             release-notes-generate.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host])
             release-notes-generate.script(groovy.lang.Closure)
                release-notes-generate.readYaml({file=manifests/null})
