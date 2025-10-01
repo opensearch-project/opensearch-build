@@ -106,10 +106,11 @@ pipeline {
                                                             filename = "${productName}-${currentComponent}.release-notes-${version}.0.md"
                                                         }
                                                         withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                                            def refParam = params.REF ? "--ref ${REF}" : ""
                                                             sh """
                                                                 #!/bin/bash
                                                                 set +e
-                                                                ./release_notes.sh generate manifests/${INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} --ref ${REF}
+                                                                ./release_notes.sh generate manifests/${INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} ${refParam}
 
                                                                 if [ \$? -ne 0 ]; then
                                                                     echo "Release notes generation failed for component ${currentComponent}"
