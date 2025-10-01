@@ -38,12 +38,14 @@ pipeline {
         string(
             name: 'MODEL_ID',
             description: 'AWS Bedrock model id to use, defaults to Anthropic Claude 3.7v2',
-            trim: true
+            trim: true,
+            defaultValue: 'us.anthropic.claude-3-7-sonnet-20250219-v1:0'
         )
         string(
             name: 'MAX_TOKENS',
-            description: 'Max number of tokens to use for supplied model id, defaults to 2000',
-            trim: true
+            description: 'Max number of tokens to use for supplied model id, defaults to 4000',
+            trim: true,
+            defaultValue: '4000'
         )
         string(
             name: 'REF',
