@@ -29,7 +29,7 @@ case "${ARCH}" in
        JDKS+="e184dc29a6712c1f78754ab36fb48866583665fa345324f1a79e569c064f95e9@https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jdk_aarch64_linux_hotspot_21.0.1_12.tar.gz "
        JDKS+="e8043d1bd9c4f42c5cf7883aca1fc3ef6bcccf4a664f378818ac0fd4fb987b7e@https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jdk_aarch64_linux_hotspot_23_37.tar.gz "
        JDKS+="a598260e340028d9b2383c23df16aa286769a661bd3bf28a52e8c1a5774b1110@https://github.com/adoptium/temurin24-binaries/releases/download/jdk-24.0.1%2B9/OpenJDK24U-jdk_aarch64_linux_hotspot_24.0.1_9.tar.gz "
-       JDKS+="pending "
+       JDKS+="95716d04bdfc8b10c94f4448ea8d57a3ba872d98b53c752e4c6b48f1c95bc582@https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25%2B36/OpenJDK25U-jdk_aarch64_linux_hotspot_25_36.tar.gz "
        ;;
    amd64|x86_64)
        # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
