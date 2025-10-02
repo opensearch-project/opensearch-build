@@ -7,7 +7,7 @@
          release-notes-generate.stage(Parameters Check, groovy.lang.Closure)
             release-notes-generate.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host])
             release-notes-generate.script(groovy.lang.Closure)
-         release-notes-generate.stage(Generate consolidated release notes, groovy.lang.Closure)
+         release-notes-generate.stage(Generate release notes, groovy.lang.Closure)
             release-notes-generate.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host])
             release-notes-generate.script(groovy.lang.Closure)
                release-notes-generate.readYaml({file=manifests/null})
@@ -24,7 +24,7 @@
                            release-notes-generate.sh(
                                                                 #!/bin/bash
                                                                 set +e
-                                                                ./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --ref main
+                                                                ./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 
 
                                                                 if [ $? -ne 0 ]; then
                                                                     echo "Release notes generation failed for component OpenSearch"
@@ -78,7 +78,7 @@
                            release-notes-generate.sh(
                                                                 #!/bin/bash
                                                                 set +e
-                                                                ./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000 --ref main
+                                                                ./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000 
 
                                                                 if [ $? -ne 0 ]; then
                                                                     echo "Release notes generation failed for component sql"

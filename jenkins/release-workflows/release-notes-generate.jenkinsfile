@@ -27,7 +27,7 @@ pipeline {
         )
         string(
             name: 'GIT_LOG_DATE',
-            description: 'in format yyyy-mm-dd, example 2022-07-26.',
+            description: 'Required: in format yyyy-mm-dd, example 2022-07-26.',
             trim: true
         )
         string(
@@ -37,19 +37,19 @@ pipeline {
         )
         string(
             name: 'MODEL_ID',
-            description: 'AWS Bedrock model id to use, defaults to Anthropic Claude 3.7v2',
+            description: 'Optional: AWS Bedrock model id to use, defaults to Anthropic Claude 3.7v2',
             trim: true,
             defaultValue: 'us.anthropic.claude-3-7-sonnet-20250219-v1:0'
         )
         string(
             name: 'MAX_TOKENS',
-            description: 'Max number of tokens to use for supplied model id, defaults to 4000',
+            description: 'Optional: Max number of tokens to use for supplied model id, defaults to 4000',
             trim: true,
             defaultValue: '4000'
         )
         string(
             name: 'REF',
-            description: 'Override input component github repo ref, defaults to provided in input manifest file',
+            description: 'Optional: Override input component github repo ref, defaults to provided in input manifest file',
             trim: true
         )
     }
@@ -65,7 +65,7 @@ pipeline {
                 }
             }
         }
-        stage('Generate consolidated release notes') {
+        stage('Generate release notes') {
             agent { label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host' }
             steps {
                 script {
@@ -106,10 +106,11 @@ pipeline {
                                                             filename = "${productName}-${currentComponent}.release-notes-${version}.0.md"
                                                         }
                                                         withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                                            def refParam = params.REF ? "--ref ${REF}" : ""
                                                             sh """
                                                                 #!/bin/bash
                                                                 set +e
-                                                                ./release_notes.sh generate manifests/${INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} --ref ${REF}
+                                                                ./release_notes.sh generate manifests/${INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} ${refParam}
 
                                                                 if [ \$? -ne 0 ]; then
                                                                     echo "Release notes generation failed for component ${currentComponent}"
