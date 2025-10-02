@@ -13,15 +13,13 @@ from unittest.mock import Mock, call, mock_open, patch
 
 import requests
 
+from system.os import current_platform
 from system.temporary_directory import TemporaryDirectory
 from validation_workflow.api_request import ApiTest
 from validation_workflow.docker.validation_docker import ValidateDocker
 from validation_workflow.tar.validation_tar import ValidateTar
 from validation_workflow.validation import Validation
 from validation_workflow.validation_args import ValidationArgs
-
-from system.os import current_platform
-from pathlib import Path
 
 
 class ImplementValidation(Validation):
@@ -141,7 +139,9 @@ class TestValidation(unittest.TestCase):
         mock_validation_args.return_value.artifact_type = "staging"
         mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
-        mock_path.return_value = "file:///tmp/trytytyuit/opensearch/bin/analysis-icu-3.0.0.zip"
+        linux_zip = "file:///tmp/trytytyuit/opensearch/bin/analysis-icu-3.0.0.zip"
+        windows_zip = "file:///tmp\\trytytyuit\\opensearch\\bin\\analysis-icu-3.0.0.zip"
+        mock_path.return_value = windows_zip if current_platform() == "windows" else linux_zip
         validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"),
                                            ["analysis-icu", "analysis-nori"])
 
@@ -153,7 +153,9 @@ class TestValidation(unittest.TestCase):
             ]
         )
 
-        mock_path.return_value = "file:///tmp/trytytyuit/opensearch/bin/analysis-nori-3.0.0.zip"
+        linux_zip = "file:///tmp/trytytyuit/opensearch/bin/analysis-nori-3.0.0.zip"
+        windows_zip = "file:///tmp\\trytytyuit\\opensearch\\bin\\analysis-nori-3.0.0.zip"
+        mock_path.return_value = windows_zip if current_platform() == "windows" else linux_zip
         mock_execute.assert_has_calls(
             [
                 call(
