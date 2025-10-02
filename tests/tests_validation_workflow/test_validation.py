@@ -142,13 +142,14 @@ class TestValidation(unittest.TestCase):
         linux_zip = "file:///tmp/trytytyuit/opensearch/bin/analysis-icu-3.0.0.zip"
         windows_zip = "file:///tmp\\trytytyuit\\opensearch\\bin\\analysis-icu-3.0.0.zip"
         mock_path.return_value = windows_zip if current_platform() == "windows" else linux_zip
+        install_script = ".\\opensearch-plugin.bat" if current_platform() == "windows" else "./opensearch-plugin"
         validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"),
                                            ["analysis-icu", "analysis-nori"])
 
         mock_execute.assert_has_calls(
             [
                 call(
-                    f'.{os.sep}opensearch-plugin install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
+                    f'{install_script} install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
                     os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
             ]
         )
@@ -159,7 +160,7 @@ class TestValidation(unittest.TestCase):
         mock_execute.assert_has_calls(
             [
                 call(
-                    f'.{os.sep}opensearch-plugin install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
+                    f'{install_script} install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
                     os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
             ]
         )
