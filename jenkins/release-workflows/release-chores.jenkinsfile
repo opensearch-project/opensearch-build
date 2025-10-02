@@ -167,7 +167,7 @@ parameters {
                             }
                             echo "Creating release notes for all components by triggering release-notes-generate job"
                             build job: 'release-notes-generate', 
-                            propagate: true,
+                            propagate: false,
                             wait: true,
                             parameters: [
                                 string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
@@ -175,7 +175,7 @@ parameters {
                             ]
 
                             build job: 'release-notes-generate', 
-                            propagate: true,
+                            propagate: false,
                             wait: true,
                             parameters: [
                                 string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
@@ -185,7 +185,7 @@ parameters {
                         case 'compile':
                             echo "Creating consolidated release notes by triggering release-notes-tracker job"
                             build job: 'release-notes-tracker', 
-                            propagate: true,
+                            propagate: false,
                             wait: true,
                             parameters: [
                                 string(name: 'RELEASE_VERSION', value: "${params.RELEASE_VERSION}"),

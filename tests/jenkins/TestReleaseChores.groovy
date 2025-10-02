@@ -144,8 +144,8 @@ class TestReleaseChores extends BuildPipelineTest {
         addParam('GIT_LOG_DATE', '2025-03-19')
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
-        assertCallStack().contains('release-chores.build({job=release-notes-generate, propagate=true, wait=true, parameters=[null, null]})')
-        assertCallStack().contains('release-chores.build({job=release-notes-generate, propagate=true, wait=true, parameters=[null, null]})')
+        assertCallStack().contains('release-chores.build({job=release-notes-generate, propagate=false, wait=true, parameters=[null, null]})')
+        assertCallStack().contains('release-chores.build({job=release-notes-generate, propagate=false, wait=true, parameters=[null, null]})')
     }
 
     @Test
@@ -156,7 +156,7 @@ class TestReleaseChores extends BuildPipelineTest {
         addParam('GIT_LOG_DATE', '2025-03-19')
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
-        assertCallStack().contains('release-chores.build({job=release-notes-tracker, propagate=true, wait=true, parameters=[null, null, null]})')
+        assertCallStack().contains('release-chores.build({job=release-notes-tracker, propagate=false, wait=true, parameters=[null, null, null]})')
     }
 
     @Test
