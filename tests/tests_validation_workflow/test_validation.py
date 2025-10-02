@@ -20,6 +20,9 @@ from validation_workflow.tar.validation_tar import ValidateTar
 from validation_workflow.validation import Validation
 from validation_workflow.validation_args import ValidationArgs
 
+from system.os import current_platform
+from pathlib import Path
+
 
 class ImplementValidation(Validation):
     def __init__(self, args: ValidationArgs, tmp_dir: TemporaryDirectory) -> None:
@@ -115,6 +118,7 @@ class TestValidation(unittest.TestCase):
             ]
         )
 
+    @patch('pathlib.Path.as_uri')
     @patch('requests.get')
     @patch("validation_workflow.validation.execute")
     @patch.object(Validation, "get_native_plugin_list")
@@ -123,7 +127,7 @@ class TestValidation(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     def test_install_native_plugin_staging(self, mock_temporary_directory: Mock, mock_file: Mock,
                                            mock_validation_args: Mock, mock_plugin_list: Mock, mock_execute: Mock,
-                                           mock_get: Mock) -> None:
+                                           mock_get: Mock, mock_path: Mock) -> None:
         mock_response = Mock()
         mock_validation_args.return_value.version = "3.0.0"
         mock_validation_args.os_build_number.return_value = "1123"
@@ -137,17 +141,25 @@ class TestValidation(unittest.TestCase):
         mock_validation_args.return_value.artifact_type = "staging"
         mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        mock_path.return_value = "file:///tmp/trytytyuit/opensearch/bin/analysis-icu-3.0.0.zip"
         validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"),
                                            ["analysis-icu", "analysis-nori"])
 
         mock_execute.assert_has_calls(
             [
                 call(
-                    f'.{os.sep}opensearch-plugin install --batch file:{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
+                    f'.{os.sep}opensearch-plugin install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
                     os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
+            ]
+        )
+
+        mock_path.return_value = "file:///tmp/trytytyuit/opensearch/bin/analysis-nori-3.0.0.zip"
+        mock_execute.assert_has_calls(
+            [
                 call(
-                    f'.{os.sep}opensearch-plugin install --batch file:{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-nori-3.0.0.zip")}',
-                    os.path.join("tmp", "trytytyuit", "opensearch", "bin"))]
+                    f'.{os.sep}opensearch-plugin install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
+                    os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
+            ]
         )
 
     @patch('requests.get')
