@@ -97,13 +97,15 @@ pipeline {
                                                         sh("echo ${currentComponent} with index ${currentIndex} will sleep ${currentWaitSeconds} seconds to reduce load && sleep ${currentWaitSeconds}")
                                                         unstash "release-notes-opensearch-$BUILD_NUMBER"
                                                         def componentObj = inputManifestObj.components[currentComponent]
+                                                        def repoUrl = componentObj.repository
+                                                        def repoName = repoUrl.replaceAll(/\.git$/, '').tokenize('/')[-1] // Extract repo name from URL, replaces git suffix if exists
                                                         def version = inputManifestObj.build.version
-                                                        def productName = ['opensearch': 'opensearch', 'opensearch dashboards': 'opensearch-dashboards'][product.toLowerCase()]
+                                                        def productName = 'opensearch'
                                                         def filename
                                                         if (currentComponent.toLowerCase() in ['opensearch', 'opensearch-dashboards']) {
                                                             filename = "${productName}.release-notes-${version}.md"
                                                         } else {
-                                                            filename = "${productName}-${currentComponent}.release-notes-${version}.0.md"
+                                                            filename = "${productName}-${repoName}.release-notes-${version}.0.md"
                                                         }
                                                         withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                                                             def refParam = params.REF ? "--ref ${REF}" : ""
