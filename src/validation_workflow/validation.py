@@ -12,19 +12,18 @@ import re
 import shutil
 import time
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any
 
 import requests
 
 from manifests.bundle_manifest import BundleManifest
 from system.execute import execute
+from system.os import current_platform
 from system.temporary_directory import TemporaryDirectory
 from validation_workflow.api_request import ApiTest
 from validation_workflow.download_utils import DownloadUtils
 from validation_workflow.validation_args import ValidationArgs
-
-from system.os import current_platform
-from pathlib import Path
 
 
 class Validation(ABC):
