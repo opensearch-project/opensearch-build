@@ -20,9 +20,6 @@ from validation_workflow.tar.validation_tar import ValidateTar
 from validation_workflow.validation import Validation
 from validation_workflow.validation_args import ValidationArgs
 
-from system.os import current_platform
-from pathlib import Path
-
 
 class ImplementValidation(Validation):
     def __init__(self, args: ValidationArgs, tmp_dir: TemporaryDirectory) -> None:
