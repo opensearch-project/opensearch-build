@@ -107,11 +107,12 @@ class TestValidation(unittest.TestCase):
 
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
         validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"), ["discovery-ec2", "repository-s3"])
+        install_script = ".\\opensearch-plugin.bat" if current_platform() == "windows" else "./opensearch-plugin"
         mock_execute.assert_has_calls(
             [
-                call(f'.{os.sep}opensearch-plugin install --batch discovery-ec2',
+                call(f'{install_script} install --batch discovery-ec2',
                      os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
-                call(f'.{os.sep}opensearch-plugin install --batch repository-s3',
+                call(f'{install_script} install --batch repository-s3',
                      os.path.join("tmp", "trytytyuit", "opensearch", "bin"))
             ]
         )
