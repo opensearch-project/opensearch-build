@@ -54,7 +54,13 @@ class ServiceOpenSearchDashboards(Service):
         # Newer version of NodeJS (16/18) might introduced bug when running test against localhost using cypress
         # https://github.com/cypress-io/github-action/issues/811
         # Temporarily set these additional configs to resolve the issue
+        logging.info("Additional Config: 'server.host: 0.0.0.0'")
         self.additional_config["server.host"] = '0.0.0.0'
+
+        # Since 3.3.0, OSD core introduced experience modal: https://github.com/opensearch-project/OpenSearch-Dashboards/pull/10607
+        # Will disable it during the test
+        logging.info("Additional Config: 'home.disableExperienceModal: true'")
+        self.additional_config["home.disableExperienceModal"] = 'true'
 
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
