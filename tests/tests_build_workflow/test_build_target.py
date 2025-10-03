@@ -35,6 +35,18 @@ class TestBuildTarget(unittest.TestCase):
             "1.1.0",
         )
 
+    def test_opensearch_snapshot_only_version_without_snapshot(self) -> None:
+        self.assertEqual(
+            BuildTarget(version="1.1.0", qualifier="alpha", snapshot=False).opensearch_snapshot_only_version,
+            "1.1.0",
+        )
+
+    def test_opensearch_snapshot_only_version_with_snapshot(self) -> None:
+        self.assertEqual(
+            BuildTarget(version="1.1.0", qualifier="alpha", snapshot=True).opensearch_snapshot_only_version,
+            "1.1.0-SNAPSHOT",
+        )
+
     def test_opensearch_version_snapshot(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.0", architecture="x86", snapshot=True).opensearch_version,
@@ -56,25 +68,25 @@ class TestBuildTarget(unittest.TestCase):
     def test_compatible_min_versions(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=False).compatible_min_versions,
-            ['1.1.2', '1.1.0', '1.1.1', '1.1.0-SNAPSHOT', '1.1.1-SNAPSHOT'],
+            ["1.1.2", "1.1.0", "1.1.1", "1.1.0-SNAPSHOT", "1.1.1-SNAPSHOT"],
         )
 
     def test_compatible_min_versions_qualifier(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=False, qualifier="alpha1").compatible_min_versions,
-            ['1.1.2-alpha1', '1.1.0', '1.1.1', '1.1.0-alpha1-SNAPSHOT', '1.1.1-alpha1-SNAPSHOT'],
+            ["1.1.2-alpha1", "1.1.0", "1.1.1", "1.1.0-alpha1-SNAPSHOT", "1.1.1-alpha1-SNAPSHOT"],
         )
 
     def test_compatible_min_versions_snapshot(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=True).compatible_min_versions,
-            ['1.1.2-SNAPSHOT', '1.1.0', '1.1.1', '1.1.0-SNAPSHOT', '1.1.1-SNAPSHOT'],
+            ["1.1.2-SNAPSHOT", "1.1.0", "1.1.1", "1.1.0-SNAPSHOT", "1.1.1-SNAPSHOT"],
         )
 
     def test_compatible_min_versions_snapshot_qualifier(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=True, qualifier="alpha1").compatible_min_versions,
-            ['1.1.2-alpha1-SNAPSHOT', '1.1.0', '1.1.1', '1.1.0-alpha1-SNAPSHOT', '1.1.1-alpha1-SNAPSHOT'],
+            ["1.1.2-alpha1-SNAPSHOT", "1.1.0", "1.1.1", "1.1.0-alpha1-SNAPSHOT", "1.1.1-alpha1-SNAPSHOT"],
         )
 
     def test_component_version(self) -> None:
@@ -92,25 +104,25 @@ class TestBuildTarget(unittest.TestCase):
     def test_compatible_component_versions(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=False).compatible_component_versions,
-            ['1.1.2.0', '1.1.0.0', '1.1.1.0', '1.1.0.0-SNAPSHOT', '1.1.1.0-SNAPSHOT'],
+            ["1.1.2.0", "1.1.0.0", "1.1.1.0", "1.1.0.0-SNAPSHOT", "1.1.1.0-SNAPSHOT"],
         )
 
     def test_compatible_component_versions_qualifier(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=False, qualifier="alpha1").compatible_component_versions,
-            ['1.1.2.0-alpha1', '1.1.0.0-alpha1', '1.1.1.0-alpha1', '1.1.0.0-alpha1-SNAPSHOT', '1.1.1.0-alpha1-SNAPSHOT'],
+            ["1.1.2.0-alpha1", "1.1.0.0-alpha1", "1.1.1.0-alpha1", "1.1.0.0-alpha1-SNAPSHOT", "1.1.1.0-alpha1-SNAPSHOT"],
         )
 
     def test_compatible_component_versions_snapshot(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=True).compatible_component_versions,
-            ['1.1.2.0-SNAPSHOT', '1.1.0.0', '1.1.1.0', '1.1.0.0-SNAPSHOT', '1.1.1.0-SNAPSHOT'],
+            ["1.1.2.0-SNAPSHOT", "1.1.0.0", "1.1.1.0", "1.1.0.0-SNAPSHOT", "1.1.1.0-SNAPSHOT"],
         )
 
     def test_compatible_component_versions_snapshot_qualifier(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=True, qualifier="alpha1").compatible_component_versions,
-            ['1.1.2.0-alpha1-SNAPSHOT', '1.1.0.0-alpha1', '1.1.1.0-alpha1', '1.1.0.0-alpha1-SNAPSHOT', '1.1.1.0-alpha1-SNAPSHOT'],
+            ["1.1.2.0-alpha1-SNAPSHOT", "1.1.0.0-alpha1", "1.1.1.0-alpha1", "1.1.0.0-alpha1-SNAPSHOT", "1.1.1.0-alpha1-SNAPSHOT"],
         )
 
     def test_component_version_snapshot(self) -> None:
