@@ -13,6 +13,7 @@ from unittest.mock import Mock, call, mock_open, patch
 
 import requests
 
+from system.os import current_platform
 from system.temporary_directory import TemporaryDirectory
 from validation_workflow.api_request import ApiTest
 from validation_workflow.docker.validation_docker import ValidateDocker
@@ -106,15 +107,17 @@ class TestValidation(unittest.TestCase):
 
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
         validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"), ["discovery-ec2", "repository-s3"])
+        install_script = ".\\opensearch-plugin.bat" if current_platform() == "windows" else "./opensearch-plugin"
         mock_execute.assert_has_calls(
             [
-                call(f'.{os.sep}opensearch-plugin install --batch discovery-ec2',
+                call(f'{install_script} install --batch discovery-ec2',
                      os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
-                call(f'.{os.sep}opensearch-plugin install --batch repository-s3',
+                call(f'{install_script} install --batch repository-s3',
                      os.path.join("tmp", "trytytyuit", "opensearch", "bin"))
             ]
         )
 
+    @patch('pathlib.Path.as_uri')
     @patch('requests.get')
     @patch("validation_workflow.validation.execute")
     @patch.object(Validation, "get_native_plugin_list")
@@ -123,7 +126,7 @@ class TestValidation(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     def test_install_native_plugin_staging(self, mock_temporary_directory: Mock, mock_file: Mock,
                                            mock_validation_args: Mock, mock_plugin_list: Mock, mock_execute: Mock,
-                                           mock_get: Mock) -> None:
+                                           mock_get: Mock, mock_path: Mock) -> None:
         mock_response = Mock()
         mock_validation_args.return_value.version = "3.0.0"
         mock_validation_args.os_build_number.return_value = "1123"
@@ -137,17 +140,30 @@ class TestValidation(unittest.TestCase):
         mock_validation_args.return_value.artifact_type = "staging"
         mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        linux_zip = "file:///tmp/trytytyuit/opensearch/bin/analysis-icu-3.0.0.zip"
+        windows_zip = "file:///tmp\\trytytyuit\\opensearch\\bin\\analysis-icu-3.0.0.zip"
+        mock_path.return_value = windows_zip if current_platform() == "windows" else linux_zip
+        install_script = ".\\opensearch-plugin.bat" if current_platform() == "windows" else "./opensearch-plugin"
         validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"),
                                            ["analysis-icu", "analysis-nori"])
 
         mock_execute.assert_has_calls(
             [
                 call(
-                    f'.{os.sep}opensearch-plugin install --batch file:{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
+                    f'{install_script} install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
                     os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
+            ]
+        )
+
+        linux_zip = "file:///tmp/trytytyuit/opensearch/bin/analysis-nori-3.0.0.zip"
+        windows_zip = "file:///tmp\\trytytyuit\\opensearch\\bin\\analysis-nori-3.0.0.zip"
+        mock_path.return_value = windows_zip if current_platform() == "windows" else linux_zip
+        mock_execute.assert_has_calls(
+            [
                 call(
-                    f'.{os.sep}opensearch-plugin install --batch file:{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-nori-3.0.0.zip")}',
-                    os.path.join("tmp", "trytytyuit", "opensearch", "bin"))]
+                    f'{install_script} install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
+                    os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
+            ]
         )
 
     @patch('requests.get')

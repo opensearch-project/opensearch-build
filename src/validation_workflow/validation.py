@@ -12,12 +12,14 @@ import re
 import shutil
 import time
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any
 
 import requests
 
 from manifests.bundle_manifest import BundleManifest
 from system.execute import execute
+from system.os import current_platform
 from system.temporary_directory import TemporaryDirectory
 from validation_workflow.api_request import ApiTest
 from validation_workflow.download_utils import DownloadUtils
@@ -55,6 +57,7 @@ class Validation(ABC):
 
     def install_native_plugin(self, path: str, installed_plugins_list: list) -> None:
         native_plugins_list = self.get_native_plugin_list(path, installed_plugins_list)
+        install_script = ".\\opensearch-plugin.bat" if current_platform() == "windows" else "./opensearch-plugin"
         try:
             if self.args.artifact_type == "staging":
                 for native_plugin in native_plugins_list:
@@ -63,12 +66,13 @@ class Validation(ABC):
                     response = requests.get(plugin_url)
                     with open(os.path.join(os.path.join(path, "bin"), f'{native_plugin}-{self.args.version}.zip'), 'wb') as f:
                         f.write(response.content)
+                    plugin_path = Path(os.path.join(os.path.join(path, "bin"), f"{native_plugin}-{self.args.version}.zip")).as_uri()
                     execute(
-                        '.' + os.sep + f'opensearch-plugin install --batch file:{os.path.join(os.path.join(path, "bin"), f"{native_plugin}-{self.args.version}.zip")}',
+                        install_script + f' install --batch {plugin_path}',
                         os.path.join(path, "bin"))
             else:
                 for native_plugin in native_plugins_list:
-                    execute('.' + os.sep + f'opensearch-plugin install --batch {native_plugin}', os.path.join(path, "bin"))
+                    execute(install_script + f' install --batch {native_plugin}', os.path.join(path, "bin"))
 
         except Exception as e:
             raise Exception(f"Unable to install native plugin: {str(e)}")
