@@ -220,6 +220,11 @@
 # assistant.text2viz.enabled: false
 # queryEnhancements.queryAssist.summary.enabled: false
 
+# 3.3 New Core Settings
+# Default to false, set true to not display the explore experience modal
+# home.disableWelcomeScreen: false
+# home.disableExperienceModal: false
+
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver
