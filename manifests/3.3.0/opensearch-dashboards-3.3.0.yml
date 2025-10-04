@@ -18,13 +18,13 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 63707ca32bbf254bb3c737c95a3216958d72c895
+    ref: 8a03e5b15e8d6eb27b109abac037115bc76634b7
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '3.3'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 9f65dc604a38248bb8d451c611453a813852b115
+    ref: 14c8c8c7abef6eab8444ea7f62ee7d2a95273cee
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
     ref: c7fc827791a45681985bacc6349a11c4ccb76112
@@ -54,7 +54,7 @@ components:
     ref: 525975da20b40db7e11b7ac127d41fc7b7d79243
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: e6cff25a122ca4297e394d5f5183ef253cd4ffaf
+    ref: 310abc5cd32d4292ef5b004a7a4134ee3ae7dd4f
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: f26cc27a55cb093826cdc58e189017e1c1d18be7
@@ -63,7 +63,7 @@ components:
     ref: 912174627bdff7ec3d1815649ba010f04eaa4f5b
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
-    ref: 988628d68ad6dbf0b985ed844209dea4cefe1876
+    ref: 4c97fb24df3125e28a0f741e307d26e1e849fa95
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
-    ref: 87dc72109579b3acd851a2327daddaaa9fd624f8
+    ref: 3f11fb254f19b011857731175ece1f6c6abde293
