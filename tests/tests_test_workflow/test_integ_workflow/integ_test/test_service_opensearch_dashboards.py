@@ -69,7 +69,8 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
                 "script.context.field.max_compilations_rate": "1000/1m",
                 "logging.dest": os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "logs", "opensearch_dashboards.log"),
                 "server.host": "0.0.0.0",
-                'home.disableExperienceModal': 'true'
+                "home.disableWelcomeScreen": "true",
+                "home.disableExperienceModal": "true"
             }
         )
         mock_file.return_value.write.assert_called_once_with(mock_dump_result)
@@ -133,7 +134,14 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         )
 
         mock_dump.assert_called_once_with({"logging.dest": os.path.join(
-            self.work_dir, "opensearch-dashboards-1.1.0", "logs", "opensearch_dashboards.log"), 'server.host': '0.0.0.0', 'home.disableExperienceModal': 'true'})
+            self.work_dir,
+            "opensearch-dashboards-1.1.0",
+            "logs",
+            "opensearch_dashboards.log"),
+            "server.host": "0.0.0.0",
+            "home.disableWelcomeScreen": "true",
+            "home.disableExperienceModal": "true"}
+        )
 
         mock_file_handler_for_security.close.assert_called_once()
         mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result)
@@ -195,7 +203,14 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         )
 
         mock_dump.assert_called_once_with({"logging.dest": os.path.join(
-            self.work_dir, "opensearch-dashboards-1.1.0", "logs", "opensearch_dashboards.log"), 'server.host': '0.0.0.0', 'home.disableExperienceModal': 'true'})
+            self.work_dir,
+            "opensearch-dashboards-1.1.0",
+            "logs",
+            "opensearch_dashboards.log"),
+            "server.host": "0.0.0.0",
+            "home.disableWelcomeScreen": "true",
+            "home.disableExperienceModal": "true"}
+        )
 
         mock_file_handler_for_security.close.assert_called_once()
         mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result)
