@@ -57,7 +57,7 @@ components:
     ref: 310abc5cd32d4292ef5b004a7a4134ee3ae7dd4f
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
-    ref: f26cc27a55cb093826cdc58e189017e1c1d18be7
+    ref: ee264a2456b27eeb017d68791f78fc7881df3d2b
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
     ref: 912174627bdff7ec3d1815649ba010f04eaa4f5b
