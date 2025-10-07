@@ -24,46 +24,46 @@ components:
     ref: '3.3'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 14c8c8c7abef6eab8444ea7f62ee7d2a95273cee
+    ref: 994b2074e04f76c3f0455bc8f78d8397ccb2b933
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: c7fc827791a45681985bacc6349a11c4ccb76112
+    ref: 28033041820e912e71a030f772383797a1e5de9e
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: fb68c76c61e8fee80bc3c1549f58ef4b934ea8e0
+    ref: 41f355e9b4bf2ed4831427303821eaca20762d89
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
-    ref: 56f14f798d44239630225f707182f7e0ca94aea4
+    ref: 89cbccbb7f7f8488fd843993a249c0e879822e56
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin.git
-    ref: 68cf2a432286f3a2674c1c03eed93b652e0cc64f
+    ref: d0b8b1d607b61843d5703508a84bd00a50778306
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
-    ref: 4dba84a5f78827f97738bf811e23ffb4072e9bc1
+    ref: db98eb0d6dac2884054258e17e2d85d757df638e
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
-    ref: 279b7f6ff0f9eb031f2401efe91c5184c3627c23
+    ref: f74d5cc5248f1f4baec4f2bc0fca4e0ffc4aa099
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
-    ref: c3d65b18c1814af9af13f447d657a8925de9b456
+    ref: c721b6e02edc387cc4aa06fb3abaaa7f01a80eab
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 6df22bedf8dbceff8fb7c008386744364483b23e
+    ref: 63ba3c528c62a373ef0ae82081204f5e5ce01dc5
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: 525975da20b40db7e11b7ac127d41fc7b7d79243
+    ref: 8417cf65282060729353336298226ebadcfbb6fb
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: 310abc5cd32d4292ef5b004a7a4134ee3ae7dd4f
+    ref: 089014895e136da23b8c810b4b2cf121622b5ab8
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
-    ref: f26cc27a55cb093826cdc58e189017e1c1d18be7
+    ref: ac442c284e2fdcb595a7353fed4a93a424507fee
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
-    ref: 912174627bdff7ec3d1815649ba010f04eaa4f5b
+    ref: 2979db8b237b2669c718266082a0eeaa4d51f3af
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
     ref: 4c97fb24df3125e28a0f741e307d26e1e849fa95
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
-    ref: 3f11fb254f19b011857731175ece1f6c6abde293
+    ref: 48d679ae31c289033b5c5bc0798ea0e922fb1176
