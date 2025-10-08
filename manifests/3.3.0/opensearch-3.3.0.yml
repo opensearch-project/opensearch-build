@@ -209,7 +209,7 @@ components:
       - neural-search
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: 2d90006bb5e40876c33c954d3d7897d570fdc9df
+    ref: 7ca2e227e835f100e663803e67d01eb9fc9cc3d7
     platforms:
       - linux
       - windows
