@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: d5f66d70a97e95bf783e1d426438bb5c7638021f
+    ref: b6bd4c8e0ca139b59e063972ef7db2554f3f6777
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: d75c4b1d5c68defcea1b59e98684f95458412070
@@ -49,7 +49,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 71a3c8ad3b4355246c0f60f47980f98249d4d566
+    ref: 53429a5853085da5258add822f768d248f70e228
     platforms:
       - linux
       - windows
@@ -71,7 +71,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 076eb5dbbb064f4ba4160b95f8e55415d3d043a7
+    ref: 4fd0a6874101cb71e18db8ce5ccccb2caa62493a
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 512edca5b9225f3f2dbe784bb362ae391c878a55
+    ref: c346a4790d8f1a59c4c533b682a7814b104a6594
     platforms:
       - linux
       - windows
@@ -89,7 +89,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 89ab3cc9d4965a2f2315d31b44a18c95d786bd89
+    ref: 81f6c4788974ab8e86de2ce60003fdca2aa8b605
     platforms:
       - linux
       - windows
@@ -159,7 +159,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 9bba18f24bf111a9915aa932b0631f2470fe84bd
+    ref: c3c7c635ed662cfba56e039de3b03d6f45f86b73
     platforms:
       - linux
       - windows
