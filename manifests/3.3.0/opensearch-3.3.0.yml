@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: b6bd4c8e0ca139b59e063972ef7db2554f3f6777
+    ref: e972d15408320e6be84c64bb0fdc076ca7696ea2
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: d75c4b1d5c68defcea1b59e98684f95458412070
@@ -98,7 +98,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: d73dfd61089bd7656a29e20e20e36cc763f3aa01
+    ref: 6dc76916b4ec1b9f3e3a8bf633aa5ee8cac9f3be
     working_directory: notifications
     platforms:
       - linux
@@ -107,7 +107,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: d73dfd61089bd7656a29e20e20e36cc763f3aa01
+    ref: 6dc76916b4ec1b9f3e3a8bf633aa5ee8cac9f3be
     working_directory: notifications
     platforms:
       - linux
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 378d0761ae524559d114af3985854fb90bcb408a
+    ref: 4df3f409fc3cd5416d640d9970c1cd487bc653dc
     platforms:
       - linux
       - windows
