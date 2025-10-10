@@ -25,7 +25,7 @@ class TestReleaseChores extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('11.1.0')
+                .defaultVersion('11.1.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
