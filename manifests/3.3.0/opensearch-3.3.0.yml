@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: e972d15408320e6be84c64bb0fdc076ca7696ea2
+    ref: dad6b842ddf6ad696cd8f2153aa9f4c960752636
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: d75c4b1d5c68defcea1b59e98684f95458412070
@@ -55,7 +55,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 5ac20a50e927ccc15f7aab61d5a9c32a62efb66c
+    ref: cf7fb75738bd8134ce993636483d19a2d2096706
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: c346a4790d8f1a59c4c533b682a7814b104a6594
+    ref: 2f717c0f3e81e6ffb514303f92beba9942a59a59
     platforms:
       - linux
       - windows
@@ -167,7 +167,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 3853076fc4345c24a00272275893013359de5e48
+    ref: 3e800cab6d34344dd0a12730130f4efb7dec8dc4
     platforms:
       - linux
       - windows
