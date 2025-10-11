@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: c346a4790d8f1a59c4c533b682a7814b104a6594
+    ref: 2f717c0f3e81e6ffb514303f92beba9942a59a59
     platforms:
       - linux
       - windows
@@ -167,7 +167,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 3853076fc4345c24a00272275893013359de5e48
+    ref: 3e800cab6d34344dd0a12730130f4efb7dec8dc4
     platforms:
       - linux
       - windows
