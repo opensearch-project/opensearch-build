@@ -586,7 +586,6 @@
 ### Opensearch ML Commons
 
 
-* Update maintainer list ([#4139](https://github.com/opensearch-project/ml-commons/pull/4139))
 * Downloads test certificates from security plugin ([#4245](https://github.com/opensearch-project/ml-commons/pull/4245))
 * Update approver matching to be exact match ([#4247](https://github.com/opensearch-project/ml-commons/pull/4247))
 * Fix approver parsing bug in require-approval workflow ([#4259](https://github.com/opensearch-project/ml-commons/pull/4259))
@@ -908,7 +907,6 @@
 ### Opensearch Security Analytics
 
 
-* Adding toepkerd to MAINTAINERS.md ([#1585](https://github.com/opensearch-project/security-analytics/pull/1585))
 * Increment version to 3.3.0-SNAPSHOT ([#1574](https://github.com/opensearch-project/security-analytics/pull/1574))
 
 
@@ -949,7 +947,6 @@
 * Fix the IT issue caused by merging conflict ([#4270](https://github.com/opensearch-project/sql/pull/4270))
 * Fix gitignore to ignore symbolic link ([#4263](https://github.com/opensearch-project/sql/pull/4263))
 * Add gitignore for Cline ([#4258](https://github.com/opensearch-project/sql/pull/4258))
-* Add Ryan as a maintainer ([#4257](https://github.com/opensearch-project/sql/pull/4257))
 
 
 ## REFACTORING
