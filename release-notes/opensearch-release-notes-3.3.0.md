@@ -48,14 +48,14 @@
 * Create guice module to bind LockService interface from SPI to LockServiceImpl ([#833](https://github.com/opensearch-project/job-scheduler/pull/833))
 
 
-### Opensearch K Nn
+### Opensearch k-NN
 
 
 * Support native Maximal Marginal Relevance ([#2868](https://github.com/opensearch-project/k-NN/pull/2868))
 * Support lateInteraction feature using painess script ([#2909](https://github.com/opensearch-project/k-NN/pull/2909))
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
 * Add WriteToScratchPad and ReadFromScratchPad tools ([#4192](https://github.com/opensearch-project/ml-commons/pull/4192))
@@ -82,7 +82,7 @@
 * Support native MMR for neural query ([#1567](https://github.com/opensearch-project/neural-search/pull/1567))
 
 
-### Opensearch Opensearch Remote Metadata Sdk
+### Opensearch Remote Metadata Sdk
 
 
 * Add global resource support ([#224](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/224))
@@ -106,6 +106,8 @@
 ### Opensearch Security
 
 
+* Introduced new experimental versioned security configuration management feature ([#5357](https://github.com/opensearch-project/security/pull/5357))
+* Introduced View API and Rollback API for experimental versioned security configurations ([#5431](https://github.com/opensearch-project/security/pull/5431))
 * [Rule-based Autotagging] Add logic to extract security attributes for rule-based autotagging ([#5606](https://github.com/opensearch-project/security/pull/5606))
 
 
@@ -122,7 +124,7 @@
 * Data Distribution Tool ([#634](https://github.com/opensearch-project/skills/pull/634))
 
 
-### SQL
+### Opensearch SQL
 
 
 * Change the default search sort tiebreaker to `_shard_doc` for PIT search ([#4378](https://github.com/opensearch-project/sql/pull/4378))
@@ -192,14 +194,14 @@
 * Introduce a configurable remote metadata client AND migrate LockService to the client ([#831](https://github.com/opensearch-project/job-scheduler/pull/831))
 
 
-### Opensearch K Nn
+### Opensearch k-NN
 
 
 * Added engine as a top-level optional parameter while creating vector field ([#2736](https://github.com/opensearch-project/k-NN/pull/2736))
 * Migrate k-NN plugin to use GRPC transport-grpc SPI interface ([#2833](https://github.com/opensearch-project/k-NN/pull/2833))
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
 * Add Get Agent to ML Client ([#4180](https://github.com/opensearch-project/ml-commons/pull/4180))
@@ -233,7 +235,7 @@
 * [Semantic Highlighting] Add semantic highlighting response processor with batch inference support ([#1520](https://github.com/opensearch-project/neural-search/pull/1520))
 
 
-### Opensearch Opensearch Remote Metadata Sdk
+### Opensearch Remote Metadata Sdk
 
 
 * Add SeqNo and PrimaryTerm support to Put and Delete requests ([#234](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/234))
@@ -366,7 +368,7 @@
 * Revert "Introduce a configurable remote metadata client AND migrate LockService to the client (#831)" to avoid jarHell in downstream plugins. ([#836](https://github.com/opensearch-project/job-scheduler/pull/836))
 
 
-### Opensearch K Nn
+### Opensearch k-NN
 
 
 * Use queryVector length if present in MDC check ([#2867](https://github.com/opensearch-project/k-NN/pull/2867))
@@ -381,7 +383,7 @@
 * Fix rescoring logic for nested exact search ([#2921](https://github.com/opensearch-project/k-NN/pull/2921))
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
 * Fix NPE when execute flow agent with mutli tenancy is off ([#4189](https://github.com/opensearch-project/ml-commons/pull/4189))
@@ -429,20 +431,20 @@
 * Fix: Update System.env syntax for Gradle 9 compatibility ([#1069](https://github.com/opensearch-project/notifications/pull/1069))
 
 
-### Opensearch Opensearch Learning To Rank Base
+### Opensearch Learning To Rank Base
 
 
 * Fix bad inclusion of log4j in this jar when bundled ([#226](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/226))
 * Fix: Update System.env syntax for Gradle 9 compatibility ([#219](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/219))
 
 
-### Opensearch Opensearch Remote Metadata Sdk
+### Opensearch Remote Metadata Sdk
 
 
 * Throw exception on empty string for put request ID ([#235](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/235))
 
 
-### Opensearch Opensearch System Templates
+### Opensearch System Templates
 
 
 * Fix: Update System.env syntax for Gradle 9 compatibility ([#95](https://github.com/opensearch-project/opensearch-system-templates/pull/95))
@@ -523,7 +525,7 @@
 * fix: Update System.env syntax for Gradle 9 compatibility ([#122](https://github.com/opensearch-project/user-behavior-insights/pull/122))
 
 
-### SQL
+### Opensearch SQL
 
 
 * Fix the `count(*)` and `dc(field)` to be capped at MAX\_INTEGER #4416 ([#4418](https://github.com/opensearch-project/sql/pull/4418))
@@ -581,7 +583,7 @@
 * Update delete\_backport\_branch workflow to include release-chores branches ([#810](https://github.com/opensearch-project/job-scheduler/pull/810))
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
 * Update maintainer list ([#4139](https://github.com/opensearch-project/ml-commons/pull/4139))
@@ -597,7 +599,7 @@
 * [BWC Test] Remove CodeQL from BWC's CI node to increase available disk size ([#1584](https://github.com/opensearch-project/neural-search/pull/1584))
 
 
-### Opensearch Opensearch Learning To Rank Base
+### Opensearch Learning To Rank Base
 
 
 * Adding code coverage report generation ([#228](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/228))
@@ -631,7 +633,7 @@
 * Update System.env syntax for Gradle 9 compatibility ([#630](https://github.com/opensearch-project/skills/pull/630))
 
 
-### SQL
+### Opensearch SQL
 
 
 * Spotless precommit: apply instead of check ([#4320](https://github.com/opensearch-project/sql/pull/4320))
@@ -651,7 +653,7 @@
 * Added release notes for 2.13 ([#869](https://github.com/opensearch-project/common-utils/pull/869))
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
 * Add colpali blueprint ([#4130](https://github.com/opensearch-project/ml-commons/pull/4130))
@@ -667,7 +669,7 @@
 * [Resource Sharing] Adds comprehensive documentation for Resource Access Control feature ([#5540](https://github.com/opensearch-project/security/pull/5540))
 
 
-### SQL
+### Opensearch SQL
 
 
 * Update bin.rst and add `bin` to doctest ([#4384](https://github.com/opensearch-project/sql/pull/4384))
@@ -785,7 +787,7 @@
 * Dependabot: bump actions/setup-java from 4 to 5 ([#830](https://github.com/opensearch-project/job-scheduler/pull/830))
 
 
-### Opensearch K Nn
+### Opensearch k-NN
 
 
 * Replace commons-lang with org.apache.commons:commons-lang3 ([#2863](https://github.com/opensearch-project/k-NN/pull/2863))
@@ -793,7 +795,7 @@
 * Bump Lucene version to 10.3 and fix build failures ([#2878](https://github.com/opensearch-project/k-NN/pull/2878))
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
 * Adding more unit tests ([#4124](https://github.com/opensearch-project/ml-commons/pull/4124))
@@ -830,7 +832,7 @@
 * Increment version to 3.3.0-SNAPSHOT ([#1941](https://github.com/opensearch-project/observability/pull/1941))
 
 
-### Opensearch Opensearch Learning To Rank Base
+### Opensearch Learning To Rank Base
 
 
 * Bump SLF4J to 2.0.17 ([#224](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/224))
@@ -838,7 +840,7 @@
 * [AUTO] Increment version to 3.3.0-SNAPSHOT ([#217](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/217))
 
 
-### Opensearch Opensearch System Templates
+### Opensearch System Templates
 
 
 * [AUTO] Increment version to 3.3.0-SNAPSHOT ([#93](https://github.com/opensearch-project/opensearch-system-templates/pull/93))
@@ -869,6 +871,38 @@
 
 
 * [AUTO] Increment version to 3.3.0-SNAPSHOT ([#1118](https://github.com/opensearch-project/reporting/pull/1118))
+
+
+### Opensearch Security
+
+
+* Update delete\_backport\_branch workflow to include release-chores branches ([#5548](https://github.com/opensearch-project/security/pull/5548))
+* Bump `1password/load-secrets-action` from 2 to 3 ([#5573](https://github.com/opensearch-project/security/pull/5573))
+* Bump `actions/checkout` from 4 to 5 ([#5572](https://github.com/opensearch-project/security/pull/5572), [#5660](https://github.com/opensearch-project/security/pull/5660))
+* Bump `jjwt_version` from 0.12.6 to 0.13.0 ([#5568](https://github.com/opensearch-project/security/pull/5568), [#5581](https://github.com/opensearch-project/security/pull/5581))
+* Bump `org.mockito:mockito-core` from 5.18.0 to 5.20.0 ([#5566](https://github.com/opensearch-project/security/pull/5566), [#5650](https://github.com/opensearch-project/security/pull/5650))
+* Bump `open_saml_version` from 5.1.4 to 5.1.6 ([#5567](https://github.com/opensearch-project/security/pull/5567), [#5614](https://github.com/opensearch-project/security/pull/5614))
+* Bump `com.google.j2objc:j2objc-annotations` from 3.0.0 to 3.1 ([#5570](https://github.com/opensearch-project/security/pull/5570))
+* Bump `spring_version` from 6.2.9 to 6.2.11 ([#5569](https://github.com/opensearch-project/security/pull/5569), [#5636](https://github.com/opensearch-project/security/pull/5636))
+* Bump `com.github.spotbugs` from 6.2.4 to 6.4.1 ([#5584](https://github.com/opensearch-project/security/pull/5584), [#5611](https://github.com/opensearch-project/security/pull/5611), [#5637](https://github.com/opensearch-project/security/pull/5637))
+* Bump `open_saml_shib_version` from 9.1.4 to 9.1.6 ([#5585](https://github.com/opensearch-project/security/pull/5585), [#5612](https://github.com/opensearch-project/security/pull/5612))
+* Bump `org.springframework.kafka:spring-kafka-test` from 4.0.0-M3 to 4.0.0-M5 ([#5583](https://github.com/opensearch-project/security/pull/5583), [#5661](https://github.com/opensearch-project/security/pull/5661))
+* Bump `net.bytebuddy:byte-buddy` from 1.17.6 to 1.17.7 ([#5586](https://github.com/opensearch-project/security/pull/5586))
+* Bump `io.dropwizard.metrics:metrics-core` from 4.2.33 to 4.2.37 ([#5589](https://github.com/opensearch-project/security/pull/5589), [#5638](https://github.com/opensearch-project/security/pull/5638))
+* Bump `com.nimbusds:nimbus-jose-jwt:9.48` from 9.48 to 10.4.2 ([#5595](https://github.com/opensearch-project/security/pull/5595))
+* Bump `actions/github-script` from 7 to 8 ([#5610](https://github.com/opensearch-project/security/pull/5610))
+* Bump `org.eclipse.platform:org.eclipse.core.runtime` from 3.33.100 to 3.34.0 ([#5628](https://github.com/opensearch-project/security/pull/5628))
+* Bump `org.opensearch:protobufs` from 0.6.0 to 0.13.0 ([#5553](https://github.com/opensearch-project/security/pull/5553))
+* Bump `org.checkerframework:checker-qual` from 3.49.5 to 3.51.0 ([#5627](https://github.com/opensearch-project/security/pull/5627))
+* Bump `com.nimbusds:nimbus-jose-jwt` from 10.4.2 to 10.5 ([#5629](https://github.com/opensearch-project/security/pull/5629))
+* Bump `derek-ho/start-opensearch` from 7 to 8 ([#5630](https://github.com/opensearch-project/security/pull/5630))
+* Bump `actions/setup-java` from 4 to 5 ([#5582](https://github.com/opensearch-project/security/pull/5582), [#5664](https://github.com/opensearch-project/security/pull/5664))
+* Bump `org.eclipse.platform:org.eclipse.equinox.common` from 3.20.100 to 3.20.200 ([#5651](https://github.com/opensearch-project/security/pull/5651))
+* Bump `jakarta.xml.bind:jakarta.xml.bind-api` from 4.0.2 to 4.0.4 ([#5649](https://github.com/opensearch-project/security/pull/5649))
+* Bump `com.google.errorprone:error_prone_annotations` from 2.41.0 to 2.42.0 ([#5648](https://github.com/opensearch-project/security/pull/5648))
+* Bump `com.google.guava:guava` from 33.4.8-jre to 33.5.0-jre ([#5665](https://github.com/opensearch-project/security/pull/5665))
+* Bump `com.typesafe.scala-logging:scala-logging_3` from 3.9.5 to 3.9.6 ([#5663](https://github.com/opensearch-project/security/pull/5663))
+* Sync `org.opensearch:protobufs` version with core ([#5659](https://github.com/opensearch-project/security/pull/5659))
 
 
 ### Opensearch Security Analytics
@@ -904,7 +938,7 @@
 * Increment version to 3.3.0-SNAPSHOT ([#127](https://github.com/opensearch-project/user-behavior-insights/pull/127))
 
 
-### SQL
+### Opensearch SQL
 
 
 * Avoid unnecessary security plugin download in integ-test ([#4368](https://github.com/opensearch-project/sql/pull/4368))
@@ -928,13 +962,13 @@
 * Adds resource types to DocRequests ([#1566](https://github.com/opensearch-project/anomaly-detection/pull/1566))
 
 
-### Opensearch K Nn
+### Opensearch k-NN
 
 
 * Refactored the KNN Stat files for better readability.
 
 
-### Opensearch Opensearch Remote Metadata Sdk
+### Opensearch Remote Metadata Sdk
 
 
 * Remove unneeded enum uppercase workaround ([#185](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/185))
@@ -950,51 +984,7 @@
 * [Resource Sharing] Match index settings of .kibana indices for resource sharing indices ([#5605](https://github.com/opensearch-project/security/pull/5605))
 
 
-## NON-COMPLIANT
 
 
-## ADDED
-
-
-### Opensearch Security
-
-
-* Introduced new experimental versioned security configuration management feature ([#5357](https://github.com/opensearch-project/security/pull/5357))
-* Introduced View API and Rollback API for experimental versioned security configurations ([#5431](https://github.com/opensearch-project/security/pull/5431))
-
-
-## DEPENDENCIES
-
-
-### Opensearch Security
-
-
-* Update delete\_backport\_branch workflow to include release-chores branches ([#5548](https://github.com/opensearch-project/security/pull/5548))
-* Bump `1password/load-secrets-action` from 2 to 3 ([#5573](https://github.com/opensearch-project/security/pull/5573))
-* Bump `actions/checkout` from 4 to 5 ([#5572](https://github.com/opensearch-project/security/pull/5572), [#5660](https://github.com/opensearch-project/security/pull/5660))
-* Bump `jjwt_version` from 0.12.6 to 0.13.0 ([#5568](https://github.com/opensearch-project/security/pull/5568), [#5581](https://github.com/opensearch-project/security/pull/5581))
-* Bump `org.mockito:mockito-core` from 5.18.0 to 5.20.0 ([#5566](https://github.com/opensearch-project/security/pull/5566), [#5650](https://github.com/opensearch-project/security/pull/5650))
-* Bump `open_saml_version` from 5.1.4 to 5.1.6 ([#5567](https://github.com/opensearch-project/security/pull/5567), [#5614](https://github.com/opensearch-project/security/pull/5614))
-* Bump `com.google.j2objc:j2objc-annotations` from 3.0.0 to 3.1 ([#5570](https://github.com/opensearch-project/security/pull/5570))
-* Bump `spring_version` from 6.2.9 to 6.2.11 ([#5569](https://github.com/opensearch-project/security/pull/5569), [#5636](https://github.com/opensearch-project/security/pull/5636))
-* Bump `com.github.spotbugs` from 6.2.4 to 6.4.1 ([#5584](https://github.com/opensearch-project/security/pull/5584), [#5611](https://github.com/opensearch-project/security/pull/5611), [#5637](https://github.com/opensearch-project/security/pull/5637))
-* Bump `open_saml_shib_version` from 9.1.4 to 9.1.6 ([#5585](https://github.com/opensearch-project/security/pull/5585), [#5612](https://github.com/opensearch-project/security/pull/5612))
-* Bump `org.springframework.kafka:spring-kafka-test` from 4.0.0-M3 to 4.0.0-M5 ([#5583](https://github.com/opensearch-project/security/pull/5583), [#5661](https://github.com/opensearch-project/security/pull/5661))
-* Bump `net.bytebuddy:byte-buddy` from 1.17.6 to 1.17.7 ([#5586](https://github.com/opensearch-project/security/pull/5586))
-* Bump `io.dropwizard.metrics:metrics-core` from 4.2.33 to 4.2.37 ([#5589](https://github.com/opensearch-project/security/pull/5589), [#5638](https://github.com/opensearch-project/security/pull/5638))
-* Bump `com.nimbusds:nimbus-jose-jwt:9.48` from 9.48 to 10.4.2 ([#5595](https://github.com/opensearch-project/security/pull/5595))
-* Bump `actions/github-script` from 7 to 8 ([#5610](https://github.com/opensearch-project/security/pull/5610))
-* Bump `org.eclipse.platform:org.eclipse.core.runtime` from 3.33.100 to 3.34.0 ([#5628](https://github.com/opensearch-project/security/pull/5628))
-* Bump `org.opensearch:protobufs` from 0.6.0 to 0.13.0 ([#5553](https://github.com/opensearch-project/security/pull/5553))
-* Bump `org.checkerframework:checker-qual` from 3.49.5 to 3.51.0 ([#5627](https://github.com/opensearch-project/security/pull/5627))
-* Bump `com.nimbusds:nimbus-jose-jwt` from 10.4.2 to 10.5 ([#5629](https://github.com/opensearch-project/security/pull/5629))
-* Bump `derek-ho/start-opensearch` from 7 to 8 ([#5630](https://github.com/opensearch-project/security/pull/5630))
-* Bump `actions/setup-java` from 4 to 5 ([#5582](https://github.com/opensearch-project/security/pull/5582), [#5664](https://github.com/opensearch-project/security/pull/5664))
-* Bump `org.eclipse.platform:org.eclipse.equinox.common` from 3.20.100 to 3.20.200 ([#5651](https://github.com/opensearch-project/security/pull/5651))
-* Bump `jakarta.xml.bind:jakarta.xml.bind-api` from 4.0.2 to 4.0.4 ([#5649](https://github.com/opensearch-project/security/pull/5649))
-* Bump `com.google.errorprone:error_prone_annotations` from 2.41.0 to 2.42.0 ([#5648](https://github.com/opensearch-project/security/pull/5648))
-* Bump `com.google.guava:guava` from 33.4.8-jre to 33.5.0-jre ([#5665](https://github.com/opensearch-project/security/pull/5665))
-* Bump `com.typesafe.scala-logging:scala-logging_3` from 3.9.5 to 3.9.6 ([#5663](https://github.com/opensearch-project/security/pull/5663))
-* Sync `org.opensearch:protobufs` version with core ([#5659](https://github.com/opensearch-project/security/pull/5659))
 
 
