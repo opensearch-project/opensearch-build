@@ -59,7 +59,7 @@ TIMEPASS=0
 TIMEOUT=7200
 RESULT="null"
 PR_TITLE_NEW=`echo $pr_title | tr -dc '[:alnum:] ' | tr '[:upper:]' '[:lower:]'`
-PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$PR_TITLE_NEW\", \"pr_number\": \"$pr_number\", \"post_merge_action\": \"$post_merge_action\", \"pr_owner\": \"$pr_owner\"}"
+PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$PR_TITLE_NEW\", \"pr_number\": \"$pr_number\", \"post_merge_action\": \"$post_merge_action\", \"pr_owner\": \"$pr_owner\", \"module_name\": \"$module_name\"}"
 
 perform_curl_and_process_with_jq() {
     local url=$1
@@ -145,7 +145,8 @@ fi
 echo "Please check jenkins url for logs: $WORKFLOW_URL"
 echo "Result: $RESULT"
 if [ "$RESULT" == "SUCCESS" ] || [ "$RESULT" == "UNSTABLE" ]; then
-    echo "Get codeCoverage.xml" && curl -SLO ${WORKFLOW_URL}artifact/codeCoverage.xml --user ${GITHUB_USER}:${GITHUB_TOKEN}
+    echo "Get Coverage reports" && curl -SLO ${WORKFLOW_URL}artifact/codeCoverage/*zip*/codeCoverage.zip --user ${GITHUB_USER}:${GITHUB_TOKEN}
+    unzip -o codeCoverage.zip
 else
     exit 1
 fi
