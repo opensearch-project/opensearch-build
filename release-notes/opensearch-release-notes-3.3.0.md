@@ -2,94 +2,93 @@
 
 ## Release Highlights
 
+### New and Updated Features
 OpenSearch 3.3 brings a number of new features designed to help your search, observability, and AI-powered applications. This includes an array of upgrades across use cases, a significant expansion of the observability toolkit and new functionality to make agentic AI integrations simpler and more powerful.
 
 
-### New and Updated Features
-
-**New Discover experience**
+* **New Discover experience**
 Users can opt into a completely redesigned OpenSearch Dashboards interface that unifies log analytics, distributed tracing, and intelligent visualizations into a single user experience, featuring auto-visualizations, context-aware analysis, and AI-powered query construction.
 
-**Automated chart selection**
+* **Automated chart selection**
 The new optional Discover interface includes automated chart selection with 12 preset rules covering common data patterns from simple metric displays to complex multi-dimensional visualizations.
 
-**Discover Traces interface**
+* **Discover Traces interface**
 Built on the new Discover interface, this feature provides a central interface for querying and exploring traces across large distributed systems with a click-to-filter interface and detailed trace journey visualization. Users can construct complex PPL queries without writing them and access complete metadata, attributes, and execution context.
 
-**Apache Calcite PPL integration**
+* **Apache Calcite PPL integration**
 Apache Calcite becomes the default query engine for PPL, introducing better portability and new optimization capabilities while providing an extensive library of new commands. 
 
-**PPL performance benchmarking**
+* **PPL performance benchmarking**
 This release includes comprehensive benchmarking infrastructure to validate PPL's performance capabilities across a range of analytical scenarios.
 
-**Advanced PPL commands**
+* **Advanced PPL commands**
 New text processing capabilities enable filtering, extraction, and parsing of unstructured text directly without preprocessing, while enhanced timechart and bin commands support temporal pattern analysis and data distribution modeling. The release also introduces new statistical functions and data transformation capabilities with coalesce, mvjoin, and regex_match functions. New commands to support data manipulation include the append command to combine results from multiple queries into a unified data set, and a new join command.
 
-**Agentic search**
+* **Agentic search**
 Now generally available, agentic search enables natural language interactions with data through intelligent agents that automatically select appropriate tools and generate optimized queries based on user intent. The feature maintains context across queries to support multi-turn conversations and allows users to leverage custom search templates.
 
-**Persistent agentic memory**
+* **Persistent agentic memory**
 Agentic memory enables AI agents to learn, remember, and reason across conversations and interactions through multiple strategies including semantic fact extraction, user preference learning, and conversation summarization. The system transforms static AI interactions into dynamic, context-aware experiences that improve over time.
 
-**Seismic algorithm integration**
+* **Seismic algorithm integration**
 A new sparse retrieval algorithm delivers exceptional search latency improvements—up to 100x faster than traditional methods—while maintaining over 90% recall accuracy. The Seismic algorithm intelligently balances precision and speed through multi-level pruning techniques, delivering search latencies under 15ms for a 50-million document collection.
 
-**Processor chains**
+* **Processor chains**
 This new feature enables flexible data transformation pipelines within ML/AI workflows, allowing sequential data transformation through multiple processors. The feature supports 10 processor types including JSONPath filtering, regex operations, conditional logic, and array iteration for seamless integration into AI/ML pipelines.
 
-**Streamable HTTP transport**
+* **Streamable HTTP transport**
 The ML Commons MCP server upgrades from Server-Sent Events to the Streamable HTTP transport protocol, providing built-in authorization handling through OpenSearch's role-based access control. This release also introduces MCP Connector support for Streamable HTTP clients, enabling ML Commons agents to connect to external MCP servers with simplified connection management.
 
-**Batch inference support**
+* **Batch inference support**
 Semantic highlighting now supports batch processing for remote models, delivering performance improvements ranging from 2x to 14x by reducing ML inference calls through batched result processing. This enhancement significantly improves GPU utilization and reduces overhead, particularly benefiting queries that return many short documents.
 
-**Late interaction scoring**
+* **Late interaction scoring**
 The new lateInteractionScore function enhances single-vector search with multi-vector precision by implementing ColBERT's late interaction mechanism. This two-stage approach combines efficient single-vector search with precise multi-vector rescoring, enabling fine-grained alignment between modalities in multi-modal applications.
 
-**Maximal Marginal Relevance**
+* **Maximal Marginal Relevance**
 Native MMR support offers search results that intelligently balance between retrieving the most relevant information and reducing redundancy, ensuring users see a broader range of answers without impacting quality. The feature works within OpenSearch queries and pipelines, requiring no external tools or configurations.
 
-**Multi-terms aggregation enhancement**
+* **Multi-terms aggregation enhancement**
 Star-tree index support now extends to multi-terms aggregations, significantly improving performance for these operations, particularly for large datasets. The feature includes new failure stats as part of search stats at index, node, and shard level for improved monitoring and troubleshooting.
 
-**Date histogram performance improvement**
+* **Date histogram performance improvement**
 Date histogram aggregation workloads can take advantage of doc value skiplist data to provide major performance improvements, with support for date, scaled_float and token_count field types added for this release.
 
-**Hybrid query performance**
+* **Hybrid query performance**
 The implementation of QueryCollectorContextSpec streamlines hybrid search query execution by directly injecting QueryCollectorContext into the search process, eliminating boilerplate code. This optimization delivers up to 20% performance improvement for hybrid searches with lexical subqueries and up to 5% improvement for combined lexical and semantic subqueries.
 
-**Expanded gRPC**
+* **Expanded gRPC**
 Support OpenSearch 3.3 extends gRPC transport capabilities across popular query types, including term-level queries, full text searches, geographic searches, and boolean, script, and nested queries. This expansion includes opensearch-protobufs python libraries published to PyPI for simplified Python application integration.
 
-**Field data cache optimization**
+* **Field data cache optimization**
 Field data cache clearing is now both asynchronous and more efficient, consuming time proportional to the number of keys rather than the number of keys multiplied by the number of fields. This prevents node drop issues and incorporates improved default settings for more predictable cache eviction behavior.
 
-**Enhanced Workload Management**
+* **Enhanced Workload Management**
 The Query Insights Dashboard now includes integrated Workload Management capabilities, enabling cluster administrators to monitor and analyze live queries by workload group with seamless navigation between dashboards. 
 
-**Rule-based auto-tagging**
+* **Rule-based auto-tagging**
 Enhanced workload management functionality automatically labels incoming requests based on defined rules, helping administrators manage workloads and monitor cluster activity. A new principal attributes feature extends rule-based auto-tagging beyond index patterns to include user attributes such as username and role.
 
 
 ### Experimental features
 OpenSearch 3.3 includes the following experimental functionality. Experimental features are disabled by default. For instructions on how to enable them, refer to the documentation for the feature.
 
-**AI-powered Discover tools**
+* **AI-powered Discover tools**
 New experimental AI capabilities transform the way users interact with their data through intelligent context awareness, conversational interfaces, and agent integration. Through a chat interface, users can execute actions like updating queries and creating visualizations via conversational requests.
 
-**React Flow integration**
+* **React Flow integration**
 The React Flow library is now integrated into OpenSearch Dashboards core, providing a standardized framework for interactive node-based visualizations. The library specializes in workflow and network diagrams, offering drag-and-drop interactions and efficient rendering of thousands of nodes.
 
-**High-performance data streaming**
+* **High-performance data streaming**
 A new experimental streaming-capable transport layer built on Apache Arrow Flight RPC protocol enables efficient server-side streaming for node-to-node communication. This opt-in feature includes a new StreamTransportService API with comprehensive security integration.
 
-**Remote model inference streaming**
+* **Remote model inference streaming**
 Streaming support for both model prediction and agent execution through Server-Sent events (SSE) advances how users interact with AI models and agents, enabling real-time data streaming that allows uers to see partial results immediately rather than waiting for a complete response.
 
-**Apache Arrow integration**
+* **Apache Arrow integration**
 A new streaming-capable transport layer built on Apache Arrow Flight RPC protocol enables high-performance data streaming within clusters, supporting server-side streaming for node-to-node communication.
 
-**Streaming aggregations**
+* **Streaming aggregations**
 New experimental functionality shifts the processing model for high-cardinality aggregations by streaming partial results per Lucene segment, moving reduce workload from data nodes to coordinators for improved scalability.
 
 
