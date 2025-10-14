@@ -71,7 +71,7 @@ Enhanced workload management functionality automatically labels incoming request
 
 
 ### Experimental features
-OpenSearch 3.3 includes the following experimental functionality. Experimental features are disabled by default. For instructions on how to enable them, refer to the documentation for the feature.
+OpenSearch 3.3 includes the following experimental functionality. Experimental features are disabled by default. For instructions on how to enable them, refer to the [documentation](https://docs.opensearch.org/latest/install-and-configure/configuring-opensearch/experimental/) for the feature.
 
 * **AI-powered Discover tools**
 New experimental AI capabilities transform the way users interact with their data through intelligent context awareness, conversational interfaces, and agent integration. Through a chat interface, users can execute actions like updating queries and creating visualizations via conversational requests.
@@ -450,7 +450,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### Opensearch Geospatial
 
 
-* fix: Update System.env syntax for Gradle 9 compatibility ([#791](https://github.com/opensearch-project/geospatial/pull/791))
+* Fix: Update System.env syntax for Gradle 9 compatibility ([#791](https://github.com/opensearch-project/geospatial/pull/791))
 
 
 ### Opensearch Index Management
@@ -620,8 +620,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### Opensearch User Behavior Insights
 
 
-* fix dependencies ([#128](https://github.com/opensearch-project/user-behavior-insights/pull/128))
-* fix: Update System.env syntax for Gradle 9 compatibility ([#122](https://github.com/opensearch-project/user-behavior-insights/pull/122))
+* Fix dependencies ([#128](https://github.com/opensearch-project/user-behavior-insights/pull/128))
+* Fix: Update System.env syntax for Gradle 9 compatibility ([#122](https://github.com/opensearch-project/user-behavior-insights/pull/122))
 
 
 ### Opensearch SQL
