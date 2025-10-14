@@ -32,7 +32,7 @@ Then build from source:
 _Please note that in order to build any plugin, core needs to be build as a dependency for non-snapshot version. Hence, it is recommended to build core along with plugin. Example:_
 ```
 ./build.sh manifests/3.0.0/opensearch-3.0.0.yml --component OpenSearch common-utils
-./build.sh manifests/3.0.0/opensearch-3.0.0.yml --component OpenSearch-Dashboards observabilityDashboards
+./build.sh manifests/3.0.0/opensearch-dashboards-3.0.0.yml --component OpenSearch-Dashboards observabilityDashboards
 ```
 
 Additional arguments:

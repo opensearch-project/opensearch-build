@@ -36,7 +36,7 @@ class ValidationArgs:
             "--file-path",
             nargs='*',
             action=TestKwargs,
-            help="(manadatory for production) Product URL or file-path to validate",
+            help="(manadatory for production) Product URL or file-path to validate in the format opensearch=<path> and opensearch-dashboards=<path>",
             default={},
             dest="file_path"
         )
