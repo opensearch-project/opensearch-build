@@ -59,11 +59,8 @@ if [ -z "${SNAPSHOT_REPO_URL}" ]; then
 else
   if echo $SNAPSHOT_REPO_URL | cut -d: -f1 | grep -q s3; then
     SERVER_ID="s3"
-  elif echo $SNAPSHOT_REPO_URL | cut -d: -f1 | grep -q https; then
-    SERVER_ID="nexus"
   else
-    echo "Protocol not supported"
-    exit 1
+    SERVER_ID="nexus"
   fi
 fi
 
