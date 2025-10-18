@@ -121,7 +121,7 @@ create_maven_extension_settings() {
     <extension>
         <groupId>com.gkatzioura.maven.cloud</groupId>
         <artifactId>s3-wagon-provider</artifactId>
-        <version>2.5</version>
+        <version>2.3</version>
     </extension>
 </extensions>
 EOF
