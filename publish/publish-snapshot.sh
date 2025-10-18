@@ -82,11 +82,15 @@ fi
 if [ ! -d "$1" ]; then
   echo "Invalid directory $1 does not exist"
   usage
+else
+  PROJ_DIR=$1
+  mkdir -p $PROJ_DIR/.mvn
 fi
 
 create_maven_settings() {
   # Create a settings.xml file with the user+password for maven
   mvn_settings="${workdir}/mvn-settings.xml"
+  echo "Update $mvn_settings"
   cat >${mvn_settings} <<-EOF
 <?xml version="1.0" encoding="UTF-8" ?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -109,14 +113,23 @@ create_maven_settings() {
       </configuration>
     </server>
   </servers>
-  <extensions>
-    <extension>
-      <groupId>com.allogy.maven.wagon</groupId>
-      <artifactId>maven-s3-wagon</artifactId>
-      <version>1.2.0</version>
-    </extension>
-  </extensions>
 </settings>
+EOF
+}
+
+create_maven_extension_settings() {
+  # Create a extensions.xml file with the user+password for maven
+  mvn_extension_settings="$PROJ_DIR/.mvn/extensions.xml"
+  echo "Update $mvn_extension_settings"
+  cat >${mvn_extension_settings} <<-EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<extensions>
+    <extension>
+        <groupId>com.allogy.maven.wagon</groupId>
+        <artifactId>maven-s3-wagon</artifactId>
+        <version>1.2.0</version>
+    </extension>
+</extensions>
 EOF
 }
 
@@ -124,14 +137,16 @@ url="${SNAPSHOT_REPO_URL}"
 workdir=$(mktemp -d)
 
 function cleanup() {
-  rm -rf "${workdir}"
+  rm -rf "$workdir"
+  rm -rf "$PROJ_DIR/.mvn"
 }
 
 trap cleanup TERM INT EXIT
 
 create_maven_settings
+create_maven_extension_settings
 
-cd "$1"
+cd "$PROJ_DIR"
 
 echo "searching for poms under $PWD"
 
