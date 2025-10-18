@@ -157,7 +157,7 @@ for pom in ${pomFiles}; do
             -DrepositoryId="${SERVER_ID}" \
             -Durl="${url}" \
             -DpomFile="${pom}" \
-            -Dfile="${FILE}" || echo "Failed to upload ${FILE}"
+            -Dfile="${FILE}" || (echo "Failed to upload ${FILE}" && exit 1)
         ;;
       *) echo "Skipping upload for ${FILE}" ;;
       esac
