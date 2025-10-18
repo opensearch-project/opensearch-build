@@ -105,9 +105,6 @@ create_maven_settings() {
     </server>
     <server>
       <id>s3</id>
-      <configuration>
-        <region>us-east-1</region>
-      </configuration>
     </server>
   </servers>
 </settings>
