@@ -67,7 +67,8 @@ pipeline {
                 [key: 'pr_title', value: '$.pr_title'],
                 [key: 'pr_number', value: '$.pr_number'],
                 [key: 'post_merge_action', value: '$.post_merge_action'],
-                [key: 'pr_owner', value: '$.pr_owner']
+                [key: 'pr_owner', value: '$.pr_owner'],
+                [key: 'module_name', value: '$.module_name']
             ],
             tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
             causeString: 'Triggered by PR on OpenSearch core repository',
@@ -130,7 +131,8 @@ pipeline {
                             runGradleCheck(
                                 gitRepoUrl: "${pr_from_clone_url}",
                                 gitReference: "${pr_from_sha}",
-                                bwcCheckoutAlign: "${bwc_checkout_align}"
+                                bwcCheckoutAlign: "${bwc_checkout_align}",
+                                scope: "${module_name}"
                             )
                         }
                         else {
@@ -154,9 +156,15 @@ pipeline {
                     archiveArtifacts artifacts: '**/build/heapdump/*.hprof', allowEmptyArchive: true
                 }
                 always {
-                    sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
+                    sh '''
+                    mkdir codeCoverage
+
+                    for file in $(find search/server/build/reports/jacoco/ -name '*.xml'); do
+                        cp -v "$file" codeCoverage/
+                    done
+                    '''
                     junit allowEmptyResults: true, testResults: '**/build/test-results/**/*.xml'
-                    archiveArtifacts artifacts: 'codeCoverage.xml', onlyIfSuccessful: true
+                    archiveArtifacts artifacts: 'codeCoverage/**', onlyIfSuccessful: true
                     script {
                         def invokedBy
                         def pullRequest
