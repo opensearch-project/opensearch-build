@@ -20,10 +20,6 @@
 ###############################################################################################
 set -e
 
-[ -z "${1:-}" ] && {
-  usage
-}
-
 usage() {
   echo "usage: $0 [-h] [dir]"
   echo "  dir     parent directory of artifacts to be published to org/opensearch namespace."
@@ -39,6 +35,10 @@ usage() {
   echo "SNAPSHOT_REPO_URL - repository URL ex. http://localhost:8081/nexus/content/repositories/snapshots/"
   echo "                                   ex. s3://my-bucket-name/maven/snapshots/"
   exit 1
+}
+
+[ -z "${1:-}" ] && {
+  usage
 }
 
 while getopts ":h" option; do
@@ -109,6 +109,13 @@ create_maven_settings() {
       </configuration>
     </server>
   </servers>
+  <extensions>
+    <extension>
+      <groupId>com.allogy.maven.wagon</groupId>
+      <artifactId>maven-s3-wagon</artifactId>
+      <version>1.2.0</version>
+    </extension>
+  </extensions>
 </settings>
 EOF
 }
@@ -138,7 +145,7 @@ for pom in ${pomFiles}; do
   pom_dir="$(dirname "${pom}")"
   for FILE in "${pom_dir}"/*; do
     # The POM is deployed with the artifact in a single deploy-file command, we can skip over it
-    if [[ $FILE != $pom ]] &&
+    if [[ $FILE != "$pom" ]] &&
        [[ $FILE != *"test-fixtures"* ]] && # This is a hack to ensure the OpenSearch build-tools test fixture jar is not uploaded instead of the actual build-tools jar.
        [[ $FILE != *"javadoc"* ]] &&
        [[ $FILE != *"sources"* ]]; then
