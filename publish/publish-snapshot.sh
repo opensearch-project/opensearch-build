@@ -53,22 +53,31 @@ while getopts ":h" option; do
   esac
 done
 
-[ -z "${SONATYPE_USERNAME}" ] && {
-  echo "SONATYPE_USERNAME is required"
-  exit 1
-}
-
-[ -z "${SONATYPE_PASSWORD}" ] && {
-  echo "SONATYPE_PASSWORD is required"
-  exit 1
-}
-
-[ -z "${SNAPSHOT_REPO_URL}" ] && {
+if [ -z "${SNAPSHOT_REPO_URL}" ]; then
   echo "REPO_URL is required"
   exit 1
-}
+else
+  if echo $SNAPSHOT_REPO_URL | cut -d: -f1 | grep -q s3; then
+    SERVER_ID="s3"
+  elif echo $SNAPSHOT_REPO_URL | cut -d: -f1 | grep -q https; then
+    SERVER_ID="nexus"
+  else
+    echo "Protocol not supported"
+    exit 1
+  fi
+fi
 
-SERVER_ID=`echo $SNAPSHOT_REPO_URL | cut -d: -f1`
+if [ "$SERVER_ID" = "s3" ]; then
+  if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ] || [ -z "$AWS_SESSION_TOKEN" ]; then
+    echo "AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_SESSION_TOKEN are required for s3"
+    exit 1
+  fi
+else
+  if [ -z "$SONATYPE_USERNAME" ] || [ -z "$SONATYPE_PASSWORD" ]; then
+    echo "SONATYPE_USERNAME and SONATYPE_PASSWORD are required for nexus"
+    exit 1
+  fi
+fi
 
 if [ ! -d "$1" ]; then
   echo "Invalid directory $1 does not exist"
