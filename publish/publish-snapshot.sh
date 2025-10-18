@@ -105,10 +105,7 @@ create_maven_settings() {
     </server>
     <server>
       <id>s3</id>
-      <username>${AWS_ACCESS_KEY_ID}</username>
-      <password>${AWS_SECRET_ACCESS_KEY}</password>
       <configuration>
-        <sessionToken>${AWS_SESSION_TOKEN}</sessionToken>
         <region>us-east-1</region>
       </configuration>
     </server>
