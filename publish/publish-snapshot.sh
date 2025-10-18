@@ -33,7 +33,11 @@ usage() {
   echo "Required environment variables:"
   echo "SONATYPE_USERNAME - username with publish rights to a sonatype repository"
   echo "SONATYPE_PASSWORD - password for sonatype"
+  echo "AWS_ACCESS_KEY_ID - aws_access_key_id for AWS account with publish rights to a s3 bucket"
+  echo "AWS_SECRET_ACCESS_KEY - aws_secret_access_key for s3"
+  echo "AWS_SESSION_TOKEN - aws_session_token for s3 when assume role"
   echo "SNAPSHOT_REPO_URL - repository URL ex. http://localhost:8081/nexus/content/repositories/snapshots/"
+  echo "                                   ex. s3://my-bucket-name/maven/snapshots/"
   exit 1
 }
 
