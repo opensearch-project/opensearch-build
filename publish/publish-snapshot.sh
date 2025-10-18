@@ -20,10 +20,6 @@
 ###############################################################################################
 set -e
 
-[ -z "${1:-}" ] && {
-  usage
-}
-
 usage() {
   echo "usage: $0 [-h] [dir]"
   echo "  dir     parent directory of artifacts to be published to org/opensearch namespace."
@@ -33,8 +29,16 @@ usage() {
   echo "Required environment variables:"
   echo "SONATYPE_USERNAME - username with publish rights to a sonatype repository"
   echo "SONATYPE_PASSWORD - password for sonatype"
+  echo "AWS_ACCESS_KEY_ID - aws_access_key_id for AWS account with publish rights to a s3 bucket"
+  echo "AWS_SECRET_ACCESS_KEY - aws_secret_access_key for s3"
+  echo "AWS_SESSION_TOKEN - aws_session_token for s3 when assume role"
   echo "SNAPSHOT_REPO_URL - repository URL ex. http://localhost:8081/nexus/content/repositories/snapshots/"
+  echo "                                   ex. s3://my-bucket-name/maven/snapshots/"
   exit 1
+}
+
+[ -z "${1:-}" ] && {
+  usage
 }
 
 while getopts ":h" option; do
@@ -49,29 +53,44 @@ while getopts ":h" option; do
   esac
 done
 
-[ -z "${SONATYPE_USERNAME}" ] && {
-  echo "SONATYPE_USERNAME is required"
-  exit 1
-}
-
-[ -z "${SONATYPE_PASSWORD}" ] && {
-  echo "SONATYPE_PASSWORD is required"
-  exit 1
-}
-
-[ -z "${SNAPSHOT_REPO_URL}" ] && {
+if [ -z "${SNAPSHOT_REPO_URL}" ]; then
   echo "REPO_URL is required"
   exit 1
-}
+else
+  if echo $SNAPSHOT_REPO_URL | cut -d: -f1 | grep -q s3; then
+    SERVER_ID="s3"
+  elif echo $SNAPSHOT_REPO_URL | cut -d: -f1 | grep -q https; then
+    SERVER_ID="nexus"
+  else
+    echo "Protocol not supported"
+    exit 1
+  fi
+fi
+
+if [ "$SERVER_ID" = "s3" ]; then
+  if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ] || [ -z "$AWS_SESSION_TOKEN" ]; then
+    echo "AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_SESSION_TOKEN are required for s3"
+    exit 1
+  fi
+else
+  if [ -z "$SONATYPE_USERNAME" ] || [ -z "$SONATYPE_PASSWORD" ]; then
+    echo "SONATYPE_USERNAME and SONATYPE_PASSWORD are required for nexus"
+    exit 1
+  fi
+fi
 
 if [ ! -d "$1" ]; then
   echo "Invalid directory $1 does not exist"
   usage
+else
+  PROJ_DIR=$1
+  mkdir -p $PROJ_DIR/.mvn
 fi
 
 create_maven_settings() {
   # Create a settings.xml file with the user+password for maven
   mvn_settings="${workdir}/mvn-settings.xml"
+  echo "Update $mvn_settings"
   cat >${mvn_settings} <<-EOF
 <?xml version="1.0" encoding="UTF-8" ?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -84,8 +103,27 @@ create_maven_settings() {
       <username>${SONATYPE_USERNAME}</username>
       <password>${SONATYPE_PASSWORD}</password>
     </server>
+    <server>
+      <id>s3</id>
+    </server>
   </servers>
 </settings>
+EOF
+}
+
+create_maven_extension_settings() {
+  # Create a extensions.xml file with the user+password for maven
+  mvn_extension_settings="$PROJ_DIR/.mvn/extensions.xml"
+  echo "Update $mvn_extension_settings"
+  cat >${mvn_extension_settings} <<-EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<extensions>
+  <extension>
+    <groupId>com.github.seahen</groupId>
+    <artifactId>maven-s3-wagon</artifactId>
+    <version>1.3.3</version>
+  </extension>
+</extensions>
 EOF
 }
 
@@ -93,14 +131,16 @@ url="${SNAPSHOT_REPO_URL}"
 workdir=$(mktemp -d)
 
 function cleanup() {
-  rm -rf "${workdir}"
+  rm -rf "$workdir"
+  rm -rf "$PROJ_DIR/.mvn"
 }
 
 trap cleanup TERM INT EXIT
 
 create_maven_settings
+create_maven_extension_settings
 
-cd "$1"
+cd "$PROJ_DIR"
 
 echo "searching for poms under $PWD"
 
@@ -114,19 +154,19 @@ for pom in ${pomFiles}; do
   pom_dir="$(dirname "${pom}")"
   for FILE in "${pom_dir}"/*; do
     # The POM is deployed with the artifact in a single deploy-file command, we can skip over it
-    if [[ $FILE != $pom ]] &&
+    if [[ $FILE != "$pom" ]] &&
        [[ $FILE != *"test-fixtures"* ]] && # This is a hack to ensure the OpenSearch build-tools test fixture jar is not uploaded instead of the actual build-tools jar.
        [[ $FILE != *"javadoc"* ]] &&
        [[ $FILE != *"sources"* ]]; then
       extension="${FILE##*.}"
       case $extension in jar | war | zip)
-          echo "Uploading: ${FILE} with ${pom} to ${url}"
+          echo "Uploading: ${FILE} with ${pom} to ${SERVER_ID} repo ${url}"
           mvn --settings="${mvn_settings}" deploy:deploy-file \
             -DgeneratePom=false \
-            -DrepositoryId=nexus \
-            -Durl="${SNAPSHOT_REPO_URL}" \
+            -DrepositoryId="${SERVER_ID}" \
+            -Durl="${url}" \
             -DpomFile="${pom}" \
-            -Dfile="${FILE}" || echo "Failed to upload ${FILE}"
+            -Dfile="${FILE}" || (echo "Failed to upload ${FILE}" && exit 1)
         ;;
       *) echo "Skipping upload for ${FILE}" ;;
       esac
