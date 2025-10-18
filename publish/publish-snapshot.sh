@@ -119,9 +119,9 @@ create_maven_extension_settings() {
 <?xml version="1.0" encoding="UTF-8"?>
 <extensions>
     <extension>
-        <groupId>org.springframework.build</groupId>
-        <artifactId>aws-maven</artifactId>
-        <version>5.0.0.RELEASE</version>
+        <groupId>com.gkatzioura.maven.cloud</groupId>
+        <artifactId>s3-wagon-provider</artifactId>
+        <version>2.5</version>
     </extension>
 </extensions>
 EOF
