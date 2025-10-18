@@ -59,20 +59,16 @@ if [ -z "${SNAPSHOT_REPO_URL}" ]; then
 else
   if echo $SNAPSHOT_REPO_URL | cut -d: -f1 | grep -q s3; then
     SERVER_ID="s3"
+    if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+      echo "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are required for s3"
+      exit 1
+    fi
   else
     SERVER_ID="nexus"
-  fi
-fi
-
-if [ "$SERVER_ID" = "s3" ]; then
-  if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
-    echo "AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are required for s3"
-    exit 1
-  fi
-else
-  if [ -z "$SONATYPE_USERNAME" ] || [ -z "$SONATYPE_PASSWORD" ]; then
-    echo "SONATYPE_USERNAME and SONATYPE_PASSWORD are required for nexus"
-    exit 1
+    if [ -z "$SONATYPE_USERNAME" ] || [ -z "$SONATYPE_PASSWORD" ]; then
+      echo "SONATYPE_USERNAME and SONATYPE_PASSWORD are required for nexus"
+      exit 1
+    fi
   fi
 fi
 
