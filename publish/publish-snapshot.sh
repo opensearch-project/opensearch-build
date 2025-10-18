@@ -125,9 +125,9 @@ create_maven_extension_settings() {
 <?xml version="1.0" encoding="UTF-8"?>
 <extensions>
     <extension>
-        <groupId>com.allogy.maven.wagon</groupId>
-        <artifactId>maven-s3-wagon</artifactId>
-        <version>1.2.0</version>
+        <groupId>org.springframework.build</groupId>
+        <artifactId>aws-maven</artifactId>
+        <version>5.0.0.RELEASE</version>
     </extension>
 </extensions>
 EOF
