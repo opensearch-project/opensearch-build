@@ -104,7 +104,9 @@ pipeline {
                     env.buildIdOpenSearch = buildManifestObjOpenSearch.getArtifactBuildId()
                     env.distribution = buildManifestObj.getDistribution()
                     env.version = buildManifestObj.build.version
+                    def osdMajorMinorVersion = buildManifestObj.build.version.tokenize('.')[0..1].join('.')
                     env.versionOpenSearch = buildManifestObjOpenSearch.build.version
+                    def osMajorMinorVersion = buildManifestObjOpenSearch.build.version.tokenize('.')[0..1].join('.')
                     env.platform = buildManifestObj.build.platform
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     env.artifactPathOpenSearch = buildManifestObjOpenSearch.getArtifactRoot(BUILD_JOB_NAME_OPENSEARCH, buildIdOpenSearch)
@@ -120,9 +122,9 @@ pipeline {
                     echo "Version: ${version}, VersionOpenSearch: ${versionOpenSearch}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
                     currentBuild.description = "$architecture, $platform, osd-$version-$buildId, os-$versionOpenSearch-$buildIdOpenSearch, $distribution"
 
-                    if (! env.version.equals(env.versionOpenSearch)) {
+                    if (! osdMajorMinorVersion.equals(osMajorMinorVersion)) {
                         currentBuild.result = 'ABORTED'
-                        error("OSD Version $version does not match OS Version $versionOpenSearch")
+                        error("OSD Major.Minor Version $osdMajorMinorVersion does not match OS Major.Minor Version $osMajorMinorVersion")
                     }
                 }
             }
