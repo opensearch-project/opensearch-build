@@ -144,7 +144,7 @@ for pom in ${pomFiles}; do
        [[ $FILE != *"sources"* ]]; then
       extension="${FILE##*.}"
       case $extension in jar | war | zip)
-          echo "Uploading: ${FILE} with ${pom} to ${url}"
+          echo "Uploading: ${FILE} with ${pom} to ${SERVER_ID} repo ${url}"
           mvn --settings="${mvn_settings}" deploy:deploy-file \
             -DgeneratePom=false \
             -DrepositoryId="${SERVER_ID}" \
