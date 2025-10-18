@@ -64,6 +64,8 @@ done
   exit 1
 }
 
+SERVER_ID=`echo $SNAPSHOT_REPO_URL | cut -d: -f1`
+
 if [ ! -d "$1" ]; then
   echo "Invalid directory $1 does not exist"
   usage
@@ -83,6 +85,15 @@ create_maven_settings() {
       <id>nexus</id>
       <username>${SONATYPE_USERNAME}</username>
       <password>${SONATYPE_PASSWORD}</password>
+    </server>
+    <server>
+      <id>s3</id>
+      <username>${AWS_ACCESS_KEY_ID}</username>
+      <password>${AWS_SECRET_ACCESS_KEY}</password>
+      <configuration>
+        <sessionToken>${AWS_SESSION_TOKEN}</sessionToken>
+        <region>us-east-1</region>
+      </configuration>
     </server>
   </servers>
 </settings>
@@ -123,8 +134,8 @@ for pom in ${pomFiles}; do
           echo "Uploading: ${FILE} with ${pom} to ${url}"
           mvn --settings="${mvn_settings}" deploy:deploy-file \
             -DgeneratePom=false \
-            -DrepositoryId=nexus \
-            -Durl="${SNAPSHOT_REPO_URL}" \
+            -DrepositoryId="${SERVER_ID}" \
+            -Durl="${url}" \
             -DpomFile="${pom}" \
             -Dfile="${FILE}" || echo "Failed to upload ${FILE}"
         ;;
