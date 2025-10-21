@@ -47,15 +47,28 @@ pipeline {
             defaultValue: true,
             description: 'Tag the images as latest'
         )
+        choice(
+            name: 'PROJECTS',
+            description: 'Enter the project to promote to production buckets',
+            choices: ['both', 'opensearch', 'opensearch-dashboards']
+        )
     }    
     stages {
         stage('Parameters Check') {
             steps {
                 script {
                     currentBuild.description = """RELEASE: ${RELEASE_VERSION}<br>OS_RC: ${OPENSEARCH_RC_BUILD_NUMBER}<br>OSD_RC: ${OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"""
-                    if(RELEASE_VERSION.isEmpty() || OPENSEARCH_RC_BUILD_NUMBER.isEmpty() || OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER.isEmpty()) {
-                                currentBuild.result = 'ABORTED'
-                                error('Make sure all the parameters are passed in.')
+                    if (RELEASE_VERSION.isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error('Please enter version number for RELEASE_VERSION')
+                    }
+                    if ((PROJECTS == "both" || PROJECTS == "opensearch") && OPENSEARCH_RC_BUILD_NUMBER.isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error('Please enter OpenSearch RC Build Number')
+                    }
+                    if ((PROJECTS == "both" || PROJECTS == "opensearch-dashboards") && OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER.isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error('Please enter OpenSearch-Dashboards RC Build Number')
                     }
                 }
             }
@@ -63,6 +76,12 @@ pipeline {
         stage('Publish'){
             parallel {
                 stage('OpenSearch Debian Apt promotion') {
+                    when {
+                        beforeAgent true
+                        expression { 
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -82,6 +101,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Yum promotion') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -101,6 +126,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Dashboards Debian Apt promotion') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch-dashboards'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -120,6 +151,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Dashboards Yum promotion') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch-dashboards'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -139,6 +176,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Windows promotion') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -160,6 +203,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Dashboards Windows promotion') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch-dashboards'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -181,6 +230,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Linux deb arm64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -202,6 +257,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Linux deb x64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -223,6 +284,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Dashboards Linux deb arm64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch-dashboards'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -244,6 +311,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Dashboards Linux deb x64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch-dashboards'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -265,6 +338,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Linux rpm arm64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -286,6 +365,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Linux rpm x64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -307,6 +392,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Dashboards Linux rpm arm64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch-dashboards'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -328,6 +419,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Dashboards Linux rpm x64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch-dashboards'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -349,6 +446,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Linux tar arm64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -370,6 +473,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Dashboards Linux tar arm64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch-dashboards'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -391,6 +500,12 @@ pipeline {
                     }
                 }
                 stage('OpenSearch Dashboards Linux tar x64') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.PROJECTS == 'both' || params.PROJECTS == 'opensearch-dashboards'
+                        }
+                    }
                     agent {
                         docker {
                             label AGENT_LINUX_X64
@@ -414,6 +529,12 @@ pipeline {
             }
         }
         stage('Publish OpenSearch Linux tar x64') {
+            when {
+                beforeAgent true
+                expression {
+                    params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
+                }
+            }
             agent {
                 docker {
                     label AGENT_LINUX_X64
@@ -437,26 +558,26 @@ pipeline {
         stage('Invalidate cloudfront and promote docker'){
             parallel {
                 stage('Invalidate Cloudfront') {
-                agent {
-                    docker {
-                        label AGENT_LINUX_X64
-                        image 'docker/library/alpine:3'
-                        registryUrl 'https://public.ecr.aws/'
-                        alwaysPull true
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
                     }
-                }
-                steps {
-                    script {
-                        echo 'Invalidating cloudfront'
-                        def majorVersion=params.RELEASE_VERSION.find(/\d/)
-                        withSecrets(secrets: secret_aws){
-                            withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-                                cfInvalidate(distribution: "${CLOUDFRONT_DISTRIBUTION_ID}", paths: ["/releases/bundle/opensearch/${majorVersion}.x/*", "/releases/bundle/opensearch-dashboards/${majorVersion}.x/*"], waitForCompletion: true)
+                    steps {
+                        script {
+                            echo 'Invalidating cloudfront'
+                            def majorVersion=params.RELEASE_VERSION.find(/\d/)
+                            withSecrets(secrets: secret_aws){
+                                withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+                                    cfInvalidate(distribution: "${CLOUDFRONT_DISTRIBUTION_ID}", paths: ["/releases/bundle/opensearch/${majorVersion}.x/*", "/releases/bundle/opensearch-dashboards/${majorVersion}.x/*"], waitForCompletion: true)
+                                }
                             }
                         }
                     }
                 }
-            }
                 stage('Promote Docker') {
                     agent {
                         docker {
@@ -467,9 +588,16 @@ pipeline {
                         }
                     }
                     steps {
+                        source_images_list = "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}, opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"
+                        if (PRODUCTS == "opensearch") {
+                            source_images_list = "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}"
+                        }
+                        else if (PRODUCTS == "opensearch-dashboards") {
+                            source_images_list = "opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"
+                        }
                         echo 'Triggering docker promotion'
                         build job: 'docker-promotion', wait: true, parameters: [
-                            string(name: 'SOURCE_IMAGES', value: "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}, opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"), 
+                            string(name: 'SOURCE_IMAGES', value: "${source_images_list}"), 
                             string(name: 'RELEASE_VERSION', value: "${params.RELEASE_VERSION}"),
                             booleanParam(name: 'DOCKER_HUB_PROMOTE', value: true),
                             booleanParam(name: 'ECR_PROMOTE', value: true),
@@ -492,22 +620,44 @@ pipeline {
         }
         steps {
             echo 'Triggering validation workflow'
-            build job: 'distribution-validation', wait: true, parameters: [
-                string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
-                string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
-                string(name: 'OSD_BUILD_NUMBER', value: "${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"),
-                string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
-                string(name: 'ARCHITECTURE', value: 'x64 arm64'),
-                string(name: 'PLATFORM', value: 'linux windows'),
-                string(name: 'PROJECTS', value: 'Both'),
-                string(name: 'DOCKER_SOURCE', value: 'Both'),
-                string(name: 'ARTIFACT_TYPE', value: 'production'),
-                string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
+            if (PRODUCTS == "opensearch") {
+                build job: 'distribution-validation', wait: true, parameters: [
+                    string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
+                    string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
+                    string(name: 'OSD_BUILD_NUMBER', value: ""),
+                    string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
+                    string(name: 'ARCHITECTURE', value: 'x64 arm64'),
+                    string(name: 'PLATFORM', value: 'linux windows'),
+                    string(name: 'PROJECTS', value: 'opensearch'),
+                    string(name: 'DOCKER_SOURCE', value: 'Both'),
+                    string(name: 'ARTIFACT_TYPE', value: 'production'),
+                    string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
                 ]
+            }
+            else {
+                build job: 'distribution-validation', wait: true, parameters: [
+                    string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
+                    string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
+                    string(name: 'OSD_BUILD_NUMBER', value: "latest"),
+                    string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
+                    string(name: 'ARCHITECTURE', value: 'x64 arm64'),
+                    string(name: 'PLATFORM', value: 'linux windows'),
+                    string(name: 'PROJECTS', value: 'Both'),
+                    string(name: 'DOCKER_SOURCE', value: 'Both'),
+                    string(name: 'ARTIFACT_TYPE', value: 'production'),
+                    string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
+                ]
+            }
             echo 'Artifacts are successfully validated!'
+        }
+    }
+    stage('Publish to Maven'){
+        when {
+            beforeAgent true
+            expression {
+                params.PROJECTS == 'both' || params.PROJECTS == 'opensearch'
             }
         }
-    stage('Publish to Maven'){
         agent {
             docker {
                 label AGENT_LINUX_X64
