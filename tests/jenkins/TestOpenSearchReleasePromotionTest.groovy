@@ -43,10 +43,12 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
         helper.registerAllowedMethod('cfInvalidate', [Map])
+        helper.registerAllowedMethod('beforeAgent', [Boolean.class], null)
         addParam('RELEASE_VERSION', '1.0.0')
         addParam('OPENSEARCH_RC_BUILD_NUMBER', '2050')
         addParam('OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER', '3050')
         binding.setVariable('AGENT_LINUX_X64', 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host')
+        binding.setVariable('PRODUCTS', 'both')
     }
 
     @Test
