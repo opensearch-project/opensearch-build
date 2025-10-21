@@ -1,4 +1,4 @@
-# OpenSearch and OpenSearch Dashboards 3.3.1 Release Notes
+# OpenSearch 3.3.1 and OpenSearch Dashboards 3.3.0 Release Notes
 
 ## Release Highlights
 Fixes OpenSearch Core Engine backward compatibility handling of date fields while maintaining performance optimizations. The `skip_list` parameter is now automatically set to `true` for new `@timestamp` fields created since 3.3.0, while preserving `skip_list=false` for existing indexes with `@timestamp` or index sort date fields. This approach ensures date histogram aggregation performance benefits for new indexes while maintaining compatibility with existing workloads.
