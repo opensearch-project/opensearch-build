@@ -590,10 +590,10 @@ pipeline {
                     steps {
                         script {
                             source_images_list = "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}, opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"
-                            if (PRODUCTS == "opensearch") {
+                            if (PROJECTS == "opensearch") {
                                 source_images_list = "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}"
                             }
-                            else if (PRODUCTS == "opensearch-dashboards") {
+                            else if (PROJECTS == "opensearch-dashboards") {
                                 source_images_list = "opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"
                             }
                             echo 'Triggering docker promotion'
@@ -623,7 +623,7 @@ pipeline {
         steps {
             script {
                 echo 'Triggering validation workflow'
-                if (PRODUCTS == "opensearch") {
+                if (PROJECTS == "opensearch") {
                     build job: 'distribution-validation', wait: true, parameters: [
                         string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
                         string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
