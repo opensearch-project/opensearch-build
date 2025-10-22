@@ -242,3 +242,9 @@ components:
     platforms:
       - linux
       - windows
+    depends_on:
+      - job-scheduler
+      - neural-search
+      - k-NN
+      - ml-commons
+      - user-behavior-insights
