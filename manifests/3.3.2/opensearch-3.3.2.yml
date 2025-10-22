@@ -37,7 +37,7 @@ components:
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: tags/3.3.0.0
+    ref: '3.3'
     platforms:
       - linux
       - windows
