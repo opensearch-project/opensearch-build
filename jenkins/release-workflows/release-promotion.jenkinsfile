@@ -588,23 +588,25 @@ pipeline {
                         }
                     }
                     steps {
-                        source_images_list = "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}, opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"
-                        if (PRODUCTS == "opensearch") {
-                            source_images_list = "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}"
+                        script {
+                            source_images_list = "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}, opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"
+                            if (PRODUCTS == "opensearch") {
+                                source_images_list = "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}"
+                            }
+                            else if (PRODUCTS == "opensearch-dashboards") {
+                                source_images_list = "opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"
+                            }
+                            echo 'Triggering docker promotion'
+                            build job: 'docker-promotion', wait: true, parameters: [
+                                string(name: 'SOURCE_IMAGES', value: "${source_images_list}"), 
+                                string(name: 'RELEASE_VERSION', value: "${params.RELEASE_VERSION}"),
+                                booleanParam(name: 'DOCKER_HUB_PROMOTE', value: true),
+                                booleanParam(name: 'ECR_PROMOTE', value: true),
+                                booleanParam(name: 'TAG_LATEST', value: "${params.TAG_DOCKER_LATEST}"),
+                                booleanParam(name: 'TAG_MAJOR_VERSION', value: true)
+                                ]
+                            echo 'Promoted Docker successfully!'
                         }
-                        else if (PRODUCTS == "opensearch-dashboards") {
-                            source_images_list = "opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"
-                        }
-                        echo 'Triggering docker promotion'
-                        build job: 'docker-promotion', wait: true, parameters: [
-                            string(name: 'SOURCE_IMAGES', value: "${source_images_list}"), 
-                            string(name: 'RELEASE_VERSION', value: "${params.RELEASE_VERSION}"),
-                            booleanParam(name: 'DOCKER_HUB_PROMOTE', value: true),
-                            booleanParam(name: 'ECR_PROMOTE', value: true),
-                            booleanParam(name: 'TAG_LATEST', value: "${params.TAG_DOCKER_LATEST}"),
-                            booleanParam(name: 'TAG_MAJOR_VERSION', value: true)
-                            ]
-                        echo 'Promoted Docker successfully!'
                     }
                 }
             }
@@ -619,36 +621,38 @@ pipeline {
             }
         }
         steps {
-            echo 'Triggering validation workflow'
-            if (PRODUCTS == "opensearch") {
-                build job: 'distribution-validation', wait: true, parameters: [
-                    string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
-                    string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
-                    string(name: 'OSD_BUILD_NUMBER', value: ""),
-                    string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
-                    string(name: 'ARCHITECTURE', value: 'x64 arm64'),
-                    string(name: 'PLATFORM', value: 'linux windows'),
-                    string(name: 'PROJECTS', value: 'opensearch'),
-                    string(name: 'DOCKER_SOURCE', value: 'Both'),
-                    string(name: 'ARTIFACT_TYPE', value: 'production'),
-                    string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
-                ]
+            script {
+                echo 'Triggering validation workflow'
+                if (PRODUCTS == "opensearch") {
+                    build job: 'distribution-validation', wait: true, parameters: [
+                        string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
+                        string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
+                        string(name: 'OSD_BUILD_NUMBER', value: ""),
+                        string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
+                        string(name: 'ARCHITECTURE', value: 'x64 arm64'),
+                        string(name: 'PLATFORM', value: 'linux windows'),
+                        string(name: 'PROJECTS', value: 'opensearch'),
+                        string(name: 'DOCKER_SOURCE', value: 'Both'),
+                        string(name: 'ARTIFACT_TYPE', value: 'production'),
+                        string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
+                    ]
+                }
+                else {
+                    build job: 'distribution-validation', wait: true, parameters: [
+                        string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
+                        string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
+                        string(name: 'OSD_BUILD_NUMBER', value: "latest"),
+                        string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
+                        string(name: 'ARCHITECTURE', value: 'x64 arm64'),
+                        string(name: 'PLATFORM', value: 'linux windows'),
+                        string(name: 'PROJECTS', value: 'Both'),
+                        string(name: 'DOCKER_SOURCE', value: 'Both'),
+                        string(name: 'ARTIFACT_TYPE', value: 'production'),
+                        string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
+                    ]
+                }
+                echo 'Artifacts are successfully validated!'
             }
-            else {
-                build job: 'distribution-validation', wait: true, parameters: [
-                    string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
-                    string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
-                    string(name: 'OSD_BUILD_NUMBER', value: "latest"),
-                    string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
-                    string(name: 'ARCHITECTURE', value: 'x64 arm64'),
-                    string(name: 'PLATFORM', value: 'linux windows'),
-                    string(name: 'PROJECTS', value: 'Both'),
-                    string(name: 'DOCKER_SOURCE', value: 'Both'),
-                    string(name: 'ARTIFACT_TYPE', value: 'production'),
-                    string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
-                ]
-            }
-            echo 'Artifacts are successfully validated!'
         }
     }
     stage('Publish to Maven'){
