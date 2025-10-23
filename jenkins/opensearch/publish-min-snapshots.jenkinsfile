@@ -24,6 +24,11 @@ pipeline {
         AGENT_MACOS_ARM64 = 'Jenkins-Agent-MacOS13-ARM64-Mac2M2proMetal-Multi-Host'
         AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
     }
+    triggers {
+        parameterizedCron '''
+            H */4 * * * %INPUT_MANIFEST=3.4.0/opensearch-dashboards-3.4.0.yml
+        '''
+    }
     parameters {
         string(
             name: 'INPUT_MANIFEST',
