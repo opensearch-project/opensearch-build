@@ -29,7 +29,7 @@ def secret_dockerhub_staging = [
 
 pipeline {
     options {
-        timeout(time: 5, unit: 'HOURS')
+        timeout(time: 6, unit: 'HOURS')
     }
     agent none
     parameters {

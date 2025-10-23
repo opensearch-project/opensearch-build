@@ -1,6 +1,6 @@
    docker-build.run()
       docker-build.pipeline(groovy.lang.Closure)
-         docker-build.timeout({time=5, unit=HOURS})
+         docker-build.timeout({time=6, unit=HOURS})
          docker-build.echo(Executing on agent [label:none])
          docker-build.stage(Parameters Check, groovy.lang.Closure)
             docker-build.script(groovy.lang.Closure)
