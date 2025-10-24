@@ -54,6 +54,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
         binding.setVariable('SIGNER_CLIENT_SIGNED_BUCKET', 'SIGNER_CLIENT_SIGNED_BUCKET')
         binding.setVariable('dockerAgent', [image:'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3', args:'-e JAVA_HOME=/opt/java/openjdk-20'])
         binding.setVariable('dockerAgentWindowsZip', [image:'opensearchstaging/ci-runner:ci-runner:ci-runner-windows2019-opensearch-build-v1', args:'-e JAVA_HOME=/opt/java/openjdk-21', javaVersion: '21'])
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
         helper.registerAllowedMethod('withSecrets', [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
