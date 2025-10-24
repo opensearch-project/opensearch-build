@@ -46,8 +46,12 @@ RUN mkdir -p /usr/local/lib/docker/cli-plugins && \
     ln -s /usr/local/lib/docker/cli-plugins/docker-compose /usr/local/bin/docker-compose
 
 # Install python, update awscli to v2 due to lib conflicts on urllib3 v1 vs v2
-RUN apt-get update -y && apt-get install -y python3.9-full python3.9-dev && \
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 100 && \
+# 20251024: mismatch versions between 3.9.23 and 3.9.24 on arm64, temporarily force old versions on all python3.9 pkgs
+#           https://github.com/deadsnakes/issues/issues/330
+RUN if [ `uname -m` = "aarch64" ]; then apt-get update -y && apt-get install -y python3.9-full=3.9.23* python3.9-dev=3.9.23* libpython3.9-testsuite=3.9.23*; \
+    else apt-get update -y && apt-get install -y python3.9-full python3.9-dev; fi
+
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 100 && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3.9 100 && \
     update-alternatives --set python3 /usr/bin/python3.9 && \
     update-alternatives --set python /usr/bin/python3.9 && \
