@@ -258,7 +258,7 @@
             publish-min-snapshots.script(groovy.lang.Closure)
                publish-min-snapshots.retry(3, groovy.lang.Closure)
                   publish-min-snapshots.echo(Switching to Java 21 on Windows Docker Container)
-                  publish-min-snapshots.sh(scoop reset `scoop list jdk | cut -d ' ' -f1 | grep 21 | head -1`)
+                  publish-min-snapshots.bat(bash -c "scoop reset `scoop list jdk | cut -d ' ' -f1 | grep 21 | head -1`")
                   publish-min-snapshots.buildManifest({componentName=OpenSearch, inputManifest=manifests/3.0.0/opensearch-3.0.0.yml, platform=windows, architecture=x64, distribution=zip, snapshot=true})
                      buildManifest.legacySCM(groovy.lang.Closure)
                      buildManifest.library({identifier=jenkins@11.0.1, retriever=null})
