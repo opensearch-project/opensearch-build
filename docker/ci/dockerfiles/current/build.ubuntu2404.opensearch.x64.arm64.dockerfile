@@ -79,4 +79,8 @@ RUN groupadd -g 1000 $CONTAINER_USER && \
 # Change User
 USER $CONTAINER_USER
 WORKDIR $CONTAINER_USER_HOME
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable -y
+
 RUN aws --install
