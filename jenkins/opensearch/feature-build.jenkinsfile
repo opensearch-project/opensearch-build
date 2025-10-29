@@ -120,7 +120,7 @@ pipeline {
                         error("Your INPUT_MANIFEST entry should be formated as '<feature_name>/opensearch-<version>.yml'")
                     }
                     else {
-                        echo("Feature Name: ${env.buildFeature}")
+                        echo("Feature Name: ${env.BUILD_FEATURE}")
                     }
                 }
             }
