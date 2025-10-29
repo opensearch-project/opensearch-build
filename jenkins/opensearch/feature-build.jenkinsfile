@@ -1,0 +1,235 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+lib = library(identifier: 'jenkins@11.2.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    options {
+        timeout(time: 4, unit: 'HOURS')
+    }
+    agent none
+    environment {
+        AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
+    }
+    triggers {
+        parameterizedCron '''
+            H 3 * * * %INPUT_MANIFEST=feature-datafusion/opensearch-3.4.0.yml
+        '''
+    }
+    parameters {
+        string(
+            name: 'INPUT_MANIFEST',
+            description: 'Required: Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            trim: true
+        )
+        string(
+            name: 'COMPONENT_NAME',
+            description: 'Optional: If this field contains one or more component names (e.g. OpenSearch common-utils ...), will build with "--component COMPONENT_NAME_HERE ...", else build everything in the INPUT_MANIFEST.',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
+            name: 'BUILD_PLATFORM',
+            description: "Required: Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms separated by space (docker is only available on linux)",
+            defaultValue: 'linux',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
+            name: 'BUILD_DISTRIBUTION',
+            description: "Required: Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions separated by space (docker is only available on tar)",
+            defaultValue: 'tar',
+            trim: true
+        )
+        booleanParam(
+            name: 'UPDATE_LATEST_URL',
+            description: 'Update latest url so /latest/ is pointed to this build',
+            defaultValue: true
+        )
+        booleanParam(
+            name: 'CONTINUE_ON_ERROR',
+            description: 'Continue building the distribution even if a one or more component fails',
+            defaultValue: true
+        )
+        booleanParam(
+            name: 'INCREMENTAL',
+            description: 'Whether to trigger incremental build. Defaults to false.',
+            defaultValue: false
+        )
+        string(
+            name: 'PREVIOUS_BUILD_ID',
+            description: 'The build ID used to download previous build artifacts. Defaults to latest.',
+            defaultValue: 'latest',
+            trim: true
+        )
+    }
+    stages {
+        stage('verify-parameters') {
+            agent {
+                docker {
+                    label AGENT_LINUX_X64
+                    image 'docker/library/alpine:3'
+                    registryUrl 'https://public.ecr.aws/'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    if (INPUT_MANIFEST == '' || !fileExists("feature-manifests/${INPUT_MANIFEST}")) {
+                        currentBuild.result = 'ABORTED'
+                        error("Input manifest was not provided or not found at feature-manifests/${INPUT_MANIFEST}.")
+                    }
+
+                    echo('Detect Docker Images and Related Parameters')
+                    dockerAgentLinuxTar = detectDockerAgent(
+                        distribution: "tar",
+                        platform: "linux",
+                        manifest: "feature-manifests/${INPUT_MANIFEST}"
+                    )
+                    echo('Print Image Information')
+                    [
+                        linux_tar: dockerAgentLinuxTar,
+                    ].each { name, agent ->
+                        echo("${name} Image: ${agent.image}, Args: ${agent.args}")
+                    }
+
+                    currentBuild.description = "feature-manifests/${INPUT_MANIFEST}"
+
+                    paramType = [
+                        'BUILD_PLATFORM': 'linux windows',
+                        'BUILD_DISTRIBUTION': 'tar rpm deb zip',
+                    ]
+
+                    paramType.each { key, value ->
+                        verifyParameterPlatformDistribution(key, value)
+                    }
+                    def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: "feature-manifests/${INPUT_MANIFEST}"))
+                    def version = inputManifestObj.build.version
+                    def qualifier = inputManifestObj.build.qualifier ? '-' + inputManifestObj.build.qualifier : ''
+                    env.revision = version + qualifier
+                    env.BUILD_FEATURE = INPUT_MANIFEST.tokenize('/')[0]
+                    if (isNullOrEmpty(env.BUILD_FEATURE)) {
+                        currentBuild.result = "ABORTED"
+                        error("Your INPUT_MANIFEST entry should be formated as '<feature_name>/opensearch-<version>.yml'")
+                    }
+                    else {
+                        echo("Feature Name: ${env.BUILD_FEATURE}")
+                    }
+                }
+            }
+        }
+        stage('build') {
+            parallel {
+                stage('build-and-test-linux-x64-tar') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.BUILD_PLATFORM.contains('linux')
+                        }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('tar')
+                        }
+                    }
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image dockerAgentLinuxTar.image
+                            args dockerAgentLinuxTar.args
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "feature-manifests/${INPUT_MANIFEST}",
+                                platform: 'linux',
+                                architecture: 'x64',
+                                distribution: 'tar',
+                                continueOnError: params.CONTINUE_ON_ERROR,
+                                incremental: params.INCREMENTAL,
+                                previousBuildId: params.PREVIOUS_BUILD_ID,
+                                buildFeature: env.BUILD_FEATURE
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_LINUX_X64_TAR = artifactUrl
+                            env.INDEX_FILE_PATH_X64_TAR = buildManifestObj.getIndexFileRoot("${JOB_NAME}", env.BUILD_FEATURE)
+
+                            echo "buildManifestUrl (linux, x64, tar): ${buildManifestUrl}"
+                            echo "artifactUrl (linux, x64, tar): ${artifactUrl}"
+
+                        }
+                    }
+                    post {
+                        success {
+                            script {
+                                if (params.UPDATE_LATEST_URL) {
+                                    uploadIndexFile(
+                                        indexFilePath: env.INDEX_FILE_PATH_X64_TAR
+                                    )
+                                }
+                            }
+                        }
+                        unstable {
+                            script {
+                                if (params.UPDATE_LATEST_URL) {
+                                    uploadIndexFile(
+                                        indexFilePath: env.INDEX_FILE_PATH_X64_TAR
+                                    )
+                                }
+                            }
+                        }
+                        always {
+                            script {
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
+                                postCleanup()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+def markStageUnstableIfPluginsFailedToBuild() {
+    def stageLogs = getLogsForStage(stageName: "${STAGE_NAME}")
+    if (stageLogs.any { e -> e.contains('Failed plugins are') }) {
+        unstable('Some plugins failed to build. See the ./build.sh step for logs and more details')
+    }
+}
+
+def verifyParameterPlatformDistribution(String paramName, String allowedValue) {
+    echo("Verify Parameter '$paramName'")
+    def paramValue = env."$paramName"
+    def checkArray = paramValue.tokenize(' ')
+    echo("Parameter Entry: '$paramValue', $checkArray")
+    echo("Supported Entry: '$allowedValue'")
+
+    if (paramValue == null || paramValue == '') {
+        currentBuild.result = 'ABORTED'
+        error("Missing parameter '$paramName' (possible entries: $allowedValue).")
+    }
+
+    for (String entry : paramValue) {
+        if (! allowedValue.contains(entry)) {
+            currentBuild.result = 'ABORTED'
+            error("Error parameter '$paramName': $paramValue (possible entries: ${allowedValue}).")
+        }
+    }
+
+    echo("Verified '$paramName': $paramValue\n")
+}
+
+boolean isNullOrEmpty(String str) { return (str == 'Null' || str == null || str.allWhitespace || str.isEmpty()) }
