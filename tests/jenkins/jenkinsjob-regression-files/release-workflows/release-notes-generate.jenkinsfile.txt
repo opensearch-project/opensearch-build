@@ -57,7 +57,7 @@
                                                                             if [ -n "$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
                                                                             else
-                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release-chores/release-notes-2.2.0 -B main
+                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release-chores/release-notes-2.2.0 -B 2.2
                                                                             fi
                                                                         fi
                                                                     else
@@ -111,7 +111,7 @@
                                                                             if [ -n "$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
                                                                             else
-                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release-chores/release-notes-2.2.0 -B main
+                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body 'Add release notes for 2.2.0' -H release-chores/release-notes-2.2.0 -B 2.2
                                                                             fi
                                                                         fi
                                                                     else

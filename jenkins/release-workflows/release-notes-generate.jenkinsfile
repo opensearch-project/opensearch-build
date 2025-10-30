@@ -146,7 +146,7 @@ pipeline {
                                                                             if [ -n "\$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #\${EXISTING_PR} for component \${REPO_NAME} with new release notes."
                                                                             else
-                                                                                gh pr create --title '[AUTO] Add release notes for ${version}' --body 'Add release notes for ${version}' -H release-chores/release-notes-${version} -B main
+                                                                                gh pr create --title '[AUTO] Add release notes for ${version}' --body 'Add release notes for ${version}' -H release-chores/release-notes-${version} -B ${ref}
                                                                             fi
                                                                         fi
                                                                     else
