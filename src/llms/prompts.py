@@ -76,6 +76,7 @@ AI_RELEASE_NOTES_PROMPT_COMMIT = """I need you to generate OpenSearch component 
    - Do not lose any commit information, even if it doesn't match any category
 
 3. **Entry Format:**
+   - Ignore the pull request that has title as "[AUTO] Increment version to".
    - Use PullRequestSubject as the main content for each entry
    - Extract PR number from PullRequestSubject (format: (#123))
    - Format: `* <description> ([#<number>]({repository_url}/pull/<number>))`
