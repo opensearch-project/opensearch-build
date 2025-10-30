@@ -22,7 +22,7 @@ USER 0
 # Add normal dependencies
 RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq protobuf-compiler
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq
 
 # Replace default curl 7.61.1 on Almalinux8 with 7.75+ version to support aws-sigv4
 # https://github.com/curl/curl/commit/08e8455dddc5e48e58a12ade3815c01ae3da3b64
