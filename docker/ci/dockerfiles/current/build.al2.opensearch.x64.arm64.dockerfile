@@ -23,7 +23,7 @@ USER 0
 RUN yum clean all && \
     amazon-linux-extras install epel -y && \
     yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq pigz protobuf-compiler
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq pigz
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
@@ -171,9 +171,9 @@ RUN pip3 install cmake==3.26.4
 # Only linux x64 glibc217 is supported in unofficial build until https://github.com/nodejs/unofficial-builds/pull/91 is merged for pre-compiled arm64 binaries
 # The linux arm64 glibc226 tarball here is directly compiled from the source code on AL2 host for the time being
 RUN if [ `uname -m` = "x86_64" ]; then \
-        curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-x64-glibc-217.tar.xz -o /node20.tar.xz; \
+        curl -SfL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-x64-glibc-217.tar.xz -o /node20.tar.xz; \
     else \
-        curl -SL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-arm64-glibc-226-libstdcpp-6.0.24.tar.xz -o /node20.tar.xz; \
+        curl -SfL https://ci.opensearch.org/ci/dbc/tools/node/node-v20.18.0-linux-arm64-glibc-226-libstdcpp-6.0.24.tar.xz -o /node20.tar.xz; \
     fi; \
     mkdir /node_al2 && \
     tar -xf /node20.tar.xz --strip-components 1 -C /node_al2 && \
@@ -186,7 +186,17 @@ WORKDIR $CONTAINER_USER_HOME
 # Install Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable -y
 
+# Install protobuf
+RUN if [ "$(uname -m)" = "x86_64" ]; then \
+        curl -SfL https://github.com/protocolbuffers/protobuf/releases/download/v33.0/protoc-33.0-linux-x86_64.zip -O protoc.zip; \
+    else \
+        curl -Sfl https://github.com/protocolbuffers/protobuf/releases/download/v33.0/protoc-33.0-linux-aarch_64.zip -O protoc.zip; \
+    fi; \
+    unzip protoc.zip -d $CONTAINER_USER_HOME/.local && rm -v protoc.zip
+
 # Install fpm for opensearch dashboards core
 RUN gem install dotenv -v 2.8.1 && gem install public_suffix -v 5.1.1 && gem install rchardet -v 1.8.0 && gem install fpm -v 1.14.2
-ENV PATH=$CONTAINER_USER_HOME/.gem/gems/fpm-1.14.2/bin:$PATH
-RUN fpm -v
+
+# Setup ENV
+ENV PATH=$CONTAINER_USER_HOME/.gem/gems/fpm-1.14.2/bin:$CONTAINER_USER_HOME/.local/bin:$PATH
+RUN fpm -v && protoc --version
