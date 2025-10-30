@@ -23,7 +23,7 @@ USER 0
 RUN yum clean all && \
     amazon-linux-extras install epel -y && \
     yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq pigz
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq pigz protobuf-compiler
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
