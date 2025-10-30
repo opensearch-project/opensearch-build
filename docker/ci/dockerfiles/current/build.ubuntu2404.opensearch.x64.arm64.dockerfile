@@ -28,7 +28,7 @@ RUN apt-get update -y && apt-get install -y docker.io=24.0.7* curl build-essenti
     apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 xauth xvfb && \
     apt-get install -y libxrender1 libxi6 libxtst6 libasound2t64 && \
     apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libatspi2.0-dev libxcomposite-dev libxdamage1 libxfixes3 libxfixes-dev libxrandr2 libgbm-dev libxkbcommon-x11-0 libpangocairo-1.0-0 libcairo2 libcairo2-dev libnss3 libnspr4 libnspr4-dev && \
-    apt-get install -y mandoc less protobuf-compiler && \
+    apt-get install -y mandoc less && \
     apt-get clean -y
 
 # Docker Compose v2
@@ -80,7 +80,19 @@ RUN groupadd -g 1000 $CONTAINER_USER && \
 USER $CONTAINER_USER
 WORKDIR $CONTAINER_USER_HOME
 
+RUN aws --install
+
 # Install Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable -y
 
-RUN aws --install
+# Install protobuf
+RUN if [ "$(uname -m)" = "x86_64" ]; then \
+        curl -SfL https://github.com/protocolbuffers/protobuf/releases/download/v33.0/protoc-33.0-linux-x86_64.zip -o protoc.zip; \
+    else \
+        curl -Sfl https://github.com/protocolbuffers/protobuf/releases/download/v33.0/protoc-33.0-linux-aarch_64.zip -o protoc.zip; \
+    fi; \
+    unzip protoc.zip -d $CONTAINER_USER_HOME/.local && rm -v protoc.zip
+
+# Setup ENV
+ENV PATH=$CONTAINER_USER_HOME/.local/bin:$PATH
+RUN protoc --version

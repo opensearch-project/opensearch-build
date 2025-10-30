@@ -22,7 +22,7 @@ USER 0
 # Add normal dependencies
 RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq protobuf-compiler
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq
 
 # Replace default curl 7.61.1 on Almalinux8 with 7.75+ version to support aws-sigv4
 # https://github.com/curl/curl/commit/08e8455dddc5e48e58a12ade3815c01ae3da3b64
@@ -115,7 +115,17 @@ WORKDIR $CONTAINER_USER_HOME
 # Install Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable -y
 
+# Install protobuf
+RUN if [ "$(uname -m)" = "x86_64" ]; then \
+        curl -SfL https://github.com/protocolbuffers/protobuf/releases/download/v33.0/protoc-33.0-linux-x86_64.zip -o protoc.zip; \
+    else \
+        curl -Sfl https://github.com/protocolbuffers/protobuf/releases/download/v33.0/protoc-33.0-linux-aarch_64.zip -o protoc.zip; \
+    fi; \
+    unzip protoc.zip -d $CONTAINER_USER_HOME/.local && rm -v protoc.zip
+
 # Install fpm for opensearch dashboards core
 RUN gem install dotenv -v 2.8.1 && gem install public_suffix -v 5.1.1 && gem install rchardet -v 1.8.0 && gem install fpm -v 1.14.2
-ENV PATH=$CONTAINER_USER_HOME/.gem/gems/fpm-1.14.2/bin:$PATH
-RUN fpm -v
+
+# Setup ENV
+ENV PATH=$CONTAINER_USER_HOME/.gem/gems/fpm-1.14.2/bin:$CONTAINER_USER_HOME/.local/bin:$PATH
+RUN fpm -v && protoc --version
