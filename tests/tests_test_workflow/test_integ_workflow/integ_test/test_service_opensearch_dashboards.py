@@ -76,6 +76,51 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_process.assert_called_once_with("./opensearch-dashboards", os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "bin"), False)
         self.assertEqual(mock_pid.call_count, 1)
 
+
+    @patch("test_workflow.integ_test.service.Process.start")
+    @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("yaml.dump")
+    @patch("tarfile.open")
+    def test_start(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Mock, mock_pid: Mock, mock_process: Mock) -> None:
+
+        mock_dependency_installer = MagicMock()
+
+        service = ServiceOpenSearchDashboards(
+            "3.3.2",
+            self.distribution,
+            self.additional_config,
+            True,
+            mock_dependency_installer,
+            self.work_dir
+        )
+
+        bundle_full_name = "test_bundle_name"
+        mock_dependency_installer.download_dist.return_value = bundle_full_name
+
+        mock_bundle_tar = MagicMock()
+        mock_tarfile_open.return_value.__enter__.return_value = mock_bundle_tar
+
+        mock_dump_result = MagicMock()
+        mock_dump.return_value = mock_dump_result
+
+        # call the target test function
+        service.start()
+
+        mock_dependency_installer.download_dist.called_once_with(self.work_dir)
+        mock_tarfile_open.assert_called_once_with(bundle_full_name, "r:gz")
+        mock_bundle_tar.extractall.assert_called_once_with(self.work_dir)
+        mock_dump.assert_called_once_with(
+            {
+                "script.context.field.max_compilations_rate": "1000/1m",
+                "logging.dest": os.path.join(self.work_dir, "opensearch-dashboards-3.3.2", "logs", "opensearch_dashboards.log"),
+                "server.host": "0.0.0.0",
+                "home.disableWelcomeScreen": "true",
+                "home.disableExperienceModal": "true"
+            }
+        )
+        mock_file.return_value.write.assert_called_once_with(mock_dump_result)
+
     @patch("os.path.isdir")
     @patch("subprocess.check_call")
     @patch("test_workflow.integ_test.service.Process.start")
