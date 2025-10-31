@@ -4,6 +4,7 @@ cluster.name: docker-cluster
 # Bind to all interfaces because we don't know what IP address Docker will assign to us.
 network.host: 0.0.0.0
 
+# For OpenSearch 1.x.x
 # # minimum_master_nodes need to be explicitly set when bound on a public IP
 # # set to 1 to allow single node clusters
 # discovery.zen.minimum_master_nodes: 1
