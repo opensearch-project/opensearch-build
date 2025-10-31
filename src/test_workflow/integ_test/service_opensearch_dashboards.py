@@ -57,11 +57,8 @@ class ServiceOpenSearchDashboards(Service):
         logging.info("Additional Config: 'server.host: 0.0.0.0'")
         self.additional_config["server.host"] = '0.0.0.0'
 
-        # Since 3.3.0, OSD core introduced experience modal and welcome screen
-        # https://github.com/opensearch-project/OpenSearch-Dashboards/pull/10607
+        # Since 3.3.0, OSD core introduced experience modal: https://github.com/opensearch-project/OpenSearch-Dashboards/pull/10607
         # Will disable it during the test
-        logging.info("Additional Config: 'home.disableWelcomeScreen: true'")
-        self.additional_config["home.disableWelcomeScreen"] = 'true'
         logging.info("Additional Config: 'home.disableExperienceModal: true'")
         self.additional_config["home.disableExperienceModal"] = 'true'
 
