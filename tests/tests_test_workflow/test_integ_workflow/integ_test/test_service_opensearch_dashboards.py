@@ -76,13 +76,12 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_process.assert_called_once_with("./opensearch-dashboards", os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "bin"), False)
         self.assertEqual(mock_pid.call_count, 1)
 
-
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Mock, mock_pid: Mock, mock_process: Mock) -> None:
+    def test_start_with_version_3_3_2(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Mock, mock_pid: Mock, mock_process: Mock) -> None:
 
         mock_dependency_installer = MagicMock()
 
