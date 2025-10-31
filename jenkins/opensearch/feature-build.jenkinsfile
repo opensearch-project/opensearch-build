@@ -22,7 +22,7 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H 3 * * * %INPUT_MANIFEST=feature-datafusion/opensearch-3.4.0.yml
+            H 3 * * * %INPUT_MANIFEST=feature-datafusion/opensearch-3.3.0.yml
         '''
     }
     parameters {
