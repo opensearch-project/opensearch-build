@@ -10,6 +10,7 @@ import os
 import subprocess
 
 import requests
+import semver
 import yaml
 from requests.models import Response
 
@@ -59,11 +60,12 @@ class ServiceOpenSearchDashboards(Service):
 
         # Since 3.3.0, OSD core introduced experience modal and welcome screen
         # https://github.com/opensearch-project/OpenSearch-Dashboards/pull/10607
-        # Will disable it during the test
-        logging.info("Additional Config: 'home.disableWelcomeScreen: true'")
-        self.additional_config["home.disableWelcomeScreen"] = 'true'
-        logging.info("Additional Config: 'home.disableExperienceModal: true'")
-        self.additional_config["home.disableExperienceModal"] = 'true'
+        # Will disable it during the test only for version >= 3.3.0
+        if semver.Version.parse(self.version).compare(semver.Version.parse("3.3.0")) >= 0:
+            logging.info("Additional Config: 'home.disableWelcomeScreen: true'")
+            self.additional_config["home.disableWelcomeScreen"] = 'true'
+            logging.info("Additional Config: 'home.disableExperienceModal: true'")
+            self.additional_config["home.disableExperienceModal"] = 'true'
 
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
