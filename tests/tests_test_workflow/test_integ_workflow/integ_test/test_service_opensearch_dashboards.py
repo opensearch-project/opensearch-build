@@ -68,9 +68,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
             {
                 "script.context.field.max_compilations_rate": "1000/1m",
                 "logging.dest": os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "logs", "opensearch_dashboards.log"),
-                "server.host": "0.0.0.0",
-                "home.disableWelcomeScreen": "true",
-                "home.disableExperienceModal": "true"
+                "server.host": "0.0.0.0"
             }
         )
         mock_file.return_value.write.assert_called_once_with(mock_dump_result)
@@ -138,9 +136,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
             "opensearch-dashboards-1.1.0",
             "logs",
             "opensearch_dashboards.log"),
-            "server.host": "0.0.0.0",
-            "home.disableWelcomeScreen": "true",
-            "home.disableExperienceModal": "true"}
+            "server.host": "0.0.0.0"}
         )
 
         mock_file_handler_for_security.close.assert_called_once()
@@ -207,9 +203,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
             "opensearch-dashboards-1.1.0",
             "logs",
             "opensearch_dashboards.log"),
-            "server.host": "0.0.0.0",
-            "home.disableWelcomeScreen": "true",
-            "home.disableExperienceModal": "true"}
+            "server.host": "0.0.0.0"}
         )
 
         mock_file_handler_for_security.close.assert_called_once()
