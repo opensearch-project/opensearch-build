@@ -1,5 +1,12 @@
 # OpenSearch and OpenSearch Dashboards 2.19.4 Release Notes
 
+## Release Details
+
+OpenSearch and OpenSearch Dashboards 2.19.4 includes the following bug fixes, infrastructure, documentation and maintenance updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.19/release-notes/opensearch.release-notes-2.19.4.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.19/release-notes/opensearch-dashboards.release-notes-2.19.4.md).
 
 ## BUG FIXES
 
