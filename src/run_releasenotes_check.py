@@ -78,7 +78,7 @@ def main() -> int:
 
         if component_name == "opensearch-sql":
             component_name = "SQL"
-        elif component_name == "k-NN" or component_name.lower() == "k-nn":
+        elif component_name.lower() == "k-nn":
             return "OpenSearch k-NN"
 
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
