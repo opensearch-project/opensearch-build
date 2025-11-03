@@ -13,3 +13,54 @@ components:
   - name: OpenSearch-DataFusion
     repository: https://github.com/opensearch-project/OpenSearch.git
     ref: 'feature/datafusion'
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: tags/3.3.0.0
+    platforms:
+      - linux
+      - windows
+  - name: opensearch-remote-metadata-sdk
+    repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
+    ref: tags/3.3.0.0
+    platforms:
+      - linux
+      - windows
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: tags/3.3.0.0
+    platforms:
+      - linux
+      - windows
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: tags/3.3.0.0
+    platforms:
+      - linux
+      - windows
+  - name: geospatial
+    repository: https://github.com/opensearch-project/geospatial.git
+    ref: tags/3.3.0.0
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - job-scheduler
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: tags/3.3.0.0
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
+      - opensearch-remote-metadata-sdk
+  - name: sql
+    repository: https://github.com/vinaykpud/sql.git
+    ref: 'feature/substrait-plan'
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - ml-commons
+      - geospatial
