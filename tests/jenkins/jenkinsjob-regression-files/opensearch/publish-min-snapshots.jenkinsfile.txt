@@ -5,7 +5,7 @@
          publish-min-snapshots.timeout({time=1, unit=HOURS})
          publish-min-snapshots.echo(Executing on agent [label:none])
          publish-min-snapshots.parameterizedCron(
-            H */4 * * * %INPUT_MANIFEST=3.4.0/opensearch-dashboards-3.4.0.yml
+            H */4 * * * %INPUT_MANIFEST=3.4.0/opensearch-3.4.0.yml
         )
          publish-min-snapshots.stage(Detect Docker-images, groovy.lang.Closure)
             publish-min-snapshots.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:docker/library/alpine:3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
