@@ -258,12 +258,6 @@ parameters {
                         version: "${params.RELEASE_VERSION}",
                         product: "${params.ACTION}"
                         )
-                    // Add RC details comment if both products are built    
-                    if (params.ACTION == 'both') {
-                        addRcDetailsComment(
-                            version: "${params.RELEASE_VERSION}"
-                        )
-                    }
                 }
             }
         }
