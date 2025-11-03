@@ -58,8 +58,10 @@ def main() -> int:
                 logging.info(f"The file {file} does not exist, creating new.")
 
     def capitalize_acronyms(formatted_name: str) -> str:
-        acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "ml-commons": "ML Commons",
-                    "ml commons": "ML Commons"}
+        formatted_name = re.sub(r'\bOpensearch\b', 'OpenSearch', formatted_name, flags=re.IGNORECASE)
+
+        acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "k nn": "k-NN",
+                    "ml-commons": "ML Commons", "ml commons": "ML Commons"}
         for acronym, replacement in acronyms.items():
             formatted_name = re.sub(r'\b' + re.escape(acronym) + r'\b', replacement, formatted_name,
                                     flags=re.IGNORECASE)
@@ -73,8 +75,12 @@ def main() -> int:
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
         component_name = url[start_index + len("release-notes/"): end_index]
+
         if component_name == "opensearch-sql":
             component_name = "SQL"
+        elif component_name == "k-NN" or component_name.lower() == "k-nn":
+            return "OpenSearch k-NN"
+
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
         return capitalize_acronyms(formatted_name)
 
