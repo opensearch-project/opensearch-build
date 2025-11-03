@@ -31,12 +31,6 @@ components:
     platforms:
       - linux
       - windows
-  - name: security
-    repository: https://github.com/opensearch-project/security.git
-    ref: tags/3.3.0.0
-    platforms:
-      - linux
-      - windows
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
     ref: tags/3.3.0.0
