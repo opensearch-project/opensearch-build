@@ -13,8 +13,8 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-14  # arm64
-          - macos-13  # x64
+          - macos-15  # arm64
+          - macos-15-intel  # x64
     runs-on: ${{ matrix.os }}
     env:
       PYTHON_VERSION: 3.9
