@@ -37,6 +37,12 @@ class TestDist(unittest.TestCase):
             "opensearch-1.3.0",
             self.manifest.build
         )
+        self.distTarFeature = DistTar(
+            "OpenSearch-Feature",
+            self.artifacts_path + "opensearch-min-1.3.0-linux-x64.tar.gz",
+            "opensearch-1.3.0",
+            self.manifest.build
+        )
 
     def test_dist_variables(self) -> None:
         self.assertEqual(self.distTar.name, "OpenSearch")
@@ -63,6 +69,12 @@ class TestDist(unittest.TestCase):
     def test_find_min_archive_path(self) -> None:
         self.assertEqual(
             self.distTar.find_min_archive_path(self.artifacts_path),
+            self.artifacts_path + "opensearch-1.3.0"
+        )
+
+    def test_find_min_archive_path_feature(self) -> None:
+        self.assertEqual(
+            self.distTarFeature.find_min_archive_path(self.artifacts_path),
             self.artifacts_path + "opensearch-1.3.0"
         )
 

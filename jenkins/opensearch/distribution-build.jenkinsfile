@@ -878,7 +878,7 @@ pipeline {
                                     architecture: 'x64',
                                     distribution: 'zip',
                                     continueOnError: params.CONTINUE_ON_ERROR,
-                                    incremental: params.INCREMENTAL,
+                                    incremental: false,
                                     previousBuildId: params.PREVIOUS_BUILD_ID
                                 )
                                 String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
