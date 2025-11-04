@@ -24,7 +24,7 @@ class Dist(ABC):
     def __init__(self, name: str, path: str, min_path: str, build_cls: BuildManifest.Build) -> None:
         self.build_cls = build_cls
         self.name = name
-        self.filename = name.lower()
+        self.filename = build_cls.filename
         self.path = path
         self.min_path = min_path
 
