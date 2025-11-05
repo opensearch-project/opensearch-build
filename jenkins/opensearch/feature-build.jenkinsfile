@@ -159,8 +159,8 @@ pipeline {
                                 previousBuildId: params.PREVIOUS_BUILD_ID,
                                 buildFeature: env.BUILD_FEATURE
                             )
-                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
-                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER, env.BUILD_FEATURE)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER, env.BUILD_FEATURE)
                             env.ARTIFACT_URL_LINUX_X64_TAR = artifactUrl
                             env.INDEX_FILE_PATH_X64_TAR = buildManifestObj.getIndexFileRoot("${JOB_NAME}", env.BUILD_FEATURE)
 
