@@ -250,6 +250,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 * Upgrade js-yaml to v4.1 ([#1333](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1333))
 * Cherry pick CVE fixes #1322, #1340 ([#1348](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1348))
+* Replace deprecated safeDump with dump ([#1355](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1355))
 
 
 ### OpenSearch Security Dashboards Plugin
