@@ -75,7 +75,10 @@ AI_RELEASE_NOTES_PROMPT_COMMIT = """I need you to generate OpenSearch component 
     methods non-static"
    - Do not lose any commit information, even if it doesn't match any category
 
-3. **Entry Format:**
+3. **Content filtering:**
+   - Do not add the pull request that has title starting with "[AUTO] Increment version to".
+
+4. **Entry Format:**
    - Use PullRequestSubject as the main content for each entry
    - Extract PR number from PullRequestSubject (format: (#123))
    - Format: `* <description> ([#<number>]({repository_url}/pull/<number>))`
@@ -83,7 +86,7 @@ AI_RELEASE_NOTES_PROMPT_COMMIT = """I need you to generate OpenSearch component 
    - Always wrap PR links in parentheses
    - Make sure first character of each entry is capitalized.
 
-4. **Output Requirements:**
+5. **Output Requirements:**
    - The main heading with ## should be "version number Release Notes" (e.g., For version 3.2.0 ## Version 3.2.0
    Release Notes followed by a blank line and then "Compatible with OpenSearch and OpenSearch Dashboards
    version <version number>" followed by content)
@@ -93,12 +96,12 @@ AI_RELEASE_NOTES_PROMPT_COMMIT = """I need you to generate OpenSearch component 
    Maintenance, Refactoring
    - Each entry should be a single line with proper PR link formatting
 
-5. **PR Link Format:**
+6. **PR Link Format:**
    - Extract PR number from PullRequestSubject
    - Format as: `([#<number>]({repository_url}/pull/<number>))`
    - Example: `([#456](https://github.com/opensearch-project/anomaly-detection/pull/456))`
 
-6. **Important Notes:
+7. **Important Notes:
    - Every commit should be categorized into exactly one category
    - If you cannot determine the appropriate category from labels OR content analysis, place the entry in an "Unknown" category
    - Do not skip any commits - every entry must appear somewhere in the release notes
