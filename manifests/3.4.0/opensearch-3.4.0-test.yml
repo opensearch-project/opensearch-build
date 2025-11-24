@@ -6,15 +6,15 @@ ci:
     linux:
       tar:
         name: opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1
-        args: -e JAVA_HOME=/opt/java/openjdk-24 -u 1000 --cpus 4 -m 16g
+        args: -e JAVA_HOME=/opt/java/openjdk-25 -u 1000 --cpus 4 -m 16g
       deb:
         name: opensearchstaging/ci-runner:ci-runner-ubuntu2404-systemd-base-integtest-v1
-        args: -e JAVA_HOME=/opt/java/openjdk-24 --entrypoint=/usr/lib/systemd/systemd
+        args: -e JAVA_HOME=/opt/java/openjdk-25 --entrypoint=/usr/lib/systemd/systemd
           -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host
           --cpus 4 -m 16g
       rpm:
         name: opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1
-        args: -e JAVA_HOME=/opt/java/openjdk-24 --entrypoint=/usr/lib/systemd/systemd
+        args: -e JAVA_HOME=/opt/java/openjdk-25 --entrypoint=/usr/lib/systemd/systemd
           -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host
           --cpus 4 -m 16g
     windows:
