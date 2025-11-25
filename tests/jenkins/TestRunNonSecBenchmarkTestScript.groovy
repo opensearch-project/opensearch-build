@@ -76,6 +76,8 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
         binding.setVariable('SINGLE_NODE_CLUSTER', 'false')
         binding.setVariable('MIN_DISTRIBUTION', 'false')
         binding.setVariable('USE_50_PERCENT_HEAP', 'true')
+        binding.setVariable('HEAP_SIZE_IN_GB', '8')
+        binding.setVariable('PLUGIN_URL', 'https://artifacts.com/plugin.zip')
         binding.setVariable('SUFFIX', '1234')
         binding.setVariable('MANAGER_NODE_COUNT', '3')
         binding.setVariable('DATA_NODE_COUNT', '3')
@@ -146,7 +148,7 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
         }
 
         assertThat(testScriptCommands.size(), equalTo(1))
-        assertThat(testScriptCommands, hasItem("set +x && ./test.sh benchmark-test execute-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml    --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false,jenkins-build-id:307 --without-security     --use-50-percent-heap   --enable-instance-storage  --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts --exclude-tasks type:search,scroll --include-tasks type:search,scroll  --data-node-storage 100".toString()))}
+        assertThat(testScriptCommands, hasItem("set +x && ./test.sh benchmark-test execute-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml  --plugin-url https://artifacts.com/plugin.zip  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false,jenkins-build-id:307 --without-security   --heap-size-in-gb 8  --use-50-percent-heap   --enable-instance-storage  --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts --exclude-tasks type:search,scroll --include-tasks type:search,scroll  --data-node-storage 100".toString()))}
 
     @Test
     void testRunSecurityBenchmarkTestScript_verifyJob_aborted() {
