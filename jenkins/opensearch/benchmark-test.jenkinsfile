@@ -132,7 +132,8 @@ pipeline {
 
         H 11 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/x64/tar/dist/opensearch/opensearch-3.1.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.1.0;TEST_WORKLOAD=nyc_taxis;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=t3.medium;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:x64,instance-type:t3.medium,major-version:3x,cluster-config:x64-t3.medium-1-shard-0-replica;WORKLOAD_PARAMS={"number_of_shards":1,"number_of_replicas":0,"bulk_indexing_clients":4};CAPTURE_NODE_STAT=true
         H 11 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.3.1/latest/linux/x64/tar/dist/opensearch/opensearch-3.3.1-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.3.1;TEST_WORKLOAD=nyc_taxis;SINGLE_NODE_CLUSTER=true;DATA_INSTANCE_TYPE=t3.medium;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:x64,instance-type:t3.medium,major-version:3x,cluster-config:x64-t3.medium-1-shard-0-replica;WORKLOAD_PARAMS={"number_of_shards":1,"number_of_replicas":0,"bulk_indexing_clients":4};CAPTURE_NODE_STAT=true
-        H 11 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.3.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.3.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r5.2xlarge;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:x64,instance-type:c5.xlarge,major-version:3x,cluster-config:x64-r5.2xlarge-3-shard-0-replica;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":4};CAPTURE_NODE_STAT=true
+        H 11 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.3.0-linux-x64.tar.gz;PLUGIN_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/builds/opensearch/core-plugins/engine-datafusion-3.3.0.zip;DISTRIBUTION_VERSION=3.3.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=true;DATA_NODE_COUNT=1;DATA_INSTANCE_TYPE=c6a.4xlarge;HEAP_SIZE_IN_GB=8;USER_TAGS=run-type:nightly,segrep:disabled,arch:x64,instance-type:c6a.4xlarge,major-version:3x,cluster-config:x64-c6a.4xlarge-8-shard-0-replica;ADDITIONAL_CONFIG='{"indexing_pressure.memory.limit":"25%","datafusion.search.memory_pool":"32G"}';WORKLOAD_PARAMS={"number_of_shards":8,"number_of_replicas":0,"bulk_indexing_clients":4};CAPTURE_NODE_STAT=true
+        H 11 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/3.4.0/latest/linux/x64/tar/dist/opensearch/opensearch-3.4.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.4.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=true;DATA_NODE_COUNT=1;DATA_INSTANCE_TYPE=c6a.4xlarge;USER_TAGS=run-type:nightly,segrep:disabled,arch:x64,instance-type:c6a.4xlarge,major-version:3x,cluster-config:x64-c6a.4xlarge-8-shard-0-replica;WORKLOAD_PARAMS={"number_of_shards":8,"number_of_replicas":0,"bulk_indexing_clients":4};CAPTURE_NODE_STAT=true
         '''
         )
     }
@@ -150,6 +151,11 @@ pipeline {
         string(
             name: 'DISTRIBUTION_VERSION',
             description: 'The distribution version of of the OpenSearch artifact, only to be provided in combination with DISTRIBUTION_URL param.',
+            trim: true
+        )
+        string(
+            name: 'PLUGIN_URL'
+            description: 'Download URL of a plugin to be installed on the OS cluster',
             trim: true
         )
         string(
@@ -237,6 +243,11 @@ pipeline {
             name: 'USE_50_PERCENT_HEAP',
             description: 'Use 50 percent of physical memory as heap.',
             defaultValue: false
+        )
+        number(
+            name: 'HEAP_SIZE_IN_GB',
+            description: 'Explicit heap size (in GB) applied to data, seed-data, and single-node clusters. If omitted, JVM heap defaults to ~50% of system memory (capped at 32 GB)',
+            trim: true
         )
         string(
             name: 'USER_TAGS',
@@ -346,10 +357,12 @@ pipeline {
                                 bundleManifest: BUNDLE_MANIFEST,
                                 distributionUrl: DISTRIBUTION_URL,
                                 distributionVersion: DISTRIBUTION_VERSION,
+                                pluginUrl: PLUGIN_URL,
                                 workload: TEST_WORKLOAD,
                                 insecure: "false",
                                 singleNode: SINGLE_NODE_CLUSTER,
                                 minDistribution: MIN_DISTRIBUTION,
+                                heapSizeInGb: HEAP_SIZE_IN_GB,
                                 use50PercentHeap: USE_50_PERCENT_HEAP,
                                 enableRemoteStore: ENABLE_REMOTE_STORE,
                                 suffix: "${BUILD_NUMBER}-secure",
@@ -407,10 +420,12 @@ pipeline {
                                 bundleManifest: BUNDLE_MANIFEST,
                                 distributionUrl: DISTRIBUTION_URL,
                                 distributionVersion: DISTRIBUTION_VERSION,
+                                pluginUrl: PLUGIN_URL,
                                 workload: TEST_WORKLOAD,
                                 insecure: "true",
                                 singleNode: SINGLE_NODE_CLUSTER,
                                 minDistribution: MIN_DISTRIBUTION,
+                                heapSizeInGb: HEAP_SIZE_IN_GB,
                                 use50PercentHeap: USE_50_PERCENT_HEAP,
                                 enableRemoteStore: ENABLE_REMOTE_STORE,
                                 suffix: "${BUILD_NUMBER}",
