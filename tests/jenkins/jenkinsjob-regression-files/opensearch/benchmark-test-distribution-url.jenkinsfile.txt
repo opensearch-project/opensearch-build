@@ -137,7 +137,7 @@
                   runBenchmarkTestScript.withCredentials([DATASTORE_USER, DATASTORE_PASSWORD], groovy.lang.Closure)
                      runBenchmarkTestScript.readFile({file=/tmp/workspace/benchmark.ini})
                      runBenchmarkTestScript.writeFile({file=/tmp/workspace/benchmark.ini, text=})
-                  runBenchmarkTestScript.sh(set +x && ./test.sh benchmark-test execute-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0 --plugin-url https://artifacts.com/plugin.zip  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false,jenkins-build-id:307 --without-security  --heap-size-in-gb 8  --use-50-percent-heap   --enable-instance-storage  --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100)
+                  runBenchmarkTestScript.sh(set +x && ./test.sh benchmark-test execute-test --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0 --plugin-url https://artifacts.com/plugin.zip --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false,jenkins-build-id:307 --without-security --heap-size-in-gb 8 --use-50-percent-heap --enable-instance-storage --suffix 307 --manager-node-count 3 --data-node-count 3 --data-instance-type r5-4xlarge --test-procedure append-no-conflicts --data-node-storage 100)
                Messages.asBoolean()
                Messages.asBoolean()
                Messages.get([benchmark-test])
