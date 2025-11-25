@@ -154,7 +154,7 @@ pipeline {
             trim: true
         )
         string(
-            name: 'PLUGIN_URL'
+            name: 'PLUGIN_URL',
             description: 'Download URL of a plugin to be installed on the OS cluster',
             trim: true
         )
