@@ -25,6 +25,8 @@ pipeline {
     environment {
         AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
         AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host'
+        AGENT_MACOS_X64 = 'Jenkins-Agent-MacOS13-X64-Mac1Metal-Multi-Host'
+        AGENT_MACOS_ARM64 = 'Jenkins-Agent-MacOS13-ARM64-Mac2M2proMetal-Multi-Host'
         AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
     }
     parameters {
@@ -63,7 +65,7 @@ pipeline {
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Required: Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms separated by space (docker is only available on linux)",
+            description: "Required: Build selected platform, choices include 'linux', 'windows', 'darwin (experimental)'. Can combine multiple platforms separated by space (docker is only available on linux)",
             defaultValue: 'linux windows',
             trim: true
         )
@@ -169,7 +171,7 @@ pipeline {
                     currentBuild.description = INPUT_MANIFEST
 
                     paramType = [
-                        'BUILD_PLATFORM': 'linux windows',
+                        'BUILD_PLATFORM': 'linux windows darwin',
                         'BUILD_DISTRIBUTION': 'tar rpm deb zip',
                         'TEST_PLATFORM': 'linux windows',
                         'TEST_DISTRIBUTION': 'tar rpm deb zip',
@@ -842,6 +844,76 @@ pipeline {
                                         postCleanup()
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+                stage('build-and-test-darwin-x64-tar') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.BUILD_PLATFORM.contains('darwin')
+                        }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('tar')
+                        }
+                    }
+                    agent {
+                        node {
+                            label AGENT_MACOS_X64
+                        }
+                    }
+                    steps {
+                        script {
+                            echo("Switching to Java ${env.javaVersionNumber} on MacOS X64")
+                            sh("/usr/local/bin/update-alternatives --set java `/usr/local/bin/update-alternatives --list java | grep openjdk-${env.javaVersionNumber}`")
+                            sh("java -version")
+
+                            echo("MacOS will only build one OpenSearch component for now")
+                            def buildManifestObj = buildAssembleUpload(
+                                componentName: "OpenSearch",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'darwin',
+                                architecture: 'x64',
+                                distribution: 'tar',
+                                continueOnError: params.CONTINUE_ON_ERROR,
+                                incremental: params.INCREMENTAL,
+                                previousBuildId: params.PREVIOUS_BUILD_ID
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_MACOS_X64_TAR = artifactUrl
+                            env.INDEX_FILE_PATH_X64_MACOS = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
+
+                            echo "buildManifestUrl (darwin, x64, tar): ${buildManifestUrl}"
+                            echo "artifactUrl (darwin, x64, tar): ${artifactUrl}"
+                        }
+                    }
+                    post {
+                        success {
+                            script {
+                                if (params.UPDATE_LATEST_URL) {
+                                    uploadIndexFile(
+                                        indexFilePath: env.INDEX_FILE_PATH_X64_MACOS
+                                    )
+                                }
+                            }
+                        }
+                        unstable {
+                            script {
+                                if (params.UPDATE_LATEST_URL) {
+                                    uploadIndexFile(
+                                        indexFilePath: env.INDEX_FILE_PATH_X64_MACOS
+                                    )
+                                }
+                            }
+                        }
+                        always {
+                            script {
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
+                                postCleanup()
                             }
                         }
                     }
