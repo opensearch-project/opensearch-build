@@ -151,7 +151,7 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
         }
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "set +x && ./test.sh benchmark-test execute-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security   --single-node --min-distribution     --suffix 307      --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100".toString()
+                "set +x && ./test.sh benchmark-test execute-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security   --single-node --min-distribution      --suffix 307      --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100".toString()
         ))
 
         def testGhCliCommand = getCommandExecutions('sh', 'gh').findAll {
