@@ -119,7 +119,7 @@ class BenchmarkArgs:
                                          help="A comma-separated list of key=value pairs that will be added to jvm.options as JVM system properties.")
         execute_test_parser.add_argument("--additional-config", nargs="*", action=JsonArgs, dest="additional_config",
                                          help="Additional opensearch.yml config parameters passed as JSON")
-        execute_test_parser.add_argument("--heap-size-in-gb", dest="heap_size_in_gb", help="GB to assign to heap memory across data/seed/single nodes")
+        execute_test_parser.add_argument("--heap-size-in-gb", dest="heap_size_in_gb", help="GB to assign to heap memory across data/seed/single nodes, defaults to 50% of available memory")
         execute_test_parser.add_argument("--data-node-storage", dest="data_node_storage",
                                          help="User provided data-node ebs block storage size, defaults to 100Gb")
         execute_test_parser.add_argument("--enable-remote-store", dest="enable_remote_store", action="store_true",

@@ -70,6 +70,7 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
         self.args.insecure = True
         self.args.data_instance_type = 'r5.4xlarge'
         self.args.enable_instance_storage = True
+        self.args.heap_size_in_gb = '4'
 
         TestBenchmarkCreateCluster.setUp(self, self.args)
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-007-x64": {"loadbalancerurl": "www.example.com"}}])
@@ -85,11 +86,13 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
         self.assertTrue("dataInstanceType=r5.4xlarge" in self.benchmark_create_cluster.params)
         self.assertTrue("customRoleArn=arn:aws:iam::12344567890:role/customRole" in self.benchmark_create_cluster.params)
         self.assertTrue("useInstanceBasedStorage=true" in self.benchmark_create_cluster.params)
+        self.assertTrue("heapSizeInGb=4" in self.benchmark_create_cluster.params)
 
     @patch("test_workflow.benchmark_test.benchmark_create_cluster.BenchmarkCreateCluster.wait_for_processing")
     def test_create_multi_node(self, mock_wait_for_processing: Optional[Mock]) -> None:
         self.args.single_node = False
         self.args.enable_remote_store = True
+        self.args.plugin_url = "https://example.com/plugin.zip"
         TestBenchmarkCreateCluster.setUp(self, self.args)
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-007-x64": {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call") as mock_check_call:
@@ -100,6 +103,7 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
 
         self.assertTrue("singleNodeCluster=false" in self.benchmark_create_cluster.params)
         self.assertTrue("enableRemoteStore=true" in self.benchmark_create_cluster.params)
+        self.assertTrue("pluginUrl=https://example.com/plugin.zip" in self.benchmark_create_cluster.params)
 
     @patch("test_workflow.benchmark_test.benchmark_create_cluster.BenchmarkCreateCluster.wait_for_processing")
     def test_create_multi_node_without_manifest(self, mock_wait_for_processing: Optional[Mock]) -> None:

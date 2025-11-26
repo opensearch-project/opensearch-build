@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@9.1.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@11.4.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -47,6 +47,11 @@ pipeline {
         string(
             name: 'DISTRIBUTION_VERSION',
             description: 'The distribution version of of the OpenSearch artifact, only to be provided in combination with DISTRIBUTION_URL param.',
+            trim: true
+        )
+        string(
+            name: 'PLUGIN_URL',
+            description: 'Download URL of a plugin to be installed on the OS cluster',
             trim: true
         )
         booleanParam(
@@ -240,6 +245,7 @@ pipeline {
                     runBenchmarkTestScript(
                         command: 'execute-test',
                         distributionUrl: DISTRIBUTION_URL,
+                        pluginUrl: PLUGIN_URL,
                         distributionVersion: DISTRIBUTION_VERSION,
                         workload: TEST_WORKLOAD,
                         insecure: !(params.SECURITY_ENABLED),

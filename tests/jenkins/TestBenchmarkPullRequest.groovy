@@ -28,7 +28,7 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('9.1.2')
+                        .defaultVersion('11.4.0')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -111,6 +111,11 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
         binding.setVariable('PERF_TEST_ACCOUNT_ID', 'PERF_TEST_ACCOUNT_ID')
         binding.setVariable('GITHUB_USER', "GITHUB_USER")
         binding.setVariable('GITHUB_TOKEN', "GITHUB_TOKEN")
+        binding.setVariable('DATASTORE_USER', "DATASTORE_USER")
+        binding.setVariable('DATASTORE_PASSWORD', "DATASTORE_PASSWORD")
+        binding.setVariable('DATASTORE_ENDPOINT', "DATASTORE_ENDPOINT")
+        binding.setVariable('HEAP_SIZE_IN_GB', '')
+        binding.setVariable('PLUGIN_URL', '')
 
         helper.registerAllowedMethod("GenericTrigger", [Map], { println 'GenericTrigger called with params: ' + it })
         helper.registerAllowedMethod("sh", [Map.class], { map ->
@@ -151,7 +156,7 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
         }
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "set +x && ./test.sh benchmark-test execute-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security   --single-node --min-distribution      --suffix 307      --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100".toString()
+                "set +x && ./test.sh benchmark-test execute-test  --distribution-url https://artifacts.com/artifact.tar.gz  --distribution-version 3.0.0  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security      --single-node --min-distribution      --suffix 307      --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100".toString()
         ))
 
         def testGhCliCommand = getCommandExecutions('sh', 'gh').findAll {

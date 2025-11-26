@@ -51,4 +51,5 @@ class PerfSingleNodeCluster(PerfTestCluster):
             "platform": self.manifest.build.platform,
             "architecture": self.manifest.build.architecture,
             "public_ip": config["Constants"].get("PublicIp", "disable"),
+            "use_50_percent_heap": self.cluster_config.use_50_percent_heap
         }
