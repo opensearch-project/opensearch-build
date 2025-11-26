@@ -12,7 +12,6 @@ class PerfTestClusterConfig():
     ingest_nodes: int
     client_nodes: int
     _is_single_node_cluster: bool
-    use_50_percent_heap: str
 
     """
     Maintains the cluster level configuration.

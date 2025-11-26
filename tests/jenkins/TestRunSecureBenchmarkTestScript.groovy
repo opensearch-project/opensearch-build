@@ -26,7 +26,7 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('9.1.2')
+                        .defaultVersion('11.4.0')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -75,7 +75,8 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
         binding.setVariable('HAS_SECURITY', 'true')
         binding.setVariable('SINGLE_NODE_CLUSTER', 'false')
         binding.setVariable('MIN_DISTRIBUTION', 'false')
-        binding.setVariable('USE_50_PERCENT_HEAP', 'true')
+        binding.setVariable('HEAP_SIZE_IN_GB', '')
+        binding.setVariable('PLUGIN_URL', '')
         binding.setVariable('ENABLE_REMOTE_STORE', 'true')
         binding.setVariable('SUFFIX', '1234')
         binding.setVariable('MANAGER_NODE_COUNT', '3')
@@ -104,6 +105,8 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
         binding.setVariable('TELEMETRY_PARAMS', '{"telemetry_setting":"value"}')
         binding.setVariable('ENABLE_INSTANCE_BASED_STORAGE', 'false')
         binding.setVariable('PERF_TEST_ACCOUNT_ID', 'PERF_TEST_ACCOUNT_ID')
+        binding.setVariable('DATASTORE_USER', "DATASTORE_USER")
+        binding.setVariable('DATASTORE_PASSWORD', "DATASTORE_PASSWORD")
 
     }
 
@@ -132,8 +135,8 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
 
         assertThat(s3DownloadCommands.size(), equalTo(4))
         assertThat(s3DownloadCommands, hasItems(
-                "{file=config.yml, bucket=ARTIFACT_BUCKET_NAME, path=test_config/config.yml, force=true}".toString(),
-                "{file=benchmark.ini, bucket=ARTIFACT_BUCKET_NAME, path=test_config/benchmark.ini, force=true}".toString()
+                "{file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true}".toString(),
+                "{file=benchmark.ini, bucket=test_bucket, path=test_config/benchmark.ini, force=true}".toString()
         ))
     }
 
@@ -148,8 +151,8 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
 
         assertThat(testScriptCommands.size(), equalTo(2))
         assertThat(testScriptCommands, hasItems(
-                "set +x && ./test.sh benchmark-test execute-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml    --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:true,jenkins-build-id:307      --use-50-percent-heap --enable-remote-store   --capture-segment-replication-stat --suffix 307-secure --manager-node-count 3 --data-node-count 3          --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString(),
-                "set +x && ./test.sh benchmark-test execute-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml    --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false,jenkins-build-id:307 --without-security     --use-50-percent-heap --enable-remote-store   --capture-segment-replication-stat --suffix 307 --manager-node-count 3 --data-node-count 3          --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
+                "set +x && ./test.sh benchmark-test execute-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml     --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:true,jenkins-build-id:307          --enable-remote-store   --capture-segment-replication-stat --suffix 307-secure --manager-node-count 3 --data-node-count 3          --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString(),
+                "set +x && ./test.sh benchmark-test execute-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml     --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false,jenkins-build-id:307 --without-security         --enable-remote-store   --capture-segment-replication-stat --suffix 307 --manager-node-count 3 --data-node-count 3          --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
         ))
     }
 
