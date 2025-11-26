@@ -230,8 +230,7 @@ The benchmarking tests will be run nightly and if you have a feature in any rele
    1. Schedule: `H <HOUR> * * *`, edit the `HOUR` section to any hour of the day, 0-24. `H` adds a jitter to the cron to make sure multiple crons are not started together.   
    2. BUNDLE_MANIFEST_URL: The distribution manifest URL that contains the artifact details such as tar location, arch, build id, commit-id, etc. 
    3. TEST_WORKLOAD: This could be any workload that [opensearch-benchmark-workload](https://github.com/opensearch-project/opensearch-benchmark-workloads) repo provides, if not provided `nyc-taxis` is used as default.   
-   4. SINGLE_NODE_CLUSTER: Values are `true/false`. Do you want to run the benchmark against a single-node cluster or multi-node.    
-   5. USE_50_PERCENT_HEAP: Values are `true/false`. Recommended to use 50 percent physical memory as heap. Keep this `true`.   
+   4. SINGLE_NODE_CLUSTER: Values are `true/false`. Do you want to run the benchmark against a single-node cluster or multi-node.      
    6. MIN_DISTRIBUTION: Values are `true/false`. If the `BUNDLE_MANIFEST_URL` you provided is for a min/snapshot distribution then set this as `true` else don't provide this parameter.    
    7. ADDITIONAL_CONFIG: The configuration that needs to be added to `opensearch.yml` to enable your feature.   
    8. USER_TAGS: The metadata that needs to be added to the benchmark metrics ingested in datastore, this helps filter out the metrics for each use-case. Mandatory tags are `run-type:nightly,segrep:<disabled|enabled>,arch:<arm64|x64>,instance-type:<instance-type>,major-version:<3x|2x>,cluster-config:<arch>-<instance-type>-<string that will help identify the feature>`
@@ -240,7 +239,7 @@ The benchmarking tests will be run nightly and if you have a feature in any rele
 
 Here's the sample entry for enabling nightly runs for `remote-store` feature   
 ```
-H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;USE_50_PERCENT_HEAP=true;ENABLE_REMOTE_STORE=true;CAPTURE_SEGMENT_REPLICATION_STAT=true;USER_TAGS=run-type:nightly,segrep:enabled-with-remote-store,arch:arm64,instance-type:r6g.xlarge,major-version:2x,cluster-config:arm64-r6g.xlarge-3-data-3-shards;ADDITIONAL_CONFIG=opensearch.experimental.feature.remote_store.enabled:true cluster.remote_store.enabled:true opensearch.experimental.feature.segment_replication_experimental.enabled:true cluster.indices.replication.strategy:SEGMENT;WORKLOAD_PARAMS={"number_of_replicas":"2","number_of_shards":"3"}
+H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;ENABLE_REMOTE_STORE=true;CAPTURE_SEGMENT_REPLICATION_STAT=true;USER_TAGS=run-type:nightly,segrep:enabled-with-remote-store,arch:arm64,instance-type:r6g.xlarge,major-version:2x,cluster-config:arm64-r6g.xlarge-3-data-3-shards;ADDITIONAL_CONFIG=opensearch.experimental.feature.remote_store.enabled:true cluster.remote_store.enabled:true opensearch.experimental.feature.segment_replication_experimental.enabled:true cluster.indices.replication.strategy:SEGMENT;WORKLOAD_PARAMS={"number_of_replicas":"2","number_of_shards":"3"}
 ```
 
 Once you have added the configuration in the jenkinsfile please raise the PR and opensearch-infra team will review it.

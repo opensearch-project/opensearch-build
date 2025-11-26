@@ -38,7 +38,6 @@ class BenchmarkArgs:
     jvm_sys_props: str
     additional_config: str
     data_instance_type: str
-    use_50_percent_heap: bool
     enable_remote_store: bool
     workload: str
     workload_params: str
@@ -120,8 +119,6 @@ class BenchmarkArgs:
                                          help="A comma-separated list of key=value pairs that will be added to jvm.options as JVM system properties.")
         execute_test_parser.add_argument("--additional-config", nargs="*", action=JsonArgs, dest="additional_config",
                                          help="Additional opensearch.yml config parameters passed as JSON")
-        execute_test_parser.add_argument("--use-50-percent-heap", dest="use_50_percent_heap", action="store_true",
-                                         help="Use 50 percent of physical memory as heap.")
         execute_test_parser.add_argument("--heap-size-in-gb", dest="heap_size_in_gb", help="GB to assign to heap memory across data/seed/single nodes")
         execute_test_parser.add_argument("--data-node-storage", dest="data_node_storage",
                                          help="User provided data-node ebs block storage size, defaults to 100Gb")
@@ -212,7 +209,6 @@ class BenchmarkArgs:
             self.user_tag = args.user_tag if args.user_tag else None
             self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None
             self.heap_size_in_gb = args.heap_size_in_gb if args.heap_size_in_gb else None
-            self.use_50_percent_heap = args.use_50_percent_heap
             self.telemetry = args.telemetry
             self.telemetry_params = args.telemetry_params if args.telemetry_params else None
             self.logging_level = args.logging_level

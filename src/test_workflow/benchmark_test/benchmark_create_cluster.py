@@ -138,7 +138,6 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             "useInstanceBasedStorage": str(self.args.enable_instance_storage).lower(),
             "jvmSysProps": self.args.jvm_sys_props,
             "heapSizeInGb": self.args.heap_size_in_gb,
-            "use50PercentHeap": str(self.args.use_50_percent_heap).lower(),
             "isInternal": config["Constants"]["isInternal"],
             "enableRemoteStore": str(self.args.enable_remote_store).lower(),
             "customRoleArn": config["Constants"]["IamRoleArn"]
