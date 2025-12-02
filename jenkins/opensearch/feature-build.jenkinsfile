@@ -19,6 +19,7 @@ pipeline {
     agent none
     environment {
         AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
+        AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host'
     }
     triggers {
         parameterizedCron '''
@@ -184,6 +185,77 @@ pipeline {
                                 if (params.UPDATE_LATEST_URL) {
                                     uploadIndexFile(
                                         indexFilePath: env.INDEX_FILE_PATH_X64_TAR
+                                    )
+                                }
+                            }
+                        }
+                        always {
+                            script {
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
+                                postCleanup()
+                            }
+                        }
+                    }
+                }
+                stage('build-and-test-linux-arm64-tar') {
+                    when {
+                        beforeAgent true
+                        expression {
+                            params.BUILD_PLATFORM.contains('linux')
+                        }
+                        expression {
+                            params.BUILD_DISTRIBUTION.contains('tar')
+                        }
+                    }
+                    agent {
+                        docker {
+                            label AGENT_LINUX_ARM64
+                            image dockerAgentLinuxTar.image
+                            args dockerAgentLinuxTar.args
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "feature-manifests/${INPUT_MANIFEST}",
+                                platform: 'linux',
+                                architecture: 'arm64',
+                                distribution: 'tar',
+                                continueOnError: params.CONTINUE_ON_ERROR,
+                                incremental: params.INCREMENTAL,
+                                previousBuildId: params.PREVIOUS_BUILD_ID,
+                                buildFeature: env.BUILD_FEATURE
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER, env.BUILD_FEATURE)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER, env.BUILD_FEATURE)
+                            env.ARTIFACT_URL_LINUX_ARM64_TAR = artifactUrl
+                            env.INDEX_FILE_PATH_ARM64_TAR = buildManifestObj.getIndexFileRoot("${JOB_NAME}", env.BUILD_FEATURE)
+
+                            echo "buildManifestUrl (linux, arm64, tar): ${buildManifestUrl}"
+                            echo "artifactUrl (linux, arm64, tar): ${artifactUrl}"
+
+                        }
+                    }
+                    post {
+                        success {
+                            script {
+                                if (params.UPDATE_LATEST_URL) {
+                                    uploadIndexFile(
+                                        indexFilePath: env.INDEX_FILE_PATH_ARM64_TAR
+                                    )
+                                }
+                            }
+                        }
+                        unstable {
+                            script {
+                                if (params.UPDATE_LATEST_URL) {
+                                    uploadIndexFile(
+                                        indexFilePath: env.INDEX_FILE_PATH_ARM64_TAR
                                     )
                                 }
                             }

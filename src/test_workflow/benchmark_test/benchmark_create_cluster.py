@@ -113,6 +113,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
 
         return {
             "distributionUrl": artifact_url,
+            "pluginUrl": self.args.plugin_url,
             "vpcId": config["Constants"]["VpcId"],
             "account": config["Constants"]["AccountId"],
             "region": config["Constants"]["Region"],
@@ -136,7 +137,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             "mlNodeStorage": self.args.ml_node_storage,
             "useInstanceBasedStorage": str(self.args.enable_instance_storage).lower(),
             "jvmSysProps": self.args.jvm_sys_props,
-            "use50PercentHeap": str(self.args.use_50_percent_heap).lower(),
+            "heapSizeInGb": self.args.heap_size_in_gb,
             "isInternal": config["Constants"]["isInternal"],
             "enableRemoteStore": str(self.args.enable_remote_store).lower(),
             "customRoleArn": config["Constants"]["IamRoleArn"]

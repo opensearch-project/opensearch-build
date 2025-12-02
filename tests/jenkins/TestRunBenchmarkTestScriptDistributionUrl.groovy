@@ -26,7 +26,7 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('9.1.2')
+                        .defaultVersion('11.4.0')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -75,7 +75,8 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
         binding.setVariable('HAS_SECURITY', 'false')
         binding.setVariable('SINGLE_NODE_CLUSTER', 'false')
         binding.setVariable('MIN_DISTRIBUTION', 'false')
-        binding.setVariable('USE_50_PERCENT_HEAP', 'true')
+        binding.setVariable('HEAP_SIZE_IN_GB', '8')
+        binding.setVariable('PLUGIN_URL', 'https://artifacts.com/plugin.zip')
         binding.setVariable('SUFFIX', '1234')
         binding.setVariable('MANAGER_NODE_COUNT', '3')
         binding.setVariable('DATA_NODE_COUNT', '3')
@@ -104,6 +105,8 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
         binding.setVariable('TELEMETRY_PARAMS', '')
         binding.setVariable('ENABLE_INSTANCE_BASED_STORAGE', 'true')
         binding.setVariable('PERF_TEST_ACCOUNT_ID', 'PERF_TEST_ACCOUNT_ID')
+        binding.setVariable('DATASTORE_USER', "DATASTORE_USER")
+        binding.setVariable('DATASTORE_PASSWORD', "DATASTORE_PASSWORD")
 
     }
 
@@ -123,8 +126,8 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
 
         assertThat(s3DownloadCommands.size(), equalTo(2))
         assertThat(s3DownloadCommands, hasItems(
-                "{file=config.yml, bucket=ARTIFACT_BUCKET_NAME, path=test_config/config.yml, force=true}".toString(),
-                "{file=benchmark.ini, bucket=ARTIFACT_BUCKET_NAME, path=test_config/benchmark.ini, force=true}".toString()
+                "{file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true}".toString(),
+                "{file=benchmark.ini, bucket=test_bucket, path=test_config/benchmark.ini, force=true}".toString()
         ))
     }
 
@@ -138,7 +141,7 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "set +x && ./test.sh benchmark-test execute-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false,jenkins-build-id:307 --without-security     --use-50-percent-heap   --enable-instance-storage  --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100".toString()
+                "set +x && ./test.sh benchmark-test execute-test  --distribution-url https://artifacts.com/artifact.tar.gz --plugin-url https://artifacts.com/plugin.zip --distribution-version 3.0.0  --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false,jenkins-build-id:307 --without-security        --heap-size-in-gb 8   --enable-instance-storage  --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100".toString()
         ))
     }
 

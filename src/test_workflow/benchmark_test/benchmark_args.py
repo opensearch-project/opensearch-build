@@ -20,6 +20,7 @@ class BenchmarkArgs:
     bundle_manifest: IO
     cluster_endpoint: str
     distribution_url: str
+    plugin_url: str
     distribution_version: str
     stack_suffix: str
     config: IO
@@ -37,7 +38,6 @@ class BenchmarkArgs:
     jvm_sys_props: str
     additional_config: str
     data_instance_type: str
-    use_50_percent_heap: bool
     enable_remote_store: bool
     workload: str
     workload_params: str
@@ -77,6 +77,8 @@ class BenchmarkArgs:
                                          help="Bundle Manifest file.")
         execute_test_parser.add_argument("--distribution-url", dest="distribution_url",
                                          help="Link to a downloadable OpenSearch tarball.")
+        execute_test_parser.add_argument("--plugin-url", dest="plugin_url",
+                                         help="Link to installable opensearch plugin")
         execute_test_parser.add_argument("--cluster-endpoint", dest="cluster_endpoint",
                                          help="Load balancer url for benchmark testing")
         execute_test_parser.add_argument("--distribution-version", dest="distribution_version",
@@ -117,8 +119,7 @@ class BenchmarkArgs:
                                          help="A comma-separated list of key=value pairs that will be added to jvm.options as JVM system properties.")
         execute_test_parser.add_argument("--additional-config", nargs="*", action=JsonArgs, dest="additional_config",
                                          help="Additional opensearch.yml config parameters passed as JSON")
-        execute_test_parser.add_argument("--use-50-percent-heap", dest="use_50_percent_heap", action="store_true",
-                                         help="Use 50 percent of physical memory as heap.")
+        execute_test_parser.add_argument("--heap-size-in-gb", dest="heap_size_in_gb", help="GB to assign to heap memory across data/seed/single nodes, defaults to 50% of available memory")
         execute_test_parser.add_argument("--data-node-storage", dest="data_node_storage",
                                          help="User provided data-node ebs block storage size, defaults to 100Gb")
         execute_test_parser.add_argument("--enable-remote-store", dest="enable_remote_store", action="store_true",
@@ -175,6 +176,7 @@ class BenchmarkArgs:
         if args.command == "execute-test":
             self.bundle_manifest = args.bundle_manifest if args.bundle_manifest else None
             self.distribution_url = args.distribution_url if args.distribution_url else None
+            self.plugin_url = args.plugin_url if args.plugin_url else None
             self.cluster_endpoint = args.cluster_endpoint if args.cluster_endpoint else None
             self.distribution_version = args.distribution_version if args.distribution_version else None
             self.config = args.config
@@ -206,7 +208,7 @@ class BenchmarkArgs:
             self.include_tasks = args.include_tasks if args.include_tasks else None
             self.user_tag = args.user_tag if args.user_tag else None
             self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None
-            self.use_50_percent_heap = args.use_50_percent_heap
+            self.heap_size_in_gb = args.heap_size_in_gb if args.heap_size_in_gb else None
             self.telemetry = args.telemetry
             self.telemetry_params = args.telemetry_params if args.telemetry_params else None
             self.logging_level = args.logging_level
