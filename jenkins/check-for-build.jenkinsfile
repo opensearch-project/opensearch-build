@@ -21,12 +21,6 @@ pipeline {
     environment {
         AGENT_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
     }
-    triggers {
-        parameterizedCron '''
-            H 1 * * * %INPUT_MANIFEST=3.4.0/opensearch-dashboards-3.4.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=3.4.0/opensearch-dashboards-3.4.0-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-            H 1 * * * %INPUT_MANIFEST=3.4.0/opensearch-3.4.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip;TEST_MANIFEST=3.4.0/opensearch-3.4.0-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar
-        '''
-    }
     parameters {
         string(
             name: 'INPUT_MANIFEST',
