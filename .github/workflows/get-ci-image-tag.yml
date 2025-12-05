@@ -65,9 +65,9 @@ jobs:
           fi
 
           if [[ "$PLATFORM" = "al2" ]]; then
-              CI_IMAGE_CMD="cp -a /node_al2/* /node && /node/bin/node -v && cp -a /node_al2/* /node24 && /node24/bin/node -v"
+              CI_IMAGE_CMD="cp -a /node_al2/* /node && /node/bin/node -v && cp -a /node_al2/* /node24 && /node24/bin/node -v && ls -l /dotnet && du -sh /dotnet && rm -rf /dotnet/*"
               echo "ci-image-start-command=$CI_IMAGE_CMD" >> $GITHUB_OUTPUT
-              CI_IMAGE_OPTIONS="--user root -v /node:/node:rw,rshared -v /node:/__e/node20:ro,rshared -v /node24:/node24:rw,rshared -v /node24:/__e/node24:ro,rshared"
+              CI_IMAGE_OPTIONS="--user root -v /node:/node:rw,rshared -v /node:/__e/node20:ro,rshared -v /node24:/node24:rw,rshared -v /node24:/__e/node24:ro,rshared -v /dotnet:/usr/share/dotnet:rw,rshared"
               echo "ci-image-start-options=$CI_IMAGE_OPTIONS" >> $GITHUB_OUTPUT
           else
               CI_IMAGE_CMD="echo pass"
