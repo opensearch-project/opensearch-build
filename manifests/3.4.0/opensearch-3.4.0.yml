@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: b7f013f27f18fea78b1aecd90dfbd58ecbfde722
+    ref: f7915943b8f8da7c1b0b0e5292ca4198db79554d
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 87149f431206352c3636535e6c041e66fdb73a06
@@ -49,7 +49,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 7e51f9a8d91427a710cff49aec838f67ad38a8d4
+    ref: baaba0be671be808ae071b4dff4630fb43ffb57a
     platforms:
       - linux
       - windows
