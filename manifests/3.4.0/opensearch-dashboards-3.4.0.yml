@@ -18,7 +18,7 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: f3289a573fcac818052cae24f9924640102360b3
+    ref: c1d92e84395038f5f99e64e27b00c00fbabcd075
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '3.4'
@@ -36,7 +36,7 @@ components:
     ref: f5c851e6861457fdb35caf481245038402436f17
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin.git
-    ref: e7fcb222a415ce903165c7e264bb1c9d70ac9fd4
+    ref: ff906088864d19e6f138a7f4cd2b1b79b9092b63
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
     ref: 464ba767a693676f1b81e847eba254749d2c9e56
@@ -63,7 +63,7 @@ components:
     ref: 4f07a0d44ab4d1f59fe678b3dae335c0f560ad51
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
-    ref: 5e073548919d1f8480f1bf8a3e4d79eaefc8c5ef
+    ref: 42a29c30deb753b4b3b80c8bd4691237f78bae85
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
     ref: 418bc1de322b67345eaee6c72465973d8c34049d
