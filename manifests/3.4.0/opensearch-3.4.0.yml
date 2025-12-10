@@ -177,7 +177,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 8a64cfd060bc8b8ffd37276a51463cd73af2d5ea
+    ref: 198dd246b48097c40511fbb528d658a5c5751d7c
     platforms:
       - linux
       - windows
