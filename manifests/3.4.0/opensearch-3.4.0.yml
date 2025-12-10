@@ -31,13 +31,13 @@ components:
       - windows
   - name: opensearch-learning-to-rank-base
     repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
-    ref: 585da691995e766285c5c7c6853b76d35ba77e4b
+    ref: 3704332c130f0f0cae69c83427364e2411fd9769
     platforms:
       - linux
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: 96eef0c637c596a4e2e7d941dfd056c932d3ad68
+    ref: c5e8503b3b3b7fdfc1b4a1d925351e11d0cd721c
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 743115e93e3936983d1e0f2e715fcadb423fc5d6
+    ref: c05cebc4314b058f2d8117255d9d0270e50667e5
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 4b2194729667490e06d25f3c0c2006dba0f33605
+    ref: 5972db4c67102cdfdd2db305224fcd9a5bab3cdf
     platforms:
       - linux
       - windows
@@ -177,7 +177,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: d0bcc36cb286f307bba2397a8cb5c476cc1d387a
+    ref: 198dd246b48097c40511fbb528d658a5c5751d7c
     platforms:
       - linux
       - windows
@@ -191,13 +191,13 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: 8be40fa305854440c34259e2bb3f7b7c0da49415
+    ref: 9380d8a247ca26f6f9e7403a76c50cb6e2c343e7
     platforms:
       - linux
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: 48b54906745d2f4ff21fcec5111cb2cd30ca0652
+    ref: 394946dbf9b405ad958c1011acd61d01566177a5
     platforms:
       - linux
       - windows
@@ -220,7 +220,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: aed37af65c7140f730a2a8b76d327d845c244998
+    ref: 708c1d4332a2c327962d040aaf6de6dc40179d35
     platforms:
       - linux
       - windows
