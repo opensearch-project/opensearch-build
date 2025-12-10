@@ -31,7 +31,7 @@ components:
       - windows
   - name: opensearch-learning-to-rank-base
     repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
-    ref: c651ccc8417d26f7941a5b052473bcf6af1e6941
+    ref: 3704332c130f0f0cae69c83427364e2411fd9769
     platforms:
       - linux
       - windows
