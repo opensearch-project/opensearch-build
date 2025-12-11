@@ -31,7 +31,7 @@ components:
       - windows
   - name: opensearch-learning-to-rank-base
     repository: https://github.com/opensearch-project/opensearch-learning-to-rank-base.git
-    ref: 3704332c130f0f0cae69c83427364e2411fd9769
+    ref: 64486b8307d949c41d0bc738e63d5c50746857fe
     platforms:
       - linux
       - windows
@@ -55,7 +55,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: fd71813fa984293516245631d291c23298f54716
+    ref: ecb0df5d071a5050047b25cee1242acb81cfe71c
     platforms:
       - linux
       - windows
@@ -159,7 +159,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 0f87af71a972cd75ad21faff03688c849c038232
+    ref: b98aed92752990f1c3043ce9e14fdd65b7c8c7a3
     platforms:
       - linux
       - windows
@@ -220,7 +220,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: 708c1d4332a2c327962d040aaf6de6dc40179d35
+    ref: f04f4a52597fb736705e64955f18a117ed7ead66
     platforms:
       - linux
       - windows
