@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 659942ac4debd069eb1686597e7959116add0583
+    ref: 62c3bdcbadd61f48bf0622b42a81530e197a6f52
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 87149f431206352c3636535e6c041e66fdb73a06
@@ -159,7 +159,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: b98aed92752990f1c3043ce9e14fdd65b7c8c7a3
+    ref: aaa1033eb69d81bb6beee613827f5f60c80b7d73
     platforms:
       - linux
       - windows
