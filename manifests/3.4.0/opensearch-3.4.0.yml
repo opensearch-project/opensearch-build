@@ -55,7 +55,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: ecb0df5d071a5050047b25cee1242acb81cfe71c
+    ref: 88e369808a39669f8c0d0ff2f2aa2d1a487c6901
     platforms:
       - linux
       - windows
@@ -167,7 +167,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: a74767091a291d3c98f5aece5bbdfc7098c89e9f
+    ref: c9e7457eacbed2082f349e53b42ac8fcf4d56442
     platforms:
       - linux
       - windows
