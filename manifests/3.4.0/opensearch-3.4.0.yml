@@ -71,7 +71,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 2486f8c83c19b08ada118364cf030cade8acb7ae
+    ref: 31ede6fac3e6b1993a890493bca7811b356bc77d
     platforms:
       - linux
       - windows
