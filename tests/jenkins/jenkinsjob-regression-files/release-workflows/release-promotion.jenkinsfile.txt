@@ -36,7 +36,7 @@
                release-promotion.string({name=ARCHITECTURE, value=x64 arm64})
                release-promotion.string({name=PLATFORM, value=linux windows})
                release-promotion.string({name=PROJECTS, value=Both})
-               release-promotion.string({name=DOCKER_SOURCE, value=Both})
+               release-promotion.string({name=DOCKER_SOURCE, value=dockerhub})
                release-promotion.string({name=ARTIFACT_TYPE, value=staging})
                release-promotion.string({name=OPTIONAL_ARGS, value=using-staging-artifact-only})
                release-promotion.build({job=distribution-validation, wait=true, parameters=[null, null, null, null, null, null, null, null, null, null]})
