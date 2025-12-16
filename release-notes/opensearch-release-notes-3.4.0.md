@@ -1,6 +1,14 @@
 # OpenSearch and OpenSearch Dashboards 3.4.0 Release Notes
 
 
+## Release Details
+[OpenSearch and OpenSearch Dashboards 3.4.0](https://opensearch.org/artifacts/by-version/#release-3-4-0) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.4.0.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.4.0.md).
+
+
 ## FEATURES
 
 
@@ -73,7 +81,7 @@
 * Remove default empty tool field values; fix EuiSelect values in Firefox ([#820](https://github.com/opensearch-project/dashboards-flow-framework/pull/820))
 
 
-### OpenSearch OpenSearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Allow warnings about directly accessing the .plugins-ml-config index ([#256](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/256))
