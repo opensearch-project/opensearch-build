@@ -88,7 +88,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Feature/ltr system origin avoid warnings ([#259](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/259))
 
 
-### OpenSearch OpenSearch Remote Metadata Sdk
+### OpenSearch Remote Metadata Sdk
 
 
 * Add CMK support to accept CMK to encrypt/decrypt customer data. ([#271](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/271))
@@ -156,7 +156,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Use OpenSearch Version.computeID for legacy version IDs ([#264](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/264))
 
 
-### OpenSearch OpenSearch Remote Metadata Sdk
+### OpenSearch Remote Metadata Sdk
 
 
 * Fix error when updating model status ([#291](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/291))
