@@ -96,7 +96,7 @@ pipeline {
                             string(name: 'PROJECTS', value: 'opensearch'),
                             string(name: 'DOCKER_SOURCE', value: 'Both'),
                             string(name: 'ARTIFACT_TYPE', value: 'staging'),
-                            string(name: 'OPTIONAL_ARGS', value: 'using_staging_artifact_only')
+                            string(name: 'OPTIONAL_ARGS', value: 'using-staging-artifact-only')
                         ]
                     }
                     else {
@@ -110,7 +110,7 @@ pipeline {
                             string(name: 'PROJECTS', value: 'Both'),
                             string(name: 'DOCKER_SOURCE', value: 'Both'),
                             string(name: 'ARTIFACT_TYPE', value: 'staging'),
-                            string(name: 'OPTIONAL_ARGS', value: 'using_staging_artifact_only')
+                            string(name: 'OPTIONAL_ARGS', value: 'using-staging-artifact-only')
                         ]
                     }
                     echo 'Artifacts successfully validated!'
