@@ -150,7 +150,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix snapshot pattern parsing in SM deletion workflow to handle comma-separated values ([#1503](https://github.com/opensearch-project/index-management/pull/1503))
 
 
-### OpenSearch OpenSearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Use OpenSearch Version.computeID for legacy version IDs ([#264](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/264))
@@ -220,7 +220,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Dependabot: bump actions/github-script from 7 to 8 ([#1485](https://github.com/opensearch-project/index-management/pull/1485))
 
 
-### OpenSearch OpenSearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Reduce the required coverage until we can improve it ([#258](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/258))
