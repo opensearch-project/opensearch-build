@@ -94,7 +94,7 @@ pipeline {
                             string(name: 'ARCHITECTURE', value: 'x64 arm64'),
                             string(name: 'PLATFORM', value: 'linux windows'),
                             string(name: 'PROJECTS', value: 'opensearch'),
-                            string(name: 'DOCKER_SOURCE', value: 'Both'),
+                            string(name: 'DOCKER_SOURCE', value: 'dockerhub'),
                             string(name: 'ARTIFACT_TYPE', value: 'staging'),
                             string(name: 'OPTIONAL_ARGS', value: 'using-staging-artifact-only')
                         ]
@@ -108,7 +108,7 @@ pipeline {
                             string(name: 'ARCHITECTURE', value: 'x64 arm64'),
                             string(name: 'PLATFORM', value: 'linux windows'),
                             string(name: 'PROJECTS', value: 'Both'),
-                            string(name: 'DOCKER_SOURCE', value: 'Both'),
+                            string(name: 'DOCKER_SOURCE', value: 'dockerhub'),
                             string(name: 'ARTIFACT_TYPE', value: 'staging'),
                             string(name: 'OPTIONAL_ARGS', value: 'using-staging-artifact-only')
                         ]
