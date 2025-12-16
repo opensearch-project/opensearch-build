@@ -190,7 +190,7 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
         assertCallStack().contains('release-promotion.build({job=docker-promotion, wait=true, parameters=[null, null, null, null, null, null]})')
 
         // Validation Workflow
-        assertCallStack().contains('stage(Validate the artifacts, groovy.lang.Closure)')
+        assertCallStack().contains('stage(Validate production artifacts, groovy.lang.Closure)')
         assertCallStack().contains('release-promotion.string({name=VERSION, value=1.0.0})')
         assertCallStack().contains('release-promotion.string({name=DISTRIBUTION, value=tar rpm yum deb zip docker})')
         assertCallStack().contains('release-promotion.string({name=ARCHITECTURE, value=x64 arm64})')

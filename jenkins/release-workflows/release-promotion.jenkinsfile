@@ -73,7 +73,7 @@ pipeline {
                 }
             }
         }
-        stage('Validate the artifacts') {
+        stage('Validate staging artifacts') {
             agent {
                 docker {
                     label AGENT_LINUX_X64
@@ -84,7 +84,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo 'Triggering validation workflow'
+                    echo 'Triggering validation workflow before promotion'
                     if (PROJECTS == "opensearch") {
                         build job: 'distribution-validation', wait: true, parameters: [
                             string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
@@ -95,7 +95,7 @@ pipeline {
                             string(name: 'PLATFORM', value: 'linux windows'),
                             string(name: 'PROJECTS', value: 'opensearch'),
                             string(name: 'DOCKER_SOURCE', value: 'Both'),
-                            string(name: 'ARTIFACT_TYPE', value: 'production'),
+                            string(name: 'ARTIFACT_TYPE', value: 'staging'),
                             string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
                         ]
                     }
@@ -109,7 +109,7 @@ pipeline {
                             string(name: 'PLATFORM', value: 'linux windows'),
                             string(name: 'PROJECTS', value: 'Both'),
                             string(name: 'DOCKER_SOURCE', value: 'Both'),
-                            string(name: 'ARTIFACT_TYPE', value: 'production'),
+                            string(name: 'ARTIFACT_TYPE', value: 'staging'),
                             string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
                         ]
                     }
@@ -655,6 +655,50 @@ pipeline {
                 }
             }
         }
+    stage('Validate production artifacts') {
+        agent {
+            docker {
+                label AGENT_LINUX_X64
+                image 'docker/library/alpine:3'
+                registryUrl 'https://public.ecr.aws/'
+                alwaysPull true
+            }
+        }
+        steps {
+            script {
+                echo 'Triggering validation workflow'
+                if (PROJECTS == "opensearch") {
+                    build job: 'distribution-validation', wait: true, parameters: [
+                        string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
+                        string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
+                        string(name: 'OSD_BUILD_NUMBER', value: ""),
+                        string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
+                        string(name: 'ARCHITECTURE', value: 'x64 arm64'),
+                        string(name: 'PLATFORM', value: 'linux windows'),
+                        string(name: 'PROJECTS', value: 'opensearch'),
+                        string(name: 'DOCKER_SOURCE', value: 'Both'),
+                        string(name: 'ARTIFACT_TYPE', value: 'production'),
+                        string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
+                    ]
+                }
+                else {
+                    build job: 'distribution-validation', wait: true, parameters: [
+                        string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
+                        string(name: 'OS_BUILD_NUMBER', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
+                        string(name: 'OSD_BUILD_NUMBER', value: "latest"),
+                        string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
+                        string(name: 'ARCHITECTURE', value: 'x64 arm64'),
+                        string(name: 'PLATFORM', value: 'linux windows'),
+                        string(name: 'PROJECTS', value: 'Both'),
+                        string(name: 'DOCKER_SOURCE', value: 'Both'),
+                        string(name: 'ARTIFACT_TYPE', value: 'production'),
+                        string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
+                    ]
+                }
+                echo 'Artifacts are successfully validated!'
+            }
+        }
+    }
     stage('Publish to Maven'){
         when {
             beforeAgent true
