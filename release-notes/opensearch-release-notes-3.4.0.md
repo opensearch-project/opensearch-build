@@ -23,6 +23,9 @@ This release replaces the previous AVLTreeDigest implementation with the Merging
 * **Enhanced gRPC functionality**
 gRPC gains functionality with support for new query types ConstantScoreQuery, FuzzyQuery, MatchBoolPrefixQuery, MatchPhrasePrefix, PrefixQuery, and MatchQuery, as well as improvements for gRPC bulk requests with support for CBOR/SMILE/YAML document formats.
 
+* **Scroll Query performance improvement**
+This release integrates cached StoredFieldsReader optimization in the query fetch phase, achieving approximately 19% improvement on scroll queries.
+
 
 ## Release Details
 [OpenSearch and OpenSearch Dashboards 3.4.0](https://opensearch.org/artifacts/by-version/#release-3-4-0) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
