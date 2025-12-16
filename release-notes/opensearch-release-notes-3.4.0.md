@@ -1,5 +1,28 @@
 # OpenSearch and OpenSearch Dashboards 3.4.0 Release Notes
 
+## Release Highlights
+
+### New and Updated Features
+OpenSearch 3.4 delivers new features designed to help your search and observability applications along with performance enhancements. Highlights include
+
+* **New agentic search user experience**
+A redesigned, no-code user experience simplifies the work of building agents and running agentic searches, with support for the latest agentic capabilities, including external Model Context Protocol (MCP) integration, search template integration, conversational memory, and single model support. 
+
+* **Enhanced search relevance tools**
+New tools and UX enhancements for the Search Relevance Workbench include the ability to schedule experiments from the user interface, support for agentic search in the single query comparison tool, and support for GUID filtering.
+
+* **Expanded PPL functions and commands**
+Explore your data with new chart, streamstats, multisearch, replace, and appendpipe commands, as well as new mvindex and mvdedup functions.
+
+* **Faster aggregation workloads**
+This release integrates Lucene’s new bulk collection API to realize performance gains of 5% to 40% across several key analytical operations including cardinality, histogram, and series of statistical aggregations.
+
+* **Better latencies for percentiles and matrix stats aggregations**
+This release replaces the previous AVLTreeDigest implementation with the MergingDigest implementation for percentiles aggregations, delivering significant improvements in performance, particularly for low-cardinality fields. An improvement in the matrix_stats aggregation implementation delivers as much as a 5x performance increase.
+
+* **Enhanced gRPC functionality**
+gRPC gains functionality with support for new query types ConstantScoreQuery, FuzzyQuery, MatchBoolPrefixQuery, MatchPhrasePrefix, PrefixQuery, and MatchQuery, as well as improvements for gRPC bulk requests with support for CBOR/SMILE/YAML document formats.
+
 
 ## Release Details
 [OpenSearch and OpenSearch Dashboards 3.4.0](https://opensearch.org/artifacts/by-version/#release-3-4-0) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
