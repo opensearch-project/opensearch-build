@@ -38,7 +38,7 @@
                release-promotion.string({name=PROJECTS, value=Both})
                release-promotion.string({name=DOCKER_SOURCE, value=Both})
                release-promotion.string({name=ARTIFACT_TYPE, value=staging})
-               release-promotion.string({name=OPTIONAL_ARGS, value=using_staging_artifact_only})
+               release-promotion.string({name=OPTIONAL_ARGS, value=using-staging-artifact-only})
                release-promotion.build({job=distribution-validation, wait=true, parameters=[null, null, null, null, null, null, null, null, null, null]})
                release-promotion.echo(Artifacts successfully validated!)
          release-promotion.stage(OpenSearch Debian Apt promotion, groovy.lang.Closure)
