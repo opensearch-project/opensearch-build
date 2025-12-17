@@ -24,10 +24,10 @@ components:
     ref: '3.4'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 38ffdc9bd80254a08ac67abf75141385867baf3e
+    ref: c4b87dfdb239314efc5de89f287c84ce6e6405e4
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 9897418e8372e3d588c1979e60b3efc6ff97db2e
+    ref: 3f011297cb0d0b1d5065b0087294130e6fae33e6
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: dec5f72bc48917751dde1b38f0e653a15e5091b9
@@ -45,25 +45,25 @@ components:
     ref: 5bdca73257641eeb02168e5e6ba973fd325a28e7
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
-    ref: 099f245a630d2e324c380fd9ca851f99b99e3c03
+    ref: 86ea99547edea3a723a42cd417cc51bdb2e98469
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 0a6a99334c15de17d75ea0cc8bab253a94eb86ac
+    ref: 952fcab208efc98bf27d79a3d8d7534c1fc62297
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: 1048b97e9f06a59c8e486405c94f1312372dc150
+    ref: f0a9e7244be6df7cd6a4d2d42bccecfeb3696eb5
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: 08375f7f429f136cc7fd8f9a14845993101d087d
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
-    ref: b6d71572cd7678bd84e1821b7dfea6f2cb5f94db
+    ref: 43d884e8d216003f2db9309772ad8a3ed8a8a638
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
-    ref: 4f07a0d44ab4d1f59fe678b3dae335c0f560ad51
+    ref: 370e343293a4d25cce63a886b36fb55e0a5de835
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
     ref: 42a29c30deb753b4b3b80c8bd4691237f78bae85
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
-    ref: 418bc1de322b67345eaee6c72465973d8c34049d
+    ref: 326c29f0461552b22d455418a3edad7ae161ea83

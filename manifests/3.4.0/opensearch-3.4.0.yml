@@ -25,7 +25,7 @@ components:
     ref: 00336141f90b2456d7aa35e9052fd6baf7147423
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 87149f431206352c3636535e6c041e66fdb73a06
+    ref: a03a433f8e40a6a7828a8be06fec9892eff934b1
     platforms:
       - linux
       - windows
@@ -43,13 +43,13 @@ components:
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 2efb3da9bc5cb89e63aa56163ddc66129eb2743d
+    ref: bfc0f7709f587a78b03aaaf5616418c35b1fda5e
     platforms:
       - linux
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: b4293103b1c53d96e0e2bf40ec56a0468e3fdc8e
+    ref: 837ab5a54817c726b50d14c7275a7920d5503690
     platforms:
       - linux
       - windows
@@ -63,7 +63,7 @@ components:
       - common-utils
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 5482b55fbeed67ed10c40b5bbe1275c59223c3ae
+    ref: d1c5e1acb56b193429068c2b3f03a84f6ed28a57
     platforms:
       - linux
       - windows
@@ -107,7 +107,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: b9dd1ea87ec9fcab12d01dac0c33c5c728779b88
+    ref: 5ccf2da71eb633d9a1cf67aba002a6056b117995
     working_directory: notifications
     platforms:
       - linux
@@ -116,7 +116,7 @@ components:
       - common-utils
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: 56f73660e15246ec588d7d685725e4adda0f65f1
+    ref: eaea8493f90f5d5031cd0d80a5330df3b0908b24
     platforms:
       - linux
       - windows
@@ -124,7 +124,7 @@ components:
       - common-utils
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: e5868ebda1dec29b222aa3954fd83f4ef89f4387
+    ref: 23ecdd626b8fcef5d657b2c808f7b131da05ac65
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 52fe8aa5bd19e8008e4c11bcbd2ea69946b5724e
+    ref: 2940e6b01ac45448611ef56b80d5b1db6678890b
     platforms:
       - linux
       - windows
@@ -142,7 +142,7 @@ components:
       - geospatial
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 718d20c4a4880307b4e373cd81d353308e264497
+    ref: 79fbf800bbcdc73b00cd00a44d5aaf3c3a9945d8
     platforms:
       - linux
       - windows
@@ -186,7 +186,7 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 380901ff664a72717abfe145db2ec2c78cd36826
+    ref: 628d9655ee09d142e2daab85dc1076f67254f9e1
     platforms:
       - linux
   - name: custom-codecs
@@ -209,7 +209,7 @@ components:
       - neural-search
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: 309c481eacde99ace02f28a870b631a57b0f3de3
+    ref: 40126c9c8f16dea6a4a946deb90886d58ff162ea
     platforms:
       - linux
       - windows
@@ -226,19 +226,19 @@ components:
       - windows
   - name: opensearch-system-templates
     repository: https://github.com/opensearch-project/opensearch-system-templates.git
-    ref: b25869c9da42d0efdfdbe5d140b45863ab46b346
+    ref: c7dfa6e97c874b9ec8acfe4a881d11ee3dd40386
     platforms:
       - linux
       - windows
   - name: user-behavior-insights
     repository: https://github.com/opensearch-project/user-behavior-insights.git
-    ref: 4e4fe30a97515bbde311c3902e68ab52172375f0
+    ref: 9119d727ba9cafe6b99e79122d90b3476a7dc4b4
     platforms:
       - linux
       - windows
   - name: search-relevance
     repository: https://github.com/opensearch-project/search-relevance.git
-    ref: 1ae04bfe3e07847990e0689d9d6a60cff813f480
+    ref: 0289583df516ddd3921a62e343f5bb39c90b1939
     platforms:
       - linux
       - windows
