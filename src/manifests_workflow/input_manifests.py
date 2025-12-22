@@ -85,7 +85,7 @@ class InputManifests(Manifests):
 
             # ignore branches that are legacy/outdated and not maintained anymore
             # get possible legacy branches based on legacy manifests, then cross check with current branches from current manifests
-            # ex: 1.0 failed due to certain dependencies not available anymore: https://github.com/avast/gradle-docker-compose-plugin/issues/446
+            branches_to_ignore = ["1.x"]
             all_manifests = set(InputManifests.files(self.prefix))
             legacy_manifests = {m for m in all_manifests if "legacy-manifests" in m}
             legacy_branches = {".".join(m.split(os.sep)[-2].rsplit(".", 1)[:-1]) for m in legacy_manifests}
@@ -97,7 +97,7 @@ class InputManifests(Manifests):
 
             # check out and build #main, 1.x, etc.
             all_branches = sorted(min_klass.branches())
-            branches = [b for b in all_branches if not any(b == o or b.startswith((f"{o}-", f"{o}/")) for o in legacy_branches)]
+            branches = [b for b in all_branches if not any(b == o or b.startswith((f"{o}-", f"{o}/")) for o in legacy_branches) and b not in branches_to_ignore]
             # TODO: Remove
             logging.info(f"Checking {self.name} {sorted(branches)} branches")
             logging.info(f"Ignoring {self.name} {sorted(set(all_branches) - set(branches))} branches as they are legacy")
