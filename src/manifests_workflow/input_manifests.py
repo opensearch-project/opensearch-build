@@ -102,7 +102,7 @@ class InputManifests(Manifests):
             branches = [b for b in valid_branches if not any(b == o or b.startswith((f"{o}-", f"{o}/")) for o in legacy_branches) and b not in branches_to_ignore]
             # TODO: Remove
             logging.info(f"Checking {self.name} {sorted(branches)} branches")
-            logging.info(f"Ignoring {self.name} {sorted(set(all_branches) - set(branches))} branches as they are legacy")
+            logging.info(f"Ignoring {self.name} {sorted(set(all_branches) - set(branches))} branches as they are legacy or do not match the required pattern.")
 
             for branch in branches:
                 repo_path = os.path.join(work_dir.name, self.name.replace(" ", ""), branch)
