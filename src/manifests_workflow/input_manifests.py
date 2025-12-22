@@ -97,7 +97,9 @@ class InputManifests(Manifests):
 
             # check out and build #main, 1.x, etc.
             all_branches = sorted(min_klass.branches())
-            branches = [b for b in all_branches if not any(b == o or b.startswith((f"{o}-", f"{o}/")) for o in legacy_branches) and b not in branches_to_ignore]
+            # Filter branches to only allow: number.number, number.x, number.number-text, main (ex: 3.1, 3.x, 3.3-alpha1, main)
+            valid_branches = [b for b in all_branches if b == "main" or re.match(r"^\d+\.\d+$|^\d+\.x$|^\d+\.\d+-\w+$", b)]
+            branches = [b for b in valid_branches if not any(b == o or b.startswith((f"{o}-", f"{o}/")) for o in legacy_branches) and b not in branches_to_ignore]
             # TODO: Remove
             logging.info(f"Checking {self.name} {sorted(branches)} branches")
             logging.info(f"Ignoring {self.name} {sorted(set(all_branches) - set(branches))} branches as they are legacy")
