@@ -86,10 +86,9 @@ class BuildRecorder:
 
         def append_artifact(self, component: str, type: str, path: str) -> None:
             artifacts = self.components_hash[component]["artifacts"]
-            list = artifacts.get(type, [])
-            if len(list) == 0:
-                artifacts[type] = list
-            list.append(path)
+            if type not in artifacts or not isinstance(artifacts[type], list):
+                artifacts[type] = []
+            artifacts[type].append(path)
 
         def to_manifest(self) -> 'BuildManifest':
             # The build manifest expects `components` to be a list, not a hash, so we need to munge things a bit
