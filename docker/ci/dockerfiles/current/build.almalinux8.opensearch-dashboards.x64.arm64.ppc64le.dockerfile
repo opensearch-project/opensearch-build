@@ -97,8 +97,8 @@ ENV PATH=$CONTAINER_USER_HOME/.gem/gems/fpm-1.14.2/bin:$PATH
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
-ENV NODE_VERSION 10.24.1
-ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1 14.21.3 16.20.0 18.16.0 18.19.0 20.18.3"
+ENV NODE_VERSION 18.19.0
+ARG NODE_VERSION_LIST="18.19.0 20.18.3 22.21.1"
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
