@@ -25,8 +25,9 @@ scoop config no_junction true
 # Install curl (to avoid ssl stall issues later on)
 scoop install curl
 
-# Install git
-scoop install git
+# Install git <2.52
+# Several binaries has been renamed here: https://github.com/ScoopInstaller/Main/pull/7459
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/1d2ab31de903b85d5c2da980cf14d3aa58d950b9/bucket/git.json
 git --version
 # Path for git windows usr bin
 $fileName = 'nohup.exe'
