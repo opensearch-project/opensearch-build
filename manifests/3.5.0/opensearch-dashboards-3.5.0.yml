@@ -17,8 +17,8 @@ ci:
         name: opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1
 components:
   - name: OpenSearch-Dashboards
-    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: main
+    repository: https://github.com/ruanyl/OpenSearch-Dashboards.git
+    ref: rspack
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: main
