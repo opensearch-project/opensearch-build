@@ -14,7 +14,7 @@
 
 
 ########################### Stage 0 ########################
-FROM public.ecr.aws/amazonlinux/amazonlinux:2023 AS linux_stage_0
+FROM amazonlinux:2023 AS linux_stage_0
 
 ARG UID=1000
 ARG GID=1000
@@ -55,7 +55,7 @@ RUN ls -l $TEMP_DIR && \
 
 ########################### Stage 1 ########################
 # Copy working directory to the actual release docker images
-FROM public.ecr.aws/amazonlinux/amazonlinux:2023
+FROM amazonlinux:2023
 
 ARG UID=1000
 ARG GID=1000
