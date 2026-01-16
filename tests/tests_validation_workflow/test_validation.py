@@ -127,44 +127,35 @@ class TestValidation(unittest.TestCase):
     def test_install_native_plugin_staging(self, mock_temporary_directory: Mock, mock_file: Mock,
                                            mock_validation_args: Mock, mock_plugin_list: Mock, mock_execute: Mock,
                                            mock_get: Mock, mock_path: Mock) -> None:
-        mock_response = Mock()
-        mock_validation_args.return_value.version = "3.0.0"
-        mock_validation_args.os_build_number.return_value = "1123"
-        mock_validation_args.platform.return_value = "linux"
-        mock_validation_args.arch.return_value = "x64"
-        mock_validation_args.distribution.return_value = "tar"
-        mock_response.status_code = 200
-        mock_get.return_value = mock_response
-        mock_plugin_list.return_value = ["analysis-icu", "analysis-nori"]
-        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
-        mock_validation_args.return_value.artifact_type = "staging"
-        mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
-        validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
-        linux_zip = "file:///tmp/trytytyuit/opensearch/bin/analysis-icu-3.0.0.zip"
-        windows_zip = "file:///tmp\\trytytyuit\\opensearch\\bin\\analysis-icu-3.0.0.zip"
-        mock_path.return_value = windows_zip if current_platform() == "windows" else linux_zip
-        install_script = ".\\opensearch-plugin.bat" if current_platform() == "windows" else "./opensearch-plugin"
-        validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"),
-                                           ["analysis-icu", "analysis-nori"])
+        for version in ["2.19.4", "3.0.0"]:
+            with self.subTest(version=version):
+                mock_response = Mock()
+                mock_validation_args.return_value.version = version
+                mock_validation_args.os_build_number.return_value = "1123"
+                mock_validation_args.platform.return_value = "linux"
+                mock_validation_args.arch.return_value = "x64"
+                mock_validation_args.distribution.return_value = "tar"
+                mock_response.status_code = 200
+                mock_get.return_value = mock_response
+                mock_plugin_list.return_value = ["analysis-icu", "analysis-nori"]
+                mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
+                mock_validation_args.return_value.artifact_type = "staging"
+                mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
+                validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+                linux_zip = f"file:///tmp/trytytyuit/opensearch/bin/analysis-icu-{version}.zip"
+                windows_zip = f"file:///tmp\\trytytyuit\\opensearch\\bin\\analysis-icu-{version}.zip"
+                mock_path.return_value = windows_zip if current_platform() == "windows" else linux_zip
+                install_script = ".\\opensearch-plugin.bat" if current_platform() == "windows" else "./opensearch-plugin"
+                validate_tar.install_native_plugin(os.path.join("tmp", "trytytyuit", "opensearch"),
+                                                   ["analysis-icu", "analysis-nori"])
 
-        mock_execute.assert_has_calls(
-            [
-                call(
-                    f'{install_script} install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
-                    os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
-            ]
-        )
-
-        linux_zip = "file:///tmp/trytytyuit/opensearch/bin/analysis-nori-3.0.0.zip"
-        windows_zip = "file:///tmp\\trytytyuit\\opensearch\\bin\\analysis-nori-3.0.0.zip"
-        mock_path.return_value = windows_zip if current_platform() == "windows" else linux_zip
-        mock_execute.assert_has_calls(
-            [
-                call(
-                    f'{install_script} install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", "analysis-icu-3.0.0.zip")}',
-                    os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
-            ]
-        )
+                mock_execute.assert_has_calls(
+                    [
+                        call(
+                            f'{install_script} install --batch file:///{os.path.join("tmp", "trytytyuit", "opensearch", "bin", f"analysis-icu-{version}.zip")}',
+                            os.path.join("tmp", "trytytyuit", "opensearch", "bin")),
+                    ]
+                )
 
     @patch('requests.get')
     @patch("validation_workflow.validation.execute")
@@ -195,28 +186,30 @@ class TestValidation(unittest.TestCase):
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_get_native_plugin_list(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
                                     mock_manifest_from_path: Mock, mock_get: Mock) -> None:
-        mock_component = Mock()
-        mock_component.commit_id = "abc123"
-        mock_manifest = Mock()
-        mock_manifest.components = {"OpenSearch": mock_component}
-        mock_manifest_from_path.return_value = mock_manifest
+        for version in ["2.19.4", "3.0.0"]:
+            with self.subTest(version=version):
+                mock_component = Mock()
+                mock_component.commit_id = "abc123"
+                mock_manifest = Mock()
+                mock_manifest.components = {"OpenSearch": mock_component}
+                mock_manifest_from_path.return_value = mock_manifest
 
-        mock_response = Mock()
-        mock_response.json.return_value = [{'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
-                                           {'name': 'analysis-nori', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
-                                           {'name': 'query-insights', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
-                                           {'name': 'examples', 'path': 'examples', 'sha': 'hjkd7559hiji96'},
-                                           {'name': 'build.gradle', 'path': 'build.gradle', 'sha': 'd3e5d75cdsiji96'},
-                                           {'name': 'identity-shiro', 'path': 'plugins/identity-shiro', 'sha': 'd3e5d75cdsiji96'}
-                                           ]
-        mock_response.status_code = 200
-        mock_get.return_value = mock_response
-        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
-        mock_validation_args.return_value.version = "3.0.0"
-        validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
-        result = validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path, ["query-insights"])
+                mock_response = Mock()
+                mock_response.json.return_value = [{'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
+                                                   {'name': 'analysis-nori', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+                                                   {'name': 'query-insights', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+                                                   {'name': 'examples', 'path': 'examples', 'sha': 'hjkd7559hiji96'},
+                                                   {'name': 'build.gradle', 'path': 'build.gradle', 'sha': 'd3e5d75cdsiji96'},
+                                                   {'name': 'identity-shiro', 'path': 'plugins/identity-shiro', 'sha': 'd3e5d75cdsiji96'}
+                                                   ]
+                mock_response.status_code = 200
+                mock_get.return_value = mock_response
+                mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+                mock_validation_args.return_value.version = version
+                validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+                result = validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path, ["query-insights"])
 
-        self.assertEqual(["analysis-icu", "analysis-nori"], result)
+                self.assertEqual(["analysis-icu", "analysis-nori"], result)
 
     @patch('requests.get')
     @patch('manifests.bundle_manifest.BundleManifest.from_path')
@@ -224,27 +217,29 @@ class TestValidation(unittest.TestCase):
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_get_native_plugin_list_exception(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
                                               mock_manifest_from_path: Mock, mock_get: Mock) -> None:
-        mock_component = Mock()
-        mock_component.commit_id = "abc123"
-        mock_manifest = Mock()
-        mock_manifest.components = {"OpenSearch": mock_component}
-        mock_manifest_from_path.return_value = mock_manifest
+        for version in ["2.19.4", "3.0.0"]:
+            with self.subTest(version=version):
+                mock_component = Mock()
+                mock_component.commit_id = "abc123"
+                mock_manifest = Mock()
+                mock_manifest.components = {"OpenSearch": mock_component}
+                mock_manifest_from_path.return_value = mock_manifest
 
-        mock_response = Mock()
-        mock_response.json.return_value = [
-            {'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
-            {'name': 'analysis-nori', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
-            {'name': 'query-insights', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'}
-        ]
-        mock_response.status_code = 503
-        mock_get.return_value = mock_response
-        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
-        mock_validation_args.return_value.version = "3.0.0"
-        validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
-        with self.assertRaises(Exception) as e1:
-            validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path, ["query-insights", "ml-commons"])
+                mock_response = Mock()
+                mock_response.json.return_value = [
+                    {'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
+                    {'name': 'analysis-nori', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+                    {'name': 'query-insights', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'}
+                ]
+                mock_response.status_code = 503
+                mock_get.return_value = mock_response
+                mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
+                mock_validation_args.return_value.version = version
+                validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+                with self.assertRaises(Exception) as e1:
+                    validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path, ["query-insights", "ml-commons"])
 
-        self.assertEqual(str(e1.exception), "Github Api returned error code while retrieving the list of native plugins")
+                self.assertEqual(str(e1.exception), "Github Api returned error code while retrieving the list of native plugins")
 
     @patch("time.sleep")
     @patch('validation_workflow.validation.Validation.check_http_request')
