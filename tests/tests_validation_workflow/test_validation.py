@@ -127,7 +127,7 @@ class TestValidation(unittest.TestCase):
     def test_install_native_plugin_staging(self, mock_temporary_directory: Mock, mock_file: Mock,
                                            mock_validation_args: Mock, mock_plugin_list: Mock, mock_execute: Mock,
                                            mock_get: Mock, mock_path: Mock) -> None:
-        for version in ["2.19.4", "3.0.0"]:
+        for version in ["2.19.4", "3.5.0"]:
             with self.subTest(version=version):
                 mock_response = Mock()
                 mock_validation_args.return_value.version = version
@@ -186,7 +186,7 @@ class TestValidation(unittest.TestCase):
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_get_native_plugin_list(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
                                     mock_manifest_from_path: Mock, mock_get: Mock) -> None:
-        for version in ["2.19.4", "3.0.0"]:
+        for version in ["2.19.4", "3.5.0"]:
             with self.subTest(version=version):
                 mock_component = Mock()
                 mock_component.commit_id = "abc123"
@@ -195,13 +195,21 @@ class TestValidation(unittest.TestCase):
                 mock_manifest_from_path.return_value = mock_manifest
 
                 mock_response = Mock()
-                mock_response.json.return_value = [{'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
-                                                   {'name': 'analysis-nori', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
-                                                   {'name': 'query-insights', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
-                                                   {'name': 'examples', 'path': 'examples', 'sha': 'hjkd7559hiji96'},
-                                                   {'name': 'build.gradle', 'path': 'build.gradle', 'sha': 'd3e5d75cdsiji96'},
-                                                   {'name': 'identity-shiro', 'path': 'plugins/identity-shiro', 'sha': 'd3e5d75cdsiji96'}
-                                                   ]
+                if version == "3.5.0":
+                    mock_response.json.return_value = [{'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
+                                                       {'name': 'analysis-nori', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+                                                       {'name': 'query-insights', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+                                                       {'name': 'examples', 'path': 'examples', 'sha': 'hjkd7559hiji96'},
+                                                       {'name': 'build.gradle', 'path': 'build.gradle', 'sha': 'd3e5d75cdsiji96'}
+                                                       ]
+                else:
+                    mock_response.json.return_value = [{'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
+                                                       {'name': 'analysis-nori', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+                                                       {'name': 'query-insights', 'path': 'plugins/analysis-nori', 'sha': 'd3e5d7559hiji96'},
+                                                       {'name': 'examples', 'path': 'examples', 'sha': 'hjkd7559hiji96'},
+                                                       {'name': 'build.gradle', 'path': 'build.gradle', 'sha': 'd3e5d75cdsiji96'},
+                                                       {'name': 'identity-shiro', 'path': 'plugins/identity-shiro', 'sha': 'd3e5d75cdsiji96'}
+                                                       ]
                 mock_response.status_code = 200
                 mock_get.return_value = mock_response
                 mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
@@ -217,7 +225,7 @@ class TestValidation(unittest.TestCase):
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_get_native_plugin_list_exception(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
                                               mock_manifest_from_path: Mock, mock_get: Mock) -> None:
-        for version in ["2.19.4", "3.0.0"]:
+        for version in ["2.19.4", "3.5.0"]:
             with self.subTest(version=version):
                 mock_component = Mock()
                 mock_component.commit_id = "abc123"
