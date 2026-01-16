@@ -195,6 +195,11 @@ class TestValidation(unittest.TestCase):
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_get_native_plugin_list(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
                                     mock_manifest_from_path: Mock, mock_get: Mock) -> None:
+        mock_component = Mock()
+        mock_component.commit_id = "abc123"
+        mock_manifest = Mock()
+        mock_manifest.components = {"OpenSearch": mock_component}
+        mock_manifest_from_path.return_value = mock_manifest
 
         mock_response = Mock()
         mock_response.json.return_value = [{'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
@@ -207,6 +212,7 @@ class TestValidation(unittest.TestCase):
         mock_response.status_code = 200
         mock_get.return_value = mock_response
         mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        mock_validation_args.return_value.version = "3.0.0"
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
         result = validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path, ["query-insights"])
 
@@ -218,6 +224,12 @@ class TestValidation(unittest.TestCase):
     @patch('system.temporary_directory.TemporaryDirectory')
     def test_get_native_plugin_list_exception(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
                                               mock_manifest_from_path: Mock, mock_get: Mock) -> None:
+        mock_component = Mock()
+        mock_component.commit_id = "abc123"
+        mock_manifest = Mock()
+        mock_manifest.components = {"OpenSearch": mock_component}
+        mock_manifest_from_path.return_value = mock_manifest
+
         mock_response = Mock()
         mock_response.json.return_value = [
             {'name': 'analysis-icu', 'path': 'plugins/analysis-icu', 'sha': 'adce05e8b5beee96'},
@@ -227,6 +239,7 @@ class TestValidation(unittest.TestCase):
         mock_response.status_code = 503
         mock_get.return_value = mock_response
         mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
+        mock_validation_args.return_value.version = "3.0.0"
         validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
         with self.assertRaises(Exception) as e1:
             validate_tar.get_native_plugin_list(mock_temporary_directory.return_value.path, ["query-insights", "ml-commons"])

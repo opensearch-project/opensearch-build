@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
+from packaging.version import Version
 
 from manifests.bundle_manifest import BundleManifest
 from system.execute import execute
@@ -78,19 +79,25 @@ class Validation(ABC):
             raise Exception(f"Unable to install native plugin: {str(e)}")
 
     def get_native_plugin_list(self, workdir: str, installed_plugins_list: list) -> list:
-        bundle_manifest = BundleManifest.from_path(os.path.join(workdir, "manifest.yml"))
-        commit_id = bundle_manifest.components["OpenSearch"].commit_id
-        plugin_url = f"https://api.github.com/repos/opensearch-project/OpenSearch/contents/plugins?ref={commit_id}"
-        api_response = requests.get(plugin_url)
-        if api_response.status_code == 200:
+        try:
+            bundle_manifest = BundleManifest.from_path(os.path.join(workdir, "manifest.yml"))
+            commit_id = bundle_manifest.components["OpenSearch"].commit_id
+            plugin_url = f"https://api.github.com/repos/opensearch-project/OpenSearch/contents/plugins?ref={commit_id}"
+            api_response = requests.get(plugin_url)
+            if api_response.status_code != 200:
+                raise Exception("Github Api returned error code while retrieving the list of native plugins")
             response = api_response.json()
             plugin_list = [i["name"] for i in response if i["name"] not in installed_plugins_list]
             plugin_list.remove("examples")
             plugin_list.remove("build.gradle")
-            plugin_list.remove("identity-shiro")  # Since the security plugin is enabled in the artifacts and identity-shiro is also an identity plugin, we cannot have both the plugins installed together. # noqa: E501
+            if Version(self.args.version) < Version("3.5.0"):
+                plugin_list.remove("identity-shiro")  # Since the security plugin is enabled in the artifacts and identity-shiro is also an identity plugin, we cannot have both the plugins installed together. # noqa: E501
             return plugin_list
-        else:
-            raise Exception("Github Api returned error code while retrieving the list of native plugins")
+        except Exception:
+            logging.exception(
+                "Couldn't fetch native plugin list from Opensearch repository"
+            )
+            raise
 
     def get_version(self, project: str) -> str:
         return re.search(r'(\d+\.\d+\.\d+)', os.path.basename(project)).group(1)
