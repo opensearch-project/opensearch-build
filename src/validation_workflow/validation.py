@@ -91,11 +91,12 @@ class Validation(ABC):
             plugin_list.remove("examples")
             plugin_list.remove("build.gradle")
             if semver.compare(self.args.version, "3.5.0") < 0:
-                plugin_list.remove("identity-shiro")  # Since the security plugin is enabled in the artifacts and identity-shiro is also an identity plugin, we cannot have both the plugins installed together. # noqa: E501
+                # Since the security plugin is enabled in the artifacts and identity-shiro is also an identity plugin, we cannot have both the plugins installed together.
+                plugin_list.remove("identity-shiro")
             return plugin_list
         except Exception:
             logging.exception(
-                "Couldn't fetch native plugin list from Opensearch repository"
+                "Error while validating native plugin list."
             )
             raise
 
