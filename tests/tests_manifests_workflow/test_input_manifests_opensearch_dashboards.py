@@ -22,8 +22,8 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
                 "..",
                 "..",
                 "manifests",
-                "3.0.0",
-                "opensearch-dashboards-3.0.0.yml",
+                "3.5.0",
+                "opensearch-dashboards-3.5.0.yml",
             )
         )
         self.assertTrue(manifest in files)

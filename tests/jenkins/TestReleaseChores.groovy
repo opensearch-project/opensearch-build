@@ -57,7 +57,7 @@ class TestReleaseChores extends BuildPipelineTest {
 
     @Test
     public void testParameterSetUp() {
-        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_VERSION', '3.5.0')
         addParam('RELEASE_CHORE', 'checkReleaseOwners')
         addParam('ACTION', 'check')
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
@@ -90,40 +90,40 @@ class TestReleaseChores extends BuildPipelineTest {
 
     @Test
     public void testStageToLibMappingCheckReleaseOwners() {
-        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_VERSION', '3.5.0')
         addParam('RELEASE_CHORE', 'checkReleaseOwners')
         addParam('ACTION', 'check')
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
         assertCallStack().contains('release-chores.stage(checkReleaseOwners, groovy.lang.Closure)')
-        assertCallStack().contains('release-chores.checkRequestAssignReleaseOwners({inputManifest=[manifests/3.0.0-beta1/opensearch-3.0.0-beta1.yml, manifests/3.0.0-beta1/opensearch-dashboards-3.0.0-beta1.yml], action=check})')
+        assertCallStack().contains('release-chores.checkRequestAssignReleaseOwners({inputManifest=[manifests/3.5.0/opensearch-3.5.0.yml, manifests/3.5.0/opensearch-dashboards-3.5.0.yml], action=check})')
     }
 
     @Test
     public void testStageToLibMappingCheckDocumentation() {
-        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_VERSION', '3.5.0')
         addParam('RELEASE_CHORE', 'checkDocumentation')
         addParam('ACTION', 'check')
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
         assertCallStack().contains('release-chores.stage(checkDocumentationIssues, groovy.lang.Closure)')
-        assertCallStack().contains('release-chores.checkDocumentationIssues({version=3.0.0-beta1, action=check})')
+        assertCallStack().contains('release-chores.checkDocumentationIssues({version=3.5.0, action=check})')
     }
 
     @Test
     public void testStageToLibMappingCheckCodeCoverage() {
-        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_VERSION', '3.5.0')
         addParam('RELEASE_CHORE', 'checkCodeCoverage')
         addParam('ACTION', 'check')
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
         assertCallStack().contains('release-chores.stage(checkCodeCoverage, groovy.lang.Closure)')
-        assertCallStack().contains('release-chores.checkCodeCoverage({inputManifest=[manifests/3.0.0-beta1/opensearch-3.0.0-beta1.yml, manifests/3.0.0-beta1/opensearch-dashboards-3.0.0-beta1.yml], action=check})')
+        assertCallStack().contains('release-chores.checkCodeCoverage({inputManifest=[manifests/3.5.0/opensearch-3.5.0.yml, manifests/3.5.0/opensearch-dashboards-3.5.0.yml], action=check})')
     }
 
     @Test
     public void testStageToLibMappingCheckReleaseNotes() {
-        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_VERSION', '3.5.0')
         addParam('RELEASE_CHORE', 'checkReleaseNotes')
         addParam('ACTION', 'check')
         addParam('GIT_LOG_DATE', '2025-03-19')
@@ -131,14 +131,14 @@ class TestReleaseChores extends BuildPipelineTest {
             runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         }
         def callStack = helper.getCallStack()
-        assertThat(getCommandExecutions('sh', 'release_notes.sh'), hasItem(containsString('./release_notes.sh check manifests/3.0.0-beta1/opensearch-3.0.0-beta1.yml manifests/3.0.0-beta1/opensearch-dashboards-3.0.0-beta1.yml --date 2025-03-19 --output /tmp/workspace/table.md')))
+        assertThat(getCommandExecutions('sh', 'release_notes.sh'), hasItem(containsString('./release_notes.sh check manifests/3.5.0/opensearch-3.5.0.yml manifests/3.5.0/opensearch-dashboards-3.5.0.yml --date 2025-03-19 --output /tmp/workspace/table.md')))
         assertCallStack().contains('release-chores.stage(checkReleaseNotes, groovy.lang.Closure)')
-        assertCallStack().contains('release-chores.checkReleaseNotes({version=3.0.0-beta1, dataTable=/tmp/workspace/table.md, action=check})')
+        assertCallStack().contains('release-chores.checkReleaseNotes({version=3.5.0, dataTable=/tmp/workspace/table.md, action=check})')
     }
 
     @Test
     public void testCheckReleaseNotesCreation() {
-        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_VERSION', '3.5.0')
         addParam('RELEASE_CHORE', 'checkReleaseNotes')
         addParam('ACTION', 'create')
         addParam('GIT_LOG_DATE', '2025-03-19')
@@ -150,7 +150,7 @@ class TestReleaseChores extends BuildPipelineTest {
 
     @Test
     public void testCheckReleaseNotesCompilation() {
-        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_VERSION', '3.5.0')
         addParam('RELEASE_CHORE', 'checkReleaseNotes')
         addParam('ACTION', 'compile')
         addParam('GIT_LOG_DATE', '2025-03-19')
@@ -161,24 +161,24 @@ class TestReleaseChores extends BuildPipelineTest {
 
     @Test
     public void testStageToLibMappingCheckReleaseIssues() {
-        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_VERSION', '3.5.0')
         addParam('RELEASE_CHORE', 'checkReleaseIssues')
         addParam('ACTION', 'check')
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
         assertCallStack().contains('release-chores.stage(checkReleaseIssues, groovy.lang.Closure)')
-        assertCallStack().contains('release-chores.checkReleaseIssues({version=3.0.0-beta1, inputManifest=[manifests/3.0.0-beta1/opensearch-3.0.0-beta1.yml, manifests/3.0.0-beta1/opensearch-dashboards-3.0.0-beta1.yml], action=check})')
+        assertCallStack().contains('release-chores.checkReleaseIssues({version=3.5.0, inputManifest=[manifests/3.5.0/opensearch-3.5.0.yml, manifests/3.5.0/opensearch-dashboards-3.5.0.yml], action=check})')
     }
 
     @Test
     public void testStageToLibMappingCheckDocumentationPullRequests() {
-        addParam('RELEASE_VERSION', '3.0.0-beta1')
+        addParam('RELEASE_VERSION', '3.5.0')
         addParam('RELEASE_CHORE', 'checkDocumentationPullRequests')
         addParam('ACTION', 'check')
             runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
         assertCallStack().contains('release-chores.stage(checkDocumentationPullRequests, groovy.lang.Closure)')
-        assertCallStack().contains('release-chores.checkDocumentationPullRequests({version=3.0.0-beta1})')
+        assertCallStack().contains('release-chores.checkDocumentationPullRequests({version=3.5.0})')
     }
 
     def getCommandExecutions(methodName, command) {
