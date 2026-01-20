@@ -177,6 +177,8 @@ opensearch_dashboards_vars=(
     queryEnhancements.queryAssist.summary.enabled
     home.disableWelcomeScreen
     home.disableExperienceModal
+    investigation.enabled
+    investigation.agenticFeaturesEnabled
 )
 
 function setupSecurityDashboardsPlugin {
