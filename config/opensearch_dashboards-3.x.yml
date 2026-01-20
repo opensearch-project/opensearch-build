@@ -231,7 +231,6 @@
 # Default to false, set true to enable the agentic features in investigation dashboards
 # investigation.agenticFeaturesEnabled: false
 
-
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver
