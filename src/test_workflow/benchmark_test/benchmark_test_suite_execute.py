@@ -43,7 +43,7 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
 
         if self.args.benchmark_config:
             self.command += f" -v {self.args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini"
-        self.command += f" opensearchproject/opensearch-benchmark:1.15.0 execute-test --workload={self.args.workload} " \
+        self.command += f" opensearchproject/opensearch-benchmark:latest run --workload={self.args.workload} " \
                         f"--pipeline=benchmark-only --target-hosts={self.endpoint}"
 
         if self.args.workload_params:
@@ -82,10 +82,10 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
     def convert(self) -> None:
         with TemporaryDirectory() as work_dir:
             subprocess.check_call(f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark"
-                                  f"/test_executions/. {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
+                                  f"/test-runs/. {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
             subprocess.check_call(f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark"
                                   f"/final_result.md {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
-            file_path = glob.glob(os.path.join(str(work_dir.path), "*", "test_execution.json"))
+            file_path = glob.glob(os.path.join(str(work_dir.path), "*", "test_run.json"))
             final_results_file = glob.glob(os.path.join(str(work_dir.path), "final_result.md"))
             shutil.copy(file_path[0], os.path.join('/tmp', f"test_execution_{self.args.stack_suffix}.json"))
             shutil.copy(final_results_file[0], os.path.join('/tmp', f"final_result_{self.args.stack_suffix}.md"))
