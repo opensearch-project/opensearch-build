@@ -42,11 +42,10 @@ jobs:
           - {repo: dashboards-search-relevance}
           - {repo: opensearch-dashboards-functional-test}
           - {repo: query-insights-dashboards}
+          - {repo: dashboards-investigation}
         branch:
           - 'main'
           - '2.19'
-          - '3.2'
-          - '3.3'
           - '3.4'
           - '3.5'
     steps:
