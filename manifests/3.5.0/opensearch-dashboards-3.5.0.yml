@@ -67,3 +67,6 @@ components:
   - name: queryInsightsDashboards
     repository: https://github.com/opensearch-project/query-insights-dashboards.git
     ref: main
+  - name: investigationDashboards
+    repository: https://github.com/opensearch-project/dashboards-investigation.git
+    ref: main
