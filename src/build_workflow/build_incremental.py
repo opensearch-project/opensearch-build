@@ -19,6 +19,7 @@ class BuildIncremental:
         self.distribution = distribution
         self.input_manifest = input_manifest
         self.platform = platform or current_platform()
+        self.is_full_rebuild = False
 
     # Given input manifest and return a list of what components changed and added.
     def commits_diff(self, input_manifest: InputManifest) -> List[str]:
@@ -52,13 +53,17 @@ class BuildIncremental:
         return components
 
     # Given updated plugins and look into the depends_on of all components to finalize a list of rebuilding components.
+    # Returns a tuple of (rebuild_list, is_full_rebuild) where is_full_rebuild indicates if core is rebuilding.
     def rebuild_plugins(self, changed_plugins: List, input_manifest: InputManifest) -> List[str]:
         if not changed_plugins:
             return []
 
         if any(core in changed_plugins for core in ("OpenSearch", "OpenSearch-Dashboards")):
             logging.info("Core engine has new changes, rebuilding all components.")
+            self.is_full_rebuild = True
             return [component.name for component in input_manifest.components.select()]
+
+        self.is_full_rebuild = False
 
         queue = changed_plugins
         rebuild_list = []

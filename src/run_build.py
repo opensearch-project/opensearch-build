@@ -54,14 +54,21 @@ def main() -> int:
         build_manifest_path = os.path.join(args.distribution, "builds", manifest.build.filename, "manifest.yml")
         if not os.path.exists(build_manifest_path):
             logging.error(f"Previous build manifest missing at path: {build_manifest_path}")
-        build_manifest = BuildManifest.from_path(build_manifest_path)
 
         if not components:
+            build_manifest = BuildManifest.from_path(build_manifest_path)
             logging.info("No commit difference found between any components. Skipping the build.")
             build_manifest.build.id = os.getenv("BUILD_NUMBER") or uuid.uuid4().hex
             build_manifest.to_file(build_manifest_path)
             logging.info(f"Updating the build ID in the build manifest to {build_manifest.build.id}.")
             return 0
+
+        # When core is rebuilding, use a clean build manifest to avoid retaining old artifacts
+        if buildIncremental.is_full_rebuild:
+            logging.info("Full rebuild triggered, using clean build manifest.")
+            build_manifest = None
+        else:
+            build_manifest = BuildManifest.from_path(build_manifest_path)
 
         logging.info(f"Plugins for incremental build: {components}")
 
