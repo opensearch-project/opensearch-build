@@ -12,13 +12,13 @@ Manifests are the single source of truth for building and testing the distributi
   
 ### Building from Source
   
-Input manifests are the source of building the distributions. Each input manifest also contains the docker image that can be used to build these distributions and avoid installing bunch of packages. See [CI image details](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/3.0.0/opensearch-3.0.0.yml#L8-L9) in the manifest along with java version used to build the distribution.
+Input manifests are the source of building the distributions. Each input manifest also contains the docker image that can be used to build these distributions and avoid installing bunch of packages. See [CI image details](https://github.com/opensearch-project/opensearch-build/blob/main/legacy-manifests/3.0.0/opensearch-3.0.0.yml#L8-L9) in the manifest along with java version used to build the distribution.
   
 To run locally:
 ```bash
   docker run -it --entrypoint bash opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1
 ```
-Once you are inside the container set JAVA_HOME as stated in the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/3.0.0-alpha1/opensearch-3.0.0-alpha1.yml#L10):
+Once you are inside the container set JAVA_HOME as stated in the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/legacy-manifests/3.0.0-alpha1/opensearch-3.0.0-alpha1.yml#L10):
 ```
 export JAVA_HOME=/opt/java/openjdk-21
 git clone https://github.com/opensearch-project/opensearch-build.git
