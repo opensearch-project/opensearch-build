@@ -159,7 +159,7 @@ yq --version
 # https://github.com/opensearch-project/opensearch-ci/issues/281#issuecomment-1654424423
 scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/49d6f71e5bd7096d49b3286ad02d5d482726b467/bucket/volta.json
 volta --version
-$nodeVersionList = "18.19.0", "20.18.3", "22.21.1"
+$nodeVersionList = "18.19.0", "20.18.3", "22.22.0"
 Foreach ($nodeVersion in $nodeVersionList)
 {
     $nodeVersion
