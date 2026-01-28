@@ -39,6 +39,7 @@ class TestReleaseNotes(unittest.TestCase):
         self.mock_args = Mock(spec=ReleaseNotesCheckArgs)
         self.mock_args.model_id = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
         self.mock_args.max_tokens = 2000
+        self.mock_args.skip_changelog = False
 
     @patch("subprocess.check_output", return_value=''.encode())
     @patch("subprocess.check_call")
@@ -246,3 +247,55 @@ class TestReleaseNotes(unittest.TestCase):
         # Check that the file was opened with the correct filename format for core components
         # Should use format: opensearch.release-notes-2.0.0.md
         mock_file_open.assert_called_with(os.path.join("test", "dir", "release-notes", "opensearch.release-notes-2.0.0.md"), "w")
+
+    @patch('release_notes_workflow.release_notes.TemporaryDirectory')
+    @patch('release_notes_workflow.release_notes.GitRepository')
+    @patch('release_notes_workflow.release_notes.ReleaseNotesComponents')
+    @patch('release_notes_workflow.release_notes.AIReleaseNotesGenerator')
+    @patch('release_notes_workflow.release_notes.GitHubCommitsProcessor')
+    @patch('os.path.isfile')
+    @patch('builtins.open', new_callable=mock_open)
+    @patch('os.getcwd')
+    def test_generate_skip_changelog_flag(self, mock_getcwd: MagicMock, mock_file_open: MagicMock, mock_isfile: MagicMock,
+                                          mock_github_commits_class: MagicMock, mock_ai_generator_class: MagicMock,
+                                          mock_release_notes_components: MagicMock, mock_git_repo: MagicMock, mock_temp_dir: MagicMock) -> None:
+        """Test that --skip-changelog forces commit-based generation even when CHANGELOG.md exists."""
+        # Setup mocks
+        mock_getcwd.return_value = os.path.join("test", "dir")
+        mock_temp_dir_instance = Mock()
+        mock_temp_dir_instance.name = os.path.join("tmp", "test")
+        mock_temp_dir.return_value.__enter__.return_value = mock_temp_dir_instance
+
+        mock_repo = Mock()
+        mock_repo.dir = os.path.join("tmp", "test", "test-component")
+        mock_git_repo.return_value.__enter__.return_value = mock_repo
+
+        mock_release_notes = Mock()
+        mock_release_notes.filename = ".release-notes-1.0.md"
+        mock_release_notes_components.from_component.return_value = mock_release_notes
+
+        mock_ai_generator = Mock()
+        mock_ai_generator.generate_release_notes.return_value = "Generated from commits"
+        mock_ai_generator_class.return_value = mock_ai_generator
+
+        # CHANGELOG.md exists
+        mock_isfile.return_value = True
+
+        # Mock commits
+        mock_commits_processor = Mock()
+        mock_commits = [{"Message": "Test commit", "Labels": ["enhancement"], "PullRequestSubject": "Test PR"}]
+        mock_commits_processor.get_commit_details.return_value = mock_commits
+        mock_github_commits_class.return_value = mock_commits_processor
+
+        # Set skip_changelog to True
+        self.mock_args.skip_changelog = True
+
+        # Execute
+        self.release_notes.generate(self.mock_args, self.component, self.build_version, self.build_qualifier, 'opensearch')
+
+        # Verify that GitHub commits were used despite CHANGELOG.md existing
+        mock_github_commits_class.assert_called_once_with("2022-07-26", self.component, None)
+        mock_ai_generator.generate_release_notes.assert_called_once()
+        call_args = mock_ai_generator.generate_release_notes.call_args[0][0]
+        self.assertIn("Test PR", call_args)
+        self.assertIn("Test commit", call_args)

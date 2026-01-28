@@ -104,5 +104,29 @@ class TestReleaseNotesGenerate extends BuildPipelineTest {
             callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --ref main')
         }).isTrue()
     }
+
+    @Test
+    public void releaseNotesCheckOpenSearchAndSqlWithRefAndSkipChangelog() {
+        addParam('COMPONENTS', 'OpenSearch sql')
+        addParam('REF', 'main')
+        addParam('SKIP_CHANELOG', true)
+        runScript("jenkins/release-workflows/release-notes-generate.jenkinsfile")
+
+        def callStack = helper.getCallStack()
+        assertCallStack().contains('Release notes for OpenSearch=groovy.lang.Closure, Release notes for sql=groovy.lang.Closure')
+        assertCallStack().contains('OpenSearch with index 0 will sleep 0 seconds to reduce load && sleep 0')
+        assertCallStack().contains('sql with index 1 will sleep 30 seconds to reduce load && sleep 30')
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000 --ref main --skip-changelog')
+        }).isTrue()
+
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --ref main --skip-changelog')
+        }).isTrue()
+    }
     
 }

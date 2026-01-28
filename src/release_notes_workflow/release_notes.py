@@ -111,7 +111,7 @@ class ReleaseNotes:
                 repo_name = component.repository.split("/")[-1].split('.')[0]
                 filename: str = f"{product}{release_notes.filename}" if component.name in ['OpenSearch', 'OpenSearch-Dashboards'] else f"opensearch-{repo_name}{release_notes.filename}"
 
-                if os.path.isfile(changelog_path):
+                if not args.skip_changelog and os.path.isfile(changelog_path):
                     with open(changelog_path, 'r') as f:
                         changelog_content = f.read()
 
@@ -124,7 +124,7 @@ class ReleaseNotes:
                     )
                     release_notes_raw = ai_generator.generate_release_notes(prompt)
                 else:
-                    logging.info(f"No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {self.date}")
+                    logging.info(f"Either --skip-changelog enabled or No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {self.date}")
                     github_commits = GitHubCommitsProcessor(baseline_date, component, self.token)
                     commits = github_commits.get_commit_details()
 

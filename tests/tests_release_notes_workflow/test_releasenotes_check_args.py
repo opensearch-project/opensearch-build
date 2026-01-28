@@ -117,3 +117,7 @@ class TestReleaseNotesCheckArgs(unittest.TestCase):
         with pytest.raises(ValueError) as exc_info:
             main()
         assert str(exc_info.value) == 'Only two manifests, OS and OSD, can be provided'
+
+    @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "generate", OPENSEARCH_MANIFEST, "--date", '2022-07-26', "--skip-changelog"])
+    def test_skip_changelog_flag(self) -> None:
+        self.assertTrue(ReleaseNotesCheckArgs().skip_changelog)
