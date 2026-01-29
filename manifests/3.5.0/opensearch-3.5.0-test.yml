@@ -187,9 +187,6 @@ components:
         - without-security
   - name: query-insights
     integ-test:
-      topology:
-        - cluster_name: cluster
-          data_nodes: 2
       test-configs:
         - with-security
         - without-security
