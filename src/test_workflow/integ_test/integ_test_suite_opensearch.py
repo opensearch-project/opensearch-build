@@ -107,7 +107,7 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
         def custom_node_endpoint_encoder(node_endpoint: NodeEndpoint) -> dict:
             return {"endpoint": node_endpoint.endpoint, "port": node_endpoint.port, "transport": node_endpoint.transport}
         if os.path.exists(script):
-            if len(cluster_endpoints) == 1:
+            if len(cluster_endpoints) == 1 and len(cluster_endpoints[0].data_nodes) == 1:
                 single_data_node = cluster_endpoints[0].data_nodes[0]
                 cmd = f"bash {script} -b {single_data_node.endpoint} -p {single_data_node.port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
             else:

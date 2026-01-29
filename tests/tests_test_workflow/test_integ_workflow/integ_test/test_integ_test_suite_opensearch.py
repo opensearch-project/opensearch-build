@@ -225,6 +225,11 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
 
         # call the test target
         mock_endpoint = MagicMock()
+        mock_data_node = MagicMock()
+        mock_data_node.endpoint = "localhost"
+        mock_data_node.port = 9200
+        mock_data_node.transport = 9300
+        mock_endpoint.data_nodes = [mock_data_node]
         status = integ_test_suite.multi_execute_integtest_sh([mock_endpoint], True, "with-security")
 
         mock_find.assert_called()
