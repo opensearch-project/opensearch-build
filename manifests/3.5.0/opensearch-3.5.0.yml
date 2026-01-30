@@ -89,7 +89,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: cd5616fdb1a4f38c333afc54af8505a77456a24a
+    ref: 61d9f3c6286c5af51a5ffd3b228540d372622db6
     platforms:
       - linux
       - windows
