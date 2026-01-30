@@ -19,6 +19,7 @@ class ReleaseNotesCheckArgs:
     model_id: str
     max_tokens: int
     ref: str
+    skip_changelog: bool
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Checkout an OpenSearch Bundle and check for CommitID and Release Notes")
@@ -62,6 +63,9 @@ class ReleaseNotesCheckArgs:
         parser.add_argument("--ref",
                             type=str,
                             help="Override input manifest ref")
+        parser.add_argument("--skip-changelog",
+                            action="store_true",
+                            help="Skip CHANGELOG.md and generate release notes from commits only")
 
         args = parser.parse_args()
         self.logging_level = args.logging_level
@@ -72,6 +76,7 @@ class ReleaseNotesCheckArgs:
         self.model_id = args.model_id
         self.max_tokens = args.max_tokens
         self.ref = args.ref
+        self.skip_changelog = args.skip_changelog
 
         # AI options
         self.components = args.components

@@ -52,6 +52,11 @@ pipeline {
             description: 'Optional: Override input component github repo ref, defaults to provided in input manifest file',
             trim: true
         )
+        booleanParam(
+            name: 'SKIP_CHANELOG',
+            description: 'Optional: Skip changelog parsing even if the file is present, defaults to false',
+            defaultValue: false
+        )
     }
     stages {
         stage('Parameters Check') {
@@ -109,11 +114,12 @@ pipeline {
                                                         }
                                                         withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                                                             def refParam = params.REF ? "--ref ${REF}" : ""
+                                                            def skipChangelogFlag = params.SKIP_CHANELOG ? "--skip-changelog" : ""
                                                             def ref = params.REF ?: componentObj.ref
                                                             sh """
                                                                 #!/bin/bash
                                                                 set +e
-                                                                ./release_notes.sh generate manifests/${INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} ${refParam}
+                                                                ./release_notes.sh generate manifests/${INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} ${refParam} ${skipChangelogFlag}
 
                                                                 if [ \$? -ne 0 ]; then
                                                                     echo "Release notes generation failed for component ${currentComponent}"
