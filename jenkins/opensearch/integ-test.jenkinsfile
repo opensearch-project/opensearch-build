@@ -203,7 +203,7 @@ pipeline {
                         echo "Add Component: ${local_component}"
                         componentTests["Testing ${local_component}"] = {
                             // Using scripted pipelines to trigger dynamic parallel stages
-                            timeout(time: 4, unit: 'HOURS') {
+                            timeout(time: 12, unit: 'HOURS') {
                                 node(AGENT_LABEL) {
                                     docker.withRegistry('https://public.ecr.aws/') {
                                         docker.image(testDockerAgent.image).pull() // always pull latest
