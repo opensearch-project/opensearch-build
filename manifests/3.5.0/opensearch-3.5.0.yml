@@ -89,7 +89,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 61d9f3c6286c5af51a5ffd3b228540d372622db6
+    ref: 0a5975c49302648b6a2c27a9d5c539044d91bfb0
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 4b785b0cd4ad081129b4ee130d96a0e74fab0b8e
+    ref: d99377a0a55ec68b69c4a0721de31fff12f45cea
     platforms:
       - linux
       - windows
@@ -220,7 +220,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: dde60c972d96826a88556045d317f28fc62bc0a1
+    ref: 55b8b26c6fad865a8ad43a914bbe955e00fd93f4
     platforms:
       - linux
       - windows
