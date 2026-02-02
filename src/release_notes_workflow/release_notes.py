@@ -28,7 +28,7 @@ class ReleaseNotes:
         self.date = date
         self.action_type = action_type
         self.token = os.getenv('GITHUB_TOKEN')
-        self.filter_commits = ['flaky-test', 'testing']
+        self.filter_commits = ['flaky-test', 'testing', 'skip-changelog']
 
     def table(self) -> MarkdownTableWriter:
         table_result = []

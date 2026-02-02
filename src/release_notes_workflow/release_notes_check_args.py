@@ -54,7 +54,7 @@ class ReleaseNotesCheckArgs:
         )
         parser.add_argument("--model-id",
                             type=str,
-                            default="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+                            default="us.anthropic.claude-sonnet-4-5-20250929-v1:0",
                             help="AWS Bedrock model ID to use for AI generation.")
         parser.add_argument("--max-tokens",
                             type=int,
