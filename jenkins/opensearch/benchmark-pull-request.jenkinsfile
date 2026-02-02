@@ -195,7 +195,8 @@ pipeline {
                     [key: 'EXCLUDE_TASKS', value: '$.EXCLUDE_TASKS'],
                     [key: 'INCLUDE_TASKS', value: '$.INCLUDE_TASKS'],
                     [key: 'CAPTURE_NODE_STAT', value: '$.CAPTURE_NODE_STAT'],
-                    [key: 'TELEMETRY_PARAMS', value: '$.TELEMETRY_PARAMS']
+                    [key: 'TELEMETRY_PARAMS', value: '$.TELEMETRY_PARAMS'],
+                    [key: 'ADDITIONAL_CONFIG', value: '$.ADDITIONAL_CONFIG'],
                 ],
                 tokenCredentialId: 'jenkins-pr-benchmark-generic-webhook-token',
                 causeString: 'Triggered by comment on PR on OpenSearch core repository',
