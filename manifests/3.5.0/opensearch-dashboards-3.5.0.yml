@@ -18,13 +18,13 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: fa971d72dc486f76771983fae38abfbbe6ccbae3
+    ref: 5a667ad4737b2ee2feb283b8c07c68acea87f20c
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '3.5'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 255ef2d58087d9041cf1e1a3152dc70312651973
+    ref: 05b294b1f28a706ac995dd94dcdd301609e84d25
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
     ref: 08cf69bab5f3c7077452cc6a0ba3529ce3719129
