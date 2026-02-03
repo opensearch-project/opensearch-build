@@ -27,7 +27,7 @@ components:
     ref: 05b294b1f28a706ac995dd94dcdd301609e84d25
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 08cf69bab5f3c7077452cc6a0ba3529ce3719129
+    ref: 811111dc5269e6e507cdd6fd0913c1924014ef4a
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: ce16a829af1c380a7d947ae6bc88940ba78bb7ee
