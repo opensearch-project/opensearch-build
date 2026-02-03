@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: a7f7aa0214b84fdb3a5ea434f9084d227ef2c3e1
+    ref: be73e05869fb4f426d16dce349cdd836d29cb58a
     platforms:
       - linux
       - windows
