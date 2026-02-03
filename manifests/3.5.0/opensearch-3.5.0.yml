@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 79a8cb98607949c47ad3869e61b03900748c06b6
+    ref: bbc94f0bdc3a759011e6529ecfe52840856f91a3
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 1669ec046c476b837125cdc69870556e8a3b7ed1
@@ -133,7 +133,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: d99377a0a55ec68b69c4a0721de31fff12f45cea
+    ref: a7f7aa0214b84fdb3a5ea434f9084d227ef2c3e1
     platforms:
       - linux
       - windows
@@ -191,7 +191,7 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: 0fab21724fd3a4e7eaffd16a5b66b0ef92e70bcb
+    ref: 13ff572476e5d246b7289f6929593055c15b5d45
     platforms:
       - linux
       - windows
@@ -220,7 +220,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: 55b8b26c6fad865a8ad43a914bbe955e00fd93f4
+    ref: 34110db8f4aa6437891e6b28dff730b2b2ec62a5
     platforms:
       - linux
       - windows
