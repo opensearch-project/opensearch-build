@@ -37,25 +37,25 @@ components:
       - windows
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: c0b1895b552da0ee41e118e29540aaadff3ccc46
+    ref: f1b61bedeae0f60955dc1645370c40decd7c0bbe
     platforms:
       - linux
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: dcb639fb9de6c60c7773da44299c23adfa9f54d0
+    ref: 50b6f13703daf0192fbdfe4154a020ab068f7c0e
     platforms:
       - linux
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 2cb891d7fb74aa649dc3767d2742a83da62f6f44
+    ref: 5fddfffe0b2a0242900eddc61d579c55188448ff
     platforms:
       - linux
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: d1fd77ee792a943f2fb430bdad8d933258a823a2
+    ref: 46fd227383154d598d350f58ce2d778a549f43b4
     platforms:
       - linux
       - windows
@@ -191,13 +191,13 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: 13ff572476e5d246b7289f6929593055c15b5d45
+    ref: 27319ab05eb580fae498c6427758910aeb2564d4
     platforms:
       - linux
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: b360458ccec22214ad414028a7efb75d195f9bb3
+    ref: 08df8138de06ac11001513ee93f150262b568035
     platforms:
       - linux
       - windows
