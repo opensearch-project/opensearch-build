@@ -14,7 +14,19 @@ on:
         required: false
         type: string
         default: 'skip-diff-analyzer'
-      update_pr_comment_with_analyzer_report:  # Only take if event is pull_request_target
+      # all = every mode
+      # report = analyze diff to find malicious code
+      # TODO: review = analyze diff to suggest code improvement
+      diff_analyzer_mode:
+        required: false
+        type: string
+        default: 'report'
+      update_pr_comment_with_analyzer_report:  # Only update if event is pull_request_target
+        required: false
+        type: boolean
+        default: false
+      # TODO: Implement review
+      update_pr_conversation_with_analyzer_review:  # Only update if event is pull_request_target
         required: false
         type: boolean
         default: false
