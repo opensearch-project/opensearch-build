@@ -55,7 +55,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 46fd227383154d598d350f58ce2d778a549f43b4
+    ref: 1aced12bc5c188ae0151419fc51766646d94cad5
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: b8880ba46b3ec9d20f01f5f82872655a98441936
+    ref: 671615257f1c9fcb9471c8103a0dcb8b2f86c623
     platforms:
       - linux
       - windows
