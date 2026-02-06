@@ -102,6 +102,7 @@ jobs:
           else
             echo "wrong github event: ${{ github.event_name }}, must be 'push' or 'pull_request_target'"
             echo "diff_analyzer=5" >> $GITHUB_ENV
+            echo "diff_report='wrong github event'" >> $GITHUB_ENV
             exit 1
           fi
 
@@ -122,6 +123,7 @@ jobs:
           if [ "$DIFF_TOKEN_EST" -gt "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
             echo "Diff too large, requires skip by maintainers after manual review"
             echo "diff_analyzer=5" >> $GITHUB_ENV
+            echo "diff_report='Diff too large, requires skip by maintainers after manual review'" >> $GITHUB_ENV
             exit 1
           fi
           echo "-------------------------------------------------------"
