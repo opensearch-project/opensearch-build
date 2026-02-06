@@ -118,3 +118,13 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        data_source.enabled: true
+        data_source.ssl.verificationMode: none
+        data_source.hideLocalCluster: true
+        investigation.enabled: true
+        investigation.agenticFeaturesEnabled: true
+        uiSettings.overrides.home:useNewHomePage: true
+        workspace.enabled: true
+        savedObjects.permission.enabled: true
+        opensearchDashboards.dashboardAdmin.users: ['admin']
