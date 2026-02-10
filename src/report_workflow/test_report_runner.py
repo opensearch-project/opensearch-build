@@ -147,9 +147,9 @@ class TestReportRunner:
             config_dict["test_stdout"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
             config_dict["test_stderr"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
             config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name,
-                                                                  nodes_per_config, config_index)[0]
+                                                                nodes_per_config, config_index)[0]
             config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name,
-                                                                  nodes_per_config, config_index)[1]
+                                                                nodes_per_config, config_index)[1]
             config_dict["failed_test"] = get_failed_tests(self.name, test_result, test_result_files)
             component["configs"].append(config_dict)
         return component
