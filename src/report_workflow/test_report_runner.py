@@ -102,13 +102,19 @@ class TestReportRunner:
 
         test_component = self.test_manifest.components[component_name]
 
+        nodes_per_config = 1
+        if self.test_type == "integ-test":
+            topology_nodes = sum(cc.data_nodes + cc.cluster_manager_nodes
+                                 for cc in test_component.topology.cluster_configs)
+            nodes_per_config = topology_nodes + 1 if self.name == 'opensearch-dashboards' else topology_nodes
+
         config_names = []
         if self.test_type == "integ-test":
             config_names = [config for config in test_component.__to_dict__().get(self.test_type)["test-configs"]]
         elif self.test_type == "smoke-test":
             config_names = self.get_spec_path(self.test_report_data["version"], test_component.__to_dict__().get(self.test_type)["test-spec"])
         logging.info(f"Configs for {component_name} on {self.test_type} are {config_names}")
-        for config in config_names:
+        for config_index, config in enumerate(config_names):
             config_dict = {
                 "name": config,
             }
@@ -140,8 +146,10 @@ class TestReportRunner:
             config_dict["status"] = test_result
             config_dict["test_stdout"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
             config_dict["test_stderr"] = get_test_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
-            config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[0]
-            config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name)[1]
+            config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name,
+                                                                  nodes_per_config, config_index)[0]
+            config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, test_report_component_name, config, self.name,
+                                                                  nodes_per_config, config_index)[1]
             config_dict["failed_test"] = get_failed_tests(self.name, test_result, test_result_files)
             component["configs"].append(config_dict)
         return component
@@ -221,15 +229,13 @@ def get_test_logs(base_path: str, test_number: str, test_type: str, component_na
 
 
 def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, component_name: str, config: str,
-                        product_name: str) -> typing.List[list]:
+                        product_name: str, nodes_per_config: int = 1, config_index: int = 0) -> typing.List[list]:
     os_stdout: list = []
     os_stderr: list = []
     cluster_ids: list
     if test_type == "integ-test":
-        if product_name == 'opensearch':
-            cluster_ids = ['id-0'] if config == 'with-security' else ['id-1']
-        else:
-            cluster_ids = ['id-0', 'id-1'] if config == 'with-security' else ['id-2', 'id-3']
+        cluster_ids = _resolve_cluster_ids(base_path, test_number, test_type, component_name, config,
+                                           nodes_per_config, config_index)
 
         for ids in cluster_ids:
             if base_path.startswith("https://"):
@@ -245,6 +251,22 @@ def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, compon
         logging.error(f"Test Type {test_type} is not supported")
 
     return [os_stdout, os_stderr]
+
+
+def _resolve_cluster_ids(base_path: str, test_number: str, test_type: str, component_name: str, config: str,
+                         nodes_per_config: int, config_index: int) -> list:
+    if not base_path.startswith("https://"):
+        log_dir = os.path.join(base_path, "test-results", test_number, test_type, component_name, config, "local-cluster-logs")
+        try:
+            entries = [e for e in os.listdir(log_dir) if e.startswith("id-")]
+            entries.sort(key=lambda x: int(x.split("-", 1)[1]))
+            if entries:
+                return entries
+        except (FileNotFoundError, OSError):
+            pass
+
+    start_id = nodes_per_config * config_index
+    return [f"id-{i}" for i in range(start_id, start_id + nodes_per_config)]
 
 
 def get_failed_tests(product_name: str, test_result: str, test_result_files: list) -> typing.List[list]:

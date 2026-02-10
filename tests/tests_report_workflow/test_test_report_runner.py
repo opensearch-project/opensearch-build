@@ -225,6 +225,45 @@ class TestTestReportRunner(unittest.TestCase):
     @patch("yaml.safe_load")
     @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
+    def test_runner_component_entry_url_multi_node_topology(self, report_args_mock: MagicMock, validators_mock: MagicMock,
+                                                            yaml_safe_load_mock: MagicMock, bundle_manifest_mock: MagicMock) -> None:
+        report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
+        report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
+        report_args_mock.test_run_id = 123
+        report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
+        report_args_mock.test_type = "integ-test"
+
+        validators_mock.return_value = True
+
+        test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("cross-cluster-replication")
+        # CCR has 2 clusters (leader + follower), each with 1 data_node = 2 nodes per config
+        # with-security (config_index=0): id-0, id-1
+        self.assertEqual(len(test_run_component_dict.get("configs")[0]["cluster_stdout"]), 2)
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][0],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-0/stdout.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][1],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-1/stdout.txt")
+        self.assertEqual(len(test_run_component_dict.get("configs")[0]["cluster_stderr"]), 2)
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stderr"][0],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-0/stderr.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stderr"][1],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-1/stderr.txt")
+        # without-security (config_index=1): id-2, id-3
+        self.assertEqual(len(test_run_component_dict.get("configs")[1]["cluster_stdout"]), 2)
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-2/stdout.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][1],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-3/stdout.txt")
+        self.assertEqual(len(test_run_component_dict.get("configs")[1]["cluster_stderr"]), 2)
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stderr"][0],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-2/stderr.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stderr"][1],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-3/stderr.txt")
+
+    @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
+    @patch("yaml.safe_load")
+    @patch("validators.url")
+    @patch("report_workflow.report_args.ReportArgs")
     def test_runner_component_entry_url_invalid(self, report_args_mock: MagicMock, validators_mock: MagicMock,
                                                 yaml_safe_load_mock: MagicMock, bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
