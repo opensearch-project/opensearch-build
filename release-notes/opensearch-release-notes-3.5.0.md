@@ -55,6 +55,11 @@ OpenSearch 3.5 includes the following experimental functionality. Experimental f
 * **HTTP/3 support**
   Server-side support for the HTTP/3 protocol offers Improved network performance and resiliency compared to HTTP/2.
 
+### Deprecation Notice
+
+* **Deprecating Node.js 20 and updating to 22; replacing Webpack 4 with Rspack**
+  OpenSearch Dashboards will deprecate support for Node.js 20 in version 3.5.0 because version 20 reaches end-of-life as of April 2026 (refer to [this notice](https://nodejs.org/en/blog/announcements/node-18-eol-support) from [nodejs.org](http://nodejs.org/)). Similarly, the project has replaced Webpack 4 with [Rspack](https://github.com/web-infra-dev/rspack), a fast Rust-based JavaScript bundler with a webpack-compatible API, as discussed in [this public RFC](https://github.com/opensearch-project/OpenSearch-Dashboards/issues/11125) on GitHub. There were no breaking changes related to customer-facing APIs observed during the upgrade process.
+
 ## FEATURES
 
 ### OpenSearch Alerting
@@ -404,7 +409,7 @@ OpenSearch 3.5 includes the following experimental functionality. Experimental f
 * [BWC]: Correct BWC tests between 3.5 and 2.19 ([#1737](https://github.com/opensearch-project/neural-search/pull/1737))
 * [BWC]: Introduce BWC tests for nested field support with for Sparse ANN ([#1725](https://github.com/opensearch-project/neural-search/pull/1725))
 
-### OpenSearch OpenSearch Remote Metadata Sdk
+### OpenSearch Remote Metadata Sdk
 
 * Update to Gradle 8.12 ([#75](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/75))
 
@@ -517,7 +522,7 @@ OpenSearch 3.5 includes the following experimental functionality. Experimental f
 * Upgrade to ktlint-cli 1.8.0 ([#1962](https://github.com/opensearch-project/observability/pull/1962))
 * Decouple jackson annotation version ([#1968](https://github.com/opensearch-project/observability/pull/1968))
 
-### OpenSearch OpenSearch Remote Metadata Sdk
+### OpenSearch Remote Metadata Sdk
 
 * Onboard jenkins prod docker images to github actions ([#76](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/76))
 
