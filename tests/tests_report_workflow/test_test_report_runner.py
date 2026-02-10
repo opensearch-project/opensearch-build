@@ -9,6 +9,7 @@
 import os
 import unittest
 from unittest.mock import MagicMock, call, mock_open, patch
+from urllib.error import HTTPError
 
 from manifests.test_manifest import TestManifest
 from report_workflow.test_report_runner import TestReportRunner
@@ -222,11 +223,11 @@ class TestTestReportRunner(unittest.TestCase):
                                                                                       "mappings with new schema version")
 
     @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
-    @patch("yaml.safe_load")
+    @patch("urllib.request.urlopen")
     @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
     def test_runner_component_entry_url_multi_node_topology(self, report_args_mock: MagicMock, validators_mock: MagicMock,
-                                                            yaml_safe_load_mock: MagicMock, bundle_manifest_mock: MagicMock) -> None:
+                                                            urlopen_mock: MagicMock, _bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
         report_args_mock.test_run_id = 123
@@ -234,6 +235,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.test_type = "integ-test"
 
         validators_mock.return_value = True
+        urlopen_mock.side_effect = HTTPError(url=None, code=404, msg="Not Found", hdrs=None, fp=None)
 
         test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("cross-cluster-replication")
         # CCR has 2 clusters (leader + follower), each with 1 data_node = 2 nodes per config

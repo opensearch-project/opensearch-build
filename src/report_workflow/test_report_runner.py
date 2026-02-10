@@ -262,7 +262,7 @@ def _resolve_cluster_ids(base_path: str, test_number: str, test_type: str, compo
             entries.sort(key=lambda x: int(x.split("-", 1)[1]))
             if entries:
                 return entries
-        except (FileNotFoundError, OSError):
+        except (FileNotFoundError, OSError, ValueError):
             pass
 
     start_id = nodes_per_config * config_index
