@@ -39,9 +39,6 @@ OpenSearch 3.5 delivers several features and enhancements designed to support yo
 * **Workload management integration**
   WLM group assignments are now integrated into the query insights dashboard with filtering and sorting capabilities, enabling you to correlate query performance with resource allocation policies.
 
-* **Node.js and build tool updates**
-  This release deprecating Node.js 20 support ahead of April 2026 EOL and upgrades to Node.js 22. Also replaces Webpack 4 with Rspack, a Rust-based Javascript bundler with a webpack-compatible API.
-
 * **Vector engine bug fixes**
   Updates address overflow issues in warmup operations, reentrant search problems in byte indexes, and nested document queries when child documents lack vector fields, enhancing performance and reliability for vector search workloads.
 
