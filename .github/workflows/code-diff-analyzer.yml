@@ -3,7 +3,7 @@ name: Code Diff Analyzer
 on:
   workflow_call:
     secrets:
-      OP_SERVICE_ACCOUNT_TOKEN:
+      BEDROCK_ACCESS_ROLE:
         required: true
     inputs:
       skip_diff_analyzer_on_push:
@@ -141,21 +141,11 @@ jobs:
           npm install -g @anthropic-ai/claude-code@stable
           pip install json-repair==0.55.2
 
-      - name: Load secret
-        if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
-        uses: 1password/load-secrets-action@v3
-        with:
-          # Export loaded secrets as environment variables
-          export-env: true
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          BEDROCK_ACCESS_ROLE: op://opensearch-infra-secrets/aws-iam-roles/bedrock-access-role
-
       - name: Configure AWS credentials
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.BEDROCK_ACCESS_ROLE }}
+          role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE }}
           aws-region: us-east-1
 
       # yamllint disable
