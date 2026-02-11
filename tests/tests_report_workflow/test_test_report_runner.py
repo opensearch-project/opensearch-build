@@ -157,14 +157,55 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "No Failed Test")
 
     @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
+    @patch("urllib.request.urlopen")
+    @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
-    def test_runner_component_entry_url_failed_test(self, report_args_mock: MagicMock,
-                                                    bundle_manifest_mock: MagicMock) -> None:
+    def test_runner_component_entry_url_failed_test(self, report_args_mock: MagicMock, validators_mock: MagicMock,
+                                                    urlopen_mock: MagicMock, bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.15.0/9971/windows/x64/zip"}
         report_args_mock.test_run_id = 8303
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip"
         report_args_mock.test_type = "integ-test"
+
+        validators_mock.return_value = True
+
+        with_security_yml = (
+            b"test_result: FAIL\n"
+            b"test_result_files:\n"
+            b"- https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip/test-results/8303/"
+            b"integ-test/index-management/with-security/opensearch-integ-test/index.html\n"
+        )
+        without_security_yml = (
+            b"test_result: FAIL\n"
+            b"test_result_files:\n"
+            b"- https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip/test-results/8303/"
+            b"integ-test/index-management/without-security/opensearch-integ-test/index.html\n"
+        )
+        with_security_html = (
+            b'<div><h2>Failed tests</h2><ul class="linkList"><li>'
+            b'<a href="classes/org.opensearch.indexmanagement.indexstatemanagement.action.CloseActionIT.html'
+            b'#test already closed index">test already closed index</a></li></ul></div>'
+        )
+        without_security_html = (
+            b'<div><h2>Failed tests</h2><ul class="linkList"><li>'
+            b'<a href="classes/org.opensearch.indexmanagement.IndexManagementIndicesIT.html'
+            b'#test update management index history mappings with new schema version">test</a></li></ul></div>'
+        )
+
+        def urlopen_side_effect(url):
+            mock_response = MagicMock()
+            if "with-security/index-management.yml" in url:
+                mock_response.__enter__.return_value.read.return_value = with_security_yml
+            elif "without-security/index-management.yml" in url:
+                mock_response.__enter__.return_value.read.return_value = without_security_yml
+            elif "with-security" in url and "index.html" in url:
+                mock_response.__enter__.return_value.read.return_value = with_security_html
+            elif "without-security" in url and "index.html" in url:
+                mock_response.__enter__.return_value.read.return_value = without_security_html
+            return mock_response
+
+        urlopen_mock.side_effect = urlopen_side_effect
 
         test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("index-management")
         self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "FAIL")
