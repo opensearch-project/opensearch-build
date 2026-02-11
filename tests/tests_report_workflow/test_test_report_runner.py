@@ -137,7 +137,7 @@ class TestTestReportRunner(unittest.TestCase):
         with_security_yml = b"test_result: PASS\ntest_result_files: []\n"
         without_security_yml = b"test_result: PASS\ntest_result_files: []\n"
 
-        def urlopen_side_effect(url):
+        def urlopen_side_effect(url: str) -> MagicMock:
             mock_response = MagicMock()
             if "with-security/geospatial.yml" in url:
                 mock_response.__enter__.return_value.read.return_value = with_security_yml
@@ -210,7 +210,7 @@ class TestTestReportRunner(unittest.TestCase):
             b'#test update management index history mappings with new schema version">test</a></li></ul></div>'
         )
 
-        def urlopen_side_effect(url):
+        def urlopen_side_effect(url: str) -> MagicMock:
             mock_response = MagicMock()
             if "with-security/index-management.yml" in url:
                 mock_response.__enter__.return_value.read.return_value = with_security_yml
