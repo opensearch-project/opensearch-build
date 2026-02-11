@@ -58,6 +58,7 @@ class BenchmarkArgs:
     show_in_results: str
     command: str
     enable_instance_storage: bool
+    preserve_cluster: bool
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle or compare two tests")
@@ -153,6 +154,8 @@ class BenchmarkArgs:
                                          help="User provided ml-node ebs block storage size defaults to 100Gb")
         execute_test_parser.add_argument("--enable-instance-storage", dest="enable_instance_storage", action="store_true",
                                          help="Use instance based SSD storage instead of EBS for data nodes", default=False)
+        execute_test_parser.add_argument("--preserve-cluster", dest="preserve_cluster", action="store_true",
+                                         help="Do not destroy the CDK cluster after the test completes", default=False)
 
         # command to run comparison
         compare_parser = subparsers.add_parser("compare", parents=[parent_parser],
@@ -199,6 +202,7 @@ class BenchmarkArgs:
             self.data_node_storage = args.data_node_storage if args.data_node_storage else None
             self.ml_node_storage = args.ml_node_storage if args.ml_node_storage else None
             self.enable_instance_storage = args.enable_instance_storage
+            self.preserve_cluster = args.preserve_cluster
             self.enable_remote_store = args.enable_remote_store
             self.data_instance_type = args.data_instance_type if args.data_instance_type else None
             self.workload = args.workload

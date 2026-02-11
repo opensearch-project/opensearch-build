@@ -156,4 +156,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             cluster.start()
             yield cluster
         finally:
-            cluster.terminate()
+            if cluster.args.preserve_cluster:
+                logging.info("Preserving cluster as --preserve-cluster flag is set. Skipping cdk destroy.")
+            else:
+                cluster.terminate()

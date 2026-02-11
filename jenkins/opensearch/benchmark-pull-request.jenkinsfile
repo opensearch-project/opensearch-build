@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@11.4.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@11.5.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -165,6 +165,11 @@ pipeline {
             description: 'Allows to set parameters for telemetry devices. Use json type. e.g.,{"node-stats-include-indices":"true","node-stats-include-indices-metrics":"segments"}',
             trim: true
         )
+        booleanParam(
+            name: 'PRESERVE_CLUSTER',
+            description: 'Whether or not to destroy the OpenSearch cluster after benchmark run has finished',
+            defaultValue: false
+        )
     }
     triggers {
             GenericTrigger(
@@ -269,7 +274,8 @@ pipeline {
                         excludeTasks: EXCLUDE_TASKS,
                         includeTasks: INCLUDE_TASKS,
                         captureNodeStat: CAPTURE_NODE_STAT,
-                        telemetryParams: TELEMETRY_PARAMS
+                        telemetryParams: TELEMETRY_PARAMS,
+                        preserveCluster: PRESERVE_CLUSTER
                     )
 
                     sh "cp /tmp/final_result_${BUILD_NUMBER}.md final_result_${BUILD_NUMBER}.md"
