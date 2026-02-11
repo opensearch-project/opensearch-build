@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, call, mock_open, patch
 from urllib.error import HTTPError
 
 from manifests.test_manifest import TestManifest
-from report_workflow.test_report_runner import TestReportRunner
+from report_workflow.test_report_runner import TestReportRunner, _resolve_cluster_ids
 from system.temporary_directory import TemporaryDirectory
 
 
@@ -345,3 +345,31 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[0]["test_stderr"],
                          os.path.join(self.DATA_DIR, "test-results", "12345", "smoke-test", "index-management", "PUT___plugins__ism_policies_policy_1", "stderr.txt"))
         self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "No Failed Test")
+
+    @patch("os.listdir")
+    def test_resolve_cluster_ids_local_with_entries(self, mock_listdir: MagicMock) -> None:
+        mock_listdir.return_value = ["id-2", "id-0", "id-1", "other-dir"]
+        result = _resolve_cluster_ids("/local/path", "123", "integ-test", "comp", "with-security", 1, 0)
+        self.assertEqual(result, ["id-0", "id-1", "id-2"])
+        mock_listdir.assert_called_once_with(
+            os.path.join("/local/path", "test-results", "123", "integ-test", "comp", "with-security", "local-cluster-logs"))
+
+    def test_resolve_cluster_ids_local_dir_not_found(self) -> None:
+        result = _resolve_cluster_ids("/nonexistent/path", "123", "integ-test", "comp", "with-security", 2, 1)
+        self.assertEqual(result, ["id-2", "id-3"])
+
+    @patch("os.listdir")
+    def test_resolve_cluster_ids_local_empty_entries(self, mock_listdir: MagicMock) -> None:
+        mock_listdir.return_value = ["other-dir", "not-id"]
+        result = _resolve_cluster_ids("/local/path", "123", "integ-test", "comp", "with-security", 1, 0)
+        self.assertEqual(result, ["id-0"])
+
+    def test_resolve_cluster_ids_url_fallback(self) -> None:
+        result = _resolve_cluster_ids("https://ci.opensearch.org/ci/dbc/mock", "123", "integ-test", "comp", "with-security", 2, 1)
+        self.assertEqual(result, ["id-2", "id-3"])
+
+    @patch("os.listdir")
+    def test_resolve_cluster_ids_local_value_error(self, mock_listdir: MagicMock) -> None:
+        mock_listdir.return_value = ["id-abc", "id-def"]
+        result = _resolve_cluster_ids("/local/path", "123", "integ-test", "comp", "with-security", 1, 0)
+        self.assertEqual(result, ["id-0"])
