@@ -262,8 +262,8 @@ def _resolve_cluster_ids(base_path: str, test_number: str, test_type: str, compo
             entries.sort(key=lambda x: int(x.split("-", 1)[1]))
             if entries:
                 return entries
-        except (FileNotFoundError, OSError, ValueError):
-            pass
+        except (FileNotFoundError, OSError, ValueError) as e:
+            logging.warning(f"Unable to resolve cluster ids from {log_dir}: {e}")
 
     start_id = nodes_per_config * config_index
     return [f"id-{i}" for i in range(start_id, start_id + nodes_per_config)]
