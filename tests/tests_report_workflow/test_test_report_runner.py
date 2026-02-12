@@ -9,9 +9,10 @@
 import os
 import unittest
 from unittest.mock import MagicMock, call, mock_open, patch
+from urllib.error import HTTPError
 
 from manifests.test_manifest import TestManifest
-from report_workflow.test_report_runner import TestReportRunner
+from report_workflow.test_report_runner import TestReportRunner, _resolve_cluster_ids
 from system.temporary_directory import TemporaryDirectory
 
 
@@ -120,14 +121,31 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_dict.get("TestID"), "123")
 
     @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
+    @patch("urllib.request.urlopen")
+    @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
-    def test_runner_component_entry_url(self, report_args_mock: MagicMock,
-                                        bundle_manifest_mock: MagicMock) -> None:
+    def test_runner_component_entry_url(self, report_args_mock: MagicMock, validators_mock: MagicMock,
+                                        urlopen_mock: MagicMock, bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.15.0/9971/windows/x64/zip"}
         report_args_mock.test_run_id = 8303
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip"
         report_args_mock.test_type = "integ-test"
+
+        validators_mock.return_value = True
+
+        with_security_yml = b"test_result: PASS\ntest_result_files: []\n"
+        without_security_yml = b"test_result: PASS\ntest_result_files: []\n"
+
+        def urlopen_side_effect(url: str) -> MagicMock:
+            mock_response = MagicMock()
+            if "with-security/geospatial.yml" in url:
+                mock_response.__enter__.return_value.read.return_value = with_security_yml
+            elif "without-security/geospatial.yml" in url:
+                mock_response.__enter__.return_value.read.return_value = without_security_yml
+            return mock_response
+
+        urlopen_mock.side_effect = urlopen_side_effect
 
         test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("geospatial")
         self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "PASS")
@@ -156,14 +174,55 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "No Failed Test")
 
     @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
+    @patch("urllib.request.urlopen")
+    @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
-    def test_runner_component_entry_url_failed_test(self, report_args_mock: MagicMock,
-                                                    bundle_manifest_mock: MagicMock) -> None:
+    def test_runner_component_entry_url_failed_test(self, report_args_mock: MagicMock, validators_mock: MagicMock,
+                                                    urlopen_mock: MagicMock, bundle_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.15.0/9971/windows/x64/zip"}
         report_args_mock.test_run_id = 8303
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip"
         report_args_mock.test_type = "integ-test"
+
+        validators_mock.return_value = True
+
+        with_security_yml = (
+            b"test_result: FAIL\n"
+            b"test_result_files:\n"
+            b"- https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip/test-results/8303/"
+            b"integ-test/index-management/with-security/opensearch-integ-test/index.html\n"
+        )
+        without_security_yml = (
+            b"test_result: FAIL\n"
+            b"test_result_files:\n"
+            b"- https://ci.opensearch.org/ci/dbc/integ-test/2.15.0/9971/windows/x64/zip/test-results/8303/"
+            b"integ-test/index-management/without-security/opensearch-integ-test/index.html\n"
+        )
+        with_security_html = (
+            b'<div><h2>Failed tests</h2><ul class="linkList"><li>'
+            b'<a href="classes/org.opensearch.indexmanagement.indexstatemanagement.action.CloseActionIT.html'
+            b'#test already closed index">test already closed index</a></li></ul></div>'
+        )
+        without_security_html = (
+            b'<div><h2>Failed tests</h2><ul class="linkList"><li>'
+            b'<a href="classes/org.opensearch.indexmanagement.IndexManagementIndicesIT.html'
+            b'#test update management index history mappings with new schema version">test</a></li></ul></div>'
+        )
+
+        def urlopen_side_effect(url: str) -> MagicMock:
+            mock_response = MagicMock()
+            if "with-security/index-management.yml" in url:
+                mock_response.__enter__.return_value.read.return_value = with_security_yml
+            elif "without-security/index-management.yml" in url:
+                mock_response.__enter__.return_value.read.return_value = without_security_yml
+            elif "with-security" in url and "index.html" in url:
+                mock_response.__enter__.return_value.read.return_value = with_security_html
+            elif "without-security" in url and "index.html" in url:
+                mock_response.__enter__.return_value.read.return_value = without_security_html
+            return mock_response
+
+        urlopen_mock.side_effect = urlopen_side_effect
 
         test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("index-management")
         self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "FAIL")
@@ -220,6 +279,46 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[1]["name"], "without-security")
         self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "org.opensearch.indexmanagement.IndexManagementIndicesIT#test update management index history "
                                                                                       "mappings with new schema version")
+
+    @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
+    @patch("urllib.request.urlopen")
+    @patch("validators.url")
+    @patch("report_workflow.report_args.ReportArgs")
+    def test_runner_component_entry_url_multi_node_topology(self, report_args_mock: MagicMock, validators_mock: MagicMock,
+                                                            urlopen_mock: MagicMock, _bundle_manifest_mock: MagicMock) -> None:
+        report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
+        report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
+        report_args_mock.test_run_id = 123
+        report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
+        report_args_mock.test_type = "integ-test"
+
+        validators_mock.return_value = True
+        urlopen_mock.side_effect = HTTPError(url=None, code=404, msg="Not Found", hdrs=None, fp=None)
+
+        test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("cross-cluster-replication")
+        # CCR has 2 clusters (leader + follower), each with 1 data_node = 2 nodes per config
+        # with-security (config_index=0): id-0, id-1
+        self.assertEqual(len(test_run_component_dict.get("configs")[0]["cluster_stdout"]), 2)
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][0],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-0/stdout.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stdout"][1],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-1/stdout.txt")
+        self.assertEqual(len(test_run_component_dict.get("configs")[0]["cluster_stderr"]), 2)
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stderr"][0],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-0/stderr.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["cluster_stderr"][1],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-1/stderr.txt")
+        # without-security (config_index=1): id-2, id-3
+        self.assertEqual(len(test_run_component_dict.get("configs")[1]["cluster_stdout"]), 2)
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][0],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-2/stdout.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stdout"][1],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-3/stdout.txt")
+        self.assertEqual(len(test_run_component_dict.get("configs")[1]["cluster_stderr"]), 2)
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stderr"][0],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-2/stderr.txt")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["cluster_stderr"][1],
+                         "https://ci.opensearch.org/ci/dbc/mock/test-results/123/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-3/stderr.txt")
 
     @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
     @patch("yaml.safe_load")
@@ -304,3 +403,31 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[0]["test_stderr"],
                          os.path.join(self.DATA_DIR, "test-results", "12345", "smoke-test", "index-management", "PUT___plugins__ism_policies_policy_1", "stderr.txt"))
         self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "No Failed Test")
+
+    @patch("os.listdir")
+    def test_resolve_cluster_ids_local_with_entries(self, mock_listdir: MagicMock) -> None:
+        mock_listdir.return_value = ["id-2", "id-0", "id-1", "other-dir"]
+        result = _resolve_cluster_ids("/local/path", "123", "integ-test", "comp", "with-security", 1, 0)
+        self.assertEqual(result, ["id-0", "id-1", "id-2"])
+        mock_listdir.assert_called_once_with(
+            os.path.join("/local/path", "test-results", "123", "integ-test", "comp", "with-security", "local-cluster-logs"))
+
+    def test_resolve_cluster_ids_local_dir_not_found(self) -> None:
+        result = _resolve_cluster_ids("/nonexistent/path", "123", "integ-test", "comp", "with-security", 2, 1)
+        self.assertEqual(result, ["id-2", "id-3"])
+
+    @patch("os.listdir")
+    def test_resolve_cluster_ids_local_empty_entries(self, mock_listdir: MagicMock) -> None:
+        mock_listdir.return_value = ["other-dir", "not-id"]
+        result = _resolve_cluster_ids("/local/path", "123", "integ-test", "comp", "with-security", 1, 0)
+        self.assertEqual(result, ["id-0"])
+
+    def test_resolve_cluster_ids_url_fallback(self) -> None:
+        result = _resolve_cluster_ids("https://ci.opensearch.org/ci/dbc/mock", "123", "integ-test", "comp", "with-security", 2, 1)
+        self.assertEqual(result, ["id-2", "id-3"])
+
+    @patch("os.listdir")
+    def test_resolve_cluster_ids_local_value_error(self, mock_listdir: MagicMock) -> None:
+        mock_listdir.return_value = ["id-abc", "id-def"]
+        result = _resolve_cluster_ids("/local/path", "123", "integ-test", "comp", "with-security", 1, 0)
+        self.assertEqual(result, ["id-0"])
