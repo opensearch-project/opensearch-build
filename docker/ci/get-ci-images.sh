@@ -19,7 +19,7 @@ function usage() {
     echo "Usage: $0 [args]"
     echo ""
     echo "Required arguments:"
-    echo -e "-p PLATFORM\tSpecify the ci image target platform, e.g. 'rockylinux8(default)', 'centos7', 'ubuntu2004' or 'windows2019-servercore'"
+    echo -e "-p PLATFORM\tSpecify the ci image target platform, e.g. 'almalinux9(default)', 'centos7', 'ubuntu2004' or 'windows2019-servercore'"
     echo -e "-u USAGE\tSpecify the ci image target usage, e.g. 'opensearch(default)' or 'opensearch-dashboards' or 'systemd-base'"
     echo -e "-t TYPE\tSpecify the usages ci image target type, e.g. 'build(default)' or 'integtest'"
     echo ""
@@ -57,7 +57,7 @@ done
 
 # Validate the required parameters to present
 if [ -z "$PLATFORM" ]; then
-    PLATFORM="almalinux8"
+    PLATFORM="almalinux9"
 fi
 
 if [ -z "$USAGE" ]; then

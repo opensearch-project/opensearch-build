@@ -60,7 +60,7 @@ jobs:
               if [[ "$PRODUCT" = "opensearch" ]]; then
                   PLATFORM="al2" # Temp measure before al2 deprecation on opensearch for k-NN
               else
-                  PLATFORM="almalinux8"
+                  PLATFORM="almalinux9"
               fi
           fi
 

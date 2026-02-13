@@ -148,7 +148,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.2",
                 "build": {"name": "OpenSearch Dashboards", "version": "4.2.3"},
-                "ci": {"image": {"linux": {"tar": {"name": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-build-v1"}}}},
+                "ci": {"image": {"linux": {"tar": {"name": "opensearchstaging/ci-runner:ci-runner-almalinux9-opensearch-dashboards-build-v1"}}}},
                 "components": [{"name": "OpenSearch-Dashboards",
                                 "repository": "https://github.com/opensearch-project/OpenSearch-Dashboards.git",
                                 "ref": "4.x",
@@ -160,7 +160,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.1",
                 "name": "OpenSearch Dashboards",
-                "ci": {"image": {"linux": {"tar": {"name": "opensearchstaging/ci-runner-almalinux8-opensearch-dashboards-integtest-v1",
+                "ci": {"image": {"linux": {"tar": {"name": "opensearchstaging/ci-runner-almalinux9-opensearch-dashboards-integtest-v1",
                                                    "args": "-u 1000 --cpus 4 -m 16g -e BROWSER_PATH=electron"}}}},
                 "components": [{"name": "OpenSearch-Dashboards",
                                 "integ-test": {"test-configs": ["with-security", "without-security"],

@@ -28,5 +28,5 @@ class TestTestManifest(unittest.TestCase):
 
     def test_component_schema_1_1(self) -> None:
         self.assertEqual(self.manifest_schema_1_1.name, "OpenSearch Dashboards")
-        self.assertEqual(self.manifest_schema_1_1.ci.image["linux"]["tar"].name, "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1")
+        self.assertEqual(self.manifest_schema_1_1.ci.image["linux"]["tar"].name, "opensearchstaging/ci-runner:ci-runner-almalinux9-opensearch-dashboards-integtest-v1")
         self.assertEqual(self.manifest_schema_1_1.ci.image["linux"]["tar"].args, "-u 1000 --cpus 4 -m 16g -e BROWSER_PATH=electron")
