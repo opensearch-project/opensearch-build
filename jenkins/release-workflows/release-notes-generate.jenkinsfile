@@ -95,8 +95,8 @@ pipeline {
                                 timeout(time: 1, unit: 'HOURS') {
                                     node('Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host') {
                                         docker.withRegistry('https://public.ecr.aws/') {
-                                            docker.image('opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1').pull()
-                                            docker.image('opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1').inside('--network=host') {
+                                            docker.image('opensearchstaging/ci-runner:ci-runner-almalinux9-opensearch-build-v1').pull()
+                                            docker.image('opensearchstaging/ci-runner:ci-runner-almalinux9-opensearch-build-v1').inside('--network=host') {
                                                 try {
                                                     stage("${currentComponent}") {
                                                         sh("echo ${currentComponent} with index ${currentIndex} will sleep ${currentWaitSeconds} seconds to reduce load && sleep ${currentWaitSeconds}")
