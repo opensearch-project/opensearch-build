@@ -1,0 +1,131 @@
+---
+schema-version: '1.1'
+name: OpenSearch Dashboards
+ci:
+  image:
+    linux:
+      tar:
+        name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1
+        args: -u 1000 --cpus 4 -m 16g -e BROWSER_PATH=electron
+      deb:
+        name: opensearchstaging/ci-runner:ci-runner-ubuntu2404-systemd-base-integtest-v1
+        args: --entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw
+          --cgroupns=host --cpus 4 -m 16g -e BROWSER_PATH=electron
+      rpm:
+        name: opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1
+        args: --entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw
+          --cgroupns=host --cpus 4 -m 16g -e BROWSER_PATH=electron
+    windows:
+      zip:
+        name: opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1
+        args: -u ContainerAdministrator
+components:
+  - name: OpenSearch-Dashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+      ci-groups: 9
+  - name: alertingDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: anomalyDetectionDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: indexManagementDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: observabilityDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: queryWorkbenchDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: reportsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: securityDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: notificationsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: customImportMapDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: searchRelevanceDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: securityAnalyticsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: mlCommonsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        ml_commons_dashboards.enabled: true
+  - name: assistantDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        assistant.chat.enabled: true
+  - name: flowFrameworkDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: queryInsightsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: investigationDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        data_source.enabled: true
+        data_source.ssl.verificationMode: none
+        data_source.hideLocalCluster: true
+        investigation.enabled: true
+        investigation.agenticFeaturesEnabled: true
+        uiSettings.overrides.home:useNewHomePage: true
+        workspace.enabled: true
+        savedObjects.permission.enabled: true
+        opensearchDashboards.dashboardAdmin.users:
+          - admin
