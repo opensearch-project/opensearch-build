@@ -44,7 +44,7 @@ curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer 
 
 #### Python 3.9
 
-Python projects in this repository use Python 3.9. See the [Python Beginners Guide](https://wiki.python.org/moin/BeginnersGuide) if you have never worked with the language.
+Python projects in this repository use Python 3.9. See the [Python Beginners Guide](https://wiki.python.org/python/BeginnersGuide.html) if you have never worked with the language.
 
 ```
 $ python3 --version
