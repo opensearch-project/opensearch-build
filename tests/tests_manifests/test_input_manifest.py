@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch
 
 import yaml
 
-from manifests.input.input_manifest_1_0 import Check_1_0, InputComponentFromDist_1_0, InputComponentFromSource_1_0
+from manifests.input.input_manifest_1_0 import Check_1_0, InputComponentFromDist_1_0, InputComponentFromSource_1_0, InputManifest_1_0
 from manifests.input.input_manifest_1_1 import Check_1_1, InputComponentFromSource_1_1, InputManifest_1_1
 from manifests.input_manifest import InputComponent, InputComponentFromDist, InputComponentFromSource, InputManifest
 from system.temporary_directory import TemporaryDirectory
@@ -318,6 +318,17 @@ class TestInputManifest(unittest.TestCase):
         data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "tests_build_workflow", "data"))
         manifest = InputManifest.from_path(os.path.join(data_path, "opensearch-input-3.1.0-alpha1.yml"))
         self.assertEqual(manifest.build.qualified_version, "3.1.0-alpha1")
+
+    def test_qualified_version_1_0_without_qualifier(self) -> None:
+        path = os.path.join(self.manifests_path, "templates", "opensearch", "1.x", "os-template-1.0.0.yml")
+        manifest = InputManifest.from_path(path)
+        self.assertEqual(manifest.version, "1.0")
+        self.assertIsNone(manifest.build.qualifier)
+        self.assertEqual(manifest.build.qualified_version, manifest.build.version)
+
+    def test_qualified_version_1_0_with_qualifier(self) -> None:
+        build = InputManifest_1_0.Build({"name": "OpenSearch", "version": "1.0.0", "qualifier": "beta1"})
+        self.assertEqual(build.qualified_version, "1.0.0-beta1")
 
     def test_to_file_formatted_schema_version_1_1(self) -> None:
         data_path = os.path.join(os.path.dirname(__file__), "data")

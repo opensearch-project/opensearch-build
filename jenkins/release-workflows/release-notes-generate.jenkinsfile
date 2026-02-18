@@ -158,7 +158,7 @@ pipeline {
                                                                             fi
                                                                         fi
                                                                     else
-                                                                        echo "File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${fullVersion}.0.md does not exist as there are no commits since ${GIT_LOG_DATE}."
+                                                                        echo "File $WORKSPACE/release-notes/${filename} does not exist as there are no commits since ${GIT_LOG_DATE}."
                                                                         exit 1
                                                                     fi
                                                                 fi
