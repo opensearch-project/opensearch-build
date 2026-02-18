@@ -91,7 +91,7 @@ class SmokeTestClusterOpenSearch():
         try:
             request = requests.get(url, verify=False, auth=("admin", "myStrongPassword123!"))
             logging.info(f"Cluster response is {request.text}")
-            return 200 <= request.status_code < 300
+            return bool(200 <= request.status_code < 300)
         except requests.RequestException as e:
             logging.info(f"Request is {request.text}")
             logging.info(f"Cluster check fails: {e}")

@@ -224,7 +224,8 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
 
         @property
         def qualified_version(self) -> str:
-            return f"{self.version}-{self.qualifier}" if self.qualifier else self.version
+            qualifier_suffix = f"-{self.qualifier}" if self.qualifier else ""
+            return f"{self.version}{qualifier_suffix}"
 
 
 class InputComponents(Components['InputComponent']):

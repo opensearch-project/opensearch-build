@@ -143,7 +143,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         assertCallStack().contains('curl -sSL https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/3.0.0/215/linux/x64/tar/test-results/215/integ-test/test-report.yml --output test-results-osd-215/test-report.yml')
         assertCallStack().contains('{distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch-dashboards/detail/distribution-build-opensearch-dashboards/215/pipeline, jobName=dummy_job, testReportManifestYml=test-results-osd-215/test-report.yml}')
         assertCallStack().contains('integ-test.build({job=integ-test-notification, propagate=false, wait=false, parameters=[null, null]})')
-        assertCallStack().contains('integ-test.string({name=INPUT_MANIFEST, value=3.0.0/opensearch-dashboards-3.0.0.yml})')
+        assertCallStack().contains('integ-test.string({name=INPUT_MANIFEST, value=tests/jenkins/data/opensearch-dashboards-3.0.0.yml})')
         assertCallStack().contains('integ-test.string({name=DISTRIBUTION_NUMBER, value=215})')
     }
 

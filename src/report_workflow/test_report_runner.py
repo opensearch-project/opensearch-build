@@ -287,7 +287,7 @@ def get_failed_tests(product_name: str, test_result: str, test_result_files: lis
 
         if product_name == 'opensearch':
             soup = BeautifulSoup(result_content, "html.parser")
-            target_header = soup.find("h2", string="Failed tests")
+            target_header = soup.find("h2", string="Failed tests")  # type: ignore[call-overload]
             if target_header:
                 target_div = target_header.find_parent("div")
                 if target_div:
@@ -305,8 +305,8 @@ def get_failed_tests(product_name: str, test_result: str, test_result_files: lis
             class_name = "DefaultClassName"
             for testsuite in soup.find_all("testsuite"):
                 if testsuite["name"] == "Root Suite":
-                    class_name = os.path.basename(testsuite["file"])
-                testsuite_failures = int(testsuite["failures"])
+                    class_name = os.path.basename(str(testsuite["file"]))
+                testsuite_failures = int(str(testsuite["failures"]))
                 if testsuite_failures > 0:
                     for testcase in testsuite.find_all("testcase"):
                         if testcase.find("failure"):
