@@ -25,12 +25,10 @@ ARG PERFORMANCE_ANALYZER_PLUGIN_CONFIG_DIR=$OPENSEARCH_PATH_CONF/opensearch-perf
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball.
 # Install which to allow running of securityadmin.sh
-# Note: UBI minimal uses microdnf, but we install dnf for compatibility
 RUN microdnf update -y && \
-    microdnf install -y tar gzip which dnf && \
+    microdnf install -y tar gzip which && \
     microdnf clean all
 
-# Create temp directory and OpenSearch home directory
 RUN mkdir -p $TEMP_DIR && \
     mkdir -p $OPENSEARCH_HOME && \
     chmod 777 $TEMP_DIR
@@ -55,7 +53,6 @@ RUN ls -l $TEMP_DIR && \
     ls -l $OPENSEARCH_HOME && \
     rm -rf $TEMP_DIR
 
-
 ########################### Stage 1 ########################
 # Copy working directory to the actual release docker images
 FROM registry.access.redhat.com/ubi10-minimal:10.1
@@ -63,21 +60,16 @@ FROM registry.access.redhat.com/ubi10-minimal:10.1
 ARG OPENSEARCH_HOME=/usr/share/opensearch
 
 # Update packages
-# Install minimal tools needed for runtime
-# Note: UBI minimal uses microdnf, but we install dnf for compatibility
+# Install the tools we need: tar and gzip to unpack the OpenSearch tarball.
+# Install which to allow running of securityadmin.sh
 RUN microdnf update -y && \
-    microdnf install -y tar gzip which dnf && \
+    microdnf install -y tar gzip which && \
     microdnf clean all
 
 # Copy from Stage0 with root group ownership (GID 0) for OpenShift arbitrary UID support
-# OpenShift runs containers with arbitrary UIDs but GID 0, so all files must be group-writable
-# No user is created - OpenShift will assign an arbitrary UID at runtime
 COPY --from=linux_stage_0 --chown=root:0 $OPENSEARCH_HOME $OPENSEARCH_HOME
 WORKDIR $OPENSEARCH_HOME
 
-# Set group-writable permissions for OpenShift compatibility
-# This allows arbitrary UIDs (with GID 0) to write to necessary directories
-# Ensure all files and directories are accessible by any UID with GID 0
 RUN chgrp -R 0 $OPENSEARCH_HOME && \
     chmod -R g+rwX $OPENSEARCH_HOME && \
     find $OPENSEARCH_HOME -type d -exec chmod g+x {} + && \
@@ -97,15 +89,11 @@ ENV LD_LIBRARY_PATH="$OPENSEARCH_HOME/plugins/opensearch-knn/lib"
 # Setup OpenSearch
 # Disable security demo installation during image build, and allow user to disable during startup of the container
 # Enable security plugin during image build, and allow user to disable during startup of the container
-# Note: We run setup as root to ensure proper permissions, then fix ownership
 ARG DISABLE_INSTALL_DEMO_CONFIG=true
 ARG DISABLE_SECURITY_PLUGIN=false
 RUN ./opensearch-onetime-setup.sh && \
     chgrp -R 0 $OPENSEARCH_HOME && \
     chmod -R g+rwX $OPENSEARCH_HOME
-
-# Don't set USER directive - OpenShift will run with arbitrary UID
-# The entrypoint script should handle UID detection and switching
 
 # Expose ports for the opensearch service (9200 for HTTP and 9300 for internal transport) and performance analyzer (9600 for the agent and 9650 for the root cause analysis component)
 EXPOSE 9200 9300 9600 9650
@@ -126,10 +114,8 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.build-date="$BUILD_DATE" \
   "DOCKERFILE"="https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockerfiles/opensearch.ubi8.dockerfile"
 
-# Ensure the entrypoint script is executable by any UID
 RUN chmod g+x $OPENSEARCH_HOME/opensearch-docker-entrypoint.sh
 
 # CMD to run
 ENTRYPOINT ["./opensearch-docker-entrypoint.sh"]
 CMD ["opensearch"]
-
