@@ -222,6 +222,10 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         def filename(self) -> str:
             return self.name.lower().replace(" ", "-")
 
+        @property
+        def qualified_version(self) -> str:
+            return f"{self.version}-{self.qualifier}" if self.qualifier else self.version
+
 
 class InputComponents(Components['InputComponent']):
     @classmethod

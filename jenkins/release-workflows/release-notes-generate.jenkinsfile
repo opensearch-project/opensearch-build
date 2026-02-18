@@ -105,12 +105,14 @@ pipeline {
                                                         def repoUrl = componentObj.repository
                                                         def repoName = repoUrl.replaceAll(/\.git$/, '').tokenize('/')[-1] // Extract repo name from URL, replaces git suffix if exists
                                                         def version = inputManifestObj.build.version
+                                                        def qualifier = inputManifestObj.build.qualifier ? '-' + inputManifestObj.build.qualifier : ''
+                                                        def fullVersion = version + qualifier
                                                         def productName = 'opensearch'
                                                         def filename
                                                         if (currentComponent.toLowerCase() in ['opensearch', 'opensearch-dashboards']) {
-                                                            filename = "${productName}.release-notes-${version}.md"
+                                                            filename = "${productName}.release-notes-${fullVersion}.md"
                                                         } else {
-                                                            filename = "${productName}-${repoName}.release-notes-${version}.0.md"
+                                                            filename = "${productName}-${repoName}.release-notes-${fullVersion}.0.md"
                                                         }
                                                         withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                                                             def refParam = params.REF ? "--ref ${REF}" : ""
@@ -130,11 +132,11 @@ pipeline {
 
                                                                     git clone -b ${ref} "\${COMPONENT_REPO_URL}"
                                                                     cd "\${REPO_NAME}"
-                                                                    git ls-remote --heads origin release-chores/release-notes-${version} | grep -q release-chores/release-notes-${version}
+                                                                    git ls-remote --heads origin release-chores/release-notes-${fullVersion} | grep -q release-chores/release-notes-${fullVersion}
                                                                     if [ \$? -ne 0 ]; then
-                                                                        git checkout -b release-chores/release-notes-${version}
+                                                                        git checkout -b release-chores/release-notes-${fullVersion}
                                                                     else
-                                                                        git checkout release-chores/release-notes-${version}
+                                                                        git checkout release-chores/release-notes-${fullVersion}
                                                                     fi
 
                                                                     if [ -f "$WORKSPACE/release-notes/${filename}" ]; then
@@ -146,17 +148,17 @@ pipeline {
                                                                             git config user.email "opensearch-infra@amazon.com"
                                                                             git config user.name "opensearch-ci"
                                                                             git add .
-                                                                            git commit -sm "Add release notes for ${version}"
-                                                                            git push origin release-chores/release-notes-${version} --force
-                                                                            EXISTING_PR=\$(gh pr list --head release-chores/release-notes-${version} --state open --json number --jq '.[0].number')
+                                                                            git commit -sm "Add release notes for ${fullVersion}"
+                                                                            git push origin release-chores/release-notes-${fullVersion} --force
+                                                                            EXISTING_PR=\$(gh pr list --head release-chores/release-notes-${fullVersion} --state open --json number --jq '.[0].number')
                                                                             if [ -n "\$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #\${EXISTING_PR} for component \${REPO_NAME} with new release notes."
                                                                             else
-                                                                                gh pr create --title '[AUTO] Add release notes for ${version}' --body 'Add release notes for ${version}' -H release-chores/release-notes-${version} -B ${ref}
+                                                                                gh pr create --title '[AUTO] Add release notes for ${fullVersion}' --body 'Add release notes for ${fullVersion}' -H release-chores/release-notes-${fullVersion} -B ${ref}
                                                                             fi
                                                                         fi
                                                                     else
-                                                                        echo "File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist as there are no commits since ${GIT_LOG_DATE}."
+                                                                        echo "File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${fullVersion}.0.md does not exist as there are no commits since ${GIT_LOG_DATE}."
                                                                         exit 1
                                                                     fi
                                                                 fi

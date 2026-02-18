@@ -332,7 +332,7 @@ pipeline {
                             propagate: false,
                             wait: false,
                             parameters: [
-                                string(name: 'INPUT_MANIFEST', value: "${env.version}/opensearch-${env.version}.yml"),
+                                string(name: 'INPUT_MANIFEST', value: "${TEST_MANIFEST.replace('-test', '')}"),
                                 string(name: 'DISTRIBUTION_NUMBER', value: "${env.buildId}")
                             ]
                     postCleanup()

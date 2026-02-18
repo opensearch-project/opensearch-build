@@ -166,6 +166,10 @@ class InputManifest_1_0(ComponentManifest['InputManifest_1_0', 'InputComponents_
         def filename(self) -> str:
             return self.name.lower().replace(" ", "-")
 
+        @property
+        def qualified_version(self) -> str:
+            return f"{self.version}-{self.qualifier}" if self.qualifier else self.version
+
 
 class InputComponents_1_0(Components['InputComponent_1_0 ']):
     @classmethod
