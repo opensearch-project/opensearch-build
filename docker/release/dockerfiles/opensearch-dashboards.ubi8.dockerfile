@@ -21,12 +21,10 @@ ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball.
 # Install which to allow running of securityadmin.sh
-# Note: UBI minimal uses microdnf, but we install dnf for compatibility
 RUN microdnf update -y && \
     microdnf install -y tar gzip which dnf && \
     microdnf clean all
 
-# Create temp directory and OpenSearch Dashboards home directory
 RUN mkdir -p $TEMP_DIR && \
     mkdir -p $OPENSEARCH_DASHBOARDS_HOME && \
     chmod 777 $TEMP_DIR
@@ -56,32 +54,21 @@ FROM registry.access.redhat.com/ubi10-minimal:10.1
 ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
 
 # Update packages
-# Install minimal tools needed for runtime
-# Note: UBI minimal requires microdnf, but we install dnf for compatibility
+# Install the tools we need: tar and gzip to unpack the OpenSearch tarball.
+# Install which to allow running of securityadmin.sh
 RUN microdnf update -y && \
     microdnf install -y tar gzip which dnf && \
     microdnf clean all
 
 # Install Reporting dependencies
-# Note: UBI 10 minimal has limited xorg font packages compared to full RHEL
-# Install available packages: nss, fontconfig, freetype, and available xorg fonts
-# Some packages (xorg-x11-fonts-100dpi, xorg-x11-fonts-75dpi, xorg-x11-utils, xorg-x11-fonts-cyrillic)
-# are not available in UBI repositories but basic reporting should work with available fonts
-RUN dnf install -y nss fontconfig freetype && \
-    (dnf install -y xorg-x11-fonts-Type1 xorg-x11-fonts-misc 2>/dev/null || true) && \
-    dnf clean all
+RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && dnf clean all
 
 # Copy from Stage0 with root group ownership (GID 0) for OpenShift arbitrary UID support
-# OpenShift runs containers with arbitrary UIDs but GID 0, so all files must be group-writable
-# No user is created - OpenShift will assign an arbitrary UID at runtime
 COPY --from=linux_stage_0 --chown=root:0 $OPENSEARCH_DASHBOARDS_HOME $OPENSEARCH_DASHBOARDS_HOME
 
 # Setup OpenSearch-dashboards
 WORKDIR $OPENSEARCH_DASHBOARDS_HOME
 
-# Set group-writable permissions for OpenShift compatibility
-# This allows arbitrary UIDs (with GID 0) to write to necessary directories
-# Ensure all files and directories are accessible by any UID with GID 0
 RUN chgrp -R 0 $OPENSEARCH_DASHBOARDS_HOME && \
     chmod -R g+rwX $OPENSEARCH_DASHBOARDS_HOME && \
     find $OPENSEARCH_DASHBOARDS_HOME -type d -exec chmod g+x {} + && \
@@ -89,9 +76,6 @@ RUN chgrp -R 0 $OPENSEARCH_DASHBOARDS_HOME && \
 
 # Set PATH
 ENV PATH=$PATH:$OPENSEARCH_DASHBOARDS_HOME/bin
-
-# Don't set USER directive - OpenShift will run with arbitrary UID
-# The entrypoint script should handle UID detection and switching
 
 # Expose port
 EXPOSE 5601
@@ -112,10 +96,8 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.build-date="$BUILD_DATE" \
   "DOCKERFILE"="https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockerfiles/opensearch-dashboards.ubi8.dockerfile"
 
-# Ensure the entrypoint script is executable by any UID
 RUN chmod g+x $OPENSEARCH_DASHBOARDS_HOME/opensearch-dashboards-docker-entrypoint.sh
 
 # CMD to run
 ENTRYPOINT ["./opensearch-dashboards-docker-entrypoint.sh"]
 CMD ["opensearch-dashboards"]
-
