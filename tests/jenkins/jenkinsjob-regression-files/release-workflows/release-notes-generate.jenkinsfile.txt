@@ -61,7 +61,7 @@
                                                                             fi
                                                                         fi
                                                                     else
-                                                                        echo "File /tmp/workspace/release-notes/opensearch-${REPO_NAME}.release-notes-2.2.0.0.md does not exist as there are no commits since 2025-06-24."
+                                                                        echo "File /tmp/workspace/release-notes/opensearch.release-notes-2.2.0.md does not exist as there are no commits since 2025-06-24."
                                                                         exit 1
                                                                     fi
                                                                 fi
@@ -115,7 +115,7 @@
                                                                             fi
                                                                         fi
                                                                     else
-                                                                        echo "File /tmp/workspace/release-notes/opensearch-${REPO_NAME}.release-notes-2.2.0.0.md does not exist as there are no commits since 2025-06-24."
+                                                                        echo "File /tmp/workspace/release-notes/opensearch-sql.release-notes-2.2.0.0.md does not exist as there are no commits since 2025-06-24."
                                                                         exit 1
                                                                     fi
                                                                 fi
