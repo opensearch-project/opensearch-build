@@ -308,6 +308,17 @@ class TestInputManifest(unittest.TestCase):
 
         self.assertEqual(formatted_manifest, written_manifest)
 
+    def test_qualified_version_without_qualifier(self) -> None:
+        data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
+        manifest = InputManifest.from_path(os.path.join(data_path, "formatted_schema_1_2.yml"))
+        self.assertIsNone(manifest.build.qualifier)
+        self.assertEqual(manifest.build.qualified_version, manifest.build.version)
+
+    def test_qualified_version_with_qualifier(self) -> None:
+        data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "tests_build_workflow", "data"))
+        manifest = InputManifest.from_path(os.path.join(data_path, "opensearch-input-3.1.0-alpha1.yml"))
+        self.assertEqual(manifest.build.qualified_version, "3.1.0-alpha1")
+
     def test_to_file_formatted_schema_version_1_1(self) -> None:
         data_path = os.path.join(os.path.dirname(__file__), "data")
         manifest = InputManifest_1_1({
