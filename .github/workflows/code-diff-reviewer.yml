@@ -1,0 +1,83 @@
+---
+name: Code Diff Reviewer
+on:
+  workflow_call:
+    secrets:
+      BEDROCK_ACCESS_ROLE:
+        required: true
+    inputs:
+      skip_diff_reviewer_on_push:
+        required: false
+        type: boolean
+        default: true
+      skip_diff_reviewer_with_label_name:
+        required: false
+        type: string
+        default: 'skip-diff-reviewer'
+
+jobs:
+  Code-Diff-Reviewer:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # github oidc to assume aws roles
+      pull-requests: write  # to create or update comment (peter-evans/create-or-update-comment)
+    timeout-minutes: 10
+    steps:
+      - name: Verify reviewer status
+        run: |
+          echo "skip_diff_reviewer=false" >> $GITHUB_ENV
+          if [ "${{ github.event_name }}" = "push" ]; then
+            if [ "${{ inputs.skip_diff_reviewer_on_push }}" ]; then
+              echo "Diff reviewer skipped due to inputs.skip_diff_reviewer_on_push is set to 'true'"
+              echo "skip_diff_reviewer=true" >> $GITHUB_ENV
+            fi
+          elif [ "${{ github.event_name }}" = "pull_request_target" ]; then
+            PR_LABELS=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/labels" \
+              | jq -r '.[].name')
+            echo "labels: $PR_LABELS"
+            echo "Verifying skip label: ${{ inputs.skip_diff_reviewer_with_label_name }}"
+            if [ -n "$PR_LABELS" ]; then
+              for label in $PR_LABELS
+              do
+                if [[ "$label" = "${{ inputs.skip_diff_reviewer_with_label_name }}" ]]; then
+                  echo "Diff analyzer skipped due to label ${{ inputs.skip_reviewer_with_label_name }}."
+                  echo "skip_diff_reviewer=true" >> $GITHUB_ENV
+                fi
+              done
+            fi
+          else
+            echo "wrong github event: ${{ github.event_name }}, must be 'push' or 'pull_request_target'"
+            exit 1
+          fi
+      - name: Configure AWS credentials
+        if: ${{ env.skip_diff_reviewer != 'true' }}
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE }}
+          aws-region: us-east-1
+      - name: PR Agent Review
+        if: ${{ env.skip_diff_reviewer != 'true' }}
+        uses: qodo-ai/pr-agent@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "false"
+          github_action_config.auto_improve: "true"
+          github_action_config.pr_actions: '["opened", "synchronize", "reopened"]'
+          pr_reviewer.require_estimate_effort_to_review: false
+          pr_reviewer.require_can_be_split_review: true  # avoid huge PRs
+          pr_reviewer.num_max_findings: 5
+          pr_reviewer.require_todo_scan: true
+          pr_reviewer.require_security_review: false  # use code-diff-analyzer for security specific review now to block checks
+          pr_reviewer.enable_review_labels_security: false  # avoid too many labels at the moment
+          pr_reviewer.enable_review_labels_effort: false
+          pr_code_suggestions.commitable_code_suggestions: true
+          pr_code_suggestions.max_history_len: 5
+          pr_code_suggestions.num_code_suggestions_per_chunk: 5
+          pr_code_suggestions.enable_more_suggestions_checkbox: false
+          pr_code_suggestions.max_number_of_calls: 5
+          pr_code_suggestions.wiki_page_accepted_suggestions: false
+          config.model: "bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+          config.fallback_models: '["bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0"]'
