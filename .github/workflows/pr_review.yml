@@ -20,7 +20,7 @@ jobs:
   Code-Diff-Reviewer:
     uses: opensearch-project/opensearch-build/.github/workflows/code-diff-reviewer.yml@main
     needs: Code-Diff-Analyzer
-    if: always() && github.repository == 'opensearch-project/opensearch-build'
+    if: github.repository == 'opensearch-project/opensearch-build'
     permissions:
       id-token: write  # github oidc to assume aws roles
       pull-requests: write  # to create or update comment (peter-evans/create-or-update-comment)
