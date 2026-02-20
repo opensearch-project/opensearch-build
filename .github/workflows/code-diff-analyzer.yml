@@ -65,7 +65,7 @@ jobs:
           if [ "${{ github.event_name }}" = "push" ]; then
             base_sha="${{ github.event.before }}"
             head_sha="${{ github.event.after }}"
-            if [ "${{ inputs.skip_diff_analyzer_on_push }}" ]; then
+            if [ "${{ inputs.skip_diff_analyzer_on_push }}" = "true" ]; then
               echo "Diff analyzer skipped due to inputs.skip_diff_analyzer_on_push is set to 'true'"
               echo "diff_analyzer=9" >> $GITHUB_ENV
             fi

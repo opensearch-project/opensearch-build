@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "skip_diff_reviewer=false" >> $GITHUB_ENV
           if [ "${{ github.event_name }}" = "push" ]; then
-            if [ "${{ inputs.skip_diff_reviewer_on_push }}" ]; then
+            if [ "${{ inputs.skip_diff_reviewer_on_push }}" = "true" ]; then
               echo "Diff reviewer skipped due to inputs.skip_diff_reviewer_on_push is set to 'true'"
               echo "skip_diff_reviewer=true" >> $GITHUB_ENV
             fi
@@ -42,7 +42,7 @@ jobs:
               for label in $PR_LABELS
               do
                 if [[ "$label" = "${{ inputs.skip_diff_reviewer_with_label_name }}" ]]; then
-                  echo "Diff analyzer skipped due to label ${{ inputs.skip_reviewer_with_label_name }}."
+                  echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_reviewer_with_label_name }}."
                   echo "skip_diff_reviewer=true" >> $GITHUB_ENV
                 fi
               done
