@@ -79,6 +79,7 @@ jobs:
           pr_code_suggestions.num_code_suggestions_per_chunk: 5
           pr_code_suggestions.enable_more_suggestions_checkbox: false
           pr_code_suggestions.max_number_of_calls: 5
+          pr_code_suggestions.suggestions_score_threshold: 3  # Avoid simple changes
           pr_code_suggestions.wiki_page_accepted_suggestions: false
           config.model: 'bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0'
           config.fallback_models: '["bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0"]'
