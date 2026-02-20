@@ -6,34 +6,22 @@ on:
       BEDROCK_ACCESS_ROLE:
         required: true
     inputs:
-      skip_diff_analyzer_on_push:
+      skip_diff_analyzer_on_push:  # Only update if event is push
         required: false
         type: boolean
         default: true
-      skip_diff_analyzer_with_label_name:
+      skip_diff_analyzer_with_label_name:  # Only update if event is pull_request_target
         required: false
         type: string
         default: 'skip-diff-analyzer'
-      # all = every mode
-      # report = analyze diff to find malicious code
-      # TODO: review = analyze diff to suggest code improvement
-      diff_analyzer_mode:
-        required: false
-        type: string
-        default: 'report'
       update_pr_comment_with_analyzer_report:  # Only update if event is pull_request_target
-        required: false
-        type: boolean
-        default: false
-      # TODO: Implement review
-      update_pr_conversation_with_analyzer_review:  # Only update if event is pull_request_target
         required: false
         type: boolean
         default: false
       hard_fail_level:
         required: false
         type: number
-        default: 3  # hard fail the workflow on issues with 'high' severity or above
+        default: 2  # hard fail the workflow on issues with 'medium' severity or above
     outputs:
       # 0 = no issues found
       # 1 = Low severity issues found
@@ -61,7 +49,7 @@ jobs:
     env:
       AWS_REGION: 'us-east-1'
       CLAUDE_CODE_USE_BEDROCK: '1'
-      CLAUDE_CODE_MAX_INPUT_TOKENS: '160000'
+      CLAUDE_CODE_MAX_INPUT_TOKENS: '150000'
       CLAUDE_CODE_MAX_OUTPUT_TOKENS: '4096'
       MAX_THINKING_TOKENS: '1024'
       DIFF_CONTENT_PATH: 'git_diff_content.txt'
@@ -77,7 +65,7 @@ jobs:
           if [ "${{ github.event_name }}" = "push" ]; then
             base_sha="${{ github.event.before }}"
             head_sha="${{ github.event.after }}"
-            if [ "${{ inputs.skip_diff_analyzer_on_push }}" ]; then
+            if [ "${{ inputs.skip_diff_analyzer_on_push }}" = "true" ]; then
               echo "Diff analyzer skipped due to inputs.skip_diff_analyzer_on_push is set to 'true'"
               echo "diff_analyzer=9" >> $GITHUB_ENV
             fi
@@ -94,7 +82,7 @@ jobs:
               for label in $PR_LABELS
               do
                 if [[ "$label" = "${{ inputs.skip_diff_analyzer_with_label_name }}" ]]; then
-                  echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_analyzer_with_label_name }}, trigger gradle check."
+                  echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_analyzer_with_label_name }}."
                   echo "diff_analyzer=9" >> $GITHUB_ENV
                 fi
               done
@@ -117,9 +105,9 @@ jobs:
             -H "Accept: application/vnd.github.v3.diff" \
             "https://api.github.com/repos/${{ github.repository }}/compare/${BASE_SHA}...${HEAD_SHA}" > $DIFF_CONTENT_PATH
 
-          echo "Check diff size"
           DIFF_SIZE=$(cat $DIFF_CONTENT_PATH | wc -c)
           DIFF_TOKEN_EST=$((DIFF_SIZE / 3))
+          echo "Check diff size of '$DIFF_SIZE' with token number '$DIFF_TOKEN_EST' over max token limit '$CLAUDE_CODE_MAX_INPUT_TOKENS'"
           if [ "$DIFF_TOKEN_EST" -gt "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
             echo "Diff too large, requires skip by maintainers after manual review"
             echo "diff_analyzer=5" >> $GITHUB_ENV
