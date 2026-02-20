@@ -62,9 +62,9 @@ jobs:
         uses: qodo-ai/pr-agent@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          github_action_config.auto_review: "true"
-          github_action_config.auto_describe: "false"
-          github_action_config.auto_improve: "true"
+          github_action_config.auto_review: true
+          github_action_config.auto_describe: false
+          github_action_config.auto_improve: true
           github_action_config.pr_actions: '["opened", "synchronize", "reopened"]'
           pr_reviewer.require_estimate_effort_to_review: false
           pr_reviewer.require_can_be_split_review: true  # avoid huge PRs
@@ -79,5 +79,5 @@ jobs:
           pr_code_suggestions.enable_more_suggestions_checkbox: false
           pr_code_suggestions.max_number_of_calls: 5
           pr_code_suggestions.wiki_page_accepted_suggestions: false
-          config.model: "bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+          config.model: 'bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0'
           config.fallback_models: '["bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0"]'
