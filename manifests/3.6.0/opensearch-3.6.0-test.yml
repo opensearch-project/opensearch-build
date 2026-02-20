@@ -180,6 +180,8 @@ components:
       test-configs:
         - with-security
         - without-security
+    smoke-test:
+      test-spec: custom-codecs.yml
   - name: skills
     integ-test:
       test-configs:
