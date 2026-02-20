@@ -71,7 +71,7 @@ jobs:
           pr_reviewer.num_max_findings: 5
           pr_reviewer.require_todo_scan: true
           pr_reviewer.require_ticket_analysis_review: false
-          pr_reviewer.require_security_review: false  # use code-diff-analyzer for security specific review now to block checks
+          pr_reviewer.require_security_review: true
           pr_reviewer.enable_review_labels_security: false  # avoid too many labels at the moment
           pr_reviewer.enable_review_labels_effort: false
           pr_code_suggestions.max_history_len: 5
@@ -81,8 +81,6 @@ jobs:
           pr_code_suggestions.commitable_code_suggestions: false  # Too much similar changes on every push
           pr_code_suggestions.apply_suggestions_checkbox: false
           pr_code_suggestions.enable_more_suggestions_checkbox: false
-          pr_code_suggestions.suggestions_score_threshold: 3  # Avoid simple changes
-          pr_code_suggestions.dual_publishing_score_threshold: 5
           pr_code_suggestions.wiki_page_accepted_suggestions: false
           config.model: 'bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0'
           config.fallback_models: '["bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0"]'
