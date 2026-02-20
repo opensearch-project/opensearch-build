@@ -158,11 +158,11 @@ pipeline {
                 }
                 always {
                     sh '''
-                    mkdir codeCoverage
+                        mkdir codeCoverage
 
-                    for file in $(find search/server/build/reports/jacoco/ -name '*.xml'); do
-                        cp -v "$file" codeCoverage/
-                    done
+                        for file in $(find search/server/build/reports/jacoco/ -name '*.xml'); do
+                            cp -v "$file" codeCoverage/
+                        done
                     '''
                     junit allowEmptyResults: true, testResults: '**/build/test-results/**/*.xml'
                     archiveArtifacts artifacts: 'codeCoverage/**', onlyIfSuccessful: true
