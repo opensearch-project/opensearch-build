@@ -70,6 +70,7 @@ jobs:
           pr_reviewer.require_can_be_split_review: true  # avoid huge PRs
           pr_reviewer.num_max_findings: 5
           pr_reviewer.require_todo_scan: true
+          pr_reviewer.require_ticket_analysis_review: false
           pr_reviewer.require_security_review: false  # use code-diff-analyzer for security specific review now to block checks
           pr_reviewer.enable_review_labels_security: false  # avoid too many labels at the moment
           pr_reviewer.enable_review_labels_effort: false
