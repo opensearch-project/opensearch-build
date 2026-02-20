@@ -21,7 +21,7 @@ on:
       hard_fail_level:
         required: false
         type: number
-        default: 3  # hard fail the workflow on issues with 'high' severity or above
+        default: 2  # hard fail the workflow on issues with 'medium' severity or above
     outputs:
       # 0 = no issues found
       # 1 = Low severity issues found
