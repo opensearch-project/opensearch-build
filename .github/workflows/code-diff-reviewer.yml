@@ -74,13 +74,15 @@ jobs:
           pr_reviewer.require_security_review: true
           pr_reviewer.enable_review_labels_security: false  # avoid too many labels at the moment
           pr_reviewer.enable_review_labels_effort: false
-          pr_code_suggestions.max_history_len: 5
-          pr_code_suggestions.num_code_suggestions_per_chunk: 5
-          pr_code_suggestions.max_number_of_calls: 5
+          pr_code_suggestions.max_history_len: 5  # max number of history of previous suggestions in same persistent comment
+          pr_code_suggestions.max_number_of_calls: 4  # max number of chunks to cut PR, make X number of calls per commit on PR, each 32000 token
+          pr_code_suggestions.num_code_suggestions_per_chunk: 4  # max number of suggestions per chunk
           pr_code_suggestions.enable_chat_in_code_suggestions: false  # only for app
           pr_code_suggestions.commitable_code_suggestions: false  # Too much similar changes on every push
           pr_code_suggestions.apply_suggestions_checkbox: false
           pr_code_suggestions.enable_more_suggestions_checkbox: false
           pr_code_suggestions.wiki_page_accepted_suggestions: false
+          pr_code_suggestions.allow_thumbs_up_down: true
           config.model: 'bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0'
           config.fallback_models: '["bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0"]'
+          config.ignore_pr_authors: '["opensearch-trigger-bot[bot]", "dependabot[bot]", "mend-for-github-com[bot]"]'
