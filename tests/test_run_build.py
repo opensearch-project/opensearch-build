@@ -316,9 +316,9 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.BuildIncremental.rebuild_plugins", return_value=MagicMock())
     @patch("run_build.logging.info")
     def test_build_incremental_no_change(self, mock_logging_info: MagicMock,
-                                         mock_build_incremental: MagicMock, mock_build_manifest: MagicMock,
-                                         *mocks: Any) -> None:
-        mock_build_incremental.return_value = []
+                                         mock_rebuild_plugins: MagicMock, mock_build_manifest: MagicMock,
+                                         mock_commits_diff: MagicMock, mock_path_exists: MagicMock) -> None:
+        mock_rebuild_plugins.return_value = []
         mock_build_manifest.return_value = self.BUILD_MANIFEST
         main()
         mock_logging_info.assert_has_calls([
