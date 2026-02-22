@@ -310,6 +310,7 @@ class TestRunBuild(unittest.TestCase):
 
     @patch.dict(os.environ, {"BUILD_NUMBER": "1234"})
     @patch("argparse._sys.argv", ["run_build.py", INPUT_MANIFEST_PATH, "--incremental", "-p", "linux"])
+    @patch("os.path.exists", return_value=True)
     @patch("run_build.BuildIncremental.commits_diff", return_value=MagicMock())
     @patch("manifests.build_manifest.BuildManifest.from_path")
     @patch("run_build.BuildIncremental.rebuild_plugins", return_value=MagicMock())
@@ -328,21 +329,51 @@ class TestRunBuild(unittest.TestCase):
         ], any_order=True)
 
     @patch("argparse._sys.argv", ["run_build.py", INPUT_MANIFEST_PATH, "--incremental"])
-    @patch("run_build.BuildIncremental", return_value=MagicMock())
-    @patch("os.path.exists")
+    @patch("run_build.BuildIncremental")
+    @patch("os.path.exists", return_value=False)
+    @patch("run_build.shutil.rmtree")
+    @patch("run_build.os.makedirs")
     @patch("run_build.Builders.builder_from", return_value=MagicMock())
     @patch("run_build.BuildRecorder", return_value=MagicMock())
     @patch("run_build.TemporaryDirectory")
-    def test_build_incremental_no_prebuild_manifest(self, mock_temp: MagicMock, mock_recorder: MagicMock,
-                                                    mock_builder: MagicMock, mock_path_exists: MagicMock,
-                                                    *mocks: Any) -> None:
+    def test_build_incremental_no_prebuild_manifest(
+        self, mock_temp: MagicMock, mock_recorder: MagicMock, mock_builder: MagicMock,
+        mock_makedirs: MagicMock, mock_rmtree: MagicMock,
+        mock_path_exists: MagicMock, mock_build_incremental: MagicMock, *mocks: Any
+    ) -> None:
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
-        mock_path_exists.return_value = False
-        try:
-            main()
-            self.assertRaises(FileNotFoundError)
-        except FileNotFoundError:
-            pass
+        mock_build_incremental.return_value.commits_diff.return_value = ["OpenSearch"]
+        mock_build_incremental.return_value.rebuild_plugins.return_value = ["OpenSearch", "common-utils"]
+        main()  # Must NOT raise FileNotFoundError
+        mock_makedirs.assert_called()  # Output dir created (rmtree skipped since output_dir doesn't exist)
+        # BuildRecorder called with no old build_manifest
+        args, kwargs = mock_recorder.call_args
+        self.assertIsNone(args[1] if len(args) > 1 else kwargs.get("build_manifest"))
+
+    @patch("argparse._sys.argv", ["run_build.py", INPUT_MANIFEST_PATH, "--incremental", "-p", "linux"])
+    @patch("run_build.BuildIncremental")
+    @patch("os.path.exists", return_value=True)
+    @patch("run_build.shutil.rmtree")
+    @patch("run_build.os.makedirs")
+    @patch("run_build.Builders.builder_from", return_value=MagicMock())
+    @patch("run_build.BuildRecorder", return_value=MagicMock())
+    @patch("run_build.TemporaryDirectory")
+    @patch("run_build.BuildOutputDir")
+    def test_build_incremental_full_rebuild_cleans_output_dir(
+        self, mock_output_dir: MagicMock, mock_temp: MagicMock, mock_recorder: MagicMock,
+        mock_builder: MagicMock, mock_makedirs: MagicMock, mock_rmtree: MagicMock,
+        mock_path_exists: MagicMock, mock_build_incremental: MagicMock, *mocks: Any
+    ) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        # Core commit changed → full rebuild
+        mock_build_incremental.return_value.commits_diff.return_value = ["OpenSearch"]
+        mock_build_incremental.return_value.rebuild_plugins.return_value = ["OpenSearch", "common-utils"]
+        main()
+        mock_rmtree.assert_called()  # Output dir was cleaned
+        # BuildRecorder should be called with no old manifest (None / no second arg)
+        args, kwargs = mock_recorder.call_args
+        build_manifest_arg = args[1] if len(args) > 1 else kwargs.get("build_manifest")
+        self.assertIsNone(build_manifest_arg)
 
     @patch("argparse._sys.argv", ["run_build.py", INPUT_MANIFEST_PATH, "--incremental", "-p", "linux"])
     @patch("run_build.BuildIncremental.commits_diff", return_value=MagicMock())
