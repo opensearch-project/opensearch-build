@@ -84,6 +84,7 @@ jobs:
                 if [[ "$label" = "${{ inputs.skip_diff_analyzer_with_label_name }}" ]]; then
                   echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_analyzer_with_label_name }}."
                   echo "diff_analyzer=9" >> $GITHUB_ENV
+                  break
                 fi
               done
             fi
