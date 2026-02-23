@@ -32,20 +32,31 @@ jobs:
               echo "skip_diff_reviewer=true" >> $GITHUB_ENV
             fi
           elif [ "${{ github.event_name }}" = "pull_request_target" ]; then
-            PR_LABELS=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/labels" \
-              | jq -r '.[].name')
-            echo "labels: $PR_LABELS"
-            echo "Verifying skip label: ${{ inputs.skip_diff_reviewer_with_label_name }}"
-            if [ -n "$PR_LABELS" ]; then
-              for label in $PR_LABELS
-              do
-                if [[ "$label" = "${{ inputs.skip_diff_reviewer_with_label_name }}" ]]; then
-                  echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_reviewer_with_label_name }}."
-                  echo "skip_diff_reviewer=true" >> $GITHUB_ENV
-                fi
-              done
+            PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+            if [ "$PR_AUTHOR" != "dependabot[bot]" ] && \
+               [ "$PR_AUTHOR" != "opensearch-trigger-bot[bot]" ] && \
+               [ "$PR_AUTHOR" != "mend-for-github-com[bot]" ]; then
+              echo "PR author '$PR_AUTHOR' is not a bot, proceeding..."
+
+              PR_LABELS=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/labels" \
+                | jq -r '.[].name')
+              echo "labels: $PR_LABELS"
+              echo "Verifying skip label: ${{ inputs.skip_diff_reviewer_with_label_name }}"
+              if [ -n "$PR_LABELS" ]; then
+                for label in $PR_LABELS
+                do
+                  if [[ "$label" = "${{ inputs.skip_diff_reviewer_with_label_name }}" ]]; then
+                    echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_reviewer_with_label_name }}."
+                    echo "skip_diff_reviewer=true" >> $GITHUB_ENV
+                    break
+                  fi
+                done
+              fi
+            else
+              echo "PR author '$PR_AUTHOR' is a bot, skipping..."
+              echo "skip_diff_reviewer=true" >> $GITHUB_ENV
             fi
           else
             echo "wrong github event: ${{ github.event_name }}, must be 'push' or 'pull_request_target'"
@@ -86,4 +97,3 @@ jobs:
           pr_code_suggestions.publish_output_no_suggestions: false  # avoid comment even if there is no suggestions
           config.model: 'bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0'
           config.fallback_models: '["bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0"]'
-          config.ignore_pr_authors: '["opensearch-trigger-bot[bot]", "dependabot[bot]", "mend-for-github-com[bot]"]'
