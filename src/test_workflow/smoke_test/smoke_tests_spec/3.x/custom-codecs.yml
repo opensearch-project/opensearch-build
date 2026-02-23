@@ -1,0 +1,114 @@
+---
+info:
+  title: OpenSearch custom-codecs (+ k-NN) plugin smoke tests
+  version: default
+name: custom-codecs
+paths:
+  /_plugins/_knn/stats:
+    GET:
+      parameters: []
+  /train-index-zstd:
+    PUT:
+      parameters:
+        [
+          {
+            'settings': {
+              'index': {
+                'codec': 'zstd',
+                'knn': true
+              },
+              'number_of_shards': 3,
+              'number_of_replicas': 0
+            },
+            'mappings': {
+              'properties': {
+                'train-field': {
+                  'type': 'knn_vector',
+                  'dimension': 4
+                }
+              }
+            }
+          }
+        ]
+  /_bulk?refresh=true:
+    POST:
+      parameters: [
+        {
+          'index':
+            {
+              '_index':
+                'train-index-zstd',
+              '_id':
+                '1'
+            }
+        },
+        {
+          'train-field':
+            [
+              1.5, 5.5, 4.5, 6.4
+            ]
+        },
+        {
+          'index':
+            {
+              '_index':
+                'train-index-zstd',
+              '_id':
+                '2'
+            }
+        },
+        {
+          'train-field':
+            [
+              2.5, 3.5, 5.6, 6.7
+            ]
+        },
+        {
+          'index':
+            {
+              '_index':
+                'train-index-zstd',
+              '_id':
+                '3'
+            }
+        },
+        {
+          'train-field':
+            [
+              4.5, 5.5, 6.7, 3.7
+            ]
+        },
+        {
+          'index':
+            {
+              '_index':
+                'train-index-zstd',
+              '_id':
+                '4'
+            }
+        },
+        {
+          'train-field':
+            [
+              1.5, 5.5, 4.5, 6.4
+            ]
+        }
+      ]
+  /train-index-zstd/_search:
+    GET:
+      parameters: []
+  /train-index-zstd/_doc/1:
+    GET:
+      parameters: []
+  /train-index-zstd/_close:
+    POST:
+      parameters: []
+  /train-index-zstd/_open:
+    POST:
+      parameters: []
+  /train-index-zstd/_search?size=5:
+    GET:
+      parameters: []
+  /train-index-zstd/_doc/2:
+    GET:
+      parameters: []
