@@ -71,9 +71,7 @@ COPY --from=linux_stage_0 --chown=root:0 $OPENSEARCH_HOME $OPENSEARCH_HOME
 WORKDIR $OPENSEARCH_HOME
 
 RUN chgrp -R 0 $OPENSEARCH_HOME && \
-    chmod -R g+rwX $OPENSEARCH_HOME && \
-    find $OPENSEARCH_HOME -type d -exec chmod g+x {} + && \
-    find $OPENSEARCH_HOME -type f -exec chmod g+r {} +
+    chmod -R g+rwX $OPENSEARCH_HOME
 
 # Set $JAVA_HOME
 RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh && \
@@ -112,9 +110,7 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.vendor="OpenSearch" \
   org.label-schema.description="$NOTES" \
   org.label-schema.build-date="$BUILD_DATE" \
-  "DOCKERFILE"="https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockerfiles/opensearch.ubi8.dockerfile"
-
-RUN chmod g+x $OPENSEARCH_HOME/opensearch-docker-entrypoint.sh
+  "DOCKERFILE"="https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockerfiles/opensearch.ubi10.dockerfile"
 
 # CMD to run
 ENTRYPOINT ["./opensearch-docker-entrypoint.sh"]
