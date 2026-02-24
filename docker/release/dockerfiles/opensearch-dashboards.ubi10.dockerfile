@@ -70,9 +70,7 @@ COPY --from=linux_stage_0 --chown=root:0 $OPENSEARCH_DASHBOARDS_HOME $OPENSEARCH
 WORKDIR $OPENSEARCH_DASHBOARDS_HOME
 
 RUN chgrp -R 0 $OPENSEARCH_DASHBOARDS_HOME && \
-    chmod -R g+rwX $OPENSEARCH_DASHBOARDS_HOME && \
-    find $OPENSEARCH_DASHBOARDS_HOME -type d -exec chmod g+x {} + && \
-    find $OPENSEARCH_DASHBOARDS_HOME -type f -exec chmod g+r {} +
+    chmod -R g+rwX $OPENSEARCH_DASHBOARDS_HOME
 
 # Set PATH
 ENV PATH=$PATH:$OPENSEARCH_DASHBOARDS_HOME/bin
@@ -94,9 +92,7 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.vendor="OpenSearch" \
   org.label-schema.description="$NOTES" \
   org.label-schema.build-date="$BUILD_DATE" \
-  "DOCKERFILE"="https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockerfiles/opensearch-dashboards.ubi8.dockerfile"
-
-RUN chmod g+x $OPENSEARCH_DASHBOARDS_HOME/opensearch-dashboards-docker-entrypoint.sh
+  "DOCKERFILE"="https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockerfiles/opensearch-dashboards.ubi10.dockerfile"
 
 # CMD to run
 ENTRYPOINT ["./opensearch-dashboards-docker-entrypoint.sh"]
