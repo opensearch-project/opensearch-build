@@ -113,6 +113,8 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.build-date="$BUILD_DATE" \
   "DOCKERFILE"="https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockerfiles/opensearch.al2.dockerfile"
 
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD curl -f http://localhost:9201/_cat/health?v || exit 1
 # CMD to run
 ENTRYPOINT ["./opensearch-docker-entrypoint.sh"]
 CMD ["opensearch"]
