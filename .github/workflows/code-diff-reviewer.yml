@@ -34,12 +34,9 @@ jobs:
             if [ "${{ inputs.skip_diff_reviewer_on_push }}" = "true" ]; then
               echo "Diff reviewer skipped due to inputs.skip_diff_reviewer_on_push is set to 'true'"
               echo "skip_diff_reviewer=true" >> $GITHUB_ENV
+              exit 0
             fi
           elif [ "${{ github.event_name }}" = "pull_request_target" ]; then
-            if [ "${{ github.event.pull_request.draft }}" = "true" ] && [ "${{ inputs.skip_diff_reviewer_on_pull_request_draft }}" = "true" ]; then
-              echo "PR is in draft mode, skip review due to inputs.skip_diff_reviewer_on_pull_request_draft set to true"
-              echo "skip_diff_reviewer=true" >> $GITHUB_ENV
-            fi
             PR_AUTHOR="${{ github.event.pull_request.user.login }}"
             if [ "$PR_AUTHOR" != "dependabot[bot]" ] && \
                [ "$PR_AUTHOR" != "opensearch-trigger-bot[bot]" ] && \
@@ -58,13 +55,19 @@ jobs:
                   if [[ "$label" = "${{ inputs.skip_diff_reviewer_with_label_name }}" ]]; then
                     echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_reviewer_with_label_name }}."
                     echo "skip_diff_reviewer=true" >> $GITHUB_ENV
-                    break
+                    exit 0
                   fi
                 done
               fi
             else
               echo "PR author '$PR_AUTHOR' is a bot, skipping..."
               echo "skip_diff_reviewer=true" >> $GITHUB_ENV
+              exit 0
+            fi
+            if [ "${{ github.event.pull_request.draft }}" = "true" ] && [ "${{ inputs.skip_diff_reviewer_on_pull_request_draft }}" = "true" ]; then
+              echo "PR is in draft mode, skip review due to inputs.skip_diff_reviewer_on_pull_request_draft set to true"
+              echo "skip_diff_reviewer=true" >> $GITHUB_ENV
+              exit 0
             fi
           else
             echo "wrong github event: ${{ github.event_name }}, must be 'push' or 'pull_request_target'"
