@@ -10,6 +10,10 @@ on:
         required: false
         type: boolean
         default: true
+      skip_diff_reviewer_on_pull_request_draft:
+        required: false
+        type: boolean
+        default: true
       skip_diff_reviewer_with_label_name:
         required: false
         type: string
@@ -32,6 +36,10 @@ jobs:
               echo "skip_diff_reviewer=true" >> $GITHUB_ENV
             fi
           elif [ "${{ github.event_name }}" = "pull_request_target" ]; then
+            if [ "${{ github.event.pull_request.draft }}" = "true" ] && [ "${{ inputs.skip_diff_reviewer_on_pull_request_draft }}" = "true" ]; then
+              echo "PR is in draft mode, skip review due to inputs.skip_diff_reviewer_on_pull_request_draft set to true"
+              echo "skip_diff_reviewer=true" >> $GITHUB_ENV
+            fi
             PR_AUTHOR="${{ github.event.pull_request.user.login }}"
             if [ "$PR_AUTHOR" != "dependabot[bot]" ] && \
                [ "$PR_AUTHOR" != "opensearch-trigger-bot[bot]" ] && \
