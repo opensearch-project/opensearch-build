@@ -1,0 +1,72 @@
+---
+schema-version: '1.2'
+build:
+  name: OpenSearch Dashboards
+  version: 2.19.5
+ci:
+  image:
+    linux:
+      tar:
+        name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-build-v1
+      deb:
+        name: opensearchstaging/ci-runner:ci-runner-ubuntu2404-opensearch-build-v1
+      rpm:
+        name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1
+    windows:
+      zip:
+        name: opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: '2.19'
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: '2.19'
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/dashboards-observability.git
+    ref: '2.19'
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reporting.git
+    ref: '2.19'
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    ref: '2.19'
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/dashboards-query-workbench.git
+    ref: '2.19'
+  - name: customImportMapDashboards
+    repository: https://github.com/opensearch-project/dashboards-maps.git
+    ref: '2.19'
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin.git
+    ref: '2.19'
+  - name: mlCommonsDashboards
+    repository: https://github.com/opensearch-project/ml-commons-dashboards.git
+    ref: '2.19'
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: '2.19'
+  - name: notificationsDashboards
+    repository: https://github.com/opensearch-project/dashboards-notifications.git
+    ref: '2.19'
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
+    ref: '2.19'
+  - name: securityAnalyticsDashboards
+    repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
+    ref: '2.19'
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: '2.19'
+  - name: searchRelevanceDashboards
+    repository: https://github.com/opensearch-project/dashboards-search-relevance.git
+    ref: '2.19'
+  - name: assistantDashboards
+    repository: https://github.com/opensearch-project/dashboards-assistant.git
+    ref: '2.19'
+  - name: flowFrameworkDashboards
+    repository: https://github.com/opensearch-project/dashboards-flow-framework.git
+    ref: '2.19'
+  - name: queryInsightsDashboards
+    repository: https://github.com/opensearch-project/query-insights-dashboards.git
+    ref: '2.19'
