@@ -109,7 +109,7 @@ jobs:
           DIFF_SIZE=$(cat $DIFF_CONTENT_PATH | wc -c)
           DIFF_TOKEN_EST=$((DIFF_SIZE / 3))
           echo "Check diff size of '$DIFF_SIZE', token number '$DIFF_TOKEN_EST', max token limit '$CLAUDE_CODE_MAX_INPUT_TOKENS'"
-          if [ "$DIFF_TOKEN_EST" -gt "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
+          if [ "$DIFF_TOKEN_EST" -ge "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
             echo "Diff too large, requires skip by maintainers after manual review"
             echo "diff_analyzer=5" >> $GITHUB_ENV
             echo "diff_report='Diff too large, requires skip by maintainers after manual review'" >> $GITHUB_ENV
