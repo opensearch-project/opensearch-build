@@ -49,7 +49,7 @@ jobs:
     env:
       AWS_REGION: 'us-east-1'
       CLAUDE_CODE_USE_BEDROCK: '1'
-      CLAUDE_CODE_MAX_INPUT_TOKENS: '100000'
+      CLAUDE_CODE_MAX_INPUT_TOKENS: '160000'
       CLAUDE_CODE_MAX_OUTPUT_TOKENS: '4096'
       MAX_THINKING_TOKENS: '1024'
       DIFF_CONTENT_PATH: 'git_diff_content.txt'
@@ -107,11 +107,12 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/compare/${BASE_SHA}...${HEAD_SHA}" > $DIFF_CONTENT_PATH
 
           DIFF_SIZE=$(cat $DIFF_CONTENT_PATH | wc -c)
-          echo "Check diff size of '$DIFF_SIZE' max token limit '$CLAUDE_CODE_MAX_INPUT_TOKENS'"
-          if [ "$DIFF_SIZE" -ge "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
-            echo "Diff too large, reduce your PR size or requires skip by maintainers after manual review"
+          DIFF_TOKEN_EST=$((DIFF_SIZE / 3))
+          echo "Check diff size of '$DIFF_SIZE', token number '$DIFF_TOKEN_EST', max token limit '$CLAUDE_CODE_MAX_INPUT_TOKENS'"
+          if [ "$DIFF_TOKEN_EST" -ge "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
+            echo "Diff too large, requires skip by maintainers after manual review"
             echo "diff_analyzer=5" >> $GITHUB_ENV
-            echo "diff_report='Diff too large, reduce your PR size or requires skip by maintainers after manual review'" >> $GITHUB_ENV
+            echo "diff_report='Diff too large, requires skip by maintainers after manual review'" >> $GITHUB_ENV
             exit 1
           fi
           echo "-------------------------------------------------------"
@@ -203,7 +204,7 @@ jobs:
           	$DIFF_CONTENT
           	EOF
           )
-          claude -p "$PROMPT" > $DIFF_REPORT_PATH
+          echo "$PROMPT" | claude -p > $DIFF_REPORT_PATH
           json_repair $DIFF_REPORT_PATH --inline --strict
           echo "Processing AI results"
           diff_report_json=$(cat $DIFF_REPORT_PATH | jq -c '.')
