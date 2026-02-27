@@ -26,7 +26,7 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H */4 * * * %INPUT_MANIFEST=3.4.0/opensearch-3.4.0.yml
+            H */4 * * * %INPUT_MANIFEST=3.6.0/opensearch-3.6.0.yml
         '''
     }
     parameters {

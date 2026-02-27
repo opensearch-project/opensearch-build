@@ -230,6 +230,29 @@ class TestInputManifests(unittest.TestCase):
             "TEST_MANIFEST=0.1.2/test-0.1.2-test.yml;TEST_PLATFORM=linux;TEST_DISTRIBUTION=tar\n"
         )
 
+    def test_os_min_snapshots_jenkinsfile(self) -> None:
+        self.assertEqual(
+            InputManifests.os_min_snapshots_jenkinsfile(),
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "jenkins", "opensearch", "publish-min-snapshots.jenkinsfile"))
+        )
+
+    @patch("manifests_workflow.input_manifests.open", new_callable=mock_open)
+    def test_add_to_cron_os_min_snapshots(self, mock_open: MagicMock) -> None:
+        mock_open().read.return_value = "parameterizedCron '''\n"
+        input_manifests = InputManifests("OpenSearch")
+        input_manifests.add_to_cron_os_min_snapshots('0.1.2')
+        mock_open.assert_has_calls([call(InputManifests.os_min_snapshots_jenkinsfile(), 'r')])
+        mock_open.assert_has_calls([call(InputManifests.os_min_snapshots_jenkinsfile(), 'w')])
+        mock_open().write.assert_called_once_with(
+            "parameterizedCron '''\n            H */4 * * * %INPUT_MANIFEST=0.1.2/opensearch-0.1.2.yml\n"
+        )
+
+    @patch("manifests_workflow.input_manifests.open")
+    def test_add_to_cron_os_min_snapshots_not_opensearch(self, mock_open: MagicMock) -> None:
+        input_manifests = InputManifests("OpenSearch Dashboards")
+        input_manifests.add_to_cron_os_min_snapshots('0.1.2')
+        mock_open.assert_not_called()
+
     def test_os_versionincrement_workflow(self) -> None:
         self.assertEqual(
             InputManifests.os_versionincrement_workflow(),

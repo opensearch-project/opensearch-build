@@ -91,8 +91,12 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
                     return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-linux-x64-build-manifest.yml' as File).text)
             }
         }
-        super.testPipeline('jenkins/opensearch/publish-min-snapshots.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/opensearch/publish-min-snapshots.jenkinsfile')
+        // Use runScript instead of testPipeline to avoid regression file comparison,
+        // as anytime the parameterizedCron changed it would require an update on
+        // tests/jenkins/jenkinsjob-regression-files/opensearch/publish-min-snapshots.jenkinsfile.txt
+        // which is not easy for ./manifests.sh update to process automatically
+        // We can add more assertion to increase test coverage later on
+        runScript('jenkins/opensearch/publish-min-snapshots.jenkinsfile')
         assertThat(getCommands('sh', 'tar'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p linux -a x64 --snapshot'))
         assertThat(getCommands('sh', 'tar'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p linux -a arm64 --snapshot'))
         assertThat(getCommands('sh', 'windows'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d zip --component OpenSearch -p windows -a x64 --snapshot'))
