@@ -52,6 +52,10 @@ class InputManifests(Manifests):
         return os.path.join(self.jenkins_path(), "check-for-build.jenkinsfile")
 
     @classmethod
+    def os_min_snapshots_jenkinsfile(self) -> str:
+        return os.path.join(self.jenkins_path(), "opensearch", "publish-min-snapshots.jenkinsfile")
+
+    @classmethod
     def os_versionincrement_workflow(self) -> str:
         return os.path.join(self.workflows_path(), "os-increment-plugin-versions.yml")
 
@@ -122,6 +126,7 @@ class InputManifests(Manifests):
             for new_version_entry in new_versions:
                 self.write_manifest(new_version_entry, branch_versions[new_version_entry], known_versions)
                 self.add_to_cron(new_version_entry)
+                self.add_to_cron_os_min_snapshots(new_version_entry)
                 self.add_to_versionincrement_workflow(new_version_entry)
                 known_versions.append(new_version_entry)
 
@@ -206,6 +211,26 @@ class InputManifests(Manifests):
 
         if cron_entry in data:
             raise ValueError(f"{jenkinsfile} already contains an entry for {self.prefix} {version}")
+
+        data = data.replace("parameterizedCron '''\n", f"parameterizedCron '''\n{' ' * 12}{cron_entry}")
+
+        with open(jenkinsfile, "w") as f:
+            f.write(data)
+
+        logging.info(f"Wrote {jenkinsfile}")
+
+    def add_to_cron_os_min_snapshots(self, version: str) -> None:
+        if self.prefix != "opensearch":
+            return
+        logging.info(f"Adding new version to os min snapshots cron: {version}")
+        jenkinsfile = self.os_min_snapshots_jenkinsfile()
+        with open(jenkinsfile, "r") as f:
+            data = f.read()
+
+        cron_entry = f"H */4 * * * %INPUT_MANIFEST={version}/opensearch-{version}.yml\n"
+
+        if cron_entry in data:
+            raise ValueError(f"{jenkinsfile} already contains an entry for {version}")
 
         data = data.replace("parameterizedCron '''\n", f"parameterizedCron '''\n{' ' * 12}{cron_entry}")
 
