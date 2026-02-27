@@ -70,7 +70,7 @@ jobs:
           aws-region: us-east-1
       - name: PR Agent Review
         if: ${{ env.skip_diff_reviewer != 'true' }}
-        uses: qodo-ai/pr-agent@main
+        uses: qodo-ai/pr-agent@v0.32
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           github_action_config.auto_review: true
@@ -95,5 +95,5 @@ jobs:
           pr_code_suggestions.wiki_page_accepted_suggestions: false
           pr_code_suggestions.allow_thumbs_up_down: true
           pr_code_suggestions.publish_output_no_suggestions: false  # avoid comment even if there is no suggestions
-          config.model: 'bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0'
+          config.model: 'bedrock/us.anthropic.claude-sonnet-4-6'
           config.fallback_models: '["bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0"]'
