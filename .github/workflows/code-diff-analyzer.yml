@@ -33,9 +33,6 @@ on:
       DIFF_ANALYZER_LEVELS:
         description: Code diff analyzer levels to output (0/1/2/3/4/5/9)
         value: ${{ jobs.Code-Diff-Analyzer.outputs.OUTPUT_DIFF_ANALYZER_LEVELS }}
-      DIFF_ANALYZER_REPORT:
-        description: Code diff analyzer report to output (html report)
-        value: ${{ jobs.Code-Diff-Analyzer.outputs.OUTPUT_DIFF_ANALYZER_REPORT }}
       HEAD_COMMIT_SHA:
         description: HEAD commit sha value to output (commit id)
         value: ${{ jobs.Code-Diff-Analyzer.outputs.OUTPUT_HEAD_COMMIT_SHA }}
@@ -59,7 +56,6 @@ jobs:
     timeout-minutes: 10
     outputs:
       OUTPUT_DIFF_ANALYZER_LEVELS: ${{ steps.step-final-status.outputs.DIFF_ANALYZER_LEVELS }}
-      OUTPUT_DIFF_ANALYZER_REPORT: ${{ steps.step-final-status.outputs.DIFF_ANALYZER_REPORT }}
       OUTPUT_HEAD_COMMIT_SHA: ${{ steps.step-final-status.outputs.HEAD_COMMIT_SHA }}
     steps:
       - name: Retrive ref sha
@@ -267,7 +263,6 @@ jobs:
         id: step-final-status
         run: |
           echo "DIFF_ANALYZER_LEVELS=${{ env.diff_analyzer }}" >> $GITHUB_OUTPUT
-          echo "DIFF_ANALYZER_REPORT=${{ env.diff_report }}" >> $GITHUB_OUTPUT
           echo "HEAD_COMMIT_SHA=${{ env.HEAD_SHA }}"  >> $GITHUB_OUTPUT
 
           if [ -z "${{ env.diff_analyzer }}" ] || [ "${{ env.diff_analyzer }}" = "5" ]; then
