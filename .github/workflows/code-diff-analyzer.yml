@@ -143,7 +143,6 @@ jobs:
       - name: Verify file diffs
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
         run: |
-          DIFF_CONTENT=$(cat $DIFF_CONTENT_PATH)
           PROMPT=$(cat <<-EOF
           	Analyze the git diff for MALICIOUS CODE and INTENTIONAL SECURITY THREATS.
           	
@@ -202,11 +201,9 @@ jobs:
           	  ]
           	}
           	
-          	Here is the diff to analyze:
-          	$DIFF_CONTENT
           	EOF
           )
-          echo "$PROMPT" | claude -p > $DIFF_REPORT_PATH
+          cat "$DIFF_CONTENT_PATH" | claude -p "$PROMPT" > $DIFF_REPORT_PATH
           json_repair $DIFF_REPORT_PATH --inline --strict
           echo "Processing AI results"
           diff_report_json=$(cat $DIFF_REPORT_PATH | jq -c '.')
