@@ -8,6 +8,7 @@
 
 import logging
 import os
+import shutil
 import sys
 import uuid
 
@@ -52,15 +53,24 @@ def main() -> int:
         components = buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)
 
         build_manifest_path = os.path.join(args.distribution, "builds", manifest.build.filename, "manifest.yml")
-        if not os.path.exists(build_manifest_path):
-            logging.error(f"Previous build manifest missing at path: {build_manifest_path}")
-        build_manifest = BuildManifest.from_path(build_manifest_path)
+        is_full_rebuild = not os.path.exists(build_manifest_path) or any(
+            core in list_of_updated_plugins for core in ("OpenSearch", "OpenSearch-Dashboards")
+        )
+
+        if is_full_rebuild:
+            logging.info("Full rebuild triggered. Cleaning output directory and skipping previous build manifest.")
+            if os.path.exists(output_dir):
+                shutil.rmtree(output_dir)
+            os.makedirs(output_dir, exist_ok=True)
+        else:
+            build_manifest = BuildManifest.from_path(build_manifest_path)
 
         if not components:
             logging.info("No commit difference found between any components. Skipping the build.")
-            build_manifest.build.id = os.getenv("BUILD_NUMBER") or uuid.uuid4().hex
-            build_manifest.to_file(build_manifest_path)
-            logging.info(f"Updating the build ID in the build manifest to {build_manifest.build.id}.")
+            if build_manifest:
+                build_manifest.build.id = os.getenv("BUILD_NUMBER") or uuid.uuid4().hex
+                build_manifest.to_file(build_manifest_path)
+                logging.info(f"Updating the build ID in the build manifest to {build_manifest.build.id}.")
             return 0
 
         logging.info(f"Plugins for incremental build: {components}")
@@ -80,7 +90,11 @@ def main() -> int:
             architecture=args.architecture or manifest.build.architecture,
         )
 
-        build_recorder = BuildRecorder(target, build_manifest) if args.incremental else BuildRecorder(target)
+        if args.incremental and build_manifest:
+            valid_names = {c.name for c in manifest.components.select()}
+            build_recorder = BuildRecorder(target, build_manifest, valid_names)
+        else:
+            build_recorder = BuildRecorder(target)
 
         logging.info(f"Building {manifest.build.name} ({target.architecture}) into {target.output_dir}")
 
