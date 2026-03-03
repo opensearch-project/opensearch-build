@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: central-release-promotion
+// @description: Promotes OpenSearch and OpenSearch Dashboards release candidates to final release
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
