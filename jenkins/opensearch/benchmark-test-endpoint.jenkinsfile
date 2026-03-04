@@ -16,7 +16,7 @@ lib = library(identifier: 'jenkins@10.3.0', retriever: modernSCM([
 pipeline {
     agent none
     options {
-        timeout(time: 24, unit: 'HOURS')
+        timeout(time: 10, unit: 'DAYS')
         buildDiscarder(logRotator(daysToKeepStr: '30'))
     }
     environment {
