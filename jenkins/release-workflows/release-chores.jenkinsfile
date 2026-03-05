@@ -8,7 +8,7 @@
  */
 
 // @job-name: distribution-release-chores
-// @description: Does various chores for distribution release
+// @description: Does various chores for distribution releases related to release owners, documentation checks, release notes, release issues, RC generation, codecoverage checks, and integration test results overview.
 
 lib = library(identifier: 'jenkins@11.3.0', retriever: modernSCM([
     $class: 'GitSCMSource',
