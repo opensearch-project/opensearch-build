@@ -35,42 +35,42 @@ pipeline {
     parameters {
         string(
             name: 'INPUT_MANIFEST',
-            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            description: '<Required> Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
             trim: true
         )
         string(
             name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
+            description: '<Optional> Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
             trim: true
         )
         string(
             name: 'TARGET_JOB_NAME',
-            description: 'Job to trigger if build has changed',
+            description: '<Required> Job to trigger if build has changed',
             trim: true
         )
         string(
             name: 'BUILD_PLATFORM',
-            description: 'Platform to build',
+            description: '<Optional> Platform to build',
             trim: true
         )
         string(
             name: 'BUILD_DISTRIBUTION',
-            description: 'Distribution to build',
+            description: '<Optional> Distribution to build',
             trim: true
         )
         string(
             name: 'TEST_PLATFORM',
-            description: 'Platform to test',
+            description: '<Optional> Platform to test',
             trim: true
         )
         string(
             name: 'TEST_DISTRIBUTION',
-            description: 'Distribution to test',
+            description: '<Optional> Distribution to test',
             trim: true
         )
         booleanParam(
             name: 'UPDATE_GITHUB_ISSUE',
-            description: 'To create/close/update a github issue for all component or not.',
+            description: '<Optional> To create/close/update a github issue for all component or not.',
             defaultValue: true
         )
     }

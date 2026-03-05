@@ -33,17 +33,17 @@ pipeline {
     parameters {
         string(
             name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. 2.19.0/opensearch-2.19.0-test.yml.',
+            description: '<Required> Test manifest under the manifests folder, e.g. 2.19.0/opensearch-2.19.0-test.yml.',
             trim: true
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL for OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.0/10545/linux/x64/tar/builds/opensearch/manifest.yml".',
+            description: '<Required> The build manifest URL for OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.19.0/10545/linux/x64/tar/builds/opensearch/manifest.yml".',
             trim: true
         )
         string(
             name: 'RC_NUMBER',
-            description: 'The RC build count. Default is 0 which means its not an RC build.',
+            description: '<Optional> The RC build count. Default is 0 which means its not an RC build.',
             defaultValue: '0'
         )
     }

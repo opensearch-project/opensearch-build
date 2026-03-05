@@ -50,72 +50,72 @@ pipeline {
     parameters {
         string(
             name: 'OPENSEARCH_ARTIFACT_URL',
-            description: 'Enter OpenSearch artifact URL',
+            description: '<Conditionally-Required> Enter OpenSearch artifact URL',
             trim: true
         )
         string(
             name: 'OPENSEARCH_DASHBOARDS_ARTIFACT_URL',
-            description: 'Enter OpenSearch-Dashboards artifact URL',
+            description: '<Conditionally-Required> Enter OpenSearch-Dashboards artifact URL',
             trim: true
         )
         string(
             name: 'VERSION',
-            description: 'Enter the OpenSearch and OpenSearch Dashboards version to validate only when the URLs are not provided',
+            description: '<Conditionally-Required> Enter the OpenSearch and OpenSearch Dashboards version to validate only when the URLs are not provided',
             defaultValue: "",
             trim: true
         )
         string(
             name: 'DISTRIBUTION',
-            description: 'Enter the distribution type among tar, rpm, yum, docker separated by space. Defaults to "tar rpm yum deb zip docker"',
+            description: '<Optional> Enter the distribution type among tar, rpm, yum, docker separated by space. Defaults to "tar rpm yum deb zip docker"',
             trim: true,
             defaultValue: "tar rpm yum deb zip docker"
 
         )
         string(
             name: 'ARCHITECTURE',
-            description: 'Enter the architecture type among x64 and arm64 separated by space. Defaults to "x64 arm64"',
+            description: '<Optional> Enter the architecture type among x64 and arm64 separated by space. Defaults to "x64 arm64"',
             trim: true,
             defaultValue: "x64 arm64"
         )
         string(
             name: 'PLATFORM',
-            description: 'Enter the type type among linux and windows separated by space. Defaults to "linux windows"',
+            description: '<Optional> Enter the type type among linux and windows separated by space. Defaults to "linux windows"',
             trim: true,
             defaultValue: "linux windows"
         )
         string(
             name: 'OS_BUILD_NUMBER',
-            description: 'Enter the build number for OpenSearch - This parameter is applicable only for Docker Validation and staging artifacts referred by build numbers',
+            description: '<Optional> Enter the build number for OpenSearch - This parameter is applicable only for Docker Validation and staging artifacts referred by build numbers',
             trim: true,
         )
         string(
             name: 'OSD_BUILD_NUMBER',
-            description: 'Enter the build number for OpenSearch Dashboards - This parameter is applicable only for Docker Validation and staging artifacts referred by build numbers',
+            description: '<Optional> Enter the build number for OpenSearch Dashboards - This parameter is applicable only for Docker Validation and staging artifacts referred by build numbers',
             trim: true,
         )
         choice(
             name: 'OPTIONAL_ARGS',
-            description: 'Optional args for docker validation. Currently supports validate-digest-only or using-staging-artifact-only. Defaults to using-staging-artifact-only.',
+            description: '<Optional> Optional args for docker validation. Currently supports validate-digest-only or using-staging-artifact-only. Defaults to using-staging-artifact-only.',
             choices: ['using-staging-artifact-only', 'validate-digest-only'],
         )
         choice(
             name: 'DOCKER_SOURCE',
-            description: 'Enter the docker-source to pull the docker image, either DockerHub or ECR or Both.',
+            description: '<Optional> Enter the docker-source to pull the docker image, either DockerHub or ECR or Both. Defaults to dockerhub.',
             choices: ["dockerhub", "ecr", "Both"]
         )
         choice(
             name: 'PROJECTS',
-            description: 'Enter the project to validate. Either OpenSearch or Both (validates both OpenSearch and OpenSearch-Dashboards).',
+            description: '<Optional> Enter the project to validate. Either OpenSearch or Both (validates both OpenSearch and OpenSearch-Dashboards). Defaults to opensearch.',
             choices: ['opensearch', 'Both']
         )
         choice(
             name: 'ARTIFACT_TYPE',
-            description: 'Determine the artifact type among staging or production.',
+            description: '<Optional> Determine the artifact type among staging or production. Defaults to production.',
             choices: ['production', 'staging'],
         )
         booleanParam(
             name: 'ALLOW_HTTP',
-            description: 'Allow validation even when the security plugin is absent.',
+            description: '<Optional> Allow validation even when the security plugin is absent.',
             defaultValue: false
         )
     }

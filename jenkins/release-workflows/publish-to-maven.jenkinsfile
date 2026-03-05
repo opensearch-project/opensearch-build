@@ -32,12 +32,12 @@ pipeline {
     parameters {
         string(
             name: 'BUILD_ID',
-            description: 'Build ID of the OpenSearch distribution artifacts to be staged and released',
+            description: '<Required> Build ID of the OpenSearch distribution artifacts to be staged and released',
             trim: true
         )
         string(
             name: 'VERSION',
-            description: 'Version of the OpenSearch distribution artifacts to be staged and released',
+            description: '<Required> Version of the OpenSearch distribution artifacts to be staged and released',
             trim: true
         )
     }

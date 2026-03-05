@@ -32,27 +32,27 @@ pipeline {
     parameters {
         string(
             name: 'RELEASE_VERSION',
-            description: 'Release version',
+            description: '<Required> Release version',
             trim: true
         )
         string(
             name: 'OPENSEARCH_RC_BUILD_NUMBER',
-            description: 'OpenSearch Release Candidate Build Number',
+            description: '<Required> OpenSearch Release Candidate Build Number',
             trim: true
         )
         string(
             name: 'OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER',
-            description: 'OpenSearch Dashboards Release Candidate Build Number',
+            description: '<Required> OpenSearch Dashboards Release Candidate Build Number',
             trim: true
         )
         booleanParam(
             name: 'TAG_DOCKER_LATEST',
             defaultValue: true,
-            description: 'Tag the images as latest'
+            description: '<Optional> Tag the images as latest'
         )
         choice(
             name: 'PROJECTS',
-            description: 'Enter the project to promote to production buckets',
+            description: '<Optional> Enter the project to promote to production buckets. Defaults to both.',
             choices: ['both', 'opensearch', 'opensearch-dashboards']
         )
     }    

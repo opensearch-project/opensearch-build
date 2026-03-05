@@ -28,7 +28,7 @@ pipeline {
     parameters {
         string(
             name: 'IMAGE_FULL_NAME', 
-            description: "Example : 'opensearchstaging/opensearch:2.0.0', 'public.ecr.aws/opensearchstaging/opensearch:2.0.0', 'alpine:3', 'ubuntu:20.04'",
+            description: "<Required> Example : 'opensearchstaging/opensearch:2.0.0', 'public.ecr.aws/opensearchstaging/opensearch:2.0.0', 'alpine:3', 'ubuntu:20.04'",
             trim: true
         )
     }

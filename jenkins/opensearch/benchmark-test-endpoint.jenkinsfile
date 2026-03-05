@@ -29,83 +29,83 @@ pipeline {
     parameters {
             password(
                 name: 'CLUSTER_ENDPOINT',
-                description: 'Provide an endpoint to a cluster for running benchmark tests against it.',
+                description: '<Required> Provide an endpoint to a cluster for running benchmark tests against it.',
             )
             booleanParam(
                 name: 'SECURITY_ENABLED',
-                description: 'Mention if the cluster is secured or insecured.',
+                description: '<Optional> Mention if the cluster is secured or insecured.',
                 defaultValue: false,
             )
             password(
                 name: 'USERNAME',
-                description: 'Enter username for the cluster endpoint',
+                description: '<Optional> Enter username for the cluster endpoint',
                 defaultValue: ''
             )
             password(
                 name: 'PASSWORD',
-                description: 'Enter password for the cluster endpoint',
+                description: '<Optional> Enter password for the cluster endpoint',
                 defaultValue: ''
             )
             booleanParam(
                 name: 'SIGV4',
-                description: 'Mention if the test will run using AWS Signature Version 4 authentication.',
+                description: '<Optional> Mention if the test will run using AWS Signature Version 4 authentication.',
                 defaultValue: false,
             )
             string(
                 name: 'REGION',
-                description: 'AWS region for signing (e.g. us-east-1).',
+                description: '<Optional> AWS region for signing (e.g. us-east-1).',
                 defaultValue: 'us-east-1',
                 trim: true
             )
             choice(
                 name: 'SERVICE',
                 choices: ['','es', 'aoss'],
-                description: 'AWS service for SigV4'
+                description: '<Optional> AWS service for SigV4. Defaults to empty (no service).'
             )
             string(
                 name: 'TEST_WORKLOAD',
-                description: 'The workload name from OpenSearch Benchmark Workloads.',
+                description: '<Optional> The workload name from OpenSearch Benchmark Workloads.',
                 defaultValue: 'nyc_taxis',
                 trim: true
             )
             string(
                 name: 'USER_TAGS',
-                description: 'Attach arbitrary text to the meta-data of each benchmark metric record, without any spaces. e.g., `run-type:adhoc,segrep:enabled,arch:x64`. ',
+                description: '<Optional> Attach arbitrary text to the meta-data of each benchmark metric record, without any spaces. e.g., `run-type:adhoc,segrep:enabled,arch:x64`. ',
                 trim: true
             )
             string(
                 name: 'WORKLOAD_PARAMS',
-                description: 'With this parameter you can inject variables into workloads. Use json type. e.g., `{"number_of_replicas":"1","number_of_shards":"5"}`',
+                description: '<Optional> With this parameter you can inject variables into workloads. Use json type. e.g., `{"number_of_replicas":"1","number_of_shards":"5"}`',
                 trim: true
             )
             string(
                 name: 'TEST_PROCEDURE',
-                description: 'Defines a test procedure to use. e.g., `append-no-conflicts,significant-text`',
+                description: '<Optional> Defines a test procedure to use. e.g., `append-no-conflicts,significant-text`',
                 trim: true
             )
             string(
                 name: 'EXCLUDE_TASKS',
-                description: 'Defines a comma-separated list of test procedure tasks not to run. Default runs all. e.g., `type:search,delete-index`',
+                description: '<Optional> Defines a comma-separated list of test procedure tasks not to run. Default runs all. e.g., `type:search,delete-index`',
                 trim: true
             )
             string(
                 name: 'INCLUDE_TASKS',
-                description: 'Defines a comma-separated list of test procedure tasks to run. Default runs all. e.g., `type:search,delete-index`',
+                description: '<Optional> Defines a comma-separated list of test procedure tasks to run. Default runs all. e.g., `type:search,delete-index`',
                 trim: true
             )
             booleanParam(
                 name: 'CAPTURE_NODE_STAT',
-                description: 'Enable opensearch-benchmark node-stats telemetry to capture system level metrics.',
+                description: '<Optional> Enable opensearch-benchmark node-stats telemetry to capture system level metrics.',
                 defaultValue: false
             )
             booleanParam(
                 name: 'CAPTURE_SEGMENT_REPLICATION_STAT',
-                description: 'Enable opensearch-benchmark segment-replication-stats telemetry to capture metrics such as replication lag.',
+                description: '<Optional> Enable opensearch-benchmark segment-replication-stats telemetry to capture metrics such as replication lag.',
                 defaultValue: false
             )
             string(
                 name: 'TELEMETRY_PARAMS',
-                description: 'Allows to set parameters for telemetry devices. Use json type. e.g.,{"node-stats-include-indices":"true","node-stats-include-indices-metrics":"segments"}',
+                description: '<Optional> Allows to set parameters for telemetry devices. Use json type. e.g.,{"node-stats-include-indices":"true","node-stats-include-indices-metrics":"segments"}',
                 trim: true
             )
     }

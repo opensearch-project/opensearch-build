@@ -31,7 +31,7 @@ parameters {
     activeChoice(
         name: 'RELEASE_CHORE',
         choiceType: 'PT_SINGLE_SELECT',
-        description: 'Release chore to carry out',
+        description: '<Required> Release chore to carry out',
         filterLength: 1,
         filterable: false,
         randomName: 'choice-parameter-338807851658059',
@@ -42,7 +42,7 @@ parameters {
         reactiveChoice(
             name: 'ACTION',
             choiceType: 'PT_SINGLE_SELECT',
-            description: 'Release chore action',
+            description: '<Optional> Release chore action. Defaults to first choice',
             filterLength: 1,
             filterable: false,
             randomName: 'choice-parameter-338807853238106',
@@ -74,12 +74,12 @@ parameters {
         )
         string(
             name: 'RELEASE_VERSION',
-            description: 'Release version to be used for the release chore',
+            description: '<Required> Release version to be used for the release chore',
             trim: true
         )
         string(
             name: 'GIT_LOG_DATE',
-            description: 'Enter data to check commits for release notes in format yyyy-mm-dd, example 2022-07-26.',
+            description: '<Conditionally-Required> Enter data to check commits for release notes in format yyyy-mm-dd, example 2022-07-26.',
             trim: true
         )
 

@@ -35,27 +35,27 @@ pipeline {
     parameters {
         string(
             name: 'RELEASE_VERSION',
-            description: 'The Release Version.',
+            description: '<Required> The Release Version.',
             trim: true
         )
         string(
             name: 'OPENSEARCH_RELEASE_CANDIDATE',
-            description: 'The OpenSearch Release Candidate build number.',
+            description: '<Conditionally-Required> The OpenSearch Release Candidate build number.',
             trim: true
         )
         string(
             name: 'OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE',
-            description: 'The OpenSearch Dashboards Release Candidate build number.',
+            description: '<Conditionally-Required> The OpenSearch Dashboards Release Candidate build number.',
             trim: true
         )
         choice(
                 choices: ['MATCH_BUILD_MANIFEST', 'UPDATE_TO_RECENT_COMMITS', 'UPDATE_TO_TAGS', 'UPDATE_TO_RELEASE_BRANCH'],
                 name: 'MANIFEST_LOCK_ACTION',
-                description: 'The manifest lock action to choose.<br>MATCH_BUILD_MANIFEST: Will update the manifest with commit ID from release candidate build manifest.<br>UPDATE_TO_RECENT_COMMITS: Will update the manifest with component repo release branch head commit.<br>UPDATE_TO_TAGS: Will update the manifest with ref tags.<br>UPDATE_TO_RELEASE_BRANCH: Will update the manifest ref with release branch',
+                description: '<Required> The manifest lock action to choose. Defaults to MATCH_BUILD_MANIFEST.<br>MATCH_BUILD_MANIFEST: Will update the manifest with commit ID from release candidate build manifest.<br>UPDATE_TO_RECENT_COMMITS: Will update the manifest with component repo release branch head commit.<br>UPDATE_TO_TAGS: Will update the manifest with ref tags.<br>UPDATE_TO_RELEASE_BRANCH: Will update the manifest ref with release branch',
         )
         string(
             name: 'COMPONENTS',
-            description: 'Commit ID update for the selected components from the manifest. Use comma-separated values, for example: OpenSearch,ml-commons,cross-cluster-replication.',
+            description: '<Optional> Commit ID update for the selected components from the manifest. Use comma-separated values, for example: OpenSearch,ml-commons,cross-cluster-replication.',
             trim: true
         )
     }

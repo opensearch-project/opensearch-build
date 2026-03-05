@@ -32,12 +32,12 @@ pipeline {
         choice(
             name: 'PRODUCT',
             choices: ['opensearch', 'opensearch-dashboards'],
-            description: "Choose the product type among OpenSearch / OpenSearch-Dashboards."
+            description: "<Required> Choose the product type among OpenSearch / OpenSearch-Dashboards. Defaults to opensearch."
         )
         choice(
             name: 'TAG',
             choices: ['2', '3'],
-            description: "Choose the tag of the Product.",
+            description: "<Required> Choose the tag of the Product. Defaults to 2.",
         )
     }
     stages {

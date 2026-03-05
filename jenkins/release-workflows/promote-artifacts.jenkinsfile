@@ -24,34 +24,34 @@ pipeline {
         choice(
             choices: ['distribution-build-opensearch', 'distribution-build-opensearch-dashboards'],
             name: 'DISTRIBUTION_JOB_NAME',
-            description: 'The jenkins job name that is used for building the artifact'
+            description: '<Optional> The jenkins job name that is used for building the artifact. Defaults to distribution-build-opensearch.'
         )
         string(
             defaultValue: '',
             name: 'DISTRIBUTION_BUILD_NUMBER',
-            description: 'What is the build id of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 123, 136)',
+            description: '<Required> What is the build id of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 123, 136)',
             trim: true
         )
         string(
             defaultValue: '',
             name: 'INPUT_MANIFEST',
-            description: 'What is the input manifest of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 1.2.2/opensearch-1.2.2.yml)',
+            description: '<Required> What is the input manifest of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 1.2.2/opensearch-1.2.2.yml)',
             trim: true
         )
         choice(
             choices: ['linux', 'windows', 'darwin'],
             name: 'DISTRIBUTION_PLATFORM',
-            description: 'What is the platform of the distribution?'
+            description: '<Optional> What is the platform of the distribution? Defaults to linux.'
         )
         choice(
             choices: ['tar', 'rpm', 'deb', 'zip'],
             name: 'DISTRIBUTION_NAME',
-            description: 'What is the name of the distribution??'
+            description: '<Optional> What is the name of the distribution?? Defaults to tar.'
         )
         choice(
             choices: ['arm64', 'x64'],
             name: 'DISTRIBUTION_ARCHITECTURE',
-            description: 'What is the architecture of the distribution?'
+            description: '<Optional> What is the architecture of the distribution? Defaults to arm64.'
         )
     }
     stages {

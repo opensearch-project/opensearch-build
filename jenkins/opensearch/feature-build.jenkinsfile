@@ -32,44 +32,44 @@ pipeline {
     parameters {
         string(
             name: 'INPUT_MANIFEST',
-            description: 'Required: Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            description: '<Required> Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
             trim: true
         )
         string(
             name: 'COMPONENT_NAME',
-            description: 'Optional: If this field contains one or more component names (e.g. OpenSearch common-utils ...), will build with "--component COMPONENT_NAME_HERE ...", else build everything in the INPUT_MANIFEST.',
+            description: '<Optional> If this field contains one or more component names (e.g. OpenSearch common-utils ...), will build with "--component COMPONENT_NAME_HERE ...", else build everything in the INPUT_MANIFEST.',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Required: Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms separated by space (docker is only available on linux)",
+            description: "<Optional> Build selected platform, choices include 'linux', 'windows'. Can combine multiple platforms separated by space (docker is only available on linux)",
             defaultValue: 'linux',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
             name: 'BUILD_DISTRIBUTION',
-            description: "Required: Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions separated by space (docker is only available on tar)",
+            description: "<Optional> Build selected distribution, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions separated by space (docker is only available on tar)",
             defaultValue: 'tar',
             trim: true
         )
         booleanParam(
             name: 'UPDATE_LATEST_URL',
-            description: 'Update latest url so /latest/ is pointed to this build',
+            description: '<Optional> Update latest url so /latest/ is pointed to this build',
             defaultValue: true
         )
         booleanParam(
             name: 'CONTINUE_ON_ERROR',
-            description: 'Continue building the distribution even if a one or more component fails',
+            description: '<Optional> Continue building the distribution even if a one or more component fails',
             defaultValue: true
         )
         booleanParam(
             name: 'INCREMENTAL',
-            description: 'Whether to trigger incremental build. Defaults to false.',
+            description: '<Optional> Whether to trigger incremental build. Defaults to false.',
             defaultValue: false
         )
         string(
             name: 'PREVIOUS_BUILD_ID',
-            description: 'The build ID used to download previous build artifacts. Defaults to latest.',
+            description: '<Optional> The build ID used to download previous build artifacts. Defaults to latest.',
             defaultValue: 'latest',
             trim: true
         )

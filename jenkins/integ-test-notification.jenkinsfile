@@ -32,12 +32,12 @@ pipeline {
     parameters {
         string(
             name: 'INPUT_MANIFEST',
-            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            description: '<Required> Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
             trim: true
         )
         string(
             name: 'DISTRIBUTION_NUMBER',
-            description: 'Ditribution number of OpenSearch/OpenSearch-Dashboards builds that was used to run the integration test. eg:10345',
+            description: '<Required> Ditribution number of OpenSearch/OpenSearch-Dashboards builds that was used to run the integration test. eg:10345',
             trim: true
         )
     }
