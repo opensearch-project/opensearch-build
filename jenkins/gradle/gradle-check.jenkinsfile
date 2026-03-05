@@ -130,7 +130,8 @@ pipeline {
                             runGradleCheck(
                                 gitRepoUrl: "${pr_from_clone_url}",
                                 gitReference: "${pr_from_sha}",
-                                bwcCheckoutAlign: "${bwc_checkout_align}"
+                                bwcCheckoutAlign: "${bwc_checkout_align}",
+                                scope: "all"
                             )
                         }
                         else {
@@ -141,7 +142,8 @@ pipeline {
                             runGradleCheck(
                                 gitRepoUrl: "${GIT_REPO_URL}",
                                 gitReference: "${GIT_REFERENCE}",
-                                bwcCheckoutAlign: "${bwc_checkout_align}"
+                                bwcCheckoutAlign: "${bwc_checkout_align}",
+                                scope: "all"
                             )
                         }
 
