@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: release-notes-generate
+// @description: Generates release notes for Core OpenSearch as well as OpenSearch and OpenSearch Dashboards plugins.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: docker-promotion
+// @description: Promotes OpenSearch Docker images from staging to production Docker and ECR repositories.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

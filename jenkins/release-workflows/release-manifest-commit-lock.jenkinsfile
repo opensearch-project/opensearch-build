@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: release-manifest-commit-lock
+// @description: Locks the release manifest with specific commit IDs for a release candidate.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

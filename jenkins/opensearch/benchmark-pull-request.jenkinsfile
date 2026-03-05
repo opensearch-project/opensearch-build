@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: benchmark-pull-request
+// @description: Runs benchmark tests on a pull request artifact to measure performance impact.
+
 lib = library(identifier: 'jenkins@11.5.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

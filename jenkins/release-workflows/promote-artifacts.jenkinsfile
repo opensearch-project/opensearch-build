@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: distribution-promote-artifacts
+// @description: Promotes OpenSearch and OpenSearch Dashboards distribution artifacts from staging to production repositories.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

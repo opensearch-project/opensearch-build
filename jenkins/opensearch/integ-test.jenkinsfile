@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: integ-test
+// @description: Workflow to run integration tests at distribution level for all OpenSearch plugins.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

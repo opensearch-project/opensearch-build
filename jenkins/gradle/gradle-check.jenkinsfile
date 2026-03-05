@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: gradle-check
+// @description: Runs Gradle check on OpenSearch core repository for a given branch or commit.
+
 def secret_dockerhub_readonly = [
     [envVar: 'DOCKER_USERNAME', secretRef: 'op://opensearch-infra-secrets/dockerhub-production-readonly-credentials/username'],
     [envVar: 'DOCKER_PASSWORD', secretRef: 'op://opensearch-infra-secrets/dockerhub-production-readonly-credentials/password']

@@ -7,6 +7,9 @@
  * compatible open source license.
  */
  
+// @job-name: docker-copy
+// @description: Copies Docker images from one registry to another.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

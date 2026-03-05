@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: feature-build-opensearch
+// @description: Builds OpenSearch distribution for feature branches based on the input manifest.
+
 lib = library(identifier: 'jenkins@11.2.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

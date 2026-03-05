@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: benchmark-compare
+// @description: Compares two OpenSearch benchmark test runs and generates a comparison report.
+
 lib = library(identifier: 'jenkins@6.8.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

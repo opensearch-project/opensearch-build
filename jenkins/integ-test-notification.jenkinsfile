@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: integ-test-notification
+// @description: Creates GitHub issues for failed integration test results for OpenSearch and OpenSearch Dashboards distribution components.
+
 lib = library(identifier: 'jenkins@11.3.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

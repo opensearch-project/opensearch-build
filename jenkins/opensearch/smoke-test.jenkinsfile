@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: smoke-test
+// @description: Runs smoke tests on OpenSearch distribution to verify basic functionality.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

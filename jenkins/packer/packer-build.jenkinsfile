@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: packer-build
+// @description: Builds Jenkins agent AMIs using Packer for OpenSearch CI infrastructure.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

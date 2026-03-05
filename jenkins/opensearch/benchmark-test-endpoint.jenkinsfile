@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: benchmark-test-endpoint
+// @description: Runs benchmark tests against an existing OpenSearch cluster endpoint.
+
 lib = library(identifier: 'jenkins@10.3.0', retriever: modernSCM([
 
     $class: 'GitSCMSource',

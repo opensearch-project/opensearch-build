@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: benchmark-test-ai-ml
+// @description: Runs vector search benchmark tests for OpenSearch using neural search workloads.
+
 lib = library(identifier: 'jenkins@9.1.2', retriever: modernSCM([
 
     $class: 'GitSCMSource',

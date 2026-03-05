@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: benchmark-test
+// @description: Runs benchmark tests for OpenSearch distribution using OpenSearch Benchmark.
+
 lib = library(identifier: 'jenkins@11.5.0', retriever: modernSCM([
 
     $class: 'GitSCMSource',
