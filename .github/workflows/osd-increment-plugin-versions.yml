@@ -83,6 +83,8 @@ jobs:
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         run: |
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
+          CURRENT_PLUGIN_VERSION=$(node -p "require('./package.json').version")
+          echo "CURRENT_PLUGIN_VERSION=$CURRENT_PLUGIN_VERSION" >> $GITHUB_ENV
           if [ ${{ matrix.entry.path }} ]; then
               yarn osd bootstrap --single-version=loose
               cp -R ${{ matrix.entry.path }} ../
@@ -109,9 +111,8 @@ jobs:
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         id: version_check
         run: |
-          CURRENT_VERSION=$(node -p "require('./OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}/package.json').version" 2>/dev/null || echo "")
-          if [ "$CURRENT_VERSION" = "${{ env.OSD_PLUGIN_VERSION }}" ]; then
-            echo "Version is already at $CURRENT_VERSION, skipping PR creation."
+          if [ "${{ env.CURRENT_PLUGIN_VERSION }}" = "${{ env.OSD_PLUGIN_VERSION }}" ]; then
+            echo "Version is already at ${{ env.OSD_PLUGIN_VERSION }}, skipping PR creation."
             echo "already_incremented=true" >> $GITHUB_OUTPUT
           else
             echo "already_incremented=false" >> $GITHUB_OUTPUT
