@@ -78,7 +78,7 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
         binding.setVariable('BUILD_NUMBER', '20')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'dummy_bucket_name')
 
-        super.testPipeline("jenkins/sign-artifacts/sign-standalone-artifacts.jenkinsfile",
+        super.testPipeline("jenkins/legacy/sign-artifacts/sign-standalone-artifacts.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/sign-standalone-artifacts/sign-standalone-artifacts.jenkinsfile")
 
     }

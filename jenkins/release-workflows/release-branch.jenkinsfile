@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: release-branch-creation
+// @description: Creates release branches for OpenSearch and OpenSearch Dashboards components.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -32,17 +35,17 @@ pipeline {
     parameters {
         string(
             name: 'MANIFEST_FILE',
-            description: "Provide either Build Manifest url's or path to Input Manifest files separated by space, Build Manifest will use commitID to create new branch",
+            description: "<Required> Provide either Build Manifest url's or path to Input Manifest files separated by space, Build Manifest will use commitID to create new branch",
             trim: true
         )
         string(
             name: 'SOURCE_BRANCH',
-            description: 'Target branch is created from this source branch.',
+            description: '<Required> Target branch is created from this source branch.',
             trim: true
         )
         string(
             name: 'TARGET_BRANCH',
-            description: 'Provide name of the target branch that needs to be created.',
+            description: '<Required> Provide name of the target branch that needs to be created.',
             trim: true
         )
     }

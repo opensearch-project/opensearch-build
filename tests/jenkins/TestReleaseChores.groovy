@@ -63,7 +63,7 @@ class TestReleaseChores extends BuildPipelineTest {
         runScript('jenkins/release-workflows/release-chores.jenkinsfile')
         def callStack = helper.getCallStack()
         assertCallStack().contains('release-chores.groovyScript({fallbackScript={classpath=[], oldScript=, sandbox=true, script=return ["Unknown chore"]}, script={classpath=[], oldScript=, sandbox=true, script=return [ "checkReleaseOwners", "checkDocumentation", "checkCodeCoverage", "checkReleaseNotes", "checkReleaseIssues", "buildRC", "addRcDetailsComment", "checkDocumentationPullRequests", "checkIntegTestResultsOverview" ]}})',
-        'release-chores.activeChoice({name=RELEASE_CHORE, choiceType=PT_SINGLE_SELECT, description=Release chore to carry out, filterLength=1, filterable=false, randomName=choice-parameter-338807851658059, script=null})',
+        'release-chores.activeChoice({name=RELEASE_CHORE, choiceType=PT_SINGLE_SELECT, description=<Required> Release chore to carry out, filterLength=1, filterable=false, randomName=choice-parameter-338807851658059, script=null})',
         'release-chores.groovyScript({fallbackScript={classpath=[], oldScript=, sandbox=true, script= return ["Unknown action"]}, script={classpath=[], oldScript=, sandbox=true, script=if (RELEASE_CHORE == "checkReleaseOwners") {\n' +
                 '                    return ["check", "request", "assign" ]\n' +
                 '                    } else if (RELEASE_CHORE == "checkDocumentation") {\n' +
@@ -85,7 +85,7 @@ class TestReleaseChores extends BuildPipelineTest {
                 '                    } else {\n' +
                 '                    return ["Unknown chore"]\n' +
                 '                    }}})',
-        'release-chores.reactiveChoice({name=ACTION, choiceType=PT_SINGLE_SELECT, description=Release chore action, filterLength=1, filterable=false, randomName=choice-parameter-338807853238106, referencedParameters=RELEASE_CHORE, script=null})')
+        'release-chores.reactiveChoice({name=ACTION, choiceType=PT_SINGLE_SELECT, description=<Optional> Release chore action. Defaults to first choice, filterLength=1, filterable=false, randomName=choice-parameter-338807853238106, referencedParameters=RELEASE_CHORE, script=null})')
     }
 
     @Test

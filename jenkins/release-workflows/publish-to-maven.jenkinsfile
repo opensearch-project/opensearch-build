@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: publish-to-maven
+// @description: Publishes OpenSearch artifacts to Maven Central repository.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -29,12 +32,12 @@ pipeline {
     parameters {
         string(
             name: 'BUILD_ID',
-            description: 'Build ID of the OpenSearch distribution artifacts to be staged and released',
+            description: '<Required> Build ID of the OpenSearch distribution artifacts to be staged and released',
             trim: true
         )
         string(
             name: 'VERSION',
-            description: 'Version of the OpenSearch distribution artifacts to be staged and released',
+            description: '<Required> Version of the OpenSearch distribution artifacts to be staged and released',
             trim: true
         )
     }
