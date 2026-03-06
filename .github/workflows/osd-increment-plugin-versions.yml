@@ -183,7 +183,7 @@ jobs:
             opensearch_dashboards.json
             package.json
       - name: Create Pull Request for opensearch-dashboards-functional-test
-        if: ${{ matrix.entry.repo == 'opensearch-dashboards-functional-test' && steps.version_check.outputs.already_incremented == 'false' }}
+        if: ${{ matrix.entry.repo == 'opensearch-dashboards-functional-test' }}
         id: cprft
         uses: peter-evans/create-pull-request@v6
         with:
