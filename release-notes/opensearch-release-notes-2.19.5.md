@@ -9,15 +9,6 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.19/release-notes/opensearch-dashboards.release-notes-2.19.5.md).
 
 
-## FEATURES
-
-
-### OpenSearch Alerting Dashboards Plugin
-
-
-* Onboarded opensearch apis to use MDS client when MDS is enabled ([#1313](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1313))
-
-
 ## BUG FIXES
 
 
@@ -25,6 +16,12 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * Preserve user when stashing thread context when sending alert notification messages. ([#2027](https://github.com/opensearch-project/alerting/pull/2027))
+
+
+### OpenSearch Alerting Dashboards Plugin
+
+
+* Onboarded opensearch apis to use MDS client when MDS is enabled ([#1313](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1313))
 
 
 ### OpenSearch Cross Cluster Replication
@@ -119,7 +116,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * [Backport 2.19] Fix indexing for 16x and 8x compression ([#3123](https://github.com/opensearch-project/k-NN/pull/3123))
 
 
-### SQL
+### OpenSearch SQL
 
 
 * Fix 2.19.5 Build Failures ([#5195](https://github.com/opensearch-project/sql/pull/5195))
@@ -184,7 +181,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Updated package structure and configs for cypress 12.17.4 version bump. ([#1386](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/1386))
 
 
-### SQL
+### OpenSearch SQL
 
 
 * Adjust shadowJar name ([#5203](https://github.com/opensearch-project/sql/pull/5203))
