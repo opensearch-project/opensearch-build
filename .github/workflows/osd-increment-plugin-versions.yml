@@ -83,6 +83,8 @@ jobs:
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         run: |
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
+          CURRENT_PLUGIN_VERSION=$(node -p "require('./package.json').version")
+          echo "CURRENT_PLUGIN_VERSION=$CURRENT_PLUGIN_VERSION" >> $GITHUB_ENV
           if [ ${{ matrix.entry.path }} ]; then
               yarn osd bootstrap --single-version=loose
               cp -R ${{ matrix.entry.path }} ../
@@ -104,6 +106,16 @@ jobs:
               node ../../scripts/plugin_helpers version --sync legacy
               OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
               echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
+          fi
+      - name: Check if version is already up to date
+        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
+        id: version_check
+        run: |
+          if [ "${{ env.CURRENT_PLUGIN_VERSION }}" = "${{ env.OSD_PLUGIN_VERSION }}" ]; then
+            echo "Version is already at ${{ env.OSD_PLUGIN_VERSION }}, skipping PR creation."
+            echo "already_incremented=true" >> $GITHUB_OUTPUT
+          else
+            echo "already_incremented=false" >> $GITHUB_OUTPUT
           fi
       - name: GitHub App token
         id: github_app_token
@@ -148,7 +160,7 @@ jobs:
             return labelFound
       - name: Create Pull Request for plugins
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' && matrix.entry.repo
-          != 'opensearch-dashboards-functional-test' }}
+          != 'opensearch-dashboards-functional-test' && steps.version_check.outputs.already_incremented == 'false' }}
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
