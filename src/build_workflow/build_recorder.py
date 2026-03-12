@@ -8,7 +8,7 @@
 import logging
 import os
 import shutil
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Set
 
 from build_workflow.build_artifact_checks import BuildArtifactChecks
 from build_workflow.build_target import BuildTarget
@@ -17,8 +17,9 @@ from manifests.build_manifest import BuildManifest
 
 
 class BuildRecorder:
-    def __init__(self, target: BuildTarget, build_manifest: BuildManifest = None) -> None:
-        self.build_manifest = self.BuildManifestBuilder(target, build_manifest)
+    def __init__(self, target: BuildTarget, build_manifest: BuildManifest = None,
+                 valid_component_names: Optional[Set[str]] = None) -> None:
+        self.build_manifest = self.BuildManifestBuilder(target, build_manifest, valid_component_names)
         self.target = target
         self.name = target.name
 
@@ -53,7 +54,8 @@ class BuildRecorder:
         logging.info(f"Created build manifest {manifest_path}")
 
     class BuildManifestBuilder:
-        def __init__(self, target: BuildTarget, build_manifest: BuildManifest = None) -> None:
+        def __init__(self, target: BuildTarget, build_manifest: BuildManifest = None,
+                     valid_component_names: Optional[Set[str]] = None) -> None:
             self.data: Dict[str, Any] = {}
             self.components_hash: Dict[str, Dict[str, Any]] = {}
 
@@ -61,7 +63,8 @@ class BuildRecorder:
                 self.data = build_manifest.__to_dict__()
                 self.data["build"]["id"] = target.build_id
                 for component in build_manifest.components.select():
-                    self.components_hash[component.name] = component.__to_dict__()
+                    if valid_component_names is None or component.name in valid_component_names:
+                        self.components_hash[component.name] = component.__to_dict__()
             else:
                 self.data["build"] = {}
                 self.data["build"]["id"] = target.build_id
