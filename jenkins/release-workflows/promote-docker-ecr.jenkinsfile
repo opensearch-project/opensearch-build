@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: docker-promotion
+// @description: Promotes OpenSearch Docker images from staging to production Docker and ECR repositories.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -27,33 +30,33 @@ pipeline {
     parameters {
         string(
             name: 'SOURCE_IMAGES',
-            description: 'Comma separated list of product with its image tag that we want to promote from staging to production. E.g.: opensearch:2.0.1.3910, opensearch-dashboards:2.0.1, data-prepper:1.5.0-19.',
+            description: '<Required> Comma separated list of product with its image tag that we want to promote from staging to production. E.g.: opensearch:2.0.1.3910, opensearch-dashboards:2.0.1, data-prepper:1.5.0-19.',
             trim: true
         )
         string(
             name: 'RELEASE_VERSION',
-            description: 'Official release version on production repository. This is uniform for all source images. E.g.: 2.0.1, 1.5.0.',
+            description: '<Required> Official release version on production repository. This is uniform for all source images. E.g.: 2.0.1, 1.5.0.',
             trim: true
         )
         booleanParam(
             name: 'DOCKER_HUB_PROMOTE',
             defaultValue: true,
-            description: 'Promote SOURCE_IMAGES to `opensearchproject` production Docker Hub.'
+            description: '<Optional> Promote SOURCE_IMAGES to `opensearchproject` production Docker Hub.'
         )
         booleanParam(
             name: 'ECR_PROMOTE',
             defaultValue: true,
-            description: 'Promote SOURCE_IMAGES to `gallery.ecr.aws/opensearchproject` production ECR repository.'
+            description: '<Optional> Promote SOURCE_IMAGES to `gallery.ecr.aws/opensearchproject` production ECR repository.'
         )
         booleanParam(
             name: 'TAG_LATEST',
             defaultValue: true,
-            description: 'Tag the copied image as latest'
+            description: '<Optional> Tag the copied image as latest'
         )
         booleanParam(
             name: 'TAG_MAJOR_VERSION',
             defaultValue: true,
-            description: 'Tag the copied image with its major version. E.g.: 1.3.2 image will be tagged with 1 in the hub.'
+            description: '<Optional> Tag the copied image with its major version. E.g.: 1.3.2 image will be tagged with 1 in the hub.'
         )
     }
 

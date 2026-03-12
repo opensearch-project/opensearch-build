@@ -7,6 +7,9 @@
  * compatible open source license.
  */
  
+// @job-name: docker-copy
+// @description: Copies Docker images from one registry to another.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -20,27 +23,27 @@ pipeline {
     parameters {
         booleanParam(
             name: 'ALL_TAGS', 
-            description: 'If true, will copy all the tags of SOURCE_IMAGE_REGISTRY/SOURCE_IMAGE to DESTINATION_IMAGE_REGISTRY/DESTINATION_IMAGE, while ignoring IMAGE_TAG even if specified, default to false',
+            description: '<Optional> If true, will copy all the tags of SOURCE_IMAGE_REGISTRY/SOURCE_IMAGE to DESTINATION_IMAGE_REGISTRY/DESTINATION_IMAGE, while ignoring IMAGE_TAG even if specified, default to false',
             defaultValue: false
         )
         choice(
             name: 'SOURCE_IMAGE_REGISTRY', 
             choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject', 'public.ecr.aws/t2m2d0w1'],
-            description: 'Choose the source image registry'
+            description: '<Optional> Choose the source image registry. Defaults to opensearchstaging.'
         )
         string(
             name: 'SOURCE_IMAGE',
-            description: 'Image name and tag <IMAGE_NAME>:<IMAGE_TAG>, Eg: opensearch:1.3.2, tag is ignored when ALL_TAGS=true, since all tags will be copied over',
+            description: '<Required> Image name and tag <IMAGE_NAME>:<IMAGE_TAG>, Eg: opensearch:1.3.2, tag is ignored when ALL_TAGS=true, since all tags will be copied over',
             trim: true
         )
         choice(
             name: 'DESTINATION_IMAGE_REGISTRY', 
             choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject'],
-            description: 'Choose the destination image registry'
+            description: '<Optional> Choose the destination image registry. Defaults to opensearchstaging.'
         )
         string(
             name: 'DESTINATION_IMAGE',
-            description: 'Image name and tag <IMAGE_NAME>:<IMAGE_TAG>, Eg: opensearch:1.3.2, tag is ignored when ALL_TAGS=true, since all tags will be copied over',
+            description: '<Required> Image name and tag <IMAGE_NAME>:<IMAGE_TAG>, Eg: opensearch:1.3.2, tag is ignored when ALL_TAGS=true, since all tags will be copied over',
             trim: true
         )
     }

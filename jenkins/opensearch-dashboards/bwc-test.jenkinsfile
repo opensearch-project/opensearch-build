@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: bwc-test-opensearch-dashboards
+// @description: Runs backward compatibility tests for OpenSearch Dashboards distribution.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -25,17 +28,17 @@ pipeline {
     parameters {
         string(
             name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
+            description: '<Required> Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
             trim: true
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0/98/linux/x64/builds/opensearch-dashboards/manifest.yml.',
+            description: '<Optional> The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0/98/linux/x64/builds/opensearch-dashboards/manifest.yml.',
             trim: true
         )
         string(
             name: 'AGENT_LABEL',
-            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host.',
+            description: '<Required> The agent label where the tests should be executed, e.g. Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host.',
             trim: true
         )
     }
