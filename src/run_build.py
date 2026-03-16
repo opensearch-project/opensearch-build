@@ -57,6 +57,7 @@ def main() -> int:
             core in list_of_updated_plugins for core in ("OpenSearch", "OpenSearch-Dashboards")
         )
 
+        build_manifest = None
         if is_full_rebuild:
             logging.info("Full rebuild triggered. Cleaning output directory and skipping previous build manifest.")
             if os.path.exists(output_dir):
