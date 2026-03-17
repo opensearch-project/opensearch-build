@@ -9,7 +9,7 @@ import os
 import shutil
 import subprocess
 import unittest
-import urllib.request
+from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, Mock, call, patch
 
@@ -237,12 +237,19 @@ class TestValidateDocker(unittest.TestCase):
         mock_pull_image.assert_called_once_with('opensearch/opensearch', '1.0.0')
 
     def test_docker_compose_files_exist(self) -> None:
-        # set up docker-compose files
-        docker_compose_file_v1_url = 'https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockercomposefiles/docker-compose-1.x.yml'
-        docker_compose_file_v2_url = 'https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockercomposefiles/docker-compose-2.x.yml'
+        docker_compose_file_v1_path = str(
+            Path(__file__).parent / '../../docker/release/dockercomposefiles/docker-compose-1.x.yml'
+        )
+        docker_compose_file_v2_path = str(
+            Path(__file__).parent / '../../docker/release/dockercomposefiles/docker-compose-2.x.yml'
+        )
+        docker_compose_file_v3_path = str(
+            Path(__file__).parent / '../../docker/release/dockercomposefiles/docker-compose-3.x.yml'
+        )
 
-        self.assertTrue(urllib.request.urlopen(docker_compose_file_v1_url).getcode() == 200)
-        self.assertTrue(urllib.request.urlopen(docker_compose_file_v2_url).getcode() == 200)
+        self.assertTrue(os.path.exists(docker_compose_file_v1_path))
+        self.assertTrue(os.path.exists(docker_compose_file_v2_path))
+        self.assertTrue(os.path.exists(docker_compose_file_v3_path))
 
     @patch.dict('os.environ', {'OPENSEARCH_INITIAL_ADMIN_PASSWORD': 'admin'})
     @patch.object(shutil, "copy2")
