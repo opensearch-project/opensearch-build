@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: packer-build
+// @description: Builds Jenkins agent AMIs using Packer for OpenSearch CI infrastructure.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -37,7 +40,7 @@ pipeline {
     parameters {
         string(
             name: 'PACKER_TEMPLATE_NAME',
-            description: 'The packer template file name of Jenkins agent. e.g. jenkins-agent-al2-arm64.json. Files exist in https://github.com/opensearch-project/opensearch-ci/tree/main/packer',
+            description: '<Required> The packer template file name of Jenkins agent. e.g. jenkins-agent-al2-arm64.json. Files exist in https://github.com/opensearch-project/opensearch-ci/tree/main/packer',
             trim: true
         )
     }

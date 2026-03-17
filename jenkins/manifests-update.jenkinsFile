@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: manifest-update
+// @description: Checks for new OpenSearch and OpenSearch-Dashboards versions and auto-generates updated input manifests.
+
 def secret_github_bot = [
     [envVar: 'GITHUB_USER', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-username'],
     [envVar: 'GITHUB_TOKEN', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-token']

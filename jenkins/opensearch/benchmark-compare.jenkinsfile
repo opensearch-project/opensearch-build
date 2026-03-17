@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: benchmark-compare
+// @description: Compares two OpenSearch benchmark test runs and generates a comparison report.
+
 lib = library(identifier: 'jenkins@6.8.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -38,20 +41,22 @@ pipeline {
     parameters {
         string(
             name: 'BASELINE_TEST_EXECUTION_ID',
-            description: 'opensearch-benchmark test-execution-id for baseline run, sample format: `61a34b4e-4ae4-40b7-9d58-6570b9166f6a`',
+            description: '<Required> opensearch-benchmark test-execution-id for baseline run, sample format: `61a34b4e-4ae4-40b7-9d58-6570b9166f6a`',
             trim: true
         )
         string(
             name: 'CONTENDER_TEST_EXECUTION_ID',
-            description: 'opensearch-benchmark test-execution-id of candidate for comparison, mainly from pull requests.',
+            description: '<Required> opensearch-benchmark test-execution-id of candidate for comparison, mainly from pull requests.',
             trim: true
         )
         string(
             name: 'PULL_REQUEST_NUMBER',
+            description: '<Optional> Pull Request Number to post the benchmark comparison result as comment, if left empty, the result will not be posted to GitHub.',
             trim: true
         )
         string(
             name: 'REPOSITORY',
+            description: '<Optional> GitHub repository in format `owner/repo` to post the benchmark comparison result as comment, e.g. `opensearch-project/OpenSearch`',
             defaultValue: 'opensearch-project/OpenSearch'
         )
     }

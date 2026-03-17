@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: gradle-check-flaky-test-detector
+// @description: Detects flaky tests from Gradle check runs and creates GitHub issues for them.
+
 lib = library(identifier: 'jenkins@11.1.3', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',

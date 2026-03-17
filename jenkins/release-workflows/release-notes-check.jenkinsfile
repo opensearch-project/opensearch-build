@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: release-notes-tracker
+// @description: Checks and compiles release notes for all OpenSearch components.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -32,32 +35,32 @@ pipeline {
     parameters {
         string(
             name: 'RELEASE_VERSION',
-            description: 'Release version number to fetch input manifest path',
+            description: '<Required> Release version number to fetch input manifest path',
             trim: true
         )
         choice(
-                choices: ['check', 'compile'],
-                name: 'ACTION',
-                description: 'check - Checks the release notes for all components. compile - Consolidates all release notes', 
+            choices: ['check', 'compile'],
+            name: 'ACTION',
+            description: '<Optional> check - Checks the release notes for all components. compile - Consolidates all release notes. Defaults to check.', 
         )
         string(
             name: 'GIT_LOG_DATE',
-            description: 'in format yyyy-mm-dd, example 2022-07-26.',
+            description: '<Conditionally-Required> in format yyyy-mm-dd, example 2022-07-26.',
             trim: true
         )
         choice(
-                choices: ['ADD', 'UPDATE', 'NO_COMMENT'],
-                name: 'COMMENT',
-                description: 'Adds MardownTable output as comment on GIT_ISSUE_NUMBER.', 
+            choices: ['ADD', 'UPDATE', 'NO_COMMENT'],
+            name: 'COMMENT',
+            description: '<Optional> Adds MardownTable output as comment on GIT_ISSUE_NUMBER. Defaults to ADD.', 
         )
         string(
             name: 'GIT_ISSUE_NUMBER',
-            description: 'The release issue number from opensearch-build repo.',
+            description: '<Conditionally-Required> The release issue number from opensearch-build repo.',
             trim: true
         )
         string(
             name: 'COMMENT_UNIQUE_ID',
-            description: 'Use only with COMMENT: UPDATE',
+            description: '<Conditionally-Required> Use only with COMMENT: UPDATE',
             trim: true
         )
     }

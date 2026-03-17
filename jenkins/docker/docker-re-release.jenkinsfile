@@ -7,6 +7,9 @@
  * compatible open source license.
  */
 
+// @job-name: docker-re-release
+// @description: Re-releases Docker images for OpenSearch and OpenSearch Dashboards with updated base images.
+
 lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -29,12 +32,12 @@ pipeline {
         choice(
             name: 'PRODUCT',
             choices: ['opensearch', 'opensearch-dashboards'],
-            description: "Choose the product type among OpenSearch / OpenSearch-Dashboards."
+            description: "<Required> Choose the product type among OpenSearch / OpenSearch-Dashboards. Defaults to opensearch."
         )
         choice(
             name: 'TAG',
             choices: ['2', '3'],
-            description: "Choose the tag of the Product.",
+            description: "<Required> Choose the tag of the Product. Defaults to 2.",
         )
     }
     stages {
