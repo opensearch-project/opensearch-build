@@ -13,6 +13,9 @@ set -e
 
 # Import libs
 . ../../lib/shell/file_management.sh
+. ../../lib/shell/version_management.sh
+
+TAG_LATEST=false
 
 function usage() {
     echo ""
@@ -25,15 +28,17 @@ function usage() {
     echo -e "-f DOCKERFILE\tSpecify the dockerfile full path, e.g. dockerfile/opensearch.al2.dockerfile."
     echo -e "-p PRODUCT\tSpecify the product, e.g. opensearch or opensearch-dashboards, make sure this is the name of your config folder and the name of your .tgz defined in dockerfile."
     echo -e "-a ARCHITECTURE\tSpecify one and only one architecture, e.g. x64 or arm64."
+    echo -e "-r REPOSITORY\tSpecify the docker repository name in the format of '<Docker Hub RepoName>/<Docker Image Name>', e.g. 'opensearchstaging/opensearch'."
     echo ""
     echo "Optional arguments:"
     echo -e "-t TARBALL\tSpecify a local opensearch or opensearch-dashboards tarball. You still need to specify the version - this tool does not attempt to parse the filename."
+    echo -e "-l\t\tTag the built image as :latest if this version is the highest semver tag in the repository. Uses the Docker Hub API to compare existing tags. Only applies to GA releases; skip for snapshots or patch backports where a newer minor already exists."
     echo -e "-n NOTES\tSpecify Pipeline Notes of the run, defaults to None."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
 
-while getopts ":ht:n:v:f:p:a:" arg; do
+while getopts ":ht:n:v:f:p:a:r:l" arg; do
     case $arg in
         h)
             usage
@@ -57,6 +62,12 @@ while getopts ":ht:n:v:f:p:a:" arg; do
         a)
             ARCHITECTURE=$OPTARG
             ;;
+        r)
+            REPOSITORY=$OPTARG
+            ;;
+        l)
+            TAG_LATEST=true
+            ;;
         :)
             echo "-${OPTARG} requires an argument"
             usage
@@ -70,8 +81,8 @@ while getopts ":ht:n:v:f:p:a:" arg; do
 done
 
 # Validate the required parameters to present
-if [ -z "$VERSION" ] || [ -z "$DOCKERFILE" ] || [ -z "$PRODUCT" ] || [ -z "$ARCHITECTURE" ]; then
-  echo "You must specify '-v VERSION', '-f DOCKERFILE', '-p PRODUCT', '-a ARCHITECTURE'"
+if [ -z "$VERSION" ] || [ -z "$DOCKERFILE" ] || [ -z "$PRODUCT" ] || [ -z "$ARCHITECTURE" ] || [ -z "$REPOSITORY" ]; then
+  echo "You must specify '-v VERSION', '-f DOCKERFILE', '-p PRODUCT', '-a ARCHITECTURE', '-r REPOSITORY'"
   usage
   exit 1
 else
@@ -123,6 +134,14 @@ else
 fi
 
 # Docker build
-docker build --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=$NOTES -f $DOCKERFILE $DIR -t opensearchproject/$PRODUCT:$VERSION
-docker tag opensearchproject/$PRODUCT:$VERSION opensearchproject/$PRODUCT:latest
+docker build --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=$NOTES -f $DOCKERFILE $DIR -t ${REPOSITORY}:${VERSION}
 
+# Conditionally tag and push :latest based on version comparison
+if [ "$TAG_LATEST" = true ]; then
+    REGISTRY_NAME="${REPOSITORY%%/*}"
+    IMAGE_NAME="${REPOSITORY##*/}"
+    if is_latest_version "$REGISTRY_NAME" "$IMAGE_NAME" "$VERSION"; then
+        docker tag ${REPOSITORY}:${VERSION} ${REPOSITORY}:latest
+        docker push ${REPOSITORY}:latest
+    fi
+fi
