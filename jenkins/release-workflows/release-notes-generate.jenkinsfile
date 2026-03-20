@@ -93,7 +93,7 @@ pipeline {
                         def currentIndex = component_index
                         def currentWaitSeconds = wait_seconds
 
-                        if (!(currentComponent in ['notifications-core', 'functionalTestDashboards', 'OpenSearch-Dashboards'])) {
+                        if (!(currentComponent in ['notifications-core', 'functionalTestDashboards'])) {
                             componentNotes["Release notes for ${currentComponent}"] = {
                                 timeout(time: 1, unit: 'HOURS') {
                                     node('Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host') {
