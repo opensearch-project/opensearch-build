@@ -70,7 +70,8 @@ pipeline {
                 [key: 'pr_title', value: '$.pr_title'],
                 [key: 'pr_number', value: '$.pr_number'],
                 [key: 'post_merge_action', value: '$.post_merge_action'],
-                [key: 'pr_owner', value: '$.pr_owner']
+                [key: 'pr_owner', value: '$.pr_owner'],
+                [key: 'exclude_tasks', value: '$.exclude_tasks', defaultValue: '']
             ],
             tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
             causeString: 'Triggered by PR on OpenSearch core repository',
@@ -134,7 +135,8 @@ pipeline {
                                 gitRepoUrl: "${pr_from_clone_url}",
                                 gitReference: "${pr_from_sha}",
                                 bwcCheckoutAlign: "${bwc_checkout_align}",
-                                scope: "all"
+                                scope: "all",
+                                excludeTasks: "${exclude_tasks}"
                             )
                         }
                         else {
@@ -146,7 +148,8 @@ pipeline {
                                 gitRepoUrl: "${GIT_REPO_URL}",
                                 gitReference: "${GIT_REFERENCE}",
                                 bwcCheckoutAlign: "${bwc_checkout_align}",
-                                scope: "all"
+                                scope: "all",
+                                excludeTasks: "${exclude_tasks}"
                             )
                         }
 
