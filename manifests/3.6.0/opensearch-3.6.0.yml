@@ -53,6 +53,12 @@ components:
     platforms:
       - linux
       - windows
+  - name: custom-codecs
+    repository: https://github.com/opensearch-project/custom-codecs.git
+    ref: main
+    platforms:
+      - linux
+      - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: main
@@ -61,6 +67,8 @@ components:
       - windows
     depends_on:
       - common-utils
+      - security
+      - custom-codecs
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
     ref: main
@@ -189,12 +197,6 @@ components:
     ref: main
     platforms:
       - linux
-  - name: custom-codecs
-    repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: main
-    platforms:
-      - linux
-      - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
     ref: main
