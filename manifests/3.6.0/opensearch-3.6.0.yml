@@ -49,7 +49,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: eb7dff1406b34ff55ff84abcd824465cc0c64b38
+    ref: 7ef2aa7c25154e095ee16609efdf333a71763d89
     platforms:
       - linux
       - windows
