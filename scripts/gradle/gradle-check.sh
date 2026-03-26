@@ -16,8 +16,9 @@ JENKINS_URL="https://build.ci.opensearch.org"
 TRIGGER_TOKEN=""
 GITHUB_USER=""
 GITHUB_TOKEN=""
+EXCLUDE_TASKS=""
 
-while getopts "u:t:p:" opt; do
+while getopts "u:t:p:e:" opt; do
   case $opt in
     t)
       TRIGGER_TOKEN="$OPTARG"
@@ -27,6 +28,9 @@ while getopts "u:t:p:" opt; do
       ;;
     p)
       GITHUB_TOKEN="$OPTARG"
+      ;;
+    e)
+      EXCLUDE_TASKS="$OPTARG"
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -59,7 +63,7 @@ TIMEPASS=0
 TIMEOUT=7200
 RESULT="null"
 PR_TITLE_NEW=`echo $pr_title | tr -dc '[:alnum:] ' | tr '[:upper:]' '[:lower:]'`
-PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$PR_TITLE_NEW\", \"pr_number\": \"$pr_number\", \"post_merge_action\": \"$post_merge_action\", \"pr_owner\": \"$pr_owner\"}"
+PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$PR_TITLE_NEW\", \"pr_number\": \"$pr_number\", \"post_merge_action\": \"$post_merge_action\", \"pr_owner\": \"$pr_owner\", \"exclude_tasks\": \"$EXCLUDE_TASKS\"}"
 
 perform_curl_and_process_with_jq() {
     local url=$1
