@@ -55,7 +55,7 @@ components:
       - windows
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: ca00ce6b81484fab3dfed21e9abda75179425a0e
+    ref: f7f43f50d2c52685a2e0f5354a8edd5f6a9ee734
     platforms:
       - linux
       - windows
