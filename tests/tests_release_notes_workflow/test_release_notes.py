@@ -89,6 +89,7 @@ class TestReleaseNotes(unittest.TestCase):
         mock_ai_generator = MagicMock()
         mock_ai_generator_class.return_value = mock_ai_generator
         mock_ai_generator.process.return_value = {"success": True}
+        mock_ai_generator.generate_release_notes.return_value = "## Release Notes\nTest content"
 
         # Create ReleaseNotes instance
         release_notes = ReleaseNotes([self.manifest_file], "2025-06-24", "generate")
@@ -151,17 +152,20 @@ class TestReleaseNotes(unittest.TestCase):
             {
                 "Message": "Fix critical bug in search",
                 "Labels": ["bug", "critical"],
-                "PullRequestSubject": "Fix search functionality"
+                "PullRequestSubject": "Fix search functionality",
+                "PullRequestBody": "Fixes a critical search bug"
             },
             {
                 "Message": "Add new feature X",
                 "Labels": ["enhancement"],
-                "PullRequestSubject": "Implement feature X"
+                "PullRequestSubject": "Implement feature X",
+                "PullRequestBody": "Adds feature X"
             },
             {
                 "Message": "Flaky test fix",
                 "Labels": ["flaky-test"],  # This should be filtered out
-                "PullRequestSubject": "Fix flaky test"
+                "PullRequestSubject": "Fix flaky test",
+                "PullRequestBody": ""
             }
         ]
         mock_commits_processor.get_commit_details.return_value = mock_commits
@@ -283,7 +287,7 @@ class TestReleaseNotes(unittest.TestCase):
 
         # Mock commits
         mock_commits_processor = Mock()
-        mock_commits = [{"Message": "Test commit", "Labels": ["enhancement"], "PullRequestSubject": "Test PR"}]
+        mock_commits = [{"Message": "Test commit", "Labels": ["enhancement"], "PullRequestSubject": "Test PR", "PullRequestBody": "Test description"}]
         mock_commits_processor.get_commit_details.return_value = mock_commits
         mock_github_commits_class.return_value = mock_commits_processor
 
