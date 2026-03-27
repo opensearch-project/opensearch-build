@@ -89,6 +89,7 @@ class TestReleaseNotes(unittest.TestCase):
         mock_ai_generator = MagicMock()
         mock_ai_generator_class.return_value = mock_ai_generator
         mock_ai_generator.process.return_value = {"success": True}
+        mock_ai_generator.generate_release_notes.return_value = "## Release Notes\nTest content"
 
         # Create ReleaseNotes instance
         release_notes = ReleaseNotes([self.manifest_file], "2025-06-24", "generate")
@@ -151,17 +152,20 @@ class TestReleaseNotes(unittest.TestCase):
             {
                 "Message": "Fix critical bug in search",
                 "Labels": ["bug", "critical"],
-                "PullRequestSubject": "Fix search functionality"
+                "PullRequestSubject": "Fix search functionality",
+                "PullRequestBody": "Fixes a critical search bug"
             },
             {
                 "Message": "Add new feature X",
                 "Labels": ["enhancement"],
-                "PullRequestSubject": "Implement feature X"
+                "PullRequestSubject": "Implement feature X",
+                "PullRequestBody": "Adds feature X"
             },
             {
                 "Message": "Flaky test fix",
                 "Labels": ["flaky-test"],  # This should be filtered out
-                "PullRequestSubject": "Fix flaky test"
+                "PullRequestSubject": "Fix flaky test",
+                "PullRequestBody": ""
             }
         ]
         mock_commits_processor.get_commit_details.return_value = mock_commits
@@ -283,7 +287,7 @@ class TestReleaseNotes(unittest.TestCase):
 
         # Mock commits
         mock_commits_processor = Mock()
-        mock_commits = [{"Message": "Test commit", "Labels": ["enhancement"], "PullRequestSubject": "Test PR"}]
+        mock_commits = [{"Message": "Test commit", "Labels": ["enhancement"], "PullRequestSubject": "Test PR", "PullRequestBody": "Test description"}]
         mock_commits_processor.get_commit_details.return_value = mock_commits
         mock_github_commits_class.return_value = mock_commits_processor
 
@@ -299,3 +303,108 @@ class TestReleaseNotes(unittest.TestCase):
         call_args = mock_ai_generator.generate_release_notes.call_args[0][0]
         self.assertIn("Test PR", call_args)
         self.assertIn("Test commit", call_args)
+
+    def test_extract_borderline_calls_with_comment(self) -> None:
+        raw = "## Release Notes\nSome content\n<!-- BORDERLINE_CALLS\nCall 1\nCall 2\n-->"
+        notes, borderline = ReleaseNotes._extract_borderline_calls(raw)
+        self.assertEqual(notes, "## Release Notes\nSome content\n")
+        self.assertEqual(borderline, "Call 1\nCall 2")
+
+    def test_extract_borderline_calls_without_comment(self) -> None:
+        raw = "## Release Notes\nJust normal content"
+        notes, borderline = ReleaseNotes._extract_borderline_calls(raw)
+        self.assertEqual(notes, raw)
+        self.assertEqual(borderline, "")
+
+    def test_extract_borderline_calls_empty_comment(self) -> None:
+        raw = "## Release Notes\n<!-- BORDERLINE_CALLS\n-->"
+        notes, borderline = ReleaseNotes._extract_borderline_calls(raw)
+        self.assertEqual(notes, "## Release Notes\n")
+        self.assertEqual(borderline, "")
+
+    @patch('release_notes_workflow.release_notes.TemporaryDirectory')
+    @patch('release_notes_workflow.release_notes.GitRepository')
+    @patch('release_notes_workflow.release_notes.ReleaseNotesComponents')
+    @patch('release_notes_workflow.release_notes.AIReleaseNotesGenerator')
+    @patch('os.path.isfile')
+    @patch('builtins.open', new_callable=mock_open)
+    @patch('os.getcwd')
+    def test_generate_writes_borderline_file(self, mock_getcwd: MagicMock, mock_file_open: MagicMock, mock_isfile: MagicMock,
+                                             mock_ai_generator_class: MagicMock, mock_release_notes_components: MagicMock,
+                                             mock_git_repo: MagicMock, mock_temp_dir: MagicMock) -> None:
+        """Test that borderline calls are extracted and written to a separate file."""
+        mock_getcwd.return_value = os.path.join("test", "dir")
+        mock_temp_dir_instance = Mock()
+        mock_temp_dir_instance.name = os.path.join("tmp", "test")
+        mock_temp_dir.return_value.__enter__.return_value = mock_temp_dir_instance
+
+        mock_repo = Mock()
+        mock_repo.dir = os.path.join("tmp", "test", "test-component")
+        mock_git_repo.return_value.__enter__.return_value = mock_repo
+
+        mock_release_notes = Mock()
+        mock_release_notes.filename = ".release-notes-1.0.md"
+        mock_release_notes_components.from_component.return_value = mock_release_notes
+
+        mock_ai_generator = Mock()
+        mock_ai_generator.generate_release_notes.return_value = (
+            "## Release Notes\nReal content\n"
+            "<!-- BORDERLINE_CALLS\nBorderline item 1\nBorderline item 2\n-->"
+        )
+        mock_ai_generator_class.return_value = mock_ai_generator
+
+        mock_isfile.return_value = True
+
+        self.release_notes.generate(self.mock_args, self.component, self.build_version, self.build_qualifier, 'opensearch')
+
+        # Verify two files were written
+        write_calls = [c for c in mock_file_open.call_args_list if len(c[0]) > 1 and c[0][1] == 'w']
+        self.assertEqual(len(write_calls), 2)
+
+        # Main release notes file
+        self.assertIn("opensearch-url.release-notes-1.0.md", write_calls[0][0][0])
+        # Borderline file
+        self.assertIn("opensearch-url.release-notes-1.0-borderline.md", write_calls[1][0][0])
+
+        # Verify content written to each file
+        handle = mock_file_open()
+        write_args = [c[0][0] for c in handle.write.call_args_list]
+        self.assertIn("## Release Notes\nReal content\n", write_args)
+        self.assertIn("Borderline item 1\nBorderline item 2", write_args)
+
+    @patch('release_notes_workflow.release_notes.TemporaryDirectory')
+    @patch('release_notes_workflow.release_notes.GitRepository')
+    @patch('release_notes_workflow.release_notes.ReleaseNotesComponents')
+    @patch('release_notes_workflow.release_notes.AIReleaseNotesGenerator')
+    @patch('os.path.isfile')
+    @patch('builtins.open', new_callable=mock_open)
+    @patch('os.getcwd')
+    def test_generate_no_borderline_file_when_absent(self, mock_getcwd: MagicMock, mock_file_open: MagicMock, mock_isfile: MagicMock,
+                                                     mock_ai_generator_class: MagicMock, mock_release_notes_components: MagicMock,
+                                                     mock_git_repo: MagicMock, mock_temp_dir: MagicMock) -> None:
+        """Test that no borderline file is created when LLM output has no borderline comment."""
+        mock_getcwd.return_value = os.path.join("test", "dir")
+        mock_temp_dir_instance = Mock()
+        mock_temp_dir_instance.name = os.path.join("tmp", "test")
+        mock_temp_dir.return_value.__enter__.return_value = mock_temp_dir_instance
+
+        mock_repo = Mock()
+        mock_repo.dir = os.path.join("tmp", "test", "test-component")
+        mock_git_repo.return_value.__enter__.return_value = mock_repo
+
+        mock_release_notes = Mock()
+        mock_release_notes.filename = ".release-notes-1.0.md"
+        mock_release_notes_components.from_component.return_value = mock_release_notes
+
+        mock_ai_generator = Mock()
+        mock_ai_generator.generate_release_notes.return_value = "## Release Notes\nClean output"
+        mock_ai_generator_class.return_value = mock_ai_generator
+
+        mock_isfile.return_value = True
+
+        self.release_notes.generate(self.mock_args, self.component, self.build_version, self.build_qualifier, 'opensearch')
+
+        # Only one file should be written (no borderline file)
+        write_calls = [c for c in mock_file_open.call_args_list if len(c[0]) > 1 and c[0][1] == 'w']
+        self.assertEqual(len(write_calls), 1)
+        self.assertNotIn("borderline", write_calls[0][0][0])
