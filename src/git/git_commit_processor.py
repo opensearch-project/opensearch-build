@@ -146,12 +146,12 @@ class GitHubCommitsProcessor:
 
         return pr_data
 
-    def get_commit_pr_info(self, owner: str, repo: str, commit: Dict) -> tuple[List[str], str]:
+    def get_commit_pr_info(self, owner: str, repo: str, commit: Dict) -> tuple[List[str], str, str]:
         """
-        Get labels and PR subject for a commit from its associated PR
+        Get labels, PR subject, and PR body for a commit from its associated PR
 
         Returns:
-            Tuple of (labels, pr_subject) where pr_subject is formatted as "Title (#PR_NUMBER)" or empty string
+            Tuple of (labels, pr_subject, pr_body) where pr_subject is formatted as "Title (#PR_NUMBER)" or empty string
         """
         # Try to get PR number from commit message
         pr_number = self._extract_pr_number_from_commit(commit)
@@ -169,9 +169,10 @@ class GitHubCommitsProcessor:
                 labels = [label["name"] for label in pr_details.get("labels", [])]
                 pr_title = pr_details.get("title", "").strip()
                 pr_subject = f"{pr_title} (#{pr_number})" if pr_title else f"(#{pr_number})"
-                return labels, pr_subject
+                pr_body = pr_details.get("body", "") or ""
+                return labels, pr_subject, pr_body
 
-        return [], ""
+        return [], "", ""
 
     def get_commits_with_labels(self, owner: str, repo: str, since_date: str,
                                 until_date: str = None, branch: str = None) -> List[Dict]:
@@ -216,11 +217,12 @@ class GitHubCommitsProcessor:
 
         def process_commit(commit: Dict) -> Dict:
             message = commit["commit"]["message"].replace('\n', ' ').replace('\r', ' ').strip()
-            labels, pr_subject = self.get_commit_pr_info(owner, repo, commit)
+            labels, pr_subject, pr_body = self.get_commit_pr_info(owner, repo, commit)
             return {
                 "Message": message,
                 "Labels": labels,
-                "PullRequestSubject": pr_subject
+                "PullRequestSubject": pr_subject,
+                "PullRequestBody": pr_body
             }
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
