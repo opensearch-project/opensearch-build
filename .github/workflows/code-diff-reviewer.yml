@@ -70,7 +70,10 @@ jobs:
           aws-region: us-east-1
       - name: PR Agent Review
         if: ${{ env.skip_diff_reviewer != 'true' }}
-        uses: qodo-ai/pr-agent@v0.32
+        # Temporary fix due to pr-agent not lock to the specific docker image in github tag
+        # Causing PRs like this to break bedrock integration:
+        # https://github.com/qodo-ai/pr-agent/pull/2278
+        uses: peterzhuamazon/pr-agent@v0.32-fix-docker
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           github_action_config.auto_review: true
