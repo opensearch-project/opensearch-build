@@ -73,7 +73,7 @@ jobs:
         # Temporary fix due to pr-agent not lock to the specific docker image in github tag
         # Causing PRs like this to break bedrock integration:
         # https://github.com/qodo-ai/pr-agent/pull/2278
-        uses: peterzhuamazon/pr-agent@v0.32-fix-docker
+        uses: peterzhuamazon/pr-agent@4708eba6e61e9bcff9e90162e91b758076c62d1b
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           github_action_config.auto_review: true
