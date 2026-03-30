@@ -130,11 +130,12 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         mock_extract_pr.return_value = 123
         mock_get_pr_details.return_value = {
             "title": "Fix bug",
-            "labels": [{"name": "bug"}, {"name": "critical"}]
+            "labels": [{"name": "bug"}, {"name": "critical"}],
+            "body": "This fixes a critical bug"
         }
 
         commit = {"sha": "abc123", "commit": {"message": "Fix bug (#123)"}}
-        labels, pr_subject = self.processor.get_commit_pr_info("owner", "repo", commit)
+        labels, pr_subject, pr_body = self.processor.get_commit_pr_info("owner", "repo", commit)
 
         self.assertEqual(labels, ["bug", "critical"])
         self.assertEqual(pr_subject, "Fix bug (#123)")
@@ -152,7 +153,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         }
 
         commit = {"sha": "def456", "commit": {"message": "Add new feature"}}
-        labels, pr_subject = self.processor.get_commit_pr_info("owner", "repo", commit)
+        labels, pr_subject, pr_body = self.processor.get_commit_pr_info("owner", "repo", commit)
 
         self.assertEqual(labels, ["enhancement"])
         self.assertEqual(pr_subject, "Add feature (#456)")
@@ -165,7 +166,7 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
 
         with patch.object(self.processor, '_get_pr_from_commit_api', return_value=None):
             commit = {"sha": "xyz789", "commit": {"message": "Direct commit"}}
-            labels, pr_subject = self.processor.get_commit_pr_info("owner", "repo", commit)
+            labels, pr_subject, pr_body = self.processor.get_commit_pr_info("owner", "repo", commit)
 
             self.assertEqual(labels, [])
             self.assertEqual(pr_subject, "")
@@ -256,10 +257,10 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         ]
 # Mock the PR info retrieval
         mock_get_pr_info.side_effect = [
-            (["bug"], "Fix bug (#123)"),
-            (["enhancement"], "Add feature (#456)"),
-            (["documentation"], "123 Numeric prefix (#789)"),
-            ([], "Empty message (#012)")
+            (["bug"], "Fix bug (#123)", "Bug fix description"),
+            (["enhancement"], "Add feature (#456)", "Feature description"),
+            (["documentation"], "123 Numeric prefix (#789)", "Doc description"),
+            ([], "Empty message (#012)", "")
         ]
         test_data = [
             {"Message": "Fix bug", "Labels": ["bug"]},

@@ -7,14 +7,15 @@
 
 import logging
 import os
-from typing import List
+import re
+from typing import List, Tuple
 
 from pytablewriter import MarkdownTableWriter
 
 from git.git_commit_processor import GitHubCommitsProcessor
 from git.git_repository import GitRepository
 from llms.ai_release_notes_generator import AIReleaseNotesGenerator
-from llms.prompts import AI_RELEASE_NOTES_PROMPT_CHANGELOG, AI_RELEASE_NOTES_PROMPT_COMMIT
+from llms.prompts import AI_RELEASE_NOTES_PROMPT_CHANGELOG, AI_RELEASE_NOTES_PROMPT_COMMIT, AI_RELEASE_NOTES_PROMPT_COMMIT_OPENSEARCH
 from manifests.input_manifest import InputComponentFromSource, InputManifest
 from release_notes_workflow.release_notes_check_args import ReleaseNotesCheckArgs
 from release_notes_workflow.release_notes_component import ReleaseNotesComponents
@@ -29,6 +30,16 @@ class ReleaseNotes:
         self.action_type = action_type
         self.token = os.getenv('GITHUB_TOKEN')
         self.filter_commits = ['flaky-test', 'testing', 'skip-changelog']
+
+    @staticmethod
+    def _extract_borderline_calls(raw: str) -> Tuple[str, str]:
+        """Extract borderline calls HTML comment from LLM output, returning (release_notes, borderline_calls)."""
+        match = re.search(r'<!-- BORDERLINE_CALLS\s*\n(.*?)-->', raw, re.DOTALL)
+        if match:
+            borderline = match.group(1).strip()
+            release_notes = raw[:match.start()].rstrip() + "\n"
+            return release_notes, borderline
+        return raw, ""
 
     def table(self) -> MarkdownTableWriter:
         table_result = []
@@ -135,11 +146,18 @@ class ReleaseNotes:
                             message = commit.get("Message", "")
                             labels = commit.get("Labels", [])
                             pr_subject = commit.get("PullRequestSubject", "")
+                            pr_body = commit.get("PullRequestBody", "")
 
                             commits_text += f"{i}. PR Subject: {pr_subject}\n"
                             commits_text += f"   Message: {message}\n"
-                            commits_text += f"   Labels: {', '.join(labels) if labels else 'None'}\n\n"
-                        prompt = AI_RELEASE_NOTES_PROMPT_COMMIT.format(
+                            commits_text += f"   Labels: {', '.join(labels) if labels else 'None'}\n"
+                            if pr_body:
+                                # Truncate very long PR bodies to avoid exceeding token limits
+                                truncated_body = pr_body[:2000] + "..." if len(pr_body) > 2000 else pr_body
+                                commits_text += f"   PR Description: {truncated_body}\n"
+                            commits_text += "\n"
+                        commit_prompt = AI_RELEASE_NOTES_PROMPT_COMMIT_OPENSEARCH if component.name == 'OpenSearch' else AI_RELEASE_NOTES_PROMPT_COMMIT
+                        prompt = commit_prompt.format(
                             component_name=component.name,
                             version=build_version,
                             repository_url=component.repository.removesuffix('.git'),
@@ -150,5 +168,10 @@ class ReleaseNotes:
                         logging.warning(f"No commits found for {component.name} since {baseline_date}")
 
         if release_notes_raw:
+            release_notes_content, borderline_calls = self._extract_borderline_calls(release_notes_raw)
             with open(os.path.join(os.getcwd(), 'release-notes', filename), 'w') as f:
-                f.write(release_notes_raw)
+                f.write(release_notes_content)
+            if borderline_calls:
+                borderline_filename = filename.replace('.md', '-borderline.md')
+                with open(os.path.join(os.getcwd(), 'release-notes', borderline_filename), 'w') as f:
+                    f.write(borderline_calls)
