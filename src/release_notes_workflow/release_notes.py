@@ -32,6 +32,25 @@ class ReleaseNotes:
         self.filter_commits = ['flaky-test', 'testing', 'skip-changelog']
 
     @staticmethod
+    def _clean_message(text: str) -> str:
+        """Strip Signed-off-by / Co-authored-by tags from flattened commit messages."""
+        text = re.sub(r'\s*(Signed-off-by|Co-authored-by):\s*\S+.*?(?=\s*(?:Signed-off-by|Co-authored-by):|\s*$)', '', text)
+        return re.sub(r'\s{2,}', ' ', text).strip()
+
+    @staticmethod
+    def _clean_pr_body(text: str) -> str:
+        """Strip HTML comments, Check List sections, and DCO boilerplate from PR body."""
+        # Remove HTML/markdown comments <!-- ... -->
+        text = re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)
+        # Remove Check List section (### Check List ... until next ### or end)
+        text = re.sub(r'###?\s*Check\s*List.*?(?=###|\Z)', '', text, flags=re.DOTALL | re.IGNORECASE)
+        # Remove Related Issues section (### Related Issues ... until next ### or end)
+        text = re.sub(r'###?\s*Related\s*Issues.*?(?=###|\Z)', '', text, flags=re.DOTALL | re.IGNORECASE)
+        # Remove DCO boilerplate paragraph
+        text = re.sub(r'By submitting this pull request.*?Apache 2\.0 license\.?.*?(?=\n\n|\n#|\Z)', '', text, flags=re.DOTALL)
+        return text.strip()
+
+    @staticmethod
     def _extract_borderline_calls(raw: str) -> Tuple[str, str]:
         """Extract borderline calls HTML comment from LLM output, returning (release_notes, borderline_calls)."""
         match = re.search(r'<!-- BORDERLINE_CALLS\s*\n(.*?)-->', raw, re.DOTALL)
@@ -143,15 +162,16 @@ class ReleaseNotes:
                         final_commits = [doc for doc in commits if not set(doc['Labels']) & set(self.filter_commits)]
                         commits_text = ""
                         for i, commit in enumerate(final_commits, 1):
-                            message = commit.get("Message", "")
+                            message = self._clean_message(commit.get("Message", ""))
                             labels = commit.get("Labels", [])
                             pr_subject = commit.get("PullRequestSubject", "")
-                            pr_body = commit.get("PullRequestBody", "")
+                            pr_body = self._clean_pr_body(commit.get("PullRequestBody", ""))
 
                             commits_text += f"{i}. PR Subject: {pr_subject}\n"
                             commits_text += f"   Message: {message}\n"
                             commits_text += f"   Labels: {', '.join(labels) if labels else 'None'}\n"
-                            if pr_body:
+                            # dependabot PRs have a lot of unneeded details in PR bodies
+                            if pr_body and 'dependabot' not in labels:
                                 # Truncate very long PR bodies to avoid exceeding token limits
                                 truncated_body = pr_body[:2000] + "..." if len(pr_body) > 2000 else pr_body
                                 commits_text += f"   PR Description: {truncated_body}\n"
