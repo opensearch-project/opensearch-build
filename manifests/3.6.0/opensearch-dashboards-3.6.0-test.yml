@@ -119,6 +119,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
+        opensearch_security.multitenancy.enabled: false
         data_source.enabled: true
         data_source.ssl.verificationMode: none
         data_source.hideLocalCluster: true
@@ -127,5 +128,5 @@ components:
         uiSettings.overrides.home:useNewHomePage: true
         workspace.enabled: true
         savedObjects.permission.enabled: true
-        opensearchDashboards.dashboardAdmin.users:
-          - admin
+        opensearchDashboards.dashboardAdmin.users: ["admin"]
+        explore.enabled: true
