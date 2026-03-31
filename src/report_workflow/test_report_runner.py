@@ -132,10 +132,11 @@ class TestReportRunner:
                 test_result = component_yml["test_result"]
 
                 # Issues with windows where certain path separator are encoded as `%5C`
+                result_files = [f.replace("%5C", "/") for f in component_yml["test_result_files"]]
                 if self.name == "opensearch":
-                    test_result_files = [f.replace("%5C", "/") for f in component_yml["test_result_files"] if f.endswith("index.html")]
+                    test_result_files = [f for f in result_files if f.endswith("opensearch-integ-test/index.html")]
                 else:
-                    test_result_files = [f.replace("%5C", "/") for f in component_yml["test_result_files"] if f.endswith(".xml")]
+                    test_result_files = [f for f in result_files if f.endswith(".xml")]
 
             except (FileNotFoundError, HTTPError):
                 logging.info(f"Component yml file for {component_name} for {config} is missing or the base path is incorrect.")
@@ -310,7 +311,10 @@ def get_failed_tests(product_name: str, test_result: str, test_result_files: lis
         if product_name == 'opensearch':
             soup = BeautifulSoup(result_content, "html.parser")
             target_header = soup.find("h2", string="Failed tests")
+            failed_header = soup.find("h2", string="Failed")
             if target_header:
+                # https://ci.opensearch.org/ci/dbc/integ-test/3.0.0-alpha1/10901/linux/x64/deb/test-results/9439/integ-test/alerting/with-security/opensearch-integ-test/index.html
+                # https://ci.opensearch.org/ci/dbc/integ-test/3.0.0-alpha1/10901/linux/x64/deb/test-results/9439/integ-test/k-NN/with-security/opensearch-integ-test/index.html
                 target_div = target_header.find_parent("div")
                 if target_div:
                     target_a_hash = [a for li in target_div.find_all("li") for a in li.find_all("a", href=True) if "#" in a["href"]]
@@ -319,6 +323,22 @@ def get_failed_tests(product_name: str, test_result: str, test_result_files: lis
                 else:
                     logging.info(f"Test Result File Has Changed Format {result_path}")
                     failed_test_list.append("Test Result File Has Changed Format")
+            elif failed_header:
+                # https://ci.opensearch.org/ci/dbc/integ-test/3.6.0/11802/linux/x64/tar/test-results/10988/integ-test/search-relevance/without-security/opensearch-integ-test/index.html
+                failed_div = failed_header.find_parent("div", class_="tab")
+                if failed_div:
+                    for row in failed_div.find_all("tr"):
+                        path_td = row.find("td", class_="path")
+                        failures_tds = row.find_all("td", class_="failures")
+                        if path_td and failures_tds:
+                            failed_test_list.append(path_td.get_text(strip=True))
+                else:
+                    logging.info(f"Test Result File Has Changed Format {result_path}")
+                    failed_test_list.append("Test Result File Has Changed Format")
+            elif soup.find("div", class_="summaryGroup"):
+                # https://ci.opensearch.org/ci/dbc/integ-test/3.6.0/11802/linux/x64/tar/test-results/10988/integ-test/k-NN/with-security/opensearch-integ-test/index.html
+                logging.info(f"Test FAIL But Test Result File Has No Failed Test {result_path}")
+                failed_test_list.append("Test FAIL But Test Result File Has No Failed Test")
             else:
                 logging.info(f"Test Result File Has Changed Format {result_path}")
                 failed_test_list.append("Test Result File Has Changed Format")
