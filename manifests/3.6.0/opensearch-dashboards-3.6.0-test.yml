@@ -128,5 +128,5 @@ components:
         uiSettings.overrides.home:useNewHomePage: true
         workspace.enabled: true
         savedObjects.permission.enabled: true
-        opensearchDashboards.dashboardAdmin.users: ["admin"]
+        opensearchDashboards.dashboardAdmin.users: ['admin']
         explore.enabled: true
