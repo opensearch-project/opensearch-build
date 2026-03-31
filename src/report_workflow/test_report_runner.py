@@ -337,7 +337,7 @@ def get_failed_tests(product_name: str, test_result: str, test_result_files: lis
                     failed_test_list.append("Test Result File Has Changed Format")
             elif soup.find("div", class_="summaryGroup"):
                 # https://ci.opensearch.org/ci/dbc/integ-test/3.6.0/11802/linux/x64/tar/test-results/10988/integ-test/k-NN/with-security/opensearch-integ-test/index.html
-                logging.info("Test FAIL But Test Result File Has No Failed Test")
+                logging.info(f"Test FAIL But Test Result File Has No Failed Test {result_path}")
                 failed_test_list.append("Test FAIL But Test Result File Has No Failed Test")
             else:
                 logging.info(f"Test Result File Has Changed Format {result_path}")
