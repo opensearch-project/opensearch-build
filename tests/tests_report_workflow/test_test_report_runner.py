@@ -74,7 +74,7 @@ class TestTestReportRunner(unittest.TestCase):
         test_report_runner_data = test_report_runner.update_data()
 
         self.assertFalse("opensearch-system-templates" in test_report_runner.bundle_components_list)
-        self.assertEqual(len(test_report_runner_data["components"]), 6)
+        self.assertEqual(len(test_report_runner_data["components"]), 8)
 
         for i in range(len(self.TEST_MANIFEST.components.__to_dict__())):
             if self.TEST_MANIFEST.components.__to_dict__()[i]["name"] == "opensearch-system-templates":
@@ -279,6 +279,39 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_component_dict.get("configs")[1]["name"], "without-security")
         self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "org.opensearch.indexmanagement.IndexManagementIndicesIT#test update management index history "
                                                                                       "mappings with new schema version")
+
+    @patch("report_workflow.report_args.ReportArgs")
+    def test_runner_component_entry_local_failed_test_gradle_format_update(self, report_args_mock: MagicMock) -> None:
+        report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
+        report_args_mock.artifact_paths = {"opensearch": self.DATA_DIR}
+        report_args_mock.test_run_id = 123
+        report_args_mock.base_path = self.DATA_DIR
+        report_args_mock.test_type = "integ-test"
+
+        test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("search-relevance")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "FAIL")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["name"], "with-security")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "org.opensearch.searchrelevance.experiment.SearchEvaluationExperimentIT")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["status"], "FAIL")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["name"], "without-security")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "org.opensearch.searchrelevance.experiment.PointwiseExperimentIT")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][1], "org.opensearch.searchrelevance.experiment.SearchEvaluationExperimentIT")
+
+    @patch("report_workflow.report_args.ReportArgs")
+    def test_runner_component_entry_local_failed_test_no_failures_section(self, report_args_mock: MagicMock) -> None:
+        report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
+        report_args_mock.artifact_paths = {"opensearch": self.DATA_DIR}
+        report_args_mock.test_run_id = 123
+        report_args_mock.base_path = self.DATA_DIR
+        report_args_mock.test_type = "integ-test"
+
+        test_run_component_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).component_entry("k-NN")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["status"], "FAIL")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["name"], "with-security")
+        self.assertEqual(test_run_component_dict.get("configs")[0]["failed_test"][0], "Test FAIL But Test Result File Has No Failed Test")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["status"], "FAIL")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["name"], "without-security")
+        self.assertEqual(test_run_component_dict.get("configs")[1]["failed_test"][0], "Test FAIL But Test Result File Has No Failed Test")
 
     @patch("manifests.bundle_manifest.BundleManifest.from_urlpath")
     @patch("urllib.request.urlopen")

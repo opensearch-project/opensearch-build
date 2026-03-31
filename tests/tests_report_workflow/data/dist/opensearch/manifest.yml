@@ -38,6 +38,11 @@ components:
     ref: ee4289213d72c63fec47758b74ab6c6376c216c9
     commit_id: ee4289213d72c63fec47758b74ab6c6376c216c9
     location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.15.0/9992/linux/x64/tar/builds/opensearch/plugins/opensearch-geospatial-2.15.0.0.zip
+  - name: search-relevance
+    repository: https://github.com/opensearch-project/search-relevance.git
+    ref: abc123
+    commit_id: abc123
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.15.0/9992/linux/x64/tar/builds/opensearch/plugins/opensearch-search-relevance-2.15.0.0.zip
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
     ref: f4af360f50d8335dcbf974001ea577f3b7428e25

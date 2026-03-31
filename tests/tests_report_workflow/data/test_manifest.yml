@@ -53,6 +53,18 @@ components:
         - with-security
         - without-security
 
+  - name: k-NN
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: search-relevance
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
   - name: index-management
     integ-test:
       build-dependencies:
