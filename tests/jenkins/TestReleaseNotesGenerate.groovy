@@ -72,13 +72,13 @@ class TestReleaseNotesGenerate extends BuildPipelineTest {
         assertThat(helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.any { call ->
-            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000')
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000 --model-id test-model-id')
         }).isTrue()
 
         assertThat(helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.any { call ->
-            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000')
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --model-id test-model-id')
         }).isTrue()
     }
 
@@ -95,13 +95,13 @@ class TestReleaseNotesGenerate extends BuildPipelineTest {
         assertThat(helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.any { call ->
-            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000 --ref main')
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000 --model-id test-model-id --ref main')
         }).isTrue()
 
         assertThat(helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.any { call ->
-            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --ref main')
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --model-id test-model-id --ref main')
         }).isTrue()
     }
 
@@ -119,13 +119,13 @@ class TestReleaseNotesGenerate extends BuildPipelineTest {
         assertThat(helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.any { call ->
-            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000 --ref main --skip-changelog')
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --date 2025-06-24 --max-tokens 10000 --model-id test-model-id --ref main --skip-changelog')
         }).isTrue()
 
         assertThat(helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.any { call ->
-            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --ref main --skip-changelog')
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --model-id test-model-id --ref main --skip-changelog')
         }).isTrue()
     }
     
