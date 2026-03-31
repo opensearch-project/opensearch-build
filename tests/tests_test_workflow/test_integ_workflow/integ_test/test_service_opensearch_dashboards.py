@@ -347,6 +347,99 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
         self.assertTrue(service.service_alive())
 
+    @patch("test_workflow.integ_test.service.Process.start")
+    @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("yaml.dump")
+    @patch("tarfile.open")
+    def test_start_with_multitenancy_config_existing_in_file(
+        self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock
+    ) -> None:
+        mock_dependency_installer = MagicMock()
+        additional_config = {"opensearch_security.multitenancy.enabled": "false"}
+
+        service = ServiceOpenSearchDashboards(
+            self.version,
+            self.distribution,
+            additional_config,
+            True,
+            mock_dependency_installer,
+            self.work_dir
+        )
+
+        bundle_full_name = "test_bundle_name"
+        mock_dependency_installer.download_dist.return_value = bundle_full_name
+
+        mock_bundle_tar = MagicMock()
+        mock_tarfile_open.return_value.__enter__.return_value = mock_bundle_tar
+
+        mock_dump_result = MagicMock()
+        mock_dump.return_value = mock_dump_result
+
+        mock_file_handler_for_read = mock_open(read_data="").return_value
+        mock_file_handler_for_read.readlines.return_value = [
+            "server.port: 5601\n",
+            "opensearch_security.multitenancy.enabled: true\n",
+        ]
+        mock_file_handler_for_write = mock_open().return_value
+        mock_file_handler_for_append = mock_open().return_value
+
+        mock_file.side_effect = [mock_file_handler_for_read, mock_file_handler_for_write, mock_file_handler_for_append]
+
+        service.start()
+
+        yml_path = os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml")
+        mock_file.assert_has_calls([
+            call(yml_path, "r"),
+            call(yml_path, "w"),
+            call(yml_path, "a"),
+        ])
+
+    @patch("test_workflow.integ_test.service.Process.start")
+    @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("yaml.dump")
+    @patch("tarfile.open")
+    def test_start_with_multitenancy_config_not_in_file(
+        self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock
+    ) -> None:
+        mock_dependency_installer = MagicMock()
+        additional_config = {"opensearch_security.multitenancy.enabled": "false"}
+
+        service = ServiceOpenSearchDashboards(
+            self.version,
+            self.distribution,
+            additional_config,
+            True,
+            mock_dependency_installer,
+            self.work_dir
+        )
+
+        bundle_full_name = "test_bundle_name"
+        mock_dependency_installer.download_dist.return_value = bundle_full_name
+
+        mock_bundle_tar = MagicMock()
+        mock_tarfile_open.return_value.__enter__.return_value = mock_bundle_tar
+
+        mock_dump_result = MagicMock()
+        mock_dump.return_value = mock_dump_result
+
+        mock_file_handler_for_read = mock_open(read_data="").return_value
+        mock_file_handler_for_read.readlines.return_value = [
+            "server.port: 5601\n",
+        ]
+        mock_file_handler_for_append = mock_open().return_value
+
+        mock_file.side_effect = [mock_file_handler_for_read, mock_file_handler_for_append]
+
+        service.start()
+
+        yml_path = os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml")
+        mock_file.assert_has_calls([
+            call(yml_path, "r"),
+            call(yml_path, "a"),
+        ])
+
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
     def test_service_alive_red_unavailable(self, mock_get_service_response: Mock) -> None:
         service = ServiceOpenSearchDashboards(
