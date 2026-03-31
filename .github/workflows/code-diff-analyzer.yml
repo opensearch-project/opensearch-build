@@ -144,6 +144,17 @@ jobs:
           	
           	**PRIMARY FOCUS: Detect deliberate attempts to compromise security, not coding mistakes.**
           	
+          	**MANDATORY RULE — SUPPLY CHAIN / DEPENDENCY CHANGES:**
+          	- Any dependency, package registry, or build plugin change MUST be flagged as **high** severity
+          	- Do NOT judge whether a dependency name looks "legitimate" — you cannot verify artifact authenticity
+          	- Namespace hijacking and typosquatting are common attack techniques
+          	- Always flag and let maintainers verify
+          	- This applies to changes including but not limited to:
+          	  - Adding, removing, or changing versions of libraries, packages, or modules
+          	  - Adding or modifying package source URLs or repository configurations
+          	  - Annotation processors, postinstall/prebuild scripts, build plugins, or compiler extensions
+          	  - Modifying FROM directives or adding package installs in container files
+          	
           	**Review for security issues including but not limited to:**
           	- **Data exfiltration**: Unauthorized transmission of secrets, credentials, or sensitive data to external endpoints
           	- **Backdoors**: Hidden access mechanisms, debug modes left enabled, or authentication bypasses
@@ -152,7 +163,7 @@ jobs:
           	- **Credential harvesting**: Code that captures, logs, or transmits credentials/tokens beyond normal usage
           	- **Time bombs/logic bombs**: Code triggered by specific dates, conditions, or external signals
           	- **Privilege escalation**: Deliberate attempts to gain elevated permissions or bypass authorization
-          	- **Supply chain attacks**: Suspicious dependency additions, modified package files, or unusual import statements
+          	- **Supply chain attacks**: Any dependency, package registry, or build plugin change (see mandatory rule above)
           	- **Environment manipulation**: Attempts to modify CI/CD variables, Jenkins secrets, or deployment configurations
           	- **Steganography or covert channels**: Hidden data transmission in images, comments, or metadata
           	
@@ -161,10 +172,11 @@ jobs:
           	- Focus on INTENT: Is this code deliberately trying to do something malicious?
           	- Consider context: Is this behavior justified by the feature being implemented?
           	- Flag anomalies: Code that seems unrelated to the stated PR purpose
+          	- Dependency/package changes are NEVER considered justified by context — always flag as high
           	
           	**Classify each issue by severity:**
           	- **critical**: Clear evidence of malicious intent with immediate security impact (data exfiltration, backdoors)
-          	- **high**: Highly suspicious patterns that likely indicate malicious intent but may have alternate explanations
+          	- **high**: Highly suspicious patterns that likely indicate malicious intent but may have alternate explanations, OR changes that match a mandatory flagging rule above
           	- **medium**: Unusual patterns that warrant investigation but could be legitimate
           	- **low**: Minor anomalies or code that seems out of place but has plausible explanations
           	
