@@ -18,7 +18,7 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: ce0fb1e6b50cceb8a400c35aa5440c399c3fd31f
+    ref: 2ab9bb07d58b54ea982f706014284c02f1958a31
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '3.6'
@@ -42,7 +42,7 @@ components:
     ref: 27d4669af463209ac5a91b7f5d502d8cbd312f20
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
-    ref: ccbe5191790014f3d8bf48b09b9bf8eeceeb0ef6
+    ref: 98f29e546279db5d31731aa20763e459882b2f6e
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
     ref: c734cebf9631ea19102c9242f851da74178da775
@@ -54,7 +54,7 @@ components:
     ref: cbd66dfa9b1678155d05bd98bf84d07966f21808
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: 83a44ad3be49b7900adb50db9b3c4d1b2b3da1a6
+    ref: 48d5356ef0ed026fe33a66e5a30d689e5abe43fc
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: d01fed3e18c2fc8bc427d482545caa2af302c405
