@@ -152,19 +152,20 @@ pipeline {
                                                                             git commit -sm "Add release notes for ${version}"
                                                                             git push origin release-chores/release-notes-${version} --force
                                                                             BORDERLINE_FILE="$WORKSPACE/release-notes/${filename.replace('.md', '-borderline.md')}"
-                                                                            PR_BODY="Add release notes for ${version}"
+                                                                            PR_BODY_FILE=\$(mktemp)
+                                                                            trap 'rm -f "\$PR_BODY_FILE"' EXIT
+                                                                            echo "Add release notes for ${version}" > "\$PR_BODY_FILE"
                                                                             if [ -f "\$BORDERLINE_FILE" ]; then
-                                                                                PR_BODY="\${PR_BODY}
-
-## Borderline Calls
-\$(cat "\$BORDERLINE_FILE")"
+                                                                                echo "" >> "\$PR_BODY_FILE"
+                                                                                echo "## Borderline Calls" >> "\$PR_BODY_FILE"
+                                                                                cat "\$BORDERLINE_FILE" >> "\$PR_BODY_FILE"
                                                                             fi
                                                                             EXISTING_PR=\$(gh pr list --head release-chores/release-notes-${version} --state open --json number --jq '.[0].number')
                                                                             if [ -n "\$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #\${EXISTING_PR} for component \${REPO_NAME} with new release notes."
-                                                                                gh pr edit "\$EXISTING_PR" --body "\$PR_BODY"
+                                                                                gh pr edit "\$EXISTING_PR" --body-file "\$PR_BODY_FILE"
                                                                             else
-                                                                                gh pr create --title '[AUTO] Add release notes for ${version}' --body "\$PR_BODY" -H release-chores/release-notes-${version} -B ${ref}
+                                                                                gh pr create --title '[AUTO] Add release notes for ${version}' --body-file "\$PR_BODY_FILE" -H release-chores/release-notes-${version} -B ${ref}
                                                                             fi
                                                                         fi
                                                                     else

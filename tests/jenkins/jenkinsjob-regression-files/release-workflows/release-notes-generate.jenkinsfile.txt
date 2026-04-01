@@ -54,19 +54,20 @@
                                                                             git commit -sm "Add release notes for 2.2.0"
                                                                             git push origin release-chores/release-notes-2.2.0 --force
                                                                             BORDERLINE_FILE="/tmp/workspace/release-notes/opensearch.release-notes-2.2.0-borderline.md"
-                                                                            PR_BODY="Add release notes for 2.2.0"
+                                                                            PR_BODY_FILE=$(mktemp)
+                                                                            trap 'rm -f "$PR_BODY_FILE"' EXIT
+                                                                            echo "Add release notes for 2.2.0" > "$PR_BODY_FILE"
                                                                             if [ -f "$BORDERLINE_FILE" ]; then
-                                                                                PR_BODY="${PR_BODY}
-
-## Borderline Calls
-$(cat "$BORDERLINE_FILE")"
+                                                                                echo "" >> "$PR_BODY_FILE"
+                                                                                echo "## Borderline Calls" >> "$PR_BODY_FILE"
+                                                                                cat "$BORDERLINE_FILE" >> "$PR_BODY_FILE"
                                                                             fi
                                                                             EXISTING_PR=$(gh pr list --head release-chores/release-notes-2.2.0 --state open --json number --jq '.[0].number')
                                                                             if [ -n "$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
-                                                                                gh pr edit "$EXISTING_PR" --body "$PR_BODY"
+                                                                                gh pr edit "$EXISTING_PR" --body-file "$PR_BODY_FILE"
                                                                             else
-                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body "$PR_BODY" -H release-chores/release-notes-2.2.0 -B 2.2
+                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body-file "$PR_BODY_FILE" -H release-chores/release-notes-2.2.0 -B 2.2
                                                                             fi
                                                                         fi
                                                                     else
@@ -117,19 +118,20 @@ $(cat "$BORDERLINE_FILE")"
                                                                             git commit -sm "Add release notes for 2.2.0"
                                                                             git push origin release-chores/release-notes-2.2.0 --force
                                                                             BORDERLINE_FILE="/tmp/workspace/release-notes/opensearch-sql.release-notes-2.2.0.0-borderline.md"
-                                                                            PR_BODY="Add release notes for 2.2.0"
+                                                                            PR_BODY_FILE=$(mktemp)
+                                                                            trap 'rm -f "$PR_BODY_FILE"' EXIT
+                                                                            echo "Add release notes for 2.2.0" > "$PR_BODY_FILE"
                                                                             if [ -f "$BORDERLINE_FILE" ]; then
-                                                                                PR_BODY="${PR_BODY}
-
-## Borderline Calls
-$(cat "$BORDERLINE_FILE")"
+                                                                                echo "" >> "$PR_BODY_FILE"
+                                                                                echo "## Borderline Calls" >> "$PR_BODY_FILE"
+                                                                                cat "$BORDERLINE_FILE" >> "$PR_BODY_FILE"
                                                                             fi
                                                                             EXISTING_PR=$(gh pr list --head release-chores/release-notes-2.2.0 --state open --json number --jq '.[0].number')
                                                                             if [ -n "$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
-                                                                                gh pr edit "$EXISTING_PR" --body "$PR_BODY"
+                                                                                gh pr edit "$EXISTING_PR" --body-file "$PR_BODY_FILE"
                                                                             else
-                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body "$PR_BODY" -H release-chores/release-notes-2.2.0 -B 2.2
+                                                                                gh pr create --title '[AUTO] Add release notes for 2.2.0' --body-file "$PR_BODY_FILE" -H release-chores/release-notes-2.2.0 -B 2.2
                                                                             fi
                                                                         fi
                                                                     else
