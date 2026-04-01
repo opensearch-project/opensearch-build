@@ -62,12 +62,21 @@
                                                                                 echo "## Borderline Calls" >> "$PR_BODY_FILE"
                                                                                 cat "$BORDERLINE_FILE" >> "$PR_BODY_FILE"
                                                                             fi
+                                                                            echo "--- PR body content ---"
+                                                                            cat "$PR_BODY_FILE"
+                                                                            echo "--- end PR body content ---"
+                                                                            gh --version
                                                                             EXISTING_PR=$(gh pr list --head release-chores/release-notes-2.2.0 --state open --json number --jq '.[0].number')
                                                                             if [ -n "$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
                                                                                 gh pr edit "$EXISTING_PR" --body-file "$PR_BODY_FILE"
+                                                                                RC=$?
                                                                             else
                                                                                 gh pr create --title '[AUTO] Add release notes for 2.2.0' --body-file "$PR_BODY_FILE" -H release-chores/release-notes-2.2.0 -B 2.2
+                                                                                RC=$?
+                                                                            fi
+                                                                            if [ "$RC" -ne 0 ]; then
+                                                                                echo "ERROR: gh command failed with exit code $RC"
                                                                             fi
                                                                         fi
                                                                     else
@@ -126,12 +135,21 @@
                                                                                 echo "## Borderline Calls" >> "$PR_BODY_FILE"
                                                                                 cat "$BORDERLINE_FILE" >> "$PR_BODY_FILE"
                                                                             fi
+                                                                            echo "--- PR body content ---"
+                                                                            cat "$PR_BODY_FILE"
+                                                                            echo "--- end PR body content ---"
+                                                                            gh --version
                                                                             EXISTING_PR=$(gh pr list --head release-chores/release-notes-2.2.0 --state open --json number --jq '.[0].number')
                                                                             if [ -n "$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
                                                                                 gh pr edit "$EXISTING_PR" --body-file "$PR_BODY_FILE"
+                                                                                RC=$?
                                                                             else
                                                                                 gh pr create --title '[AUTO] Add release notes for 2.2.0' --body-file "$PR_BODY_FILE" -H release-chores/release-notes-2.2.0 -B 2.2
+                                                                                RC=$?
+                                                                            fi
+                                                                            if [ "$RC" -ne 0 ]; then
+                                                                                echo "ERROR: gh command failed with exit code $RC"
                                                                             fi
                                                                         fi
                                                                     else
