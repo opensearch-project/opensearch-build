@@ -216,6 +216,12 @@ op.exe --version
 scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/f7cf8513558307e90b483ddff2394a023e894ccf/bucket/docker.json
 scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/a6a7d8e2a7eecb13fb7200952c9bcea4eaeeb994/bucket/docker-compose.json
 
+# Install Rust
+curl.exe --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain stable -y
+
+# Install protobuf
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Extras/3a512b00c3faed1487eeacf6c2efa3f5c61c96d8/bucket/protobuf.json
+
 # Scoop cleanup
 scoop cache rm *
 
