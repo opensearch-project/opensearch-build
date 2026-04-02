@@ -101,6 +101,22 @@ class ServiceOpenSearchDashboards(Service):
         return requests.get(url, verify=False, auth=("admin", get_password(self.version)) if self.security_enabled else None)
 
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
+        # Only apply specifically due to this param already exist in config most of the time
+        # https://github.com/opensearch-project/opensearch-build/blob/7c36dd404b88f0a85dbe2674bf31c3fe27f2dc96/config/opensearch_dashboards-3.x.yml#L240
+        # TODO: Make this change more generic to support all existing/duplicate params + detect security related params to be removed during without-security test
+        if "opensearch_security.multitenancy.enabled" in additional_config:
+            if self.security_enabled:
+                with open(self.opensearch_dashboards_yml_path, "r") as yamlfile:
+                    lines = yamlfile.readlines()
+
+                filtered = [line for line in lines if not line.startswith("opensearch_security.multitenancy.enabled")]
+
+                if len(filtered) != len(lines):
+                    with open(self.opensearch_dashboards_yml_path, "w") as yamlfile:
+                        yamlfile.writelines(filtered)
+            else:
+                del additional_config["opensearch_security.multitenancy.enabled"]
+
         with open(self.opensearch_dashboards_yml_path, "a") as yamlfile:
             yamlfile.write(yaml.dump(additional_config))
 

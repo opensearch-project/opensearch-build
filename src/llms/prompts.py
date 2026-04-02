@@ -123,107 +123,61 @@ AI_RELEASE_NOTES_PROMPT_COMMIT = """I need you to generate OpenSearch component 
 
 Generate the release notes in proper OpenSearch format:"""
 
-AI_RELEASE_NOTES_PROMPT_COMMIT_OPENSEARCH = """I need you to generate OpenSearch component release notes from commit data. Please follow the OpenSearch release notes format exactly.
+AI_RELEASE_NOTES_PROMPT_COMMIT_OPENSEARCH = """Generate release notes for {component_name} {version} from the commit data below.
 
-**Component Information:**
-- Component Name: {component_name}
-- Version: {version}
-- Repository URL: {repository_url}
+Repository: {repository_url}
 
 **Commit Data:**
 {commits_text}
 
-**Instructions:**
+**Filtering (apply first):**
+- Exclude PRs titled "[AUTO] Increment version to...".
+- Exclude PRs with the `skip-changelog` label.
+- Exclude commit/revert pairs.
+- Exclude non-user-facing changes: test-only changes, CI/build changes, GitHub Actions bumps,
+  release machinery (changelogs, READMEs), internal refactoring with no behavior/API/config
+  change, maintainer list changes, and incremental PRs for a feature already covered by another entry.
+- Exclusion rules override label-based categorization.
+- When uncertain, include — a human reviewer can remove it later.
 
-1. **Content filtering — apply BEFORE categorization:**
-   - Do not add the pull request that has title starting with "[AUTO] Increment version to".
-   - Do not add any PR with the `skip-changelog` label, regardless of content.
-   - Exclude any commit/revert pairs as the net result is no change.
-   - **Exclude the following non-user-facing changes:**
-     * Test additions, modifications, fixes, or refactoring (including flaky test fixes, new integration tests,
-       test infrastructure improvements, and test cleanup). A PR whose description says "Add test for X" or
-       "Cleanup X in tests" is non-user-facing even if the underlying feature is user-facing.
-     * Build and CI changes: GitHub Actions version bumps (e.g. actions/setup-java, actions/upload-artifact,
-       peter-evans/create-pull-request, lycheeverse/lychee-action, tj-actions/*), Gradle build changes,
-       Docker base image updates, CI pipeline configuration.
-     * Dependency bumps that only affect test fixtures or build tooling (e.g. bumps under /test/fixtures/,
-       /buildSrc/, or test-only libraries like wiremock).
-     * Release machinery: changelog fixes, release notes commits, README edits.
-     * Internal code refactoring that does not change any user-facing behavior, API, or configuration.
-       This includes deprecation warning fixes, code cleanup, and removing unused internal code/plugins.
-     * Maintainer list changes.
-     * Incremental PRs for a larger feature (these should already have one entry from the main PR).
-   - A PR matching an exclusion rule above must be excluded even if its labels would match a category.
-   - Use the commit message, PR description, and labels to make this judgment.
-   - When uncertain whether a change is user-facing, **include it** — a human reviewer can remove it later.
+**Categorization (for surviving PRs):**
+- Match labels first (case-insensitive, partial match):
+  "breaking"→Breaking Changes, "feature"/"feat"→Features, "enhancement"/"improve"→Enhancements,
+  "bug"/"fix"/"bugfix"→Bug Fixes, "maintenance"/"version"/"support"→Maintenance
+- If no label matches, categorize by content:
+  Features=net new functionality, Enhancements=improves existing feature,
+  Bug Fixes=fixes a defect, Maintenance=dependency updates and routine upkeep.
+- Only use these 5 categories. If none fit, use "Unknown".
 
-2. **Categorization — only for PRs that survive filtering:**
-   - First, check if any labels match these categories (case-insensitive, partial matches allowed):
-     * "breaking change" or "breaking" → Breaking Changes
-     * "feature" or "feat" → Features
-     * "enhancement" or "improve" → Enhancements
-     * "bug" or "fix" or "bugfix" → Bug Fixes
-     * "maintenance" or "version" or "support" → Maintenance
-   - If no labels match, analyze the Message content, PullRequestSubject, and PR Description to determine
-     the appropriate category:
-     * Features: A net new unit of functionality that satisfies a requirement, represents a design decision,
-       and provides a potential configuration option. For improvements on existing features, use Enhancements.
-       For fixes on existing features, use Bug Fixes.
-     * Enhancements: Improves the performance, usability, or reliability of an existing feature without
-       changing its core functionality.
-     * Bug Fixes: Resolves an issue or defect in the software.
-     * Maintenance: Routine upkeep such as dependency updates that ship in the distribution.
-   - Do not use "Infrastructure", "Documentation", or "Refactoring" as categories. Changes that would
-     belong to those categories should have been excluded by the filtering step.
+**Entry format:**
+`* <concise one-line summary for end-users/operators> ([#<number>]({repository_url}/pull/<number>))`
+- Rewrite PR subjects for clarity; do not copy verbatim. Capitalize first character.
+- Group related PRs into a single entry when appropriate.
 
-3. **Entry Format:**
-   - Use the PullRequestSubject and PR Description as input, but rewrite each entry as a concise, clear one-line
-     summary. The target audience is OpenSearch users — end-users, operators, and system administrators — not developers.
-     Do not simply copy the PR subject verbatim; improve clarity and consistency.
-   - Extract PR number from PullRequestSubject (format: (#123))
-   - Format: `* <description> ([#<number>]({repository_url}/pull/<number>))`
-   - Always use asterisk (*) for bullet points
-   - Always wrap PR links in parentheses
-   - Make sure first character of each entry is capitalized.
-   - Group related commits into a single entry when appropriate (e.g., multiple PRs implementing parts of the same
-     feature, or a series of dependency bumps for the same library).
+Example rewrites:
+  PR Subject: "Add support for warm index pre-loading of global ordinals on replica shards with segment replication (#20650)"
+  Good: * Add index warmer support for replica shards using segment replication ([#20650](https://github.com/opensearch-project/OpenSearch/pull/20650))
+  Bad:  * Add WarmerRefreshListener to NRTReplicationEngine to warm replica shards ([#20650](https://github.com/opensearch-project/OpenSearch/pull/20650))
+  Why: The "good" version uses user-facing language. The "bad" version leaks internal class names.
 
-4. **Output Requirements:**
-   - The main heading with ## should be "version number Release Notes" (e.g., For version 3.2.0 ## Version 3.2.0
-   Release Notes followed by a blank line and then "Compatible with OpenSearch and OpenSearch Dashboards
-   version <version number>" followed by content)
-   - Generate markdown with ### headers for each category
-   - Only include categories that have entries
-   - Sort categories in this order: Breaking Changes, Features, Enhancements, Bug Fixes, Maintenance
-   - Each entry should be a single line with proper PR link formatting
+**Output format:**
 
-5. **PR Link Format:**
-   - Extract PR number from PullRequestSubject
-   - Format as: `([#<number>]({repository_url}/pull/<number>))`
-   - Example: `([#456](https://github.com/opensearch-project/OpenSearch/pull/456))`
+## Version {version} Release Notes
 
-6. **Important Notes:**
-   - If you cannot determine the appropriate category from labels OR content analysis, place the entry in an "Unknown" category
-   - Prioritize Message over PullRequestSubject for determining category when using fallback analysis
+Compatible with OpenSearch and OpenSearch Dashboards version {version}
 
-7. **Borderline Calls:**
-   After the release notes, add a section starting with `<!-- BORDERLINE_CALLS` and ending with `-->`.
-   Inside this HTML comment, list any judgment calls where the categorization, inclusion, or exclusion decision
-   was debatable. For each, reference the PR number and briefly explain the decision and alternatives. Examples:
-   - A PR labeled `bug` that reads more like a behavioral change
-   - Grouping multiple PRs into a single entry
-   - Including a PR that could reasonably be considered non-user-facing
-   - Excluding a PR that could reasonably be considered user-facing
-   - Choosing one category over another when both fit
+### Breaking Changes
+* ...
 
-   Format:
-   ```
-   <!-- BORDERLINE_CALLS
-   - #1234: Excluded as non-user-facing (test fix) — but it changes test infrastructure that plugin authors rely on, so could be included under Infrastructure.
-   - #5678: Placed in **Enhancements** — could also be **Bug Fixes** since it changes existing behavior to fix a usability issue.
-   - #9012 + #9013: Grouped into one entry — both implement parts of the same feature.
-   -->
-   ```
-   If there are no borderline calls, omit this section entirely.
+### Features
+* ...
+
+- Only include categories that have entries.
+- Order: Breaking Changes, Features, Enhancements, Bug Fixes, Maintenance.
+
+**Borderline calls:**
+After the release notes, add `<!-- BORDERLINE_CALLS ... -->` listing any debatable
+filtering, categorization, or grouping decisions with PR numbers and brief rationale.
+Omit if none.
 
 Generate the release notes in proper OpenSearch format:"""

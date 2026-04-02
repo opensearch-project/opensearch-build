@@ -1,0 +1,7 @@
+component_name: k-NN
+run_id: 123
+test_config: with-security
+test_result: FAIL
+test_result_files:
+- ./tests/tests_report_workflow/data/test-results/123/integ-test/k-NN/with-security/opensearch-integ-test/index.html
+test_type: integ-test
