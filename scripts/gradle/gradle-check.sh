@@ -17,7 +17,9 @@ TRIGGER_TOKEN=""
 GITHUB_USER=""
 GITHUB_TOKEN=""
 
-while getopts "u:t:p:" opt; do
+GRADLE_CHECK_COMMAND=""
+
+while getopts "u:t:p:c:" opt; do
   case $opt in
     t)
       TRIGGER_TOKEN="$OPTARG"
@@ -27,6 +29,9 @@ while getopts "u:t:p:" opt; do
       ;;
     p)
       GITHUB_TOKEN="$OPTARG"
+      ;;
+    c)
+      GRADLE_CHECK_COMMAND="$OPTARG"
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -59,7 +64,7 @@ TIMEPASS=0
 TIMEOUT=7200
 RESULT="null"
 PR_TITLE_NEW=`echo $pr_title | tr -dc '[:alnum:] ' | tr '[:upper:]' '[:lower:]'`
-PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$PR_TITLE_NEW\", \"pr_number\": \"$pr_number\", \"post_merge_action\": \"$post_merge_action\", \"pr_owner\": \"$pr_owner\"}"
+PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$PR_TITLE_NEW\", \"pr_number\": \"$pr_number\", \"post_merge_action\": \"$post_merge_action\", \"pr_owner\": \"$pr_owner\", \"gradle_check_command\": \"$GRADLE_CHECK_COMMAND\"}"
 
 perform_curl_and_process_with_jq() {
     local url=$1

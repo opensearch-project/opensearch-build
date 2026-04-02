@@ -76,7 +76,8 @@ pipeline {
                 [key: 'pr_title', value: '$.pr_title'],
                 [key: 'pr_number', value: '$.pr_number'],
                 [key: 'post_merge_action', value: '$.post_merge_action'],
-                [key: 'pr_owner', value: '$.pr_owner']
+                [key: 'pr_owner', value: '$.pr_owner'],
+                [key: 'gradle_check_command', value: '$.gradle_check_command']
             ],
             tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
             causeString: 'Triggered by PR on OpenSearch core repository',
@@ -95,6 +96,15 @@ pipeline {
         stage('Run Gradle Check') {
             steps {
                 script {
+
+                    // Use webhook value if provided, otherwise fall back to pipeline parameter default
+                    if (binding.hasVariable('gradle_check_command') && gradle_check_command?.trim()) {
+                        env.GRADLE_CHECK_COMMAND = gradle_check_command
+                    }
+
+                    if (!(env.GRADLE_CHECK_COMMAND ==~ /^[a-zA-Z0-9\-._=: \/*#]+$/)) {
+                        error("Invalid GRADLE_CHECK_COMMAND '${env.GRADLE_CHECK_COMMAND}': contains disallowed characters")
+                    }
 
                     sh """
                         set +x
