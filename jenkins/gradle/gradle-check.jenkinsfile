@@ -15,7 +15,7 @@ def secret_dockerhub_readonly = [
     [envVar: 'DOCKER_PASSWORD', secretRef: 'op://opensearch-infra-secrets/dockerhub-production-readonly-credentials/password']
 ]
 
-lib = library(identifier: 'jenkins@11.5.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@11.6.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -46,6 +46,12 @@ pipeline {
             name: 'GIT_REFERENCE',
             description: 'Git branch, tag, commitid for reference to checkout commit of OpenSearch core before running the gradle check.',
             defaultValue: 'main',
+            trim: true
+        )
+        string(
+            name: 'GRADLE_CHECK_COMMAND',
+            description: '<Optional> Custom command to pass to runGradleCheck.',
+            defaultValue: 'check -Dtests.coverage=true',
             trim: true
         )
         // Must use agent with 1 executor or gradle check will show a lot of java-related errors
@@ -134,7 +140,7 @@ pipeline {
                                 gitRepoUrl: "${pr_from_clone_url}",
                                 gitReference: "${pr_from_sha}",
                                 bwcCheckoutAlign: "${bwc_checkout_align}",
-                                scope: "all"
+                                command: "${GRADLE_CHECK_COMMAND}"
                             )
                         }
                         else {
@@ -146,7 +152,7 @@ pipeline {
                                 gitRepoUrl: "${GIT_REPO_URL}",
                                 gitReference: "${GIT_REFERENCE}",
                                 bwcCheckoutAlign: "${bwc_checkout_align}",
-                                scope: "all"
+                                command: "${GRADLE_CHECK_COMMAND}"
                             )
                         }
 
@@ -197,7 +203,7 @@ pipeline {
                                 gitReference = "${pr_from_sha}"
                                 pullRequestOwner = "${pr_owner}"
                         }
-                        publishGradleCheckTestResults(prNumber: "${pullRequest}" , prTitle: "${pullRequestTitle}", prOwner: "${pullRequestOwner}", invokeType: "${invokedBy}", gitReference: "${gitReference}")
+                        publishGradleCheckTestResults(prNumber: "${pullRequest}" , prTitle: "${pullRequestTitle}", prOwner: "${pullRequestOwner}", invokeType: "${invokedBy}", gitReference: "${gitReference}", command: "${GRADLE_CHECK_COMMAND}")
                         sh("rm -rf *")
                         postCleanup()
                     }
