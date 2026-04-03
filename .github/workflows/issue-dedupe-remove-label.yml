@@ -1,32 +1,15 @@
 ---
 name: Issue Dedupe Remove Label
 on:
-  workflow_call:
-    inputs:
-      issue_number:
-        type: string
-        required: true
-        description: 'Issue number to remove duplicate label from'
-      issue_state:
-        type: string
-        required: true
-        description: 'Current state of the issue'
-      has_duplicate_label:
-        type: boolean
-        required: true
-        description: 'Whether the issue has the duplicate label'
-      commenter_is_bot:
-        type: boolean
-        required: true
-        description: 'Whether the commenter is a bot'
+  workflow_call: {}
 
 jobs:
   remove-label:
     if: >-
       ${{
-        inputs.issue_state == 'open' &&
-        inputs.has_duplicate_label &&
-        !inputs.commenter_is_bot
+        github.event.issue.state == 'open' &&
+        contains(github.event.issue.labels.*.name, 'duplicate') &&
+        github.event.comment.user.type != 'Bot'
       }}
     runs-on: ubuntu-latest
     permissions:
@@ -38,7 +21,7 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo;
-            const issueNumber = parseInt('${{ inputs.issue_number }}', 10);
+            const issueNumber = context.issue.number;
             console.log(`Removing duplicate label from issue #${issueNumber}`);
             try {
               await github.rest.issues.removeLabel({

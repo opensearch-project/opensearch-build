@@ -6,10 +6,6 @@ on:
       BEDROCK_ACCESS_ROLE:
         required: true
     inputs:
-      issue_number:
-        type: string
-        required: true
-        description: 'Issue number to check for duplicates'
       grace_days:
         type: string
         required: false
@@ -32,6 +28,8 @@ jobs:
       issues: write
       id-token: write
     timeout-minutes: 10
+    env:
+      ISSUE_NUMBER: ${{ github.event.issue.number || github.event.inputs.issue_number }}
     steps:
       - name: Checkout caller repo
         uses: actions/checkout@v4
@@ -52,19 +50,19 @@ jobs:
           allowed_bots: ${{ inputs.allowed_bots }}
           claude_args: '--model ${{ inputs.claude_model }} --allowedTools Bash(gh\ *)'
           prompt: |
-            Find up to 3 likely duplicate issues for issue #${{ inputs.issue_number }} in ${{ github.repository }}.
+            Find up to 3 likely duplicate issues for issue #${{ env.ISSUE_NUMBER }} in ${{ github.repository }}.
 
             Follow these steps precisely:
 
-            1. Use `gh issue view ${{ inputs.issue_number }} --repo ${{ github.repository }}` to read the issue. If the issue is closed, or is broad product feedback without a specific bug/feature request, or already has a duplicate detection comment (containing `<!-- duplicate-detection -->`), stop and report why you are not proceeding.
+            1. Use `gh issue view ${{ env.ISSUE_NUMBER }} --repo ${{ github.repository }}` to read the issue. If the issue is closed, or is broad product feedback without a specific bug/feature request, or already has a duplicate detection comment (containing `<!-- duplicate-detection -->`), stop and report why you are not proceeding.
 
             2. Summarize the issue's core problem in 2-3 sentences. Identify the key terms, error messages, and affected components.
 
             3. Search for potential duplicates using **at least 3 different search strategies**. Run these searches in parallel. **Only consider issues with a lower issue number** (older issues) as potential originals — skip any result with a number >= the current issue. Also skip issues already labeled `duplicate`.
-               - `gh search issues "<exact error message or key phrase>" --repo ${{ github.repository }} --state open -- -label:duplicate --limit 15 --json number,title | jq '[.[] | select(.number < ${{ inputs.issue_number }})]'`
-               - `gh search issues "<component or feature keywords>" --repo ${{ github.repository }} --state open -- -label:duplicate --limit 15 --json number,title | jq '[.[] | select(.number < ${{ inputs.issue_number }})]'`
-               - `gh search issues "<alternate description of the problem>" --repo ${{ github.repository }} --state open -- -label:duplicate --limit 15 --json number,title | jq '[.[] | select(.number < ${{ inputs.issue_number }})]'`
-               - `gh search issues "<key terms>" --repo ${{ github.repository }} --state all -- -label:duplicate --limit 10 --json number,title | jq '[.[] | select(.number < ${{ inputs.issue_number }})]'` (include closed issues for reference)
+               - `gh search issues "<exact error message or key phrase>" --repo ${{ github.repository }} --state open -- -label:duplicate --limit 15 --json number,title | jq '[.[] | select(.number < ${{ env.ISSUE_NUMBER }})]'`
+               - `gh search issues "<component or feature keywords>" --repo ${{ github.repository }} --state open -- -label:duplicate --limit 15 --json number,title | jq '[.[] | select(.number < ${{ env.ISSUE_NUMBER }})]'`
+               - `gh search issues "<alternate description of the problem>" --repo ${{ github.repository }} --state open -- -label:duplicate --limit 15 --json number,title | jq '[.[] | select(.number < ${{ env.ISSUE_NUMBER }})]'`
+               - `gh search issues "<key terms>" --repo ${{ github.repository }} --state all -- -label:duplicate --limit 10 --json number,title | jq '[.[] | select(.number < ${{ env.ISSUE_NUMBER }})]'` (include closed issues for reference)
 
             4. For each candidate issue that looks like a potential match, read it with `gh issue view <number> --repo ${{ github.repository }}` to verify it is truly about the same problem. Filter out false positives — issues that merely share keywords but describe different problems.
 
@@ -73,7 +71,7 @@ jobs:
                   `gh issue view <dup_number> --repo ${{ github.repository }} --json title -q .title`
                b. Post the comment (replace <dup_list> with formatted lines like `- #123 — Title`):
                   ```
-                  gh issue comment ${{ inputs.issue_number }} --repo ${{ github.repository }} --body "<!-- duplicate-detection -->
+                  gh issue comment ${{ env.ISSUE_NUMBER }} --repo ${{ github.repository }} --body "<!-- duplicate-detection -->
                   ### Possible Duplicate
 
                   Found **N** possible duplicate issue(s):
@@ -91,7 +89,7 @@ jobs:
                c. Ensure the duplicate label exists:
                   `gh label create "duplicate" --description "Issue is a duplicate of an existing issue" --color "cccccc" --repo ${{ github.repository }} 2>/dev/null || true`
                d. Add the label:
-                  `gh issue edit ${{ inputs.issue_number }} --repo ${{ github.repository }} --add-label "duplicate"`
+                  `gh issue edit ${{ env.ISSUE_NUMBER }} --repo ${{ github.repository }} --add-label "duplicate"`
 
             6. If no genuine duplicates are found, report that no duplicates were detected and take no further action.
 
