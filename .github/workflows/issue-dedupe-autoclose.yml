@@ -1,81 +1,16 @@
 ---
-name: Issue Dedupe
+name: Issue Dedupe Auto-close
 on:
   workflow_call:
-    secrets:
-      BEDROCK_ACCESS_ROLE:
-        required: false
     inputs:
-      mode:
-        type: string
-        required: true
-        description: 'detect | auto-close | remove-label'
-      issue_number:
-        type: string
-        required: false
-        description: 'Issue number to process'
       grace_days:
         type: string
         required: false
         default: '7'
-      claude_model:
-        type: string
-        required: false
-        default: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0'
-      dedupe_prompt:
-        type: string
-        required: false
-        description: 'Custom prompt for dedupe detection (passed to claude-code-action)'
-      allowed_bots:
-        type: string
-        required: false
-        default: 'github-actions[bot]'
-      issue_state:
-        type: string
-        required: false
-        default: 'open'
-        description: 'State of the issue (for remove-label mode)'
-      has_duplicate_label:
-        type: boolean
-        required: false
-        default: false
-        description: 'Whether the issue has the duplicate label (for remove-label mode)'
-      commenter_is_bot:
-        type: boolean
-        required: false
-        default: true
-        description: 'Whether the commenter is a bot (for remove-label mode)'
+        description: 'Days to wait before auto-closing duplicate issues'
 
 jobs:
-  detect:
-    if: ${{ inputs.mode == 'detect' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      issues: write
-      id-token: write
-    timeout-minutes: 10
-    steps:
-      - name: Checkout caller repo
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE }}
-          aws-region: us-east-1
-
-      - name: Run Claude Code for duplicate detection
-        uses: anthropics/claude-code-action@v1
-        with:
-          use_bedrock: "true"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          allowed_bots: ${{ inputs.allowed_bots }}
-          prompt: ${{ inputs.dedupe_prompt }}
-          claude_args: "--model ${{ inputs.claude_model }}"
-
   auto-close:
-    if: ${{ inputs.mode == 'auto-close' }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -92,7 +27,6 @@ jobs:
             const GRACE_PERIOD_MS = graceDays * 24 * 60 * 60 * 1000;
             const now = Date.now();
 
-            // Find all open issues with the duplicate label
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner, repo, state: 'open', labels: 'duplicate', per_page: 100,
             });
@@ -154,36 +88,3 @@ jobs:
               closedCount++;
             }
             console.log(`Done. Closed ${closedCount} duplicate issue(s).`);
-
-  remove-label:
-    if: >-
-      ${{
-        inputs.mode == 'remove-label' &&
-        inputs.issue_state == 'open' &&
-        inputs.has_duplicate_label &&
-        !inputs.commenter_is_bot
-      }}
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-    timeout-minutes: 5
-    steps:
-      - name: Remove duplicate label on human comment
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            const issueNumber = parseInt('${{ inputs.issue_number }}', 10);
-            console.log(`Removing duplicate label from issue #${issueNumber}`);
-            try {
-              await github.rest.issues.removeLabel({
-                owner, repo, issue_number: issueNumber, name: 'duplicate',
-              });
-              console.log(`Successfully removed duplicate label from issue #${issueNumber}`);
-            } catch (error) {
-              if (error.status === 404) {
-                console.log(`duplicate label was already removed from issue #${issueNumber}`);
-              } else {
-                throw error;
-              }
-            }
