@@ -33,6 +33,9 @@ jobs:
       id-token: write
     timeout-minutes: 10
     steps:
+      - name: Checkout caller repo
+        uses: actions/checkout@v4
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -47,7 +50,6 @@ jobs:
           use_bedrock: "true"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allowed_bots: ${{ inputs.allowed_bots }}
-          allowed_tools: "Bash(gh:*)"
           claude_args: "--model ${{ inputs.claude_model }}"
           prompt: |
             Find up to 3 likely duplicate issues for issue #${{ inputs.issue_number }} in ${{ github.repository }}.
