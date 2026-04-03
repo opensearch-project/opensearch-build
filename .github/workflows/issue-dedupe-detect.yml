@@ -50,6 +50,7 @@ jobs:
           use_bedrock: "true"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allowed_bots: ${{ inputs.allowed_bots }}
+          additional_permissions: "Bash(gh:*)"
           claude_args: "--model ${{ inputs.claude_model }}"
           prompt: |
             Find up to 3 likely duplicate issues for issue #${{ inputs.issue_number }} in ${{ github.repository }}.
