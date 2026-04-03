@@ -47,11 +47,10 @@ jobs:
         env:
           DUPLICATE_GRACE_DAYS: ${{ inputs.grace_days }}
         with:
-          use_bedrock: "true"
+          use_bedrock: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allowed_bots: ${{ inputs.allowed_bots }}
-          additional_permissions: "Bash(gh:*)"
-          claude_args: "--model ${{ inputs.claude_model }}"
+          claude_args: '--model ${{ inputs.claude_model }} --allowedTools Bash(gh\ *)'
           prompt: |
             Find up to 3 likely duplicate issues for issue #${{ inputs.issue_number }} in ${{ github.repository }}.
 
