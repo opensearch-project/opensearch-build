@@ -3,7 +3,7 @@ name: Issue Dedupe Detect
 on:
   workflow_call:
     secrets:
-      BEDROCK_ACCESS_ROLE:
+      BEDROCK_ACCESS_ROLE_ISSUE:
         required: true
     inputs:
       grace_days:
@@ -14,11 +14,11 @@ on:
       claude_model:
         type: string
         required: false
-        default: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0'
+        default: 'us.anthropic.claude-sonnet-4-6'
       allowed_bots:
         type: string
         required: false
-        default: 'github-actions[bot]'
+        default: 'github-actions[bot],dependabot[bot],mend-for-github-com[bot],opensearch-trigger-bot[bot]'
 
 jobs:
   detect:
@@ -32,12 +32,12 @@ jobs:
       ISSUE_NUMBER: ${{ github.event.issue.number || github.event.inputs.issue_number }}
     steps:
       - name: Checkout caller repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE }}
+          role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE_ISSUE }}
           aws-region: us-east-1
 
       - name: Run Claude Code for duplicate detection
