@@ -106,6 +106,38 @@ class TestReleaseNotesGenerate extends BuildPipelineTest {
     }
 
     @Test
+    public void releaseNotesGenerateDashboardsComponentFilename() {
+        binding.setVariable('INPUT_MANIFEST', 'tests/jenkins/data/opensearch-dashboards-3.0.0.yml')
+        helper.registerAllowedMethod("readYaml", [Map], {
+            return new Yaml().load(('tests/jenkins/data/opensearch-dashboards-3.0.0.yml' as File).text)
+        })
+        addParam('COMPONENTS', 'OpenSearch-Dashboards ganttChartDashboards')
+        runScript("jenkins/release-workflows/release-notes-generate.jenkinsfile")
+
+        // Core component OpenSearch-Dashboards should use 'opensearch-dashboards' prefix, not 'opensearch'
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('opensearch-dashboards.release-notes-3.0.0.md')
+        }).isTrue()
+
+        // Plugin component should use 'opensearch-' prefix
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('opensearch-dashboards-visualizations.release-notes-3.0.0.0.md')
+        }).isTrue()
+
+        // Verify OpenSearch-Dashboards filename does NOT use the wrong 'opensearch.release-notes' pattern
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            def args = callArgsToString(call)
+            args.contains('opensearch.release-notes-3.0.0.md') && args.contains('OpenSearch-Dashboards')
+        }).isFalse()
+    }
+
+    @Test
     public void releaseNotesCheckOpenSearchAndSqlWithRefAndSkipChangelog() {
         addParam('COMPONENTS', 'OpenSearch sql')
         addParam('REF', 'main')
