@@ -48,7 +48,7 @@ components:
     ref: 63cae96d92391d2254ded5df06182d5638d936ed
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: e8c050d752e457cada0e36f328e0ceef4b568e8f
+    ref: 8c38afe973defc26d436f44ad50ed3a9169a5d3a
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
     ref: fad54652e28e92675edfd7b13c0bb3082031a5b0
