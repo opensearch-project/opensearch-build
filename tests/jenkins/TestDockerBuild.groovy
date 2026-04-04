@@ -47,6 +47,7 @@ class TestDockerBuild extends BuildPipelineTest {
         binding.setVariable('DOCKER_PASSWORD', dockerPassword)
         binding.setVariable('DOCKER_BUILD_SCRIPT_WITH_COMMANDS', dockerBuildScriptwithCommands)
         binding.setVariable('DOCKER_BUILD_OS', dockerBuildOS)
+        binding.setVariable('TAG_LATEST', false)
         helper.registerAllowedMethod('isUnix', [], { true })
         helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
             closure.delegate = delegate
@@ -78,6 +79,50 @@ class TestDockerBuild extends BuildPipelineTest {
 
         // Make sure dockerBuildOS is deciding agent_node docker_nodes docker_args correctly
         assertCallStack().contains("docker-build.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])")
+
+        // Verify -l flag is NOT appended when TAG_LATEST is false
+        def commandsWithLatestFlag = getCommands('docker').findAll {
+            shCommand -> shCommand.contains(' -l')
+        }
+        assertThat(commandsWithLatestFlag.size(), equalTo(0))
+
+        printCallStack()
+    }
+
+    @Test
+    public void DockerBuildWithTagLatestEnabled() {
+        binding.setVariable('TAG_LATEST', true)
+
+        runScript("jenkins/docker/docker-build.jenkinsfile")
+
+        assertJobStatusSuccess()
+
+        // Verify -l flag IS appended to the build command when TAG_LATEST is true
+        def dockerCommandWithLatest = getCommands('docker').findAll {
+            shCommand -> shCommand.contains('docker logout && echo dockerPassword | docker login -u dockerUsername --password-stdin && eval bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH> -l')
+        }
+        assertThat(dockerCommandWithLatest.size(), equalTo(1))
+
+        // Validate the docker-build.sh is called with correct predefined credential
+        assertCallStack().contains("docker-build.echo(Account: dockerhub staging)")
+
+        printCallStack()
+    }
+
+    @Test
+    public void DockerBuildWithTagLatestDisabled() {
+        binding.setVariable('TAG_LATEST', false)
+
+        runScript("jenkins/docker/docker-build.jenkinsfile")
+
+        assertJobStatusSuccess()
+
+        // Verify -l flag is NOT appended when TAG_LATEST is explicitly false
+        def dockerCommandWithoutLatest = getCommands('docker').findAll {
+            shCommand -> shCommand.contains('docker logout && echo dockerPassword | docker login -u dockerUsername --password-stdin && eval bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>')
+                      && !shCommand.contains(' -l')
+        }
+        assertThat(dockerCommandWithoutLatest.size(), equalTo(1))
 
         printCallStack()
     }
