@@ -43,6 +43,7 @@
                                                                     fi
 
                                                                     if [ -f "/tmp/workspace/release-notes/opensearch.release-notes-2.2.0.md" ]; then
+                                                                        mkdir -p release-notes/
                                                                         cp "/tmp/workspace/release-notes/opensearch.release-notes-2.2.0.md" release-notes/
                                                                         if [ -z "$(git status --porcelain)" ]; then
                                                                              echo "No changes to commit for component ${REPO_NAME}. Skipping PR creation."
@@ -116,6 +117,7 @@
                                                                     fi
 
                                                                     if [ -f "/tmp/workspace/release-notes/opensearch-sql.release-notes-2.2.0.0.md" ]; then
+                                                                        mkdir -p release-notes/
                                                                         cp "/tmp/workspace/release-notes/opensearch-sql.release-notes-2.2.0.0.md" release-notes/
                                                                         if [ -z "$(git status --porcelain)" ]; then
                                                                              echo "No changes to commit for component ${REPO_NAME}. Skipping PR creation."
