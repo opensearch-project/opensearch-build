@@ -108,12 +108,11 @@ pipeline {
                                                         def repoUrl = componentObj.repository
                                                         def repoName = repoUrl.replaceAll(/\.git$/, '').tokenize('/')[-1] // Extract repo name from URL, replaces git suffix if exists
                                                         def version = inputManifestObj.build.version
-                                                        def productName = 'opensearch'
                                                         def filename
                                                         if (currentComponent.toLowerCase() in ['opensearch', 'opensearch-dashboards']) {
-                                                            filename = "${productName}.release-notes-${version}.md"
+                                                            filename = "${currentComponent.toLowerCase()}.release-notes-${version}.md"
                                                         } else {
-                                                            filename = "${productName}-${repoName}.release-notes-${version}.0.md"
+                                                            filename = "opensearch-${repoName}.release-notes-${version}.0.md"
                                                         }
                                                         withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                                                             def refParam = params.REF ? "--ref ${REF}" : ""
@@ -178,7 +177,7 @@ pipeline {
                                                                             fi
                                                                         fi
                                                                     else
-                                                                        echo "File $WORKSPACE/release-notes/opensearch-\${REPO_NAME}.release-notes-${version}.0.md does not exist as there are no commits since ${GIT_LOG_DATE}."
+                                                                        echo "File $WORKSPACE/release-notes/${filename} does not exist as there are no commits since ${GIT_LOG_DATE}."
                                                                         exit 1
                                                                     fi
                                                                 fi
