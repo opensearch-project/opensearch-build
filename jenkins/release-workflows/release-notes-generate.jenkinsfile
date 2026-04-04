@@ -140,6 +140,7 @@ pipeline {
                                                                     fi
 
                                                                     if [ -f "$WORKSPACE/release-notes/${filename}" ]; then
+                                                                        mkdir -p release-notes/
                                                                         cp "$WORKSPACE/release-notes/${filename}" release-notes/
                                                                         if [ -z "\$(git status --porcelain)" ]; then
                                                                              echo "No changes to commit for component \${REPO_NAME}. Skipping PR creation."
