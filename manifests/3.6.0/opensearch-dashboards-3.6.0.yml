@@ -69,4 +69,4 @@ components:
     ref: da1f321fce29baa679991137fb7830e50079ab03
   - name: investigationDashboards
     repository: https://github.com/opensearch-project/dashboards-investigation.git
-    ref: a592c5520a2ba48e785ce6e813578786a52d9852
+    ref: 41b20b1b13850d88146351e696c728f20909b67a
