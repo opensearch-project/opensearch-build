@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: e2270fccb65fe4d49b58c004f4ddb17388866a5e
+    ref: f822cb03b76abbdf1b9e558a23d2fb02a7220322
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: a686a58bd20e6e3451ce2cb241cfc15c848d6a5a
@@ -61,7 +61,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 65b749f3379414331a8346ce2efbf2c4b5eb115c
+    ref: d33f27f89601accd4a18122797b73ba4394ba67c
     platforms:
       - linux
       - windows
@@ -71,7 +71,7 @@ components:
       - custom-codecs
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 4d81c82efabb33da7bd5b18a1ab48d1db3600aee
+    ref: d9fe13243c1f919f9fc07041c10cb5c87def2d9f
     platforms:
       - linux
       - windows
@@ -87,7 +87,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: a26f87fb679384f7559856ecd4d39bd215dac222
+    ref: 556f8ee13f35018441f9418a64f41748ec88c4a1
     platforms:
       - linux
       - windows
@@ -97,7 +97,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: e35467f1f975fbf59891da7a314ec366dc635888
+    ref: 84943265eda028ef7554813abec77e4029dab4d5
     platforms:
       - linux
       - windows
@@ -222,7 +222,7 @@ components:
       - ml-commons
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: 76558e829c49b9363cd5994784af3aea8bcdfd01
+    ref: 4e434420af7420a71231890958e846add63c781d
     platforms:
       - linux
       - windows
