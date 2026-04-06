@@ -138,7 +138,7 @@
 * Support aborting native engine merges to prevent shard relocation and cluster stability issues ([#2529](https://github.com/opensearch-project/k-NN/pull/2529))
 
 
-### SQL
+### OpenSearch SQL
 
 
 * Update mend config to allow remediation ([#5287](https://github.com/opensearch-project/sql/pull/5287))
@@ -435,7 +435,7 @@
 * Fix build failure due to Jackson version conflict ([#1151](https://github.com/opensearch-project/notifications/pull/1151))
 
 
-### OpenSearch OpenSearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Fix `LoggingSearchExtBuilder.toXContent` missing field name, which caused a `JsonGenerationException` when LTR feature logging was used with search pipelines that re-serialize the request ([#290](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/290))
@@ -516,7 +516,7 @@
 * Fix integer overflow for memory-optimized search when converting Faiss HNSW offsets from long to int ([#3130](https://github.com/opensearch-project/k-NN/pull/3130))
 
 
-### SQL
+### OpenSearch SQL
 
 
 * Fix flaky TPC-H Q1 test due to bugs in `MatcherUtils.closeTo()` ([#5283](https://github.com/opensearch-project/sql/pull/5283))
@@ -626,7 +626,7 @@
 * Update shadow plugin usage to replace deprecated API ([#1138](https://github.com/opensearch-project/notifications/pull/1138))
 
 
-### OpenSearch OpenSearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Fix Windows CI build failure by removing Spotless P2 mirror dependency and resolving from Maven Central instead ([#305](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/305))
@@ -676,7 +676,7 @@
 * Fix k-NN build and run compatibility with Lucene 10.4.0 upgrade ([#3135](https://github.com/opensearch-project/k-NN/pull/3135))
 
 
-### SQL
+### OpenSearch SQL
 
 
 * Add gradle.properties file to build sql with -Pcrypto.standard=FIPS-140-3 by default ([#5231](https://github.com/opensearch-project/sql/pull/5231))
@@ -687,7 +687,7 @@
 ## DOCUMENTATION
 
 
-### SQL
+### OpenSearch SQL
 
 
 * Apply docs website feedback to ppl functions ([#5207](https://github.com/opensearch-project/sql/pull/5207))
@@ -946,7 +946,7 @@
 * Fix KNN1030Codec to properly support delegation for non-default codecs on the read path ([#3093](https://github.com/opensearch-project/k-NN/pull/3093))
 
 
-### SQL
+### OpenSearch SQL
 
 
 * Move some maintainers from active to Emeritus ([#5260](https://github.com/opensearch-project/sql/pull/5260))
