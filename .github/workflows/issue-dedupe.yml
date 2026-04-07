@@ -1,0 +1,28 @@
+---
+name: Issue Dedupe
+on:
+  issues:
+    types: [opened]
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  detect:
+    if: >-
+      github.event_name == 'issues' &&
+      github.repository == 'opensearch-project/opensearch-build'
+    uses: opensearch-project/opensearch-build/.github/workflows/issue-dedupe-detect.yml@main
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    secrets:
+      BEDROCK_ACCESS_ROLE_ISSUE: ${{ secrets.BEDROCK_ACCESS_ROLE_ISSUE }}
+
+  auto-close:
+    if: >-
+      github.event_name == 'schedule' &&
+      github.repository == 'opensearch-project/opensearch-build'
+    uses: opensearch-project/opensearch-build/.github/workflows/issue-dedupe-autoclose.yml@main
+    permissions:
+      issues: write
