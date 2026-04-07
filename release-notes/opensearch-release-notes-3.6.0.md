@@ -7,8 +7,6 @@
 #### Search Modernization
 * **Automate search app development with OpenSearch Launchpad**: An AI-powered agent automatically provisions a complete local setup with optimal architecture and working UI based on your sample documents and conversational input. Launchpad can handle every technical decision—from semantic encoding to cluster configuration—and integrates natively with IDEs.
 
-* **Simplify agent creation and standardize agent input**: A unified registration API collapses four manual steps (creating a connector, registering a model, configuring an agent, and mapping parameters) into single API call. New conversational_v2 agent type supports plain text, multimodal content blocks, and conversation history—no custom connector configuration required.
-
 * **Build more robust agentic search applications**: New capabilities include alias support, embedding model configuration, fallback query options, reranking capabilities, and agentic memory for conversational, context-aware search experiences with improved relevance and precision.
 
 * **Maximize storage efficiency with 1-bit Scalar Quantization**: 1-bit SQ delivers 32x compression across Faiss and Lucene engines with 24% better recall and 15% lower latency. Perform approximate and exact k-NN search directly on quantized vectors for metadata-heavy use cases.
@@ -41,10 +39,12 @@
 
 * **Add visualizations to Top N Queries**: A new Stats & Visualizations panel displays P90 and P99 percentile stats with an interactive pie chart and table. A Performance Analysis section shows line chart and heatmap views to identify bottlenecks and understand query distribution.
 
-
 ### Experimental Features
 OpenSearch 3.6 includes the following experimental functionality. Experimental features are disabled by default. For instructions on how to enable them, refer to the documentation for the feature.
+
 * **Optimize search results with OpenSearch Relevance Agent**: Automate search relevance tuning with multi-agent system integrated into OpenSearch Dashboards. The agent continuously analyzes user behavior, generates hypotheses, and validates improvements through offline evaluation to help you dramatically reduce optimization cycles.
+
+* **Simplify agent creation and standardize agent input**: A unified registration API collapses four manual steps (creating a connector, registering a model, configuring an agent, and mapping parameters) into single API call. New conversational_v2 agent type supports plain text, multimodal content blocks, and conversation history—no custom connector configuration required.
 
 ## Release Details
 [OpenSearch and OpenSearch Dashboards 3.6.0](https://opensearch.org/artifacts/by-version/#release-3-6-0) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
