@@ -1,5 +1,57 @@
 # OpenSearch and OpenSearch Dashboards 3.6.0 Release Notes
 
+## Release Highlights
+
+### New and Updated Features
+
+#### Search Modernization
+* **Automate search app development with OpenSearch Launchpad**: An AI-powered agent automatically provisions a complete local setup with optimal architecture and working UI based on your sample documents and conversational input. Launchpad can handle every technical decision—from semantic encoding to cluster configuration—and integrates natively with IDEs.
+
+* **Simplify agent creation and standardize agent input**: A unified registration API collapses four manual steps (creating a connector, registering a model, configuring an agent, and mapping parameters) into single API call. New conversational_v2 agent type supports plain text, multimodal content blocks, and conversation history—no custom connector configuration required.
+
+* **Build more robust agentic search applications**: New capabilities include alias support, embedding model configuration, fallback query options, reranking capabilities, and agentic memory for conversational, context-aware search experiences with improved relevance and precision.
+
+* **Maximize storage efficiency with 1-bit Scalar Quantization**: 1-bit SQ delivers 32x compression across Faiss and Lucene engines with 24% better recall and 15% lower latency. Perform approximate and exact k-NN search directly on quantized vectors for metadata-heavy use cases.
+
+* **Decrease latency with Faiss quantization optimizations**: New functionality leverages quantized flat vectors directly from graph files, offering a 40% reduction in latency for quantized index searches compared with FP32 flat vectors.
+
+* **Reduce vector storage with metadata compression**: Zstandard compression for vectors reduces the disk footprint for metadata, enabling storage of more metadata-rich vectors on same hardware without compromising high-speed access needed for search and retrieval.
+
+* **Reduce vector search latency 50%**: New prefetch functionality for ANN and exact search proactively loads vectors into memory before CPU needs them, minimizing idle cycles to deliver up to 2x search latency improvements for memory-constrained environments.
+
+* **Streamline relevance tuning**: Ease-of-use enhancements to the Search Relevance Workbench simplify the work of organizing experiments, running experiments against multiple data sources, and creating query sets. Evaluate quality for different search scenarios with three new metrics: Recall@K, MRR, and DCG@K.
+ 
+#### Observability and Analytics
+* **Track and analyze distributed applications**: Built-in Application Performance Monitoring combines auto-generated service topology maps with RED metrics powered by OpenTelemetry and Data Prepper pipelines. A centralized services catalog offers per-operation and dependency performance breakdowns, and in-context correlations let you drill down to analyze root cause.
+
+* **Monitor generative AI applications with Agent Traces**: Trace agent invocations, LLM calls, and tool executions across your AI stack using OpenTelemetry-based instrumentation. A Python SDK supports OpenAI, Anthropic, Bedrock, LangChain, and LlamaIndex with interactive DAG graphs and token usage tracking in Dashboards.
+
+* **Deploy full-stack observability with one command**: This release supports the OpenSearch Observability Stack, which bundles OpenTelemetry Collector, Data Prepper, OpenSearch, Prometheus, and Dashboards into a single deployment to deliver comprehensive, open source observability.
+
+* **Enhance PPL queries with new tools and commands**: This release brings a unified query library for third-party tools, search result highlighting, auto-extract mode for JSON fields, graphlookup for recursive graph traversal, and query cancellation for in-flight queries.
+ 
+#### Scalability and Resiliency
+* **Improve query debugging with user- and team-based access control**: A new filter mode enables self-service query debugging without admin privileges while maintaining data privacy for multi-tenant environments. Users see only their queries or queries from shared backend roles; administrators retain full visibility.
+
+* **Enhance query insights with automated recommendations**: A new recommendation engine analyzes top N queries, identifies problems, and proposes solutions with confidence scores and estimated impacts. Recommendations are generated asynchronously off the search path with no impact to query performance.
+
+* **Observe short-lived queries with cache layer**: A finished queries cache layer for the Live Queries API lets you retrieve recently completed queries alongside active ones, ideal for observing short-lived queries. A dynamic lifecycle model activates cache on demand to conserve resources.
+
+* **Access remote storage for top N queries**: Query insights lets you move top N queries data to remote blob store repositories as a cost-effective, long-term storage option with support for Amazon S3 repositories in this release. Exported data is written as JSON files organized by timestamp with retention managed by bucket configuration.
+
+* **Add visualizations to Top N Queries**: A new Stats & Visualizations panel displays P90 and P99 percentile stats with an interactive pie chart and table. A Performance Analysis section shows line chart and heatmap views to identify bottlenecks and understand query distribution.
+
+
+### Experimental Features
+OpenSearch 3.6 includes the following experimental functionality. Experimental features are disabled by default. For instructions on how to enable them, refer to the documentation for the feature.
+* **Optimize search results with OpenSearch Relevance Agent**: Automate search relevance tuning with multi-agent system integrated into OpenSearch Dashboards. The agent continuously analyzes user behavior, generates hypotheses, and validates improvements through offline evaluation to help you dramatically reduce optimization cycles.
+
+## Release Details
+[OpenSearch and OpenSearch Dashboards 3.6.0](https://opensearch.org/artifacts/by-version/#release-3-6-0) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.6.0.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.6.0.md).
 
 ## FEATURES
 
