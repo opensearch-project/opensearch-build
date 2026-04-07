@@ -15,6 +15,11 @@ on:
         type: string
         required: false
         default: 'us.anthropic.claude-sonnet-4-6'
+      issue_number:
+        type: string
+        required: false
+        default: ''
+        description: 'Issue number to check (defaults to github.event.issue.number)'
       allowed_bots:
         type: string
         required: false
@@ -29,7 +34,7 @@ jobs:
       id-token: write
     timeout-minutes: 10
     env:
-      ISSUE_NUMBER: ${{ github.event.issue.number || github.event.inputs.issue_number }}
+      ISSUE_NUMBER: ${{ inputs.issue_number || github.event.issue.number }}
     steps:
       - name: Checkout caller repo
         uses: actions/checkout@v6

@@ -5,11 +5,17 @@ on:
     types: [opened]
   schedule:
     - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to check for duplicates'
+        required: true
+        type: string
 
 jobs:
   detect:
     if: >-
-      github.event_name == 'issues' &&
+      (github.event_name == 'issues' || github.event_name == 'workflow_dispatch') &&
       github.repository == 'opensearch-project/opensearch-build'
     uses: opensearch-project/opensearch-build/.github/workflows/issue-dedupe-detect.yml@main
     permissions:
@@ -18,6 +24,8 @@ jobs:
       id-token: write
     secrets:
       BEDROCK_ACCESS_ROLE_ISSUE: ${{ secrets.BEDROCK_ACCESS_ROLE_ISSUE }}
+    with:
+      issue_number: ${{ inputs.issue_number || '' }}
 
   auto-close:
     if: >-
