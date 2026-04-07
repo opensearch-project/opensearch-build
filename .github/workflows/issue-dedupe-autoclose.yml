@@ -45,12 +45,9 @@ jobs:
                 continue;
               }
               const lastDupeComment = dupeComments[dupeComments.length - 1];
-              const dupeCommentAge = now - new Date(lastDupeComment.created_at).getTime();
-              if (dupeCommentAge < GRACE_PERIOD_MS) {
-                const daysLeft = ((GRACE_PERIOD_MS - dupeCommentAge) / (24 * 60 * 60 * 1000)).toFixed(1);
-                console.log(`  Duplicate comment is too recent (${daysLeft} days remaining), skipping`);
-                continue;
-              }
+
+              // Check for human disagreement first (before grace period),
+              // so users get immediate feedback on next autoclose run
               const humanCommentsAfter = comments.data.filter(c =>
                 new Date(c.created_at) > new Date(lastDupeComment.created_at) &&
                 c.user.type !== 'Bot' &&
@@ -95,6 +92,15 @@ jobs:
                 }
                 continue;
               }
+
+              // Only check grace period after confirming no human disagreement
+              const dupeCommentAge = now - new Date(lastDupeComment.created_at).getTime();
+              if (dupeCommentAge < GRACE_PERIOD_MS) {
+                const daysLeft = ((GRACE_PERIOD_MS - dupeCommentAge) / (24 * 60 * 60 * 1000)).toFixed(1);
+                console.log(`  Duplicate comment is too recent (${daysLeft} days remaining), skipping`);
+                continue;
+              }
+
               const dupeMatch = lastDupeComment.body.match(/#(\d+)/);
               const dupeNumber = dupeMatch ? dupeMatch[1] : 'unknown';
               console.log(`  Closing as duplicate of #${dupeNumber}`);
