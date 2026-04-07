@@ -26,6 +26,7 @@ jobs:
       BEDROCK_ACCESS_ROLE_ISSUE: ${{ secrets.BEDROCK_ACCESS_ROLE_ISSUE }}
     with:
       issue_number: ${{ inputs.issue_number || '' }}
+      grace_days: ${{ vars.DUPLICATE_GRACE_DAYS || '7' }}
 
   auto-close:
     if: >-
@@ -34,3 +35,5 @@ jobs:
     uses: opensearch-project/opensearch-build/.github/workflows/issue-dedupe-autoclose.yml@main
     permissions:
       issues: write
+    with:
+      grace_days: ${{ vars.DUPLICATE_GRACE_DAYS || '7' }}
