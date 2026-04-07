@@ -79,7 +79,7 @@ jobs:
                   <dup_list>
 
                   If this is **not** a duplicate:
-                  - Add a comment on this issue, and the \`duplicate\` label will be removed automatically, or
+                  - Add a comment on this issue, or
                   - 👎 this comment to prevent auto-closure
 
                   Otherwise, this issue will be **automatically closed in ${DUPLICATE_GRACE_DAYS:-7} days**.

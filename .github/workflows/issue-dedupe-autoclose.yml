@@ -58,7 +58,19 @@ jobs:
                 !c.body.includes('automatically closed as a duplicate')
               );
               if (humanCommentsAfter.length > 0) {
-                console.log(`  Has ${humanCommentsAfter.length} human comment(s) after detection, skipping`);
+                console.log(`  Has ${humanCommentsAfter.length} human comment(s) after detection, removing duplicate label`);
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner, repo, issue_number: issue.number, name: 'duplicate',
+                  });
+                  console.log(`  Successfully removed duplicate label from issue #${issue.number}`);
+                } catch (e) {
+                  if (e.status === 404) {
+                    console.log(`  duplicate label was already removed from issue #${issue.number}`);
+                  } else {
+                    throw e;
+                  }
+                }
                 continue;
               }
               const reactions = await github.rest.reactions.listForIssueComment({
@@ -68,7 +80,19 @@ jobs:
                 r.user.id === issue.user.id && r.content === '-1'
               );
               if (authorThumbsDown) {
-                console.log(`  Issue author gave thumbs-down on duplicate comment, skipping`);
+                console.log(`  Issue author gave thumbs-down on duplicate comment, removing duplicate label`);
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner, repo, issue_number: issue.number, name: 'duplicate',
+                  });
+                  console.log(`  Successfully removed duplicate label from issue #${issue.number}`);
+                } catch (e) {
+                  if (e.status === 404) {
+                    console.log(`  duplicate label was already removed from issue #${issue.number}`);
+                  } else {
+                    throw e;
+                  }
+                }
                 continue;
               }
               const dupeMatch = lastDupeComment.body.match(/#(\d+)/);
