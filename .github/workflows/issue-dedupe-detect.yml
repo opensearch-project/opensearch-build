@@ -53,6 +53,7 @@ jobs:
           use_bedrock: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allowed_bots: ${{ inputs.allowed_bots }}
+          allowed_non_write_users: '*'
           claude_args: '--model ${{ inputs.claude_model }} --allowedTools Bash(gh\ *)'
           prompt: |
             Find up to 3 likely duplicate issues for issue #${{ env.ISSUE_NUMBER }} in ${{ github.repository }}.
