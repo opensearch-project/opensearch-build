@@ -57,11 +57,11 @@ jobs:
           claude_args: >-
             --model ${{ inputs.claude_model }}
             --allowedTools
-            "Bash(gh issue view*)"
-            "Bash(gh issue comment*)"
-            "Bash(gh issue edit*)"
-            "Bash(gh search issues*)"
-            "Bash(gh label create*)"
+            "Bash(gh issue view *)"
+            "Bash(gh issue comment *)"
+            "Bash(gh issue edit *)"
+            "Bash(gh search issues *)"
+            "Bash(gh label create *)"
           prompt: |
             Find up to 3 likely duplicate issues for issue #${{ env.ISSUE_NUMBER }} in ${{ github.repository }}.
 
