@@ -28,10 +28,10 @@ jobs:
             const now = Date.now();
 
             const issues = await github.paginate(github.rest.issues.listForRepo, {
-              owner, repo, state: 'open', labels: 'duplicate-issue', per_page: 100,
+              owner, repo, state: 'open', labels: 'duplicate', per_page: 100,
             });
 
-            console.log(`Found ${issues.length} open issues with duplicate-issue label`);
+            console.log(`Found ${issues.length} open issues with duplicate label`);
             let closedCount = 0;
 
             for (const issue of issues) {
@@ -55,15 +55,15 @@ jobs:
                 !c.body.includes('automatically closed as a duplicate')
               );
               if (humanCommentsAfter.length > 0) {
-                console.log(`  Has ${humanCommentsAfter.length} human comment(s) after detection, removing duplicate-issue label`);
+                console.log(`  Has ${humanCommentsAfter.length} human comment(s) after detection, removing duplicate label`);
                 try {
                   await github.rest.issues.removeLabel({
-                    owner, repo, issue_number: issue.number, name: 'duplicate-issue',
+                    owner, repo, issue_number: issue.number, name: 'duplicate',
                   });
-                  console.log(`  Successfully removed duplicate-issue label from issue #${issue.number}`);
+                  console.log(`  Successfully removed duplicate label from issue #${issue.number}`);
                 } catch (e) {
                   if (e.status === 404) {
-                    console.log(`  duplicate-issue label was already removed from issue #${issue.number}`);
+                    console.log(`  duplicate label was already removed from issue #${issue.number}`);
                   } else {
                     throw e;
                   }
@@ -77,15 +77,15 @@ jobs:
                 r.user.id === issue.user.id && r.content === '-1'
               );
               if (authorThumbsDown) {
-                console.log(`  Issue author gave thumbs-down on duplicate comment, removing duplicate-issue label`);
+                console.log(`  Issue author gave thumbs-down on duplicate comment, removing duplicate label`);
                 try {
                   await github.rest.issues.removeLabel({
-                    owner, repo, issue_number: issue.number, name: 'duplicate-issue',
+                    owner, repo, issue_number: issue.number, name: 'duplicate',
                   });
-                  console.log(`  Successfully removed duplicate-issue label from issue #${issue.number}`);
+                  console.log(`  Successfully removed duplicate label from issue #${issue.number}`);
                 } catch (e) {
                   if (e.status === 404) {
-                    console.log(`  duplicate-issue label was already removed from issue #${issue.number}`);
+                    console.log(`  duplicate label was already removed from issue #${issue.number}`);
                   } else {
                     throw e;
                   }
