@@ -84,15 +84,14 @@ jobs:
         shell: bash
         run: |
           RESULT_FILE="/tmp/dedupe-result.txt"
-          echo "Raw dedupe result file contents:"
-          cat "$RESULT_FILE"
-
-          # Sanitize: only keep lines matching "- #<number>" pattern
           if [ ! -f "$RESULT_FILE" ] || [ ! -s "$RESULT_FILE" ]; then
             echo "No duplicates found or result file missing"
             echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
+          echo "Raw dedupe result file contents:"
+          cat "$RESULT_FILE"
 
           # Sanitize: only keep lines matching "- #<number>" pattern
           SANITIZED=$(grep -E '^- #[0-9]+$' "$RESULT_FILE" || true)
