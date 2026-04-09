@@ -14,7 +14,7 @@ on:
       claude_model:
         type: string
         required: false
-        default: 'us.anthropic.claude-sonnet-4-6'
+        default: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0'
       issue_number:
         type: string
         required: false
