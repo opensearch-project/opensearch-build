@@ -17,7 +17,7 @@ jobs:
     if: >-
       (github.event_name == 'workflow_dispatch') ||
       (github.event_name == 'issues' &&
-       !contains(github.event.issue.labels.*.name, 'duplicate'))
+       !contains(github.event.issue.labels.*.name, 'duplicate-issue'))
     uses: opensearch-project/opensearch-build/.github/workflows/issue-dedupe-detect.yml@main
     permissions:
       contents: read
