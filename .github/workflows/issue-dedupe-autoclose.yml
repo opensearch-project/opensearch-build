@@ -1,0 +1,120 @@
+---
+name: Issue Dedupe Auto-close
+on:
+  workflow_call:
+    inputs:
+      grace_days:
+        type: string
+        required: false
+        default: '7'
+        description: 'Days to wait before auto-closing duplicate issues'
+
+jobs:
+  auto-close:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    timeout-minutes: 10
+    steps:
+      - name: Auto-close duplicate issues past grace period
+        uses: actions/github-script@v7
+        env:
+          GRACE_DAYS: ${{ inputs.grace_days }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const graceDays = parseInt(process.env.GRACE_DAYS, 10) || 7;
+            const GRACE_PERIOD_MS = graceDays * 24 * 60 * 60 * 1000;
+            const now = Date.now();
+
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', labels: 'duplicate', per_page: 100,
+            });
+
+            console.log(`Found ${issues.length} open issues with duplicate label`);
+            let closedCount = 0;
+
+            for (const issue of issues) {
+              console.log(`Processing issue #${issue.number}: ${issue.title}`);
+              const comments = await github.rest.issues.listComments({
+                owner, repo, issue_number: issue.number, per_page: 100,
+              });
+              const dupeComments = comments.data.filter(c => c.body.includes('<!-- duplicate-detection -->'));
+              if (dupeComments.length === 0) {
+                console.log(`  No duplicate detection comment found, skipping`);
+                continue;
+              }
+              const lastDupeComment = dupeComments[dupeComments.length - 1];
+
+              // Check for human disagreement first (before grace period),
+              // so users get immediate feedback on next autoclose run
+              const humanCommentsAfter = comments.data.filter(c =>
+                new Date(c.created_at) > new Date(lastDupeComment.created_at) &&
+                c.user.type !== 'Bot' &&
+                !c.body.includes('<!-- duplicate-detection -->') &&
+                !c.body.includes('automatically closed as a duplicate')
+              );
+              if (humanCommentsAfter.length > 0) {
+                console.log(`  Has ${humanCommentsAfter.length} human comment(s) after detection, removing duplicate label`);
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner, repo, issue_number: issue.number, name: 'duplicate',
+                  });
+                  console.log(`  Successfully removed duplicate label from issue #${issue.number}`);
+                } catch (e) {
+                  if (e.status === 404) {
+                    console.log(`  duplicate label was already removed from issue #${issue.number}`);
+                  } else {
+                    throw e;
+                  }
+                }
+                continue;
+              }
+              const reactions = await github.rest.reactions.listForIssueComment({
+                owner, repo, comment_id: lastDupeComment.id, per_page: 100,
+              });
+              const authorThumbsDown = reactions.data.some(r =>
+                r.user.id === issue.user.id && r.content === '-1'
+              );
+              if (authorThumbsDown) {
+                console.log(`  Issue author gave thumbs-down on duplicate comment, removing duplicate label`);
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner, repo, issue_number: issue.number, name: 'duplicate',
+                  });
+                  console.log(`  Successfully removed duplicate label from issue #${issue.number}`);
+                } catch (e) {
+                  if (e.status === 404) {
+                    console.log(`  duplicate label was already removed from issue #${issue.number}`);
+                  } else {
+                    throw e;
+                  }
+                }
+                continue;
+              }
+
+              // Only check grace period after confirming no human disagreement
+              const dupeCommentAge = now - new Date(lastDupeComment.created_at).getTime();
+              if (dupeCommentAge < GRACE_PERIOD_MS) {
+                const daysLeft = ((GRACE_PERIOD_MS - dupeCommentAge) / (24 * 60 * 60 * 1000)).toFixed(1);
+                console.log(`  Duplicate comment is too recent (${daysLeft} days remaining), skipping`);
+                continue;
+              }
+
+              const dupeMatch = lastDupeComment.body.match(/#(\d+)/);
+              const dupeNumber = dupeMatch ? dupeMatch[1] : 'unknown';
+              console.log(`  Closing as duplicate of #${dupeNumber}`);
+              await github.rest.issues.update({
+                owner, repo, issue_number: issue.number,
+                state: 'closed', state_reason: 'duplicate',
+              });
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number: issue.number, labels: ['autoclose'],
+              });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issue.number,
+                body: `This issue has been automatically closed as a duplicate of #${dupeNumber}.\n\nIf this is incorrect, please reopen this issue or create a new one.\n\n🤖 Generated with [Claude Code](https://claude.ai/code)`,
+              });
+              closedCount++;
+            }
+            console.log(`Done. Closed ${closedCount} duplicate issue(s).`);
