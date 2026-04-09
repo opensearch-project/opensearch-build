@@ -46,7 +46,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Run Claude Code for duplicate detection
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@2ff1acb3ee319fa302837dad6e17c2f36c0d98ea # v1
         env:
           DUPLICATE_GRACE_DAYS: ${{ inputs.grace_days }}
         with:
