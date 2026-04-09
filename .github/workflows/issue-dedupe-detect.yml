@@ -3,7 +3,7 @@ name: Issue Dedupe Detect
 on:
   workflow_call:
     secrets:
-      BEDROCK_ACCESS_ROLE_ISSUE:
+      BEDROCK_ACCESS_ROLE_ISSUE_DEDUPE:
         required: true
     inputs:
       grace_days:
@@ -42,7 +42,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE_ISSUE }}
+          role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE_ISSUE_DEDUPE }}
           aws-region: us-east-1
 
       - name: Run Claude Code for duplicate detection

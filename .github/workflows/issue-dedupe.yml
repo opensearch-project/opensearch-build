@@ -1,5 +1,5 @@
 ---
-name: Issue Dedupe
+name: Issue Dedupe Main
 on:
   issues:
     types: [opened]
@@ -13,25 +13,21 @@ on:
         type: string
 
 jobs:
-  detect:
-    if: >-
-      (github.event_name == 'issues' || github.event_name == 'workflow_dispatch') &&
-      github.repository == 'opensearch-project/opensearch-build'
+  detect-issue:
+    if: github.event_name == 'issues' || github.event_name == 'workflow_dispatch'
     uses: opensearch-project/opensearch-build/.github/workflows/issue-dedupe-detect.yml@main
     permissions:
       contents: read
       issues: write
       id-token: write
     secrets:
-      BEDROCK_ACCESS_ROLE_ISSUE: ${{ secrets.BEDROCK_ACCESS_ROLE_ISSUE }}
+      BEDROCK_ACCESS_ROLE_ISSUE_DEDUPE: ${{ secrets.BEDROCK_ACCESS_ROLE_ISSUE_DEDUPE }}
     with:
       issue_number: ${{ inputs.issue_number || '' }}
       grace_days: ${{ vars.DUPLICATE_GRACE_DAYS || '7' }}
 
-  auto-close:
-    if: >-
-      github.event_name == 'schedule' &&
-      github.repository == 'opensearch-project/opensearch-build'
+  auto-close-issue:
+    if: github.event_name == 'schedule'
     uses: opensearch-project/opensearch-build/.github/workflows/issue-dedupe-autoclose.yml@main
     permissions:
       issues: write
