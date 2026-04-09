@@ -98,9 +98,7 @@ jobs:
             - Add a comment on this issue, or
             - 👎 this comment to prevent auto-closure
 
-            Otherwise, this issue will be **automatically closed in ${DUPLICATE_GRACE_DAYS:-7} days**.
-
-            🤖 Generated with [Claude Code](https://claude.ai/code)"
+            Otherwise, this issue will be **automatically closed in ${DUPLICATE_GRACE_DAYS:-7} days**."
                   ```
 
             6. If no genuine duplicates are found, report that no duplicates were detected and take no further action.
