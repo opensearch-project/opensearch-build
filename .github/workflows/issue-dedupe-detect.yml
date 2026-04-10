@@ -21,6 +21,7 @@ on:
         default: ''
         description: 'Issue number to check (defaults to github.event.issue.number)'
 
+
 jobs:
   detect:
     runs-on: ubuntu-latest
@@ -42,6 +43,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Run Claude Code for duplicate detection
+        id: claude
         uses: anthropics/claude-code-action@2ff1acb3ee319fa302837dad6e17c2f36c0d98ea # v1
         env:
           DUPLICATE_GRACE_DAYS: ${{ inputs.grace_days }}
@@ -53,16 +55,13 @@ jobs:
             --model ${{ inputs.claude_model }}
             --allowedTools
             "Bash(gh issue view *)"
-            "Bash(gh issue comment *)"
-            "Bash(gh issue edit *)"
             "Bash(gh search issues *)"
-            "Bash(gh label create *)"
           prompt: |
             Find up to 3 likely duplicate issues for issue #${{ env.ISSUE_NUMBER }} in ${{ github.repository }}.
 
             Follow these steps precisely:
 
-            1. Use `gh issue view ${{ env.ISSUE_NUMBER }} --repo ${{ github.repository }} --comments` to read the issue and its comments. If the issue is closed, or is broad product feedback without a specific bug/feature request, or already has a duplicate detection comment (containing `<!-- duplicate-detection -->`), stop and report why you are not proceeding.
+            1. Use `gh issue view ${{ env.ISSUE_NUMBER }} --repo ${{ github.repository }} --comments` to read the issue and its comments. If the issue is closed, or is broad product feedback without a specific bug/feature request, or already has a duplicate detection comment (containing `<!-- duplicate-detection -->`), stop immediately and output nothing.
 
             2. Summarize the issue's core problem in 2-3 sentences. Identify the key terms, error messages, and affected components.
 
@@ -74,36 +73,77 @@ jobs:
 
             4. For each candidate issue that looks like a potential match, read it with `gh issue view <number> --repo ${{ github.repository }}` to verify it is truly about the same problem. Filter out false positives — issues that merely share keywords but describe different problems.
 
-            5. If you find 1-3 genuine duplicates, you MUST run the following commands exactly as shown. Do NOT paraphrase or reformat the comment body — the `<!-- duplicate-detection -->` marker is required for automated processing.
-
-               a. For each duplicate, get its title:
-                  `gh issue view <dup_number> --repo ${{ github.repository }} --json title -q .title`
-
-               b. Ensure the duplicate label exists:
-                  `gh label create "duplicate" --description "Issue is a duplicate of an existing issue" --color "cccccc" --repo ${{ github.repository }} 2>/dev/null || true`
-
-               c. Add the label:
-                  `gh issue edit ${{ env.ISSUE_NUMBER }} --repo ${{ github.repository }} --add-label "duplicate"`
-
-               d. Post the comment. You MUST use this EXACT command with the EXACT format below (only replace N with the count and <dup_list> with lines like `- #123 — Title`):
-                  ```
-                  gh issue comment ${{ env.ISSUE_NUMBER }} --repo ${{ github.repository }} --body "<!-- duplicate-detection -->
-            ### Possible Duplicate
-
-            Found **N** possible duplicate issue(s):
-
-            <dup_list>
-
-            If this is **not** a duplicate:
-            - Add a comment on this issue, or
-            - 👎 this comment to prevent auto-closure
-
-            Otherwise, this issue will be **automatically closed in ${DUPLICATE_GRACE_DAYS:-7} days**."
-                  ```
-
-            6. If no genuine duplicates are found, report that no duplicates were detected and take no further action.
+            5. Output ONLY the confirmed duplicates, one per line in the format `- #<number>`. No other text, no explanation, no markdown headers. If no duplicates found, output nothing.
 
             Important notes:
             - Only flag issues as duplicates when you are confident they describe the **same underlying problem**
             - Prefer open issues as duplicates, but closed issues can be referenced too
             - Do not flag the issue as a duplicate of itself
+
+      - name: Build duplicate list
+        id: build-list
+        shell: bash
+        run: |
+          EXECUTION_FILE="${{ steps.claude.outputs.execution_file }}"
+          if [ -z "$EXECUTION_FILE" ] || [ ! -f "$EXECUTION_FILE" ]; then
+            echo "No execution file found"
+            echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Extract the final result text from the execution output
+          RESULT=$(jq -r 'if type == "array" then .[] else . end | objects | select(.type == "result") | .result // empty' "$EXECUTION_FILE" | tail -1)
+          echo "Claude result text:"
+          echo "$RESULT"
+
+          if [ -z "$RESULT" ]; then
+            echo "No result text found"
+            echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Sanitize: only keep lines matching "- #<number>" pattern
+          SANITIZED=$(echo "$RESULT" | grep -E '^- #[0-9]+$' || true)
+          if [ -z "$SANITIZED" ]; then
+            echo "No valid duplicate entries after sanitization"
+            echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "has_duplicates=true" >> "$GITHUB_OUTPUT"
+          echo "Sanitized duplicate list:"
+          echo "$SANITIZED"
+
+          {
+            echo "duplicate_list<<EOF"
+            echo "$SANITIZED"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Add duplicate label
+        if: steps.build-list.outputs.has_duplicates == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "duplicate" --description "Issue is a duplicate of an existing issue" --color "cccccc" --repo "${{ github.repository }}" 2>/dev/null || true
+          gh issue edit "${{ env.ISSUE_NUMBER }}" --repo "${{ github.repository }}" --add-label "duplicate"
+          echo "Added duplicate label to issue #${{ env.ISSUE_NUMBER }}"
+
+      - name: Post duplicate detection comment
+        if: steps.build-list.outputs.has_duplicates == 'true'
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          body: |
+            <!-- duplicate-detection -->
+            ### Possible Duplicate
+
+            Possible duplicate issue(s):
+
+            ${{ steps.build-list.outputs.duplicate_list }}
+
+            If this is **not** a duplicate:
+            - Add a comment on this issue, or
+            - 👎 this comment to prevent auto-closure
+
+            Otherwise, this issue will be **automatically closed in ${{ inputs.grace_days }} days**.
