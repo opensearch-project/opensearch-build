@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@aoss-v2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@aoss-v2-search', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/rishabh6788/opensearch-build-libraries.git',
@@ -28,6 +28,10 @@ pipeline {
             '''
                 H */4 * * * %CLUSTER_ENDPOINT=g82rc2ix4zc49mtfjw35.gamma-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,cluster-config:aoss-v2-hot-path,aws_account_id:080869525086,placement_constraint_id:rBopAwIg98f2RaBPGIoL1mvg-CaXuW-HG67WF1M2Ko8;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"3.3.0","range_auto_date_histo_w_met_iterations":10,"range_auto_date_histo_w_met_warmup_iterations":10};ASSUME_ROLE_ACCOUNT=080869525086
                 H */4 * * * %CLUSTER_ENDPOINT=krnza9tkh2gniwptouo2.gamma-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,cluster-config:aoss-v1-hot-path,aws_account_id:080869525086,placement_constraint_id:hX6yXOuDfogGj-FCXcGR1y4gKhzVoAe0U98koww3Wuo;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"2.17.0"};ASSUME_ROLE_ACCOUNT=080869525086
+
+                ## 4 OCU Runs
+                H */4 * * * %CLUSTER_ENDPOINT=ulkgtx5tamqhfcm6maf0.gamma-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,cluster-config:aoss-v1-hot-path-4-ocu,aws_account_id:080869525086,placement_constraint_id:dppllkz7PNhDdgoLuve0wUQuIbsaT-XSTGnlBhAW33g;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"2.17.0","warmup_iterations":20,"test_iterations":50};ASSUME_ROLE_ACCOUNT=080869525086
+                H */4 * * * %CLUSTER_ENDPOINT=8bjedp46c24xekouz6i6.gamma-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,cluster-config:aoss-v2-hot-path-4-ocu,aws_account_id:080869525086,placement_constraint_id:6fVi08qpiCX1SPeTL8uc2Bdlq0KPGVrzvdRVzX50Rgc;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"2.17.0","warmup_iterations":20,"test_iterations":50};ASSUME_ROLE_ACCOUNT=080869525086
 
                 H 1 * * * %CLUSTER_ENDPOINT=juypenejcyfqt3e92iri.beta-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,cluster-config:aoss-v2-hot-path-css-disabled;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"3.3.0"};ASSUME_ROLE_ACCOUNT=158160602664
                 H 1 * * * %CLUSTER_ENDPOINT=dxnb6q4s7jztml07uzrd.beta-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,cluster-config:aoss-v2-hot-path-css-enabled;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"3.3.0"};ASSUME_ROLE_ACCOUNT=346299179122
