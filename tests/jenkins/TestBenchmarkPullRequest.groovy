@@ -173,7 +173,9 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
         binding.getVariable('currentBuild').rawBuild = [:]
         binding.getVariable('currentBuild').rawBuild.getCauses = { return "jenkins.branch.GenericCause@123abc" }
         helper.registerAllowedMethod('sh', [String.class], { String cmd ->
-            updateBuildStatus('FAILURE')
+            if (!cmd.contains('curl') && !cmd.contains('node --version') && !cmd.contains('npm install') && !cmd.contains('cdk --version')) {
+                updateBuildStatus('FAILURE')
+            }
         })
         def result = runScript("jenkins/opensearch/benchmark-pull-request.jenkinsfile")
 
@@ -189,7 +191,9 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
         binding.getVariable('currentBuild').rawBuild.getCauses = { return "jenkins.branch.GenericCause@123abc" }
         helper.registerAllowedMethod("cfnDescribe", [Map.class]) { args -> return true}
         helper.registerAllowedMethod('sh', [String.class], { String cmd ->
-            updateBuildStatus('ABORTED')
+            if (!cmd.contains('curl') && !cmd.contains('node --version') && !cmd.contains('npm install') && !cmd.contains('cdk --version')) {
+                updateBuildStatus('ABORTED')
+            }
         })
         runScript("jenkins/opensearch/benchmark-pull-request.jenkinsfile")
 

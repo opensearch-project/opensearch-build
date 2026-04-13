@@ -23,6 +23,14 @@
 
                 H 16 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/3.6.0-SNAPSHOT/opensearch-min-3.6.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=3.6.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=true;USER_TAGS=cluster-config:x64-c5.2xlarge-3-shard-0-replica-snapshot-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo-3x","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"10.3.2","snapshot_name":"clickbench_3_shards","warmup_iterations":10,"test_iterations":20};MIN_DISTRIBUTION=true;TEST_PROCEDURE=dsl-clickbench-snapshot
             )
+         benchmark-pull-request.stage(setup-node, groovy.lang.Closure)
+            benchmark-pull-request.sh(
+                    curl -sL https://nodejs.org/dist/v20.18.0/node-v20.18.0-linux-x64.tar.xz | tar -xJ
+                    mv node-v20.18.0-linux-x64 node-20
+                    node --version
+                    npm install -g fs-extra@11.3.4 chalk@4.1.2 @aws-cdk/cloudformation-diff@2.182.0 aws-cdk@2.1118.0 cdk-assume-role-credential-plugin@1.4.0
+                    cdk --version
+                )
          benchmark-pull-request.stage(validate-and-set-parameters, groovy.lang.Closure)
             benchmark-pull-request.script(groovy.lang.Closure)
                Messages.asBoolean()
