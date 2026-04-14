@@ -45,8 +45,6 @@ jobs:
       - name: Run Claude Code for duplicate detection
         id: claude
         uses: anthropics/claude-code-action@2ff1acb3ee319fa302837dad6e17c2f36c0d98ea # v1
-        env:
-          DUPLICATE_GRACE_DAYS: ${{ inputs.grace_days }}
         with:
           use_bedrock: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -56,12 +54,13 @@ jobs:
             --allowedTools
             "Bash(gh issue view *)"
             "Bash(gh search issues *)"
+            --json-schema '{"type":"object","properties":{"duplicates":{"type":"array","items":{"type":"integer"}},"skip_reason":{"type":"string"}},"required":["duplicates"]}'
           prompt: |
             Find up to 3 likely duplicate issues for issue #${{ env.ISSUE_NUMBER }} in ${{ github.repository }}.
 
             Follow these steps precisely:
 
-            1. Use `gh issue view ${{ env.ISSUE_NUMBER }} --repo ${{ github.repository }} --comments` to read the issue and its comments. If the issue is closed, or is broad product feedback without a specific bug/feature request, or already has a duplicate detection comment (containing `<!-- duplicate-detection -->`), stop immediately and output nothing.
+            1. Use `gh issue view ${{ env.ISSUE_NUMBER }} --repo ${{ github.repository }} --comments` to read the issue and its comments. If the issue is closed, or is broad product feedback without a specific bug/feature request, or already has a duplicate detection comment (containing `<!-- duplicate-detection -->`), return an empty duplicates array with skip_reason explaining why.
 
             2. Summarize the issue's core problem in 2-3 sentences. Identify the key terms, error messages, and affected components.
 
@@ -73,55 +72,63 @@ jobs:
 
             4. For each candidate issue that looks like a potential match, read it with `gh issue view <number> --repo ${{ github.repository }}` to verify it is truly about the same problem. Filter out false positives — issues that merely share keywords but describe different problems.
 
-            5. Output ONLY the confirmed duplicates, one per line in the format `- #<number>`. No other text, no explanation, no markdown headers. If no duplicates found, output nothing.
+            5. Return the confirmed duplicate issue numbers. If no duplicates found, return an empty array.
 
             Important notes:
             - Only flag issues as duplicates when you are confident they describe the **same underlying problem**
             - Prefer open issues as duplicates, but closed issues can be referenced too
             - Do not flag the issue as a duplicate of itself
 
-      - name: Build duplicate list
-        id: build-list
+      # The --json-schema flag in claude_args makes Claude return validated JSON
+      # via steps.claude.outputs.structured_output (instead of free-form text in execution_file).
+      # Schema: { "duplicates": [int], "skip_reason"?: string }
+      #   - duplicates: issue numbers confirmed as duplicates (empty if none or skipped)
+      #   - skip_reason: optional, explains why detection was skipped (for debugging)
+      - name: Process structured output
+        id: process
         shell: bash
+        env:
+          STRUCTURED_OUTPUT: ${{ steps.claude.outputs.structured_output }}
         run: |
-          EXECUTION_FILE="${{ steps.claude.outputs.execution_file }}"
-          if [ -z "$EXECUTION_FILE" ] || [ ! -f "$EXECUTION_FILE" ]; then
-            echo "No execution file found"
+          echo "Structured output: $STRUCTURED_OUTPUT"
+
+          # No output means Claude failed to return structured data
+          if [ -z "$STRUCTURED_OUTPUT" ]; then
+            echo "No structured output"
             echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # Extract the final result text from the execution output
-          RESULT=$(jq -r 'if type == "array" then .[] else . end | objects | select(.type == "result") | .result // empty' "$EXECUTION_FILE" | tail -1)
-          echo "Claude result text:"
-          echo "$RESULT"
-
-          if [ -z "$RESULT" ]; then
-            echo "No result text found"
+          # skip_reason is set when Claude decides not to proceed
+          # (e.g., issue is closed, already processed, or broad feedback).
+          # Log it for debugging — takes priority over any duplicates.
+          SKIP_REASON=$(echo "$STRUCTURED_OUTPUT" | jq -r '.skip_reason // empty')
+          if [ -n "$SKIP_REASON" ]; then
+            echo "Skipped: $SKIP_REASON"
             echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # Sanitize: only keep lines matching "- #<number>" pattern
-          SANITIZED=$(echo "$RESULT" | grep -E '^- #[0-9]+$' || true)
-          if [ -z "$SANITIZED" ]; then
-            echo "No valid duplicate entries after sanitization"
+          COUNT=$(echo "$STRUCTURED_OUTPUT" | jq '.duplicates | length')
+          if [ "$COUNT" -eq 0 ]; then
+            echo "No duplicates found"
             echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           echo "has_duplicates=true" >> "$GITHUB_OUTPUT"
-          echo "Sanitized duplicate list:"
-          echo "$SANITIZED"
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
 
+          # Format as "- #123" lines — GitHub auto-renders issue links with titles
+          DUP_LIST=$(echo "$STRUCTURED_OUTPUT" | jq -r '.duplicates[] | "- #\(.)"')
           {
             echo "duplicate_list<<EOF"
-            echo "$SANITIZED"
+            echo "$DUP_LIST"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
       - name: Add duplicate label
-        if: steps.build-list.outputs.has_duplicates == 'true'
+        if: steps.process.outputs.has_duplicates == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -130,17 +137,17 @@ jobs:
           echo "Added duplicate label to issue #${{ env.ISSUE_NUMBER }}"
 
       - name: Post duplicate detection comment
-        if: steps.build-list.outputs.has_duplicates == 'true'
-        uses: peter-evans/create-or-update-comment@v5
+        if: steps.process.outputs.has_duplicates == 'true'
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
           body: |
             <!-- duplicate-detection -->
             ### Possible Duplicate
 
-            Possible duplicate issue(s):
+            Found **${{ steps.process.outputs.count }}** possible duplicate issue(s):
 
-            ${{ steps.build-list.outputs.duplicate_list }}
+            ${{ steps.process.outputs.duplicate_list }}
 
             If this is **not** a duplicate:
             - Add a comment on this issue, or
