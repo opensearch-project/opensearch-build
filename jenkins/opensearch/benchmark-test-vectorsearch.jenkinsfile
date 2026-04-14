@@ -30,8 +30,6 @@ pipeline {
         AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Vector-Benchmark-Test'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'benchmark-test'
-        NODE_HOME = "${WORKSPACE}/node-20"
-        PATH = "${WORKSPACE}/node-20/bin:${env.PATH}"
     }
     triggers {
         parameterizedCron(
@@ -265,6 +263,12 @@ pipeline {
                 sh '''
                     curl -sL https://nodejs.org/dist/v20.18.0/node-v20.18.0-linux-x64.tar.xz | tar -xJ
                     mv node-v20.18.0-linux-x64 node-20
+                '''
+                script {
+                    env.NODE_HOME = "${WORKSPACE}/node-20"
+                    env.PATH = "${WORKSPACE}/node-20/bin:${env.PATH}"
+                }
+                sh '''
                     node --version
                     npm install -g fs-extra@11.3.4 chalk@4.1.2 @aws-cdk/cloudformation-diff@2.182.0 aws-cdk@2.1118.0 cdk-assume-role-credential-plugin@1.4.0
                 '''
