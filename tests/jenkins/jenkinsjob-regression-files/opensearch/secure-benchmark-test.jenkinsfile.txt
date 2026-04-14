@@ -111,15 +111,6 @@
         H 12 * * * %DISTRIBUTION_URL=https://artifacts.opensearch.org/snapshots/core/opensearch/3.6.0-SNAPSHOT/opensearch-min-3.6.0-SNAPSHOT-linux-x64-latest.tar.gz;DISTRIBUTION_VERSION=3.6.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=c5.2xlarge;USER_TAGS=run-type:nightly,segrep:disabled,arch:x64,instance-type:c5.4xlarge,major-version:3x,cluster-config:x64-c5.2xlarge-3-data-3-shards-0-replica-snapshot-non-streaming-baseline;WORKLOAD_PARAMS={"snapshot_repo_name":"benchmark-workloads-repo-3x","snapshot_bucket_name":"benchmark-workload-snapshots","snapshot_region":"us-east-1","snapshot_base_path":"10.3.2","snapshot_name":"clickbench_3_shards","warmup_iterations":10,"test_iterations":20};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=true;TELEMETRY_PARAMS={"node-stats-sample-interval":5};TEST_PROCEDURE=dsl-clickbench-streaming
 
         )
-         benchmark-test.stage(setup-node, groovy.lang.Closure)
-            benchmark-test.echo(Executing on agent [label:Jenkins-Agent-AL2-X64-M52xlarge-Docker-Host-Benchmark-Test])
-            benchmark-test.sh(
-                    curl -sL https://nodejs.org/dist/v20.18.0/node-v20.18.0-linux-x64.tar.xz | tar -xJ
-                    mv node-v20.18.0-linux-x64 node-20
-                    node --version
-                    npm install -g fs-extra@11.3.4 chalk@4.1.2 @aws-cdk/cloudformation-diff@2.182.0 aws-cdk@2.1118.0 cdk-assume-role-credential-plugin@1.4.0
-                    cdk --version
-                )
          benchmark-test.stage(validate-and-set-parameters, groovy.lang.Closure)
             benchmark-test.echo(Executing on agent [label:Jenkins-Agent-AL2-X64-M52xlarge-Docker-Host-Benchmark-Test])
             benchmark-test.script(groovy.lang.Closure)

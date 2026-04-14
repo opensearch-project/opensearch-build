@@ -123,7 +123,7 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
             shCommand -> shCommand.contains('curl')
         }
 
-        assertThat(curlCommands.size(), equalTo(4))
+        assertThat(curlCommands.size(), equalTo(3))
         assertThat(curlCommands, hasItem(
                 "curl -sSL --retry 5 test://artifact.url --output tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml".toString()
         ))
