@@ -30,8 +30,6 @@ pipeline {
         AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'benchmark-test'
-        NODE_HOME = "${WORKSPACE}/node-20"
-        PATH = "${WORKSPACE}/node-20/bin:${env.PATH}"
     }
     triggers {
         parameterizedCron(
