@@ -50,20 +50,20 @@ jobs:
           - '3.7'
     steps:
       - name: Check out OpenSearch Dashboards repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ matrix.branch }}
           path: OpenSearch-Dashboards
       - name: Check out plugin repo
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
           path: OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'

@@ -19,7 +19,7 @@ jobs:
     env:
       PYTHON_VERSION: 3.9
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v6
         with:
@@ -50,7 +50,7 @@ jobs:
     env:
       PYTHON_VERSION: 3.9
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v6
         with:
@@ -91,7 +91,7 @@ jobs:
     steps:
       - name: Run start commands
         run: ${{ needs.Get-CI-Image-Tag.outputs.ci-image-start-command }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Pipenv and Dependencies
         run: |
           pipenv install
@@ -108,7 +108,7 @@ jobs:
         run: |
           pipenv run coverage run -m pytest --cov=./ --cov-report=xml
           sed -i 's|<source>.*</source>|<source>opensearch-build</source>|' coverage.xml
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: coverage-report-${{ matrix.os }}
           path: ./coverage.xml
@@ -117,7 +117,7 @@ jobs:
     needs: python-tests-linux
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: coverage-report-ubuntu-24.04
           path: ./
