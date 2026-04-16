@@ -130,7 +130,7 @@ jobs:
 
       - name: Configure AWS credentials
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE }}
           aws-region: us-east-1
