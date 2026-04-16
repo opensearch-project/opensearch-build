@@ -21,7 +21,9 @@ pid_dir=/var/run/opensearch
 
 # Apply Security Settings
 if [ -d ${product_dir}/plugins/opensearch-security ]; then
-    bash ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1
+    if [ "$ENABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
+        bash ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1
+    fi
 fi
 
 # Apply PerformanceAnalyzer Settings
@@ -65,7 +67,7 @@ echo " sudo systemctl enable opensearch.service"
 echo "### You can start opensearch service by executing"
 echo " sudo systemctl start opensearch.service"
 
-if [ -d ${product_dir}/plugins/opensearch-security ]; then
+if [ -d ${product_dir}/plugins/opensearch-security ] && [ "$ENABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
     echo "### Create opensearch demo certificates in ${config_dir}/"
     echo " See demo certs creation log in ${log_dir}/install_demo_configuration.log"
 fi
@@ -74,5 +76,4 @@ echo " In a future release of OpenSearch, we plan to change the permissions asso
 echo " If you are configuring tools that require read access to the OpenSearch configuration files, we recommend you add the user that runs these tools to the 'opensearch' group"
 echo " For more information, see https://github.com/opensearch-project/opensearch-build/pull/4043"
 exit 0
-
 
