@@ -17,7 +17,7 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Get changed manifest files
         uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32
         id: list-changed-manifests
@@ -40,7 +40,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Check JDK Version
         run: |
           java_version=`cat ${{ matrix.manifest }} | yq -r .ci.image.args | grep -Eo '[0-9]+' || echo ''`
@@ -48,11 +48,11 @@ jobs:
           echo "JAVA_VERSION=$java_version" >> "$GITHUB_ENV"
       - name: Set Up JDK ${{ env.JAVA_VERSION }}
         if: ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install Pipenv and Dependencies

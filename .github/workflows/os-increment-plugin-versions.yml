@@ -61,7 +61,7 @@ jobs:
           - '3.7'
     steps:
       - name: Check out OpenSearch repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: opensearch-project/OpenSearch
           ref: ${{ matrix.branch }}
@@ -77,14 +77,14 @@ jobs:
           OPENSEARCH_JAVA_VERSION_NUMBER=`curl -sSfL https://raw.githubusercontent.com/opensearch-project/opensearch-build/refs/heads/main/manifests/$OS_VERSION/opensearch-$OS_VERSION.yml | yq -r '.ci.image.linux.tar.args' | grep -oE 'openjdk-[0-9]*' | awk -F'-' '{ print $NF }'`
           echo "OPENSEARCH_JAVA_VERSION=$OPENSEARCH_JAVA_VERSION_NUMBER" >> $GITHUB_ENV
       - name: Set up JDK ${{ env.OPENSEARCH_JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.OPENSEARCH_JAVA_VERSION }}
           distribution: 'temurin'
           cache: gradle
       - name: Check out plugin repo
         if: ${{ matrix.entry.repo != 'OpenSearch' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
