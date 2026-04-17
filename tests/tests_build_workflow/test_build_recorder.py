@@ -280,3 +280,29 @@ class TestBuildRecorder(unittest.TestCase):
                          "8776900f2f26312b4d3a08e4343f3e3f7bdde536")
         self.assertEqual(mock.build_manifest.components_hash.get("security").get("commit_id"),
                          "e3c8902dea26fd20f56a6f144042b2623f652e3e")
+
+    def test_stale_component_filtered_from_old_manifest(self) -> None:
+        build_manifest_path = os.path.join("tests", "tests_build_workflow", "data", "opensearch-build-tar-2.12.0.yml")
+        build_manifest = BuildManifest.from_path(build_manifest_path)
+
+        # Only allow a subset — "geospatial" and "security" exist in old manifest but are NOT in valid_names
+        valid_names = {"OpenSearch", "common-utils", "job-scheduler"}
+
+        recorder = BuildRecorder(
+            BuildTarget(
+                build_id="1",
+                output_dir="output_dir",
+                name="OpenSearch",
+                version="2.12.0",
+                platform="linux",
+                architecture="x64",
+                snapshot=False,
+            ),
+            build_manifest,
+            valid_names,
+        )
+
+        for name in recorder.build_manifest.components_hash:
+            self.assertIn(name, valid_names, f"Stale component '{name}' should have been filtered out")
+        self.assertNotIn("geospatial", recorder.build_manifest.components_hash)
+        self.assertNotIn("security", recorder.build_manifest.components_hash)
