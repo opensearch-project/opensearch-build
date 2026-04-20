@@ -28,8 +28,8 @@ on:
       # 2 = Medium severity issues found
       # 3 = High severity issues found
       # 4 = Critical severity issues found
-      # 5 = Analizer failed early
-      # 9 = Analizer skipped
+      # 5 = Analyzer failed early
+      # 9 = Analyzer skipped
       DIFF_ANALYZER_LEVELS:
         description: Code diff analyzer levels to output (0/1/2/3/4/5/9)
         value: ${{ jobs.Code-Diff-Analyzer.outputs.OUTPUT_DIFF_ANALYZER_LEVELS }}
@@ -58,7 +58,7 @@ jobs:
       OUTPUT_DIFF_ANALYZER_LEVELS: ${{ steps.step-final-status.outputs.DIFF_ANALYZER_LEVELS }}
       OUTPUT_HEAD_COMMIT_SHA: ${{ steps.step-final-status.outputs.HEAD_COMMIT_SHA }}
     steps:
-      - name: Retrive ref sha
+      - name: Retrieve ref sha
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
             base_sha="${{ github.event.before }}"
@@ -70,21 +70,32 @@ jobs:
           elif [ "${{ github.event_name }}" = "pull_request_target" ]; then
             base_sha=${{ github.event.pull_request.base.sha }}
             head_sha=${{ github.event.pull_request.head.sha }}
-            PR_LABELS=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/labels" \
-              | jq -r '.[].name')
-            echo "labels: $PR_LABELS"
-            echo "Verifying skip label: ${{ inputs.skip_diff_analyzer_with_label_name }}"
-            if [ -n "$PR_LABELS" ]; then
-              for label in $PR_LABELS
-              do
-                if [[ "$label" = "${{ inputs.skip_diff_analyzer_with_label_name }}" ]]; then
-                  echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_analyzer_with_label_name }}."
-                  echo "diff_analyzer=9" >> $GITHUB_ENV
-                  break
-                fi
-              done
+
+            PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+            if [ "$PR_AUTHOR" != "dependabot[bot]" ] && \
+               [ "$PR_AUTHOR" != "opensearch-trigger-bot[bot]" ] && \
+               [ "$PR_AUTHOR" != "mend-for-github-com[bot]" ]; then
+              echo "PR author '$PR_AUTHOR' is not a bot, proceeding..."
+
+              PR_LABELS=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/labels" \
+                | jq -r '.[].name')
+              echo "labels: $PR_LABELS"
+              echo "Verifying skip label: ${{ inputs.skip_diff_analyzer_with_label_name }}"
+              if [ -n "$PR_LABELS" ]; then
+                for label in $PR_LABELS
+                do
+                  if [[ "$label" = "${{ inputs.skip_diff_analyzer_with_label_name }}" ]]; then
+                    echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_analyzer_with_label_name }}."
+                    echo "diff_analyzer=9" >> $GITHUB_ENV
+                    break
+                  fi
+                done
+              fi
+            else
+              echo "PR author '$PR_AUTHOR' is a bot, skipping..."
+              echo "diff_analyzer=9" >> $GITHUB_ENV
             fi
           else
             echo "wrong github event: ${{ github.event_name }}, must be 'push' or 'pull_request_target'"

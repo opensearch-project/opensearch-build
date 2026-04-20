@@ -48,7 +48,7 @@ jobs:
                 for label in $PR_LABELS
                 do
                   if [[ "$label" = "${{ inputs.skip_diff_reviewer_with_label_name }}" ]]; then
-                    echo "Diff analyzer skipped due to label ${{ inputs.skip_diff_reviewer_with_label_name }}."
+                    echo "Diff reviewer skipped due to label ${{ inputs.skip_diff_reviewer_with_label_name }}."
                     echo "skip_diff_reviewer=true" >> $GITHUB_ENV
                     break
                   fi
