@@ -98,8 +98,15 @@ exit 0
 %post
 set -e
 # Apply Security Settings
-if [ -d %{product_dir}/plugins/opensearch-security ]; then
+# Starting 3.7, allow disable demo config and security plugin with parameter
+if [ -d %{product_dir}/plugins/opensearch-security ] && [ "$DISABLE_INSTALL_DEMO_CONFIG" != "true" ]; then
     sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > %{log_dir}/install_demo_configuration.log 2>&1 || (echo "ERROR: Something went wrong during demo configuration installation. Please see the logs in %{log_dir}/install_demo_configuration.log" && exit 1)
+fi
+
+if [ -d %{product_dir}/plugins/opensearch-security ] && [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
+    UPDATED_CONFIG=`cat %{config_dir}/opensearch.yml | sed "/^plugins.security.disabled/d"`
+    echo "$UPDATED_CONFIG" > %{config_dir}/opensearch.yml
+    echo "plugins.security.disabled: true" >> %{config_dir}/opensearch.yml
 fi
 chown -R %{name}:%{name} %{config_dir}
 chown -R %{name}:%{name} %{log_dir}
@@ -134,7 +141,11 @@ echo " sudo systemctl daemon-reload"
 echo " sudo systemctl enable opensearch.service"
 echo "### You can start opensearch service by executing"
 echo " sudo systemctl start opensearch.service"
-if [ -d %{product_dir}/plugins/opensearch-security ]; then
+if [ -d %{product_dir}/plugins/opensearch-security ] && [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
+    echo "### Security plugin is DISABLED, update parameter: %{config_dir}/opensearch.yml"
+fi
+
+if [ -d %{product_dir}/plugins/opensearch-security ] && [ "$DISABLE_INSTALL_DEMO_CONFIG" != "true" ]; then
     echo "### Create opensearch demo certificates in %{config_dir}/"
     echo " See demo certs creation log in %{log_dir}/install_demo_configuration.log"
 fi
