@@ -84,6 +84,16 @@ exit 0
 %post
 set -e
 chown -R root:%{name} %{config_dir}
+# Starting 3.7, allow disable security dashboards plugin with parameter
+if [ "$DISABLE_SECURITY_DASHBOARDS_PLUGIN" = "true" ]; then
+    %{product_dir}/bin/opensearch-dashboards-plugin remove securityDashboards
+
+    # Remove all security related parameters as well as changing HTTPS to HTTP
+    # Temporary fix before security-dashboards plugin implement a parameter to disable the plugin entirely
+    # https://github.com/opensearch-project/security-dashboards-plugin/issues/896
+    UPDATED_CONFIG=`cat %{config_dir}/opensearch_dashboards.yml | sed "/^opensearch_security/d" | sed "s/https/http/g"`
+    echo "$UPDATED_CONFIG" > %{config_dir}/opensearch_dashboards.yml
+fi
 # Reload systemctl daemon
 if command -v systemctl > /dev/null; then
     systemctl daemon-reload
