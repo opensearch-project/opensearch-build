@@ -55,6 +55,7 @@ jobs:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ matrix.branch }}
           path: OpenSearch-Dashboards
+          persist-credentials: false
       - name: Check out plugin repo
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         uses: actions/checkout@v6
@@ -62,6 +63,7 @@ jobs:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
           path: OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
+          persist-credentials: false
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
@@ -149,7 +151,7 @@ jobs:
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' && matrix.entry.repo
           != 'opensearch-dashboards-functional-test' }}
         id: cpr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.github_app_token.outputs.token }}
           committer: opensearch-ci-bot <opensearch-infra@amazon.com>
@@ -172,7 +174,7 @@ jobs:
       - name: Create Pull Request for opensearch-dashboards-functional-test
         if: ${{ matrix.entry.repo == 'opensearch-dashboards-functional-test' }}
         id: cprft
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ steps.github_app_token.outputs.token }}
           committer: opensearch-ci-bot <opensearch-infra@amazon.com>
