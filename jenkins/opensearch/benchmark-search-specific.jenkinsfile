@@ -35,6 +35,10 @@ pipeline {
 
                 H 1 * * * %CLUSTER_ENDPOINT=juypenejcyfqt3e92iri.beta-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,cluster-config:aoss-v2-hot-path-css-disabled;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"3.3.0"};ASSUME_ROLE_ACCOUNT=158160602664
                 H 1 * * * %CLUSTER_ENDPOINT=dxnb6q4s7jztml07uzrd.beta-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=run-type:nightly,cluster-config:aoss-v2-hot-path-css-enabled;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"3.3.0"};ASSUME_ROLE_ACCOUNT=346299179122
+
+                H */4 * * * %CLUSTER_ENDPOINT=h6w40xxup5d2hqqq5dil.gamma-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=aws_account_id:845061289336,placement_constraint_id:TpmA77Mdak1x9kwSOxnakgmNlnn2C7aPeSWMzuVARTE;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"3.3.0","range_auto_date_histo_w_met_iterations":10,"range_auto_date_histo_w_met_warmup_iterations":10};ASSUME_ROLE_ACCOUNT=845061289336
+                H */4 * * * %CLUSTER_ENDPOINT=5t2u5zqvtx1pjh998621.gamma-us-east-1.aoss.amazonaws.com;SECURITY_ENABLED=true;SIGV4=true;REGION=us-east-1;SERVICE=aoss;TEST_WORKLOAD=big5;USER_TAGS=aws_account_id:845061289336,placement_constraint_id:YrzoZbxZ_lLqHnxYTSL9UiEJ1imKtNmfI6souzInJqI;INCLUDE_TASKS=type:search;WORKLOAD_PARAMS={"target_throughput":0,"distribution_version":"3.3.0","range_auto_date_histo_w_met_iterations":10,"range_auto_date_histo_w_met_warmup_iterations":10};ASSUME_ROLE_ACCOUNT=845061289336
+
             '''
             )
     }
