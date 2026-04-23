@@ -58,6 +58,11 @@ pipeline {
             description: '<Optional> Build docker image on which operating system. Defaults to linux.',
             choices: ['linux', 'windows'],
         )
+        booleanParam(
+            name: 'TAG_LATEST',
+            defaultValue: false,
+            description: 'If true, appends -l to the build script so the image is also tagged as :latest when this version is the highest semver in the staging registry. Should only be enabled for GA release builds, not snapshots or patch backports.'
+        )
     }
     stages {
         stage('Parameters Check') {
@@ -84,17 +89,21 @@ pipeline {
                 script {
                     echo 'The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories'
                     checkout([$class: 'GitSCM', branches: [[name: "${DOCKER_BUILD_GIT_REPOSITORY_REFERENCE}" ]], userRemoteConfigs: [[url: "${DOCKER_BUILD_GIT_REPOSITORY}" ]]])
+                    def buildCommand = DOCKER_BUILD_SCRIPT_WITH_COMMANDS
+                    if (TAG_LATEST.toBoolean()) {
+                        buildCommand += ' -l'
+                    }
                     echo "Account: dockerhub staging"
                     withSecrets(secrets: secret_dockerhub_staging){
                         if (isUnix()){
                             sh """
                                 set -e
                                 set +x
-                                docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
+                                docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval ${buildCommand}
                             """
                         } else {
                             bat"""
-                                bash -c "set -e && set +x && docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS"
+                                bash -c "set -e && set +x && docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval ${buildCommand}"
                             """
                         }
                     }
