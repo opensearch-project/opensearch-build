@@ -15,9 +15,11 @@ on:
 jobs:
   detect-issue:
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_dispatch' &&
+       github.repository == 'opensearch-project/opensearch-build') ||
       (github.event_name == 'issues' &&
-       github.event.issue.user.type != 'Bot')
+       github.event.issue.user.type != 'Bot' &&
+       github.repository == 'opensearch-project/opensearch-build')
     uses: opensearch-project/opensearch-build/.github/workflows/issue-dedupe-detect.yml@main
     permissions:
       contents: read
@@ -30,7 +32,7 @@ jobs:
       grace_days: ${{ vars.DUPLICATE_GRACE_DAYS || '7' }}
 
   auto-close-issue:
-    if: github.event_name == 'schedule'
+    if: github.event_name == 'schedule' && github.repository == 'opensearch-project/opensearch-build'
     uses: opensearch-project/opensearch-build/.github/workflows/issue-dedupe-autoclose.yml@main
     permissions:
       issues: write
