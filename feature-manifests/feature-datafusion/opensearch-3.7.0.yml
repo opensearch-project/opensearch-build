@@ -31,6 +31,12 @@ components:
     platforms:
       - linux
       - windows
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: 'main'
+    platforms:
+      - linux
+      - windows
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
     ref: 'main'
@@ -49,9 +55,10 @@ components:
       - common-utils
       - job-scheduler
       - opensearch-remote-metadata-sdk
+      - security
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 'mustang-ppl-integration'
+    ref: 'feature/mustang-ppl-integration'
     platforms:
       - linux
       - windows
