@@ -1,6 +1,6 @@
 {
   "scanSettings": {
-    "configMode": "LOCAL",
+    "configMode": "AUTO",
     "configExternalURL": "",
     "projectToken": "",
     "baseBranches": []
@@ -10,6 +10,11 @@
     "displayMode": "diff"
   },
   "issueSettings": {
-    "minSeverityLevel": "MEDIUM"
+    "minSeverityLevel": "LOW"
+  },
+  "remediateSettings": {
+    "workflowRules": {
+      "enabled": true
+    }
   }
 }
