@@ -90,6 +90,13 @@ class BuildArgs:
             dest="distribution"
         )
         parser.add_argument(
+            "--skip-artifact-check",
+            dest="skip_artifact_check",
+            default=False,
+            action="store_true",
+            help="Skip artifact checks when building components and plugins.",
+        )
+        parser.add_argument(
             "--continue-on-error",
             dest="continue_on_error",
             default=False,
@@ -126,6 +133,7 @@ class BuildArgs:
         self.distribution = args.distribution
         self.script_path = sys.argv[0].replace("/src/run_build.py", "/build.sh")
         self.continue_on_error = args.continue_on_error
+        self.skip_artifact_check = args.skip_artifact_check
         self.incremental = args.incremental
 
     def component_command(self, name: str) -> str:

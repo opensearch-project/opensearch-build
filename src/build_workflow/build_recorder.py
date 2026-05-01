@@ -38,7 +38,10 @@ class BuildRecorder:
         dest_dir = os.path.dirname(dest_file)
         os.makedirs(dest_dir, exist_ok=True)
         # Check artifact
-        BuildArtifactChecks.check(self.target, artifact_type, artifact_file)
+        if not self.target.skip_artifact_check:
+            BuildArtifactChecks.check(self.target, artifact_type, artifact_file)
+        else:
+            logging.info(f"Skipping artifact check for {component_name}: {artifact_path} (--skip-artifact-check was set)")
         # Copy the file
         shutil.copyfile(artifact_file, dest_file)
         # Notify the recorder

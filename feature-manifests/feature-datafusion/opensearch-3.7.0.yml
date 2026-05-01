@@ -56,6 +56,15 @@ components:
       - job-scheduler
       - opensearch-remote-metadata-sdk
       - security
+  - name: analytics-engine
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: 'main'
+    working_directory: sandbox/plugins
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - OpenSearch-DataFusion
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: 'feature/mustang-ppl-integration'
