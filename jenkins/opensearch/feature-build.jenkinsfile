@@ -62,7 +62,7 @@ pipeline {
             description: '<Optional> Continue building the distribution even if a one or more component fails',
             defaultValue: true
         )
-        booleanParam( // Note: Feature Build will always skil artifact check just so that we can install core plugins
+        booleanParam( // Note: Feature Build will always skip artifact check just so that we can install core plugins
             name: 'SKIP_ARTIFACT_CHECK',
             description: '<Optional> Skip Artifact Check upon completing the build of a component and plugin',
             defaultValue: true
