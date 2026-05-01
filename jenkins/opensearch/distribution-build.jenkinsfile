@@ -10,7 +10,7 @@
 // @job-name: distribution-build-opensearch
 // @description: Build OpenSearch distribution based on the input manifest and provided parameters.
 
-lib = library(identifier: 'jenkins@11.3.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@11.6.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -110,6 +110,11 @@ pipeline {
             name: 'CONTINUE_ON_ERROR',
             description: '<Optional> Continue building the distribution even if a one or more component fails',
             defaultValue: true
+        )
+        booleanParam(
+            name: 'SKIP_ARTIFACT_CHECK',
+            description: '<Optional> Skip Artifact Check upon completing the build of a component and plugin',
+            defaultValue: false
         )
         booleanParam(
             name: 'INCREMENTAL',
@@ -252,6 +257,7 @@ pipeline {
                                 architecture: 'x64',
                                 distribution: 'tar',
                                 continueOnError: params.CONTINUE_ON_ERROR,
+                                skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                 incremental: params.INCREMENTAL,
                                 previousBuildId: params.PREVIOUS_BUILD_ID
                             )
@@ -336,6 +342,7 @@ pipeline {
                                         architecture: 'x64',
                                         distribution: 'rpm',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         incremental: params.INCREMENTAL,
                                         previousBuildId: params.PREVIOUS_BUILD_ID,
                                         stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
@@ -371,6 +378,7 @@ pipeline {
                                         architecture: 'x64',
                                         distribution: 'rpm',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -452,6 +460,7 @@ pipeline {
                                         architecture: 'x64',
                                         distribution: 'deb',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         incremental: params.INCREMENTAL,
                                         previousBuildId: params.PREVIOUS_BUILD_ID,
                                         stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
@@ -487,6 +496,7 @@ pipeline {
                                         architecture: 'x64',
                                         distribution: 'deb',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -565,6 +575,7 @@ pipeline {
                                 architecture: 'arm64',
                                 distribution: 'tar',
                                 continueOnError: params.CONTINUE_ON_ERROR,
+                                skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                 incremental: params.INCREMENTAL,
                                 previousBuildId: params.PREVIOUS_BUILD_ID
                             )
@@ -646,6 +657,7 @@ pipeline {
                                         architecture: 'arm64',
                                         distribution: 'rpm',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         incremental: params.INCREMENTAL,
                                         previousBuildId: params.PREVIOUS_BUILD_ID,
                                         stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
@@ -681,6 +693,7 @@ pipeline {
                                         architecture: 'arm64',
                                         distribution: 'rpm',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -763,6 +776,7 @@ pipeline {
                                         architecture: 'arm64',
                                         distribution: 'deb',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         incremental: params.INCREMENTAL,
                                         previousBuildId: params.PREVIOUS_BUILD_ID,
                                         stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
@@ -798,6 +812,7 @@ pipeline {
                                         architecture: 'arm64',
                                         distribution: 'deb',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -881,6 +896,7 @@ pipeline {
                                     architecture: 'x64',
                                     distribution: 'zip',
                                     continueOnError: params.CONTINUE_ON_ERROR,
+                                    skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                     incremental: false,
                                     previousBuildId: params.PREVIOUS_BUILD_ID
                                 )
