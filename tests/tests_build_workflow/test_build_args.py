@@ -129,3 +129,11 @@ class TestBuildArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
     def test_manifest_no_lock(self) -> None:
         self.assertIsNone(BuildArgs().ref_manifest)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
+    def test_skip_artifact_check_default(self) -> None:
+        self.assertFalse(BuildArgs().skip_artifact_check)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--skip-artifact-check"])
+    def test_skip_artifact_check_true(self) -> None:
+        self.assertTrue(BuildArgs().skip_artifact_check)

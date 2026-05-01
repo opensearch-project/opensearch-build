@@ -22,6 +22,7 @@ class BuildTarget:
     distribution: str
     snapshot: bool
     output_dir: str
+    skip_artifact_check: bool
 
     def __init__(
         self,
@@ -35,6 +36,7 @@ class BuildTarget:
         snapshot: bool = True,
         build_id: str = None,
         output_dir: str = "artifacts",
+        skip_artifact_check: bool = False,
     ) -> None:
         self.build_id = os.getenv("BUILD_NUMBER") or build_id or uuid.uuid4().hex
         self.name = name
@@ -46,6 +48,7 @@ class BuildTarget:
         self.distribution = distribution
         self.platform = platform or current_platform()
         self.output_dir = output_dir
+        self.skip_artifact_check = skip_artifact_check
 
     @property
     def opensearch_version(self) -> str:

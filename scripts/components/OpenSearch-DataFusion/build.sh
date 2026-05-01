@@ -186,19 +186,19 @@ for plugin in plugins/*; do
   fi
 done
 
-echo "Building (sandbox) core plugins, save in same dir as core plugins..."
-cd sandbox/plugins
-../../gradlew assemble -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
-cd ../../
-touch ./sandbox-core-plugins.txt
-for plugin in sandbox/plugins/*; do
-  PLUGIN_NAME=$(basename "$plugin")
-  if [ -d "$plugin" ] && [ "examples" != "$PLUGIN_NAME" ]; then
-    PLUGIN_ARTIFACT_BUILD_NAME=`ls "$plugin"/build/distributions/ | grep "$PLUGIN_NAME.*$IDENTIFIER.zip"`
-    cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/core-plugins/"$PLUGIN_ARTIFACT_BUILD_NAME"
-    echo $PLUGIN_ARTIFACT_BUILD_NAME >> ./sandbox-core-plugins.txt
-  fi
-done
-cp -v ./sandbox-core-plugins.txt "${OUTPUT}"/core-plugins/
-
-echo "Both core-plugins and (sandbox) core-plugins are built now"
+#echo "Building (sandbox) core plugins, save in same dir as core plugins..."
+#cd sandbox/plugins
+#../../gradlew assemble -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
+#cd ../../
+#touch ./sandbox-core-plugins.txt
+#for plugin in sandbox/plugins/*; do
+#  PLUGIN_NAME=$(basename "$plugin")
+#  if [ -d "$plugin" ] && [ "examples" != "$PLUGIN_NAME" ]; then
+#    PLUGIN_ARTIFACT_BUILD_NAME=`ls "$plugin"/build/distributions/ | grep "$PLUGIN_NAME.*$IDENTIFIER.zip"`
+#    cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/core-plugins/"$PLUGIN_ARTIFACT_BUILD_NAME"
+#    echo $PLUGIN_ARTIFACT_BUILD_NAME >> ./sandbox-core-plugins.txt
+#  fi
+#done
+#cp -v ./sandbox-core-plugins.txt "${OUTPUT}"/core-plugins/
+#
+#echo "Both core-plugins and (sandbox) core-plugins are built now"

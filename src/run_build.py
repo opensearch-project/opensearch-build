@@ -78,6 +78,7 @@ def main() -> int:
             distribution=args.distribution,
             platform=args.platform or manifest.build.platform,
             architecture=args.architecture or manifest.build.architecture,
+            skip_artifact_check=args.skip_artifact_check,
         )
 
         build_recorder = BuildRecorder(target, build_manifest) if args.incremental else BuildRecorder(target)

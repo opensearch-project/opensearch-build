@@ -20,7 +20,7 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class TestBuildRecorder(unittest.TestCase):
-    def __mock(self, snapshot: bool = True) -> BuildRecorder:
+    def __mock(self, snapshot: bool = True, skip_artifact_check: bool = False) -> BuildRecorder:
         return BuildRecorder(
             BuildTarget(
                 build_id="1",
@@ -30,6 +30,7 @@ class TestBuildRecorder(unittest.TestCase):
                 platform="linux",
                 architecture="x64",
                 snapshot=snapshot,
+                skip_artifact_check=skip_artifact_check,
             )
         )
 
@@ -247,6 +248,15 @@ class TestBuildRecorder(unittest.TestCase):
         mock_plugin_check.assert_called()
         mock_copyfile.assert_called()
         mock_makedirs.assert_called()
+
+    @patch("shutil.copyfile")
+    @patch("os.makedirs")
+    def test_record_artifact_skip_artifact_check(self, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
+        recorder = self.__mock(snapshot=False, skip_artifact_check=True)
+        recorder.record_component("security", MagicMock())
+        with patch.object(BuildArtifactOpenSearchCheckPlugin, "check") as mock_check:
+            recorder.record_artifact("security", "plugins", "../file1.zip", "invalid.file")
+            mock_check.assert_not_called()
 
     def test_append_component_with_existing_manifest(self) -> None:
         mock = self.__mock_with_manifest(snapshot=False)
