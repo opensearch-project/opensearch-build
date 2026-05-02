@@ -81,7 +81,7 @@ sharedLibrary {
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '527.vd61b_1d3c5078') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
         dependency('org.jenkins-ci.plugins', 'script-security', '1373.vb_b_4a_a_c26fa_00')
         dependency('org.jenkins-ci.plugins', 'credentials', '1415.v831096eb_5534')
-        dependency('org.jenkins-ci.plugins', 'git-client', '6.2.0')
+        dependency('org.jenkins-ci.plugins', 'git-client', '6.2.1')
         dependency('org.apache.sshd', 'sshd-core', '2.15.0')
         dependency('org.jenkins-ci.plugins', 'junit', '1335.v6b_a_a_e18534e1')
         dependency('org.jenkins-ci.plugins', 'mailer', '509.vc54d23fc427e') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
