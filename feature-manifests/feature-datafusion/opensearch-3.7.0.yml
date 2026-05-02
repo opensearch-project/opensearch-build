@@ -13,7 +13,7 @@ components:
   - name: OpenSearch-DataFusion
     repository: https://github.com/opensearch-project/OpenSearch.git
     ref: 'main'
-  - name: core-plugins
+  - name: core-plugins-sandbox
     repository: https://github.com/opensearch-project/OpenSearch.git
     ref: 'main'
     working_directory: sandbox/plugins

@@ -107,13 +107,19 @@ class Bundle(ABC):
         subprocess.check_call(command, cwd=self.min_dist.archive_path, shell=True)
 
     def _copy_component(self, component: BuildComponent, component_type: str) -> str:
-        rel_path = self.__get_rel_path(component, component_type)
+        rel_path = self.__get_rel_paths(component, component_type)[0]
         tmp_path = self.__copy_component_files(rel_path, self.tmp_dir.name)
         self.bundle_recorder.record_component(component, rel_path)
         return tmp_path
 
-    def __get_rel_path(self, component: BuildComponent, component_type: str) -> str:
-        return next(iter(component.artifacts.get(component_type, [])), None)
+    def _copy_components(self, component: BuildComponent, component_type: str) -> List[str]:
+        rel_paths = self.__get_rel_paths(component, component_type)
+        tmp_paths = [self.__copy_component_files(rel_path, self.tmp_dir.name) for rel_path in rel_paths]
+        self.bundle_recorder.record_component(component, rel_paths[0] if rel_paths else None)
+        return tmp_paths
+
+    def __get_rel_paths(self, component: BuildComponent, component_type: str) -> List[str]:
+        return component.artifacts.get(component_type, [])
 
     def __copy_component_files(self, rel_path: str, dest: str) -> str:
         local_path = os.path.join(self.artifacts_dir, rel_path)
