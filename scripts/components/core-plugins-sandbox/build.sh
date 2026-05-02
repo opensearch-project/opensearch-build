@@ -73,5 +73,21 @@ pwd
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 mkdir -p $OUTPUT/plugins
-cp -v analytics-engine/build/distributions/analytics-engine-$VERSION.zip $OUTPUT/plugins/
+for plugin in ./*; do
+  PLUGIN_NAME=$(basename "$plugin")
+  echo $PLUGIN_NAME
+  if [ -d "$plugin" ] && [ "builds" != "$PLUGIN_NAME" ]; then
+    if [ "$PLUGIN_NAME" = "analytics-engine" ] ||
+       [ "$PLUGIN_NAME" = "analytics-backend-datafusion" ] ||
+       [ "$PLUGIN_NAME" = "analytics-backend-lucene" ] ||
+       [ "$PLUGIN_NAME" = "composite-engine" ] ||
+       [ "$PLUGIN_NAME" = "dsl-query-executor" ] ||
+       [ "$PLUGIN_NAME" = "parquet-data-format" ]; then
+      PLUGIN_ARTIFACT_BUILD_NAME=`ls "$plugin"/build/distributions/ | grep "$PLUGIN_NAME-$VERSION.zip"`
+      cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/plugins/
+    else
+      echo "Ignore $PLUGIN_NAME as it is not in the required list"
+    fi
+  fi
+done
 

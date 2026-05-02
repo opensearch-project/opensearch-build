@@ -42,6 +42,10 @@ class DummyBundle(BundleOpenSearch):
         # Simulate copied plugin zip path
         return str(Path(self.tmp_dir.name) / "opensearch-ltr-3.3.0.0.zip")
 
+    def _copy_components(self, plugin: Any, subdir: str) -> List[str]:
+        # Simulate copied plugin zip path
+        return [str(Path(self.tmp_dir.name) / "opensearch-ltr-3.3.0.0.zip")]
+
     def _execute(self, cmd: str) -> None:
         # Capture any command invoked by install_plugin() and super().install_plugin()
         self._commands.append(cmd)

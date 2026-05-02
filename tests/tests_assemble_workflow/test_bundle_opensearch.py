@@ -219,6 +219,34 @@ class TestBundleOpenSearch(unittest.TestCase):
                 )
         self.assertEqual(path_isfile.call_count, 2)
 
+    @patch("os.path.isfile", return_value=True)
+    def test_bundle_install_plugin_multiple(self, path_isfile: Mock) -> None:
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
+        artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
+        bundle = BundleOpenSearch(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
+
+        plugin = bundle.components['job-scheduler']
+        plugin.artifacts['plugins'] = ['plugins/opensearch-job-scheduler-1.1.0.0.zip', 'plugins/opensearch-job-scheduler-extra-1.1.0.0.zip']
+
+        with patch("shutil.copyfile") as mock_copyfile:
+            with patch("subprocess.check_call") as mock_check_call:
+                bundle.install_plugin(plugin)
+
+                self.assertEqual(mock_copyfile.call_count, 2)
+
+                script = "opensearch-plugin.bat" if current_platform() == "windows" else "opensearch-plugin"
+                install_plugin_bin = os.path.join(bundle.min_dist.archive_path, "bin", script)
+                mock_check_call.assert_any_call(
+                    f'{install_plugin_bin} install --batch {Path(os.path.join(bundle.tmp_dir.name, "opensearch-job-scheduler-1.1.0.0.zip")).as_uri()}',
+                    cwd=bundle.min_dist.archive_path,
+                    shell=True,
+                )
+                mock_check_call.assert_any_call(
+                    f'{install_plugin_bin} install --batch {Path(os.path.join(bundle.tmp_dir.name, "opensearch-job-scheduler-extra-1.1.0.0.zip")).as_uri()}',
+                    cwd=bundle.min_dist.archive_path,
+                    shell=True,
+                )
+
     def test_bundle_package_tar(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
