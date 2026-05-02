@@ -122,7 +122,7 @@ class Bundle(ABC):
         return tmp_paths
 
     def __get_rel_paths(self, component: BuildComponent, component_type: str) -> List[str]:
-        return component.artifacts.get(component_type, [])
+        return list(component.artifacts.get(component_type, []))
 
     def __copy_component_files(self, rel_path: str, dest: str) -> str:
         local_path = os.path.join(self.artifacts_dir, rel_path)
