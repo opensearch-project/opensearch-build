@@ -60,7 +60,7 @@ class BuilderFromSource(Builder):
         artifacts_path = os.path.join(self.git_repo.working_directory, self.output_path)
         for artifact_type in ["maven", "dist", "plugins", "libs", "core-plugins"]:
             for dir, _, files in os.walk(os.path.join(artifacts_path, artifact_type)):
-                for file_name in files:
+                for file_name in sorted(files):
                     absolute_path = os.path.join(dir, file_name)
                     relative_path = os.path.relpath(absolute_path, artifacts_path)
                     build_recorder.record_artifact(self.component.name, artifact_type, relative_path, absolute_path)

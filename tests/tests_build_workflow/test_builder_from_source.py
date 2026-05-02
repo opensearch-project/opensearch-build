@@ -210,6 +210,44 @@ class TestBuilderFromSource(unittest.TestCase):
         else:
             return []
 
+    def mock_os_walk_unsorted(self, artifact_path: str) -> List[Any]:
+        if artifact_path.endswith(os.path.join("dir", "builds", "plugins")):
+            return [["plugins", [], ["plugin-c.zip", "plugin-a.zip", "plugin-b.zip"]]]
+        else:
+            return []
+
+    @patch("os.walk")
+    @patch("build_workflow.builder_from_source.GitRepository")
+    def test_export_artifacts_sorted(self, mock_git_repo: Mock, mock_walk: Mock) -> None:
+        build_recorder = MagicMock()
+        mock_git_repo.return_value = MagicMock(working_directory="dir")
+        mock_walk.side_effect = self.mock_os_walk_unsorted
+        self.builder.checkout("dir")
+        self.builder.export_artifacts(build_recorder)
+        self.assertEqual(build_recorder.record_artifact.call_count, 3)
+        build_recorder.record_artifact.assert_has_calls(
+            [
+                call(
+                    "sample_component",
+                    "plugins",
+                    os.path.relpath(os.path.join("plugins", "plugin-a.zip"), os.path.join("dir", "artifacts")),
+                    os.path.join("plugins", "plugin-a.zip"),
+                ),
+                call(
+                    "sample_component",
+                    "plugins",
+                    os.path.relpath(os.path.join("plugins", "plugin-b.zip"), os.path.join("dir", "artifacts")),
+                    os.path.join("plugins", "plugin-b.zip"),
+                ),
+                call(
+                    "sample_component",
+                    "plugins",
+                    os.path.relpath(os.path.join("plugins", "plugin-c.zip"), os.path.join("dir", "artifacts")),
+                    os.path.join("plugins", "plugin-c.zip"),
+                ),
+            ]
+        )
+
     @patch("os.walk")
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_export_artifacts(self, mock_git_repo: Mock, mock_walk: Mock) -> None:

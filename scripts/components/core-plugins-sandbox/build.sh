@@ -72,6 +72,7 @@ pwd
 ../../gradlew assemble -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
+INSTALL_ORDER=1
 mkdir -p $OUTPUT/plugins
 for plugin in ./*; do
   PLUGIN_NAME=$(basename "$plugin")
@@ -84,7 +85,11 @@ for plugin in ./*; do
        [ "$PLUGIN_NAME" = "dsl-query-executor" ] ||
        [ "$PLUGIN_NAME" = "parquet-data-format" ]; then
       PLUGIN_ARTIFACT_BUILD_NAME=`ls "$plugin"/build/distributions/ | grep "$PLUGIN_NAME-$VERSION.zip"`
-      cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/plugins/
+      if [ "$PLUGIN_NAME" = "analytics-engine" ]; then
+        PLUGIN_NAME=$INSTALL_ORDER-$PLUGIN_NAME
+        INSTALL_ORDER=$((INSTALL_ORDER + 1))
+      fi
+      cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/plugins/"$PLUGIN_NAME-$VERSION.zip"
     else
       echo "Ignore $PLUGIN_NAME as it is not in the required list"
     fi
