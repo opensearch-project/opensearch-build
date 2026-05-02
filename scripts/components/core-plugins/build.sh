@@ -73,5 +73,12 @@ pwd
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 mkdir -p $OUTPUT/plugins
-cp -v analytics-engine/build/distributions/analytics-engine-$VERSION.zip $OUTPUT/plugins/
+for plugin in ./*; do
+  PLUGIN_NAME=$(basename "$plugin")
+  echo $PLUGIN_NAME
+  if [ -d "$plugin" ] && [ "builds" != "$PLUGIN_NAME" ]; then
+    PLUGIN_ARTIFACT_BUILD_NAME=`ls "$plugin"/build/distributions/ | grep "$PLUGIN_NAME-$VERSION.zip"`
+    cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/plugins/
+  fi
+done
 
