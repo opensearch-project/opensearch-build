@@ -115,6 +115,9 @@ class Bundle(ABC):
     def _copy_components(self, component: BuildComponent, component_type: str) -> List[str]:
         rel_paths = self.__get_rel_paths(component, component_type)
         tmp_paths = [self.__copy_component_files(rel_path, self.tmp_dir.name) for rel_path in rel_paths]
+        # TODO: bundle manifest schema only supports a single location string per component.
+        # For multi-plugin components, only the first plugin location is recorded.
+        # Need to update the bundle manifest schema to support a list of locations.
         self.bundle_recorder.record_component(component, rel_paths[0] if rel_paths else None)
         return tmp_paths
 
