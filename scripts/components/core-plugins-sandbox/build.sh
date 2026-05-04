@@ -71,6 +71,19 @@ pwd
 
 ../../gradlew assemble -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
 
+# Determine native lib path and extension
+[ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
+LIB_EXT="so"
+if [[ "$PLATFORM" == "darwin" ]]; then LIB_EXT="dylib"; fi
+NATIVE_LIB="../../sandbox/libs/dataformat-native/rust/target/release/libopensearch_native.${LIB_EXT}"
+
+if [ ! -f "$NATIVE_LIB" ]; then
+    echo "Error: Native library not found at $NATIVE_LIB"
+    exit 1
+fi
+
+NATIVE_LIB_PLUGINS="analytics-backend-datafusion parquet-data-format"
+
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 INSTALL_ORDER=1
 mkdir -p $OUTPUT/plugins
@@ -85,6 +98,17 @@ for plugin in ./*; do
        [ "$PLUGIN_NAME" = "dsl-query-executor" ] ||
        [ "$PLUGIN_NAME" = "parquet-data-format" ]; then
       PLUGIN_ARTIFACT_BUILD_NAME=`ls "$plugin"/build/distributions/ | grep "$PLUGIN_NAME-$VERSION.zip"`
+
+      # Inject native lib into plugins that load it at runtime
+      if echo "$NATIVE_LIB_PLUGINS" | grep -qw "$PLUGIN_NAME"; then
+        PLUGIN_ZIP_PATH="$plugin/build/distributions/$PLUGIN_ARTIFACT_BUILD_NAME"
+        STAGING=$(mktemp -d)
+        mkdir -p "$STAGING/lib"
+        cp "$NATIVE_LIB" "$STAGING/lib/"
+        (cd "$STAGING" && zip -ur "$(cd - >/dev/null && pwd)/$PLUGIN_ZIP_PATH" lib)
+        rm -rf "$STAGING"
+      fi
+
       if [ "$PLUGIN_NAME" = "analytics-engine" ]; then
         PLUGIN_NAME=$INSTALL_ORDER-$PLUGIN_NAME
         INSTALL_ORDER=$((INSTALL_ORDER + 1))

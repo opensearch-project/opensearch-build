@@ -8,6 +8,8 @@ export OPENSEARCH_PATH_CONF=$OPENSEARCH_HOME/config
 cd $OPENSEARCH_HOME
 
 KNN_LIB_DIR=$OPENSEARCH_HOME/plugins/opensearch-knn/lib
+DATAFUSION_LIB_DIR=$OPENSEARCH_HOME/plugins/analytics-backend-datafusion/lib
+PARQUET_LIB_DIR=$OPENSEARCH_HOME/plugins/parquet-data-format/lib
 ##Security Plugin
 if [ -d "$OPENSEARCH_HOME/plugins/opensearch-security" ]; then
         echo -e "OpenSearch 2.12.0 onwards, the OpenSearch Security Plugin introduces a change that requires an initial password for 'admin' user. \nPlease define an environment variable 'OPENSEARCH_INITIAL_ADMIN_PASSWORD' with a strong password string. \nIf a password is not provided, the setup will quit. \nFor more details, please visit: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/tar/"
@@ -34,22 +36,25 @@ if ! grep -q '## OpenSearch Performance Analyzer' $OPENSEARCH_PATH_CONF/jvm.opti
 fi
 echo "done plugins"
 
-##Set KNN Dylib Path for macOS and *nix systems
-if echo "$OSTYPE" | grep -qi "darwin"; then
-    if echo "$JAVA_LIBRARY_PATH" | grep -q "$KNN_LIB_DIR"; then
-        echo "k-NN libraries found in JAVA_LIBRARY_PATH"
-    else
-        export JAVA_LIBRARY_PATH=$JAVA_LIBRARY_PATH:$KNN_LIB_DIR
-        echo "k-NN libraries not found in JAVA_LIBRARY_PATH. Updating path to: $JAVA_LIBRARY_PATH." 
+##Set native library paths for macOS and *nix systems
+NATIVE_LIB_DIRS="$KNN_LIB_DIR $DATAFUSION_LIB_DIR $PARQUET_LIB_DIR"
+
+for LIB_DIR in $NATIVE_LIB_DIRS; do
+    if [ ! -d "$LIB_DIR" ]; then
+        continue
     fi
-else
-    if echo "$LD_LIBRARY_PATH" | grep -q "$KNN_LIB_DIR"; then
-        echo "k-NN libraries found in LD_LIBRARY_PATH"
+    if echo "$OSTYPE" | grep -qi "darwin"; then
+        if ! echo "$JAVA_LIBRARY_PATH" | grep -q "$LIB_DIR"; then
+            export JAVA_LIBRARY_PATH=$JAVA_LIBRARY_PATH:$LIB_DIR
+            echo "Added $LIB_DIR to JAVA_LIBRARY_PATH"
+        fi
     else
-        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$KNN_LIB_DIR
-        echo "k-NN libraries not found in LD_LIBRARY_PATH. Updating path to: $LD_LIBRARY_PATH."
+        if ! echo "$LD_LIBRARY_PATH" | grep -q "$LIB_DIR"; then
+            export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIB_DIR
+            echo "Added $LIB_DIR to LD_LIBRARY_PATH"
+        fi
     fi
-fi
+done
 
 ##Start OpenSearch
 echo "Starting OpenSearch"
