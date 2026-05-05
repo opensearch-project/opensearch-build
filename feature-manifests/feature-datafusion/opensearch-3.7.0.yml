@@ -16,7 +16,7 @@ components:
   - name: core-plugins-sandbox
     repository: https://github.com/opensearch-project/OpenSearch.git
     ref: 'main'
-    working_directory: sandbox/plugins
+    working_directory: sandbox
     platforms:
       - linux
       - windows

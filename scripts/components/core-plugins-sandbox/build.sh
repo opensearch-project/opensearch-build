@@ -69,11 +69,12 @@ fi
 
 pwd
 
-../../gradlew assemble -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
-
-[ -z "$OUTPUT" ] && OUTPUT=artifacts
+# Sandbox Plugins
+echo "Building sandbox plugins..."
+../gradlew assemble -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
 INSTALL_ORDER=1
 mkdir -p $OUTPUT/plugins
+cd plugins/
 for plugin in ./*; do
   PLUGIN_NAME=$(basename "$plugin")
   echo $PLUGIN_NAME
@@ -95,11 +96,12 @@ for plugin in ./*; do
     fi
   fi
 done
+cd ../
 
 # Rustlib
 echo "Specifically saving rustlib..."
-mkdir -p "${OUTPUT}"/core-plugins/
+mkdir -p "${OUTPUT}"/dist/
 #./gradlew :sandbox:libs:dataformat-native:buildRustLibrary -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
 for libext in so dylib dll; do
-  cp -v ./sandbox/libs/dataformat-native/rust/target/release/libopensearch_native."$libext" "${OUTPUT}"/core-plugins/ || echo "$libext not found"
+  cp -v ./libs/dataformat-native/rust/target/release/libopensearch_native."$libext" "${OUTPUT}"/dist/ || echo "$libext not found"
 done
