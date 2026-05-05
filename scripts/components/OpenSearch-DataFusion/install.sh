@@ -121,5 +121,5 @@ fi
 if [ "$MAJOR_VERSION" -ge "3" ]; then
   echo "Setting datafusion rustlib..."
   mkdir -p "$OUTPUT/../lib/rust"
-  cp -v ../../../$DISTRIBUTION/builds/opensearch/core-plugins/libopensearch_native.* "$OUTPUT/../lib/rust"
+  cp -v ../../../$DISTRIBUTION/builds/opensearch/dist/libopensearch_native.* "$OUTPUT/../lib/rust"
 fi

@@ -104,4 +104,8 @@ mkdir -p "${OUTPUT}"/dist/
 #./gradlew :sandbox:libs:dataformat-native:buildRustLibrary -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
 for libext in so dylib dll; do
   cp -v ./libs/dataformat-native/rust/target/release/libopensearch_native."$libext" "${OUTPUT}"/dist/ || echo "$libext not found"
+  if ! (ls "${OUTPUT}"/dist/ | grep libopensearch_native); then
+    echo "libopensearch_native lib not found, exit 1"
+    exit 1
+  fi
 done
