@@ -44,7 +44,7 @@ jobs:
 
       - name: Run Claude Code for duplicate detection
         id: claude
-        uses: anthropics/claude-code-action@2ff1acb3ee319fa302837dad6e17c2f36c0d98ea # v1
+        uses: anthropics/claude-code-action@4c682d8b65549056a671d1be4d37ac4832e53859 # v1  # support node24
         with:
           use_bedrock: 'true'
           github_token: ${{ secrets.GITHUB_TOKEN }}
