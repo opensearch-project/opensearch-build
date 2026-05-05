@@ -96,3 +96,10 @@ for plugin in ./*; do
   fi
 done
 
+# Rustlib
+echo "Specifically saving rustlib..."
+mkdir -p "${OUTPUT}"/core-plugins/
+#./gradlew :sandbox:libs:dataformat-native:buildRustLibrary -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
+for libext in so dylib dll; do
+  cp -v ./sandbox/libs/dataformat-native/rust/target/release/libopensearch_native."$libext" "${OUTPUT}"/core-plugins/ || echo "$libext not found"
+done

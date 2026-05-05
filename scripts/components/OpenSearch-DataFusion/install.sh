@@ -116,3 +116,10 @@ elif [ "$DISTRIBUTION" = "deb" ] || [ "$DISTRIBUTION" = "rpm" ]; then
 elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
     cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install.bat "$OUTPUT/"
 fi
+
+## Major 3 rustlib, since 3.7 version
+if [ "$MAJOR_VERSION" -ge "3" ]; then
+  echo "Setting datafusion rustlib..."
+  mkdir -p "$OUTPUT/../lib/rust"
+  cp -v ../../../$DISTRIBUTION/builds/opensearch/core-plugins/libopensearch_native.* "$OUTPUT/../lib/rust"
+fi
