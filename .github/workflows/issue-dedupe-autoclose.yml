@@ -73,11 +73,11 @@ jobs:
               const reactions = await github.rest.reactions.listForIssueComment({
                 owner, repo, comment_id: lastDupeComment.id, per_page: 100,
               });
-              const authorThumbsDown = reactions.data.some(r =>
-                r.user.id === issue.user.id && r.content === '-1'
+              const humanThumbsDown = reactions.data.some(r =>
+                r.user.type !== 'Bot' && r.content === '-1'
               );
-              if (authorThumbsDown) {
-                console.log(`  Issue author gave thumbs-down on duplicate comment, removing duplicate label`);
+              if (humanThumbsDown) {
+                console.log(`  Human user gave thumbs-down on duplicate comment, removing duplicate label`);
                 try {
                   await github.rest.issues.removeLabel({
                     owner, repo, issue_number: issue.number, name: 'duplicate',
