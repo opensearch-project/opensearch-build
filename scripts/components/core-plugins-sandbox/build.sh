@@ -76,6 +76,17 @@ echo OUTPUT_REAL $OUTPUT_REAL
 mkdir -p "${OUTPUT_REAL}"/plugins
 mkdir -p "${OUTPUT_REAL}"/dist/
 
+# Copy arrow as it is needed before analytics-engine
+DIR="$(dirname "$0")"
+echo $DIR
+cd $DIR
+cp -v ../../../tar/builds/opensearch/core-plugins/arrow-flight-rpc-$VERSION.zip \
+    "${OUTPUT_REAL}"/plugins/0-arrow-flight-rpc-$VERSION.zip || \
+cp -v ../../../zip/builds/opensearch/core-plugins/arrow-flight-rpc-$VERSION.zip \
+    "${OUTPUT_REAL}"/plugins/0-arrow-flight-rpc-$VERSION.zip
+
+cd -
+
 # Sandbox Plugins
 echo "Building sandbox plugins..."
 ../../gradlew assemble -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
