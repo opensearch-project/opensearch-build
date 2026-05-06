@@ -1,8 +1,7 @@
 
 # DataFusion JVM Opts
---enable-native-access=ALL-UNNAMED,org.opensearch.nativebridge
 -Dio.netty.allocator.numDirectArenas=1
 -Dio.netty.noUnsafe=false
 -Dio.netty.tryUnsafe=true
 -Dio.netty.tryReflectionSetAccessible=true
---add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED
+-Dopensearch.experimental.feature.pluggable.dataformat.enabled=true
