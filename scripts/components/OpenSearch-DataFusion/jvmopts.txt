@@ -1,0 +1,7 @@
+
+# DataFusion JVM Opts
+-Dio.netty.allocator.numDirectArenas=1
+-Dio.netty.noUnsafe=false
+-Dio.netty.tryUnsafe=true
+-Dio.netty.tryReflectionSetAccessible=true
+-Dopensearch.experimental.feature.pluggable.dataformat.enabled=true

@@ -122,4 +122,7 @@ if [ "$MAJOR_VERSION" -ge "3" ]; then
   echo "Setting datafusion rustlib..."
   mkdir -p "$OUTPUT/lib/rust"
   cp -v ../../../$DISTRIBUTION/builds/opensearch/dist/libopensearch_native.* "$OUTPUT/lib/rust"
+  ls "$OUTPUT/lib/rust"
+  echo "Updating jvmopts settings..."
+  cat ./jvmopts.txt >> "$OUTPUT/config/jvm.options"
 fi
