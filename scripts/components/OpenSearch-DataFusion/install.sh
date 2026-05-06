@@ -120,6 +120,6 @@ fi
 ## Major 3 rustlib, since 3.7 version
 if [ "$MAJOR_VERSION" -ge "3" ]; then
   echo "Setting datafusion rustlib..."
-  mkdir -p "$OUTPUT/../lib/rust"
+  mkdir -p "$OUTPUT/lib/rust"
   cp -v ../../../$DISTRIBUTION/builds/opensearch/dist/libopensearch_native.* "$OUTPUT/lib/rust"
 fi
