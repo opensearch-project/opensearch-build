@@ -69,12 +69,17 @@ fi
 
 pwd
 
+# Setup paths
+mkdir -p "${OUTPUT}"
+OUTPUT_REAL=`realpath ${OUTPUT}`
+echo OUTPUT_REAL $OUTPUT_REAL
+mkdir -p "${OUTPUT_REAL}"/plugins
+mkdir -p "${OUTPUT_REAL}"/dist/
+
 # Sandbox Plugins
 echo "Building sandbox plugins..."
-../gradlew assemble -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
+../../gradlew assemble -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
 INSTALL_ORDER=1
-mkdir -p $OUTPUT/plugins
-cd plugins/
 for plugin in ./*; do
   PLUGIN_NAME=$(basename "$plugin")
   echo $PLUGIN_NAME
@@ -90,22 +95,22 @@ for plugin in ./*; do
         PLUGIN_NAME=$INSTALL_ORDER-$PLUGIN_NAME
         INSTALL_ORDER=$((INSTALL_ORDER + 1))
       fi
-      cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/plugins/"$PLUGIN_NAME-$VERSION.zip"
+      cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT_REAL}"/plugins/"$PLUGIN_NAME-$VERSION.zip"
     else
       echo "Ignore $PLUGIN_NAME as it is not in the required list"
     fi
   fi
 done
-cd ../
 
 # Rustlib
+cd ../
 echo "Specifically saving rustlib..."
-mkdir -p "${OUTPUT}"/dist/
-#./gradlew :sandbox:libs:dataformat-native:buildRustLibrary -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
+../gradlew :sandbox:libs:dataformat-native:buildRustLibrary -Dbuild.snapshot="$SNAPSHOT" -Dbuild.version_qualifier=$QUALIFIER -Dsandbox.enabled=true -PrustRelease -Pcrypto.standard=FIPS-140-3
 for libext in so dylib dll; do
-  cp -v ./libs/dataformat-native/rust/target/release/libopensearch_native."$libext" "${OUTPUT}"/dist/ || echo "$libext not found"
-  if ! (ls "${OUTPUT}"/dist/ | grep libopensearch_native); then
-    echo "libopensearch_native lib not found, exit 1"
-    exit 1
-  fi
+  cp -v ./libs/dataformat-native/rust/target/release/libopensearch_native."$libext" "${OUTPUT_REAL}"/dist/ || echo "$libext not found"
 done
+
+if ! (ls "${OUTPUT_REAL}"/dist/ | grep libopensearch_native); then
+  echo "libopensearch_native lib not found, exit 1"
+  exit 1
+fi

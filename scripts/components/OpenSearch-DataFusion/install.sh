@@ -86,7 +86,7 @@ cd $DIR
 ## Copy the tar installation script into the bundle
 MAJOR_VERSION=`echo $VERSION | cut -d. -f1`
 if [ "$DISTRIBUTION" = "tar" ]; then
-    cp -v ../../../scripts/startup/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
+    cp -v ../../../scripts/startup/tar/linux/opensearch-tar-install-datafusion.sh "$OUTPUT/"
 elif [ "$DISTRIBUTION" = "deb" ] || [ "$DISTRIBUTION" = "rpm" ]; then
     cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
     if [ "$MAJOR_VERSION" = "1" ]; then
@@ -114,7 +114,7 @@ elif [ "$DISTRIBUTION" = "deb" ] || [ "$DISTRIBUTION" = "rpm" ]; then
         echo "LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/share/opensearch/plugins/opensearch-knn/lib" >> $ENV_FILE_PATH
     fi
 elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
-    cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install.bat "$OUTPUT/"
+    cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install-datafusion.bat "$OUTPUT/"
 fi
 
 ## Major 3 rustlib, since 3.7 version
