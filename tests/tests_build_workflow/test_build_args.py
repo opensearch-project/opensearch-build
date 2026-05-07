@@ -137,3 +137,15 @@ class TestBuildArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--skip-artifact-check"])
     def test_skip_artifact_check_true(self) -> None:
         self.assertTrue(BuildArgs().skip_artifact_check)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
+    def test_parallel_default(self) -> None:
+        self.assertIsNone(BuildArgs().parallel)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--parallel"])
+    def test_parallel_default_workers(self) -> None:
+        self.assertEqual(BuildArgs().parallel, 4)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--parallel", "8"])
+    def test_parallel_custom_workers(self) -> None:
+        self.assertEqual(BuildArgs().parallel, 8)
