@@ -9,7 +9,6 @@
 import logging
 import os
 import sys
-import threading
 import uuid
 
 from build_workflow.build_args import BuildArgs
@@ -118,7 +117,6 @@ def main() -> int:
 
 
 def _build_parallel(manifest: InputManifest, target: BuildTarget, build_recorder: BuildRecorder, work_dir: str, args: BuildArgs, components: list) -> list:
-    recorder_lock = threading.Lock()
 
     selected_components = list(manifest.components.select(focus=components, platform=target.platform))
     component_map = {c.name: c for c in selected_components}
@@ -156,8 +154,7 @@ def _build_parallel(manifest: InputManifest, target: BuildTarget, build_recorder
         builder = Builders.builder_from(component, target)
         builder.checkout(work_dir)
         builder.build(build_recorder)
-        with recorder_lock:
-            builder.export_artifacts(build_recorder)
+        builder.export_artifacts(build_recorder)
         logging.info(f"Successfully built {component.name}")
 
     failed = graph.execute_parallel(
