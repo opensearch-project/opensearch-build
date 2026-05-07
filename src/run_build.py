@@ -24,7 +24,7 @@ from paths.build_output_dir import BuildOutputDir
 from system import console
 from system.temporary_directory import TemporaryDirectory
 
-CRITICAL_COMPONENTS = ['OpenSearch', 'job-scheduler', 'common-utils', 'OpenSearch-Dashboards']
+REQUIRED_COMPONENTS = ['OpenSearch', 'job-scheduler', 'common-utils', 'OpenSearch-Dashboards']
 
 
 def main() -> int:
@@ -104,7 +104,7 @@ def main() -> int:
                 except Exception as e:
                     logging.error(f"ERROR: {e}")
                     logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
-                    if args.continue_on_error and component.name not in CRITICAL_COMPONENTS:
+                    if args.continue_on_error and component.name not in REQUIRED_COMPONENTS:
                         failed_plugins.append(component.name)
                         continue
                     else:
@@ -124,8 +124,7 @@ def _build_parallel(manifest: InputManifest, target: BuildTarget, build_recorder
     component_map = {c.name: c for c in selected_components}
     selected_names = set(component_map.keys())
 
-    # OpenSearch core must build first — it publishes build-tools and artifacts
-    # to Maven local that ALL plugins depend on implicitly.
+    # Core engines must build first
     core_name = manifest.build.name.replace(" ", "-")
     if core_name in component_map:
         core_component = component_map[core_name]
@@ -163,16 +162,15 @@ def _build_parallel(manifest: InputManifest, target: BuildTarget, build_recorder
 
     failed = graph.execute_parallel(
         build_fn=build_component,
-        critical_components=CRITICAL_COMPONENTS,
+        required_components=REQUIRED_COMPONENTS,
         continue_on_error=args.continue_on_error,
     )
 
-    if not args.continue_on_error:
-        critical_failures = [f for f in failed if f in CRITICAL_COMPONENTS]
-        if critical_failures:
-            raise Exception(f"Critical component(s) failed: {critical_failures}")
+    required_component_failures = [f for f in failed if f in REQUIRED_COMPONENTS]
+    if required_component_failures:
+        raise Exception(f"Required component(s) failed: {required_component_failures}")
 
-    return [f for f in failed if f not in CRITICAL_COMPONENTS]
+    return [f for f in failed if f not in REQUIRED_COMPONENTS]
 
 
 if __name__ == "__main__":

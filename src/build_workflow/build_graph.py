@@ -35,7 +35,7 @@ class BuildGraph:
     def execute_parallel(
         self,
         build_fn: Callable[[str], None],
-        critical_components: List[str],
+        required_components: List[str],
         continue_on_error: bool = False,
     ) -> List[str]:
         """
@@ -73,7 +73,7 @@ class BuildGraph:
                 with lock:
                     failed.append(name)
                     completed_event[name].set()
-                if not continue_on_error and name in critical_components:
+                if not continue_on_error or name in required_components:
                     raise
                 return name
 
@@ -88,8 +88,7 @@ class BuildGraph:
                 try:
                     future.result()
                 except Exception:
-                    if not continue_on_error:
-                        executor.shutdown(wait=False, cancel_futures=True)
-                        raise
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    raise
 
         return failed
