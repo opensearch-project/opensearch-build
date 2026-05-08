@@ -5,3 +5,4 @@
 -Dio.netty.tryUnsafe=true
 -Dio.netty.tryReflectionSetAccessible=true
 -Dopensearch.experimental.feature.pluggable.dataformat.enabled=true
+-Dopensearch.experimental.feature.transport.stream.enabled=true
