@@ -50,7 +50,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         self.assertEqual(mock_check_call.call_count, 2)
         self.assertEqual(test_suite.command,
                          f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.15.0 execute-test '
-                         f'--workload=nyc_taxis --pipeline=benchmark-only --target-hosts=abc.com:80 --client-options="timeout:300" --results-file=final_result.md')
+                         f'--workload=nyc_taxis --pipeline=benchmark-only --target-hosts=abc.com:80 --client-options="timeout:120" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
@@ -66,7 +66,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.15.0 execute-test'
                          f' --workload=nyc_taxis --pipeline=benchmark-only '
                          f'--target-hosts=abc.com:443 '
-                         f'--client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'myStrongPassword123!\'" --results-file=final_result.md')
+                         f'--client-options="timeout:120,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'myStrongPassword123!\'" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
@@ -81,7 +81,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         self.assertEqual(test_suite.command,
                          f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis --pipeline=benchmark-only '
-                         '--target-hosts=abc.com:443 --client-options="timeout:300,use_ssl:true,'
+                         '--target-hosts=abc.com:443 --client-options="timeout:120,use_ssl:true,'
                          'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
@@ -102,7 +102,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN '
                          'opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis --pipeline=benchmark-only '
-                         '--target-hosts=abc.com:443 --client-options="timeout:300,amazon_aws_log_in:session,'
+                         '--target-hosts=abc.com:443 --client-options="timeout:120,amazon_aws_log_in:session,'
                          f'region:{self.args.region},service:{self.args.service}" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
@@ -127,7 +127,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
                          '--user-tag="key1:value1,key2:value2" --telemetry node-stats, --telemetry-params \'{"example_key":"example_value"}\' '
-                         '--client-options="timeout:300" --results-file=final_result.md')
+                         '--client-options="timeout:120" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
@@ -148,7 +148,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
                          '--user-tag="key1:value1,key2:value2" --telemetry node-stats,test, '
-                         '--client-options="timeout:300" --results-file=final_result.md')
+                         '--client-options="timeout:120" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
@@ -171,7 +171,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--workload-params \'{"number_of_replicas":"1"}\' '
                          '--test-procedure="test-proc1,test-proc2" '
                          '--user-tag="key1:value1,key2:value2" '
-                         '--client-options="timeout:300" --results-file=final_result.md')
+                         '--client-options="timeout:120" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
@@ -196,7 +196,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--exclude-tasks="task2,type:search" '
                          '--include-tasks="task1,type:index" '
                          '--user-tag="key1:value1,key2:value2" '
-                         '--client-options="timeout:300" --results-file=final_result.md')
+                         '--client-options="timeout:120" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
     def test_execute_with_all_benchmark_optional_params(self, mock_convert: Mock) -> None:
@@ -220,7 +220,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                                                  '--exclude-tasks="task2,type:search" '
                                                  '--include-tasks="task1,type:index" '
                                                  '--user-tag="key1:value1,key2:value2" '
-                                                 '--client-options="timeout:300" --results-file=final_result.md')
+                                                 '--client-options="timeout:120" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
@@ -237,7 +237,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         self.assertEqual(test_suite.command,
                          f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis --pipeline=benchmark-only '
-                         '--target-hosts=abc.com:443 --client-options="timeout:300,use_ssl:true,'
+                         '--target-hosts=abc.com:443 --client-options="timeout:120,use_ssl:true,'
                          'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'" --results-file=final_result.md')
 
     @patch('pandas.json_normalize')
