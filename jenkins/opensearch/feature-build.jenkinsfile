@@ -26,7 +26,7 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H 3 * * * %INPUT_MANIFEST=feature-datafusion/opensearch-3.7.0.yml
+            H */4 * * * %INPUT_MANIFEST=feature-datafusion/opensearch-3.7.0.yml
         '''
     }
     parameters {
@@ -57,10 +57,10 @@ pipeline {
             description: '<Optional> Update latest url so /latest/ is pointed to this build',
             defaultValue: true
         )
-        booleanParam(
+        booleanParam( // Note: Feature Build must succeed the builds
             name: 'CONTINUE_ON_ERROR',
             description: '<Optional> Continue building the distribution even if a one or more component fails',
-            defaultValue: true
+            defaultValue: false
         )
         booleanParam( // Note: Feature Build will always skip artifact check just so that we can install core plugins
             name: 'SKIP_ARTIFACT_CHECK',
