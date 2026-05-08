@@ -71,12 +71,12 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
                 self.command += f" --telemetry-params '{self.args.telemetry_params}'"
 
         if self.security and self.args.sigv4:
-            self.command += f' --client-options="timeout:300,amazon_aws_log_in:session,region:{self.args.region},service:{self.args.service}" --results-file=final_result.md'
+            self.command += f' --client-options="timeout:120,amazon_aws_log_in:session,region:{self.args.region},service:{self.args.service}" --results-file=final_result.md'
         elif self.security:
-            self.command += (f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\','
+            self.command += (f' --client-options="timeout:120,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\','
                              f'basic_auth_password:\'{self.password}\'" --results-file=final_result.md')
         else:
-            self.command += ' --client-options="timeout:300" --results-file=final_result.md'
+            self.command += ' --client-options="timeout:120" --results-file=final_result.md'
         return self.command
 
     def convert(self) -> None:
