@@ -64,7 +64,7 @@ components:
       - security
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 'feature/mustang-ppl-integration'
+    ref: 'main'
     platforms:
       - linux
       - windows

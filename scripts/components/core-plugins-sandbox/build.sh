@@ -106,7 +106,13 @@ for plugin in ./*; do
         PLUGIN_NAME=$INSTALL_ORDER-$PLUGIN_NAME
         INSTALL_ORDER=$((INSTALL_ORDER + 1))
       fi
-      cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT_REAL}"/plugins/"$PLUGIN_NAME-$VERSION.zip"
+
+      if [ "$PLUGIN_NAME" = "dsl-query-executor" ]; then  # temp put dsl plugin to dist to build but avoid installation
+        cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT_REAL}"/dist/"$PLUGIN_NAME-$VERSION.zip"
+      else
+        cp -v "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT_REAL}"/plugins/"$PLUGIN_NAME-$VERSION.zip"
+      fi
+
     else
       echo "Ignore $PLUGIN_NAME as it is not in the required list"
     fi
