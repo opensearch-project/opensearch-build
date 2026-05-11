@@ -10,7 +10,7 @@
 // @job-name: distribution-build-opensearch
 // @description: Build OpenSearch distribution based on the input manifest and provided parameters.
 
-lib = library(identifier: 'jenkins@11.6.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@11.6.3', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -95,6 +95,12 @@ pipeline {
             name: 'BUILD_DOCKER',
             description: '<Optional> Build docker image or not with options. Defaults to build_docker.',
             choices: ['build_docker', 'build_docker_with_build_number_tag', 'do_not_build_docker'],
+        )
+        string(
+            name: 'PARALLEL',
+            description: '<Optional> Number of parallel workers for component builds. Set to 0 or empty to disable. Default is 4.',
+            defaultValue: '4',
+            trim: true
         )
         booleanParam(
             name: 'UPDATE_LATEST_URL',
