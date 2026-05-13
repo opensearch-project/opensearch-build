@@ -10,7 +10,7 @@
                docker-build.echo(The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories)
                docker-build.checkout({$class=GitSCM, branches=[{name=main}], userRemoteConfigs=[{url=https://github.com/opensearch-project/opensearch-build}]})
                docker-build.echo(Account: dockerhub staging)
-               docker-build.withSecrets({secrets=[{envVar=DOCKER_USERNAME, secretRef=op://opensearch-infra-secrets/dockerhub-staging-credentials/username}, {envVar=DOCKER_PASSWORD, secretRef=op://opensearch-infra-secrets/dockerhub-staging-credentials/password}]}, groovy.lang.Closure)
+               docker-build.withSecrets({secrets=[{envVar=DOCKER_USERNAME, secretRef=op://opensearch-release-secrets/dockerhub-staging-credentials/username}, {envVar=DOCKER_PASSWORD, secretRef=op://opensearch-release-secrets/dockerhub-staging-credentials/password}]}, groovy.lang.Closure)
                   docker-build.isUnix()
                   docker-build.sh(
                                 set -e

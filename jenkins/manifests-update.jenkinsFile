@@ -11,8 +11,8 @@
 // @description: Checks for new OpenSearch and OpenSearch-Dashboards versions and auto-generates updated input manifests.
 
 def secret_github_bot = [
-    [envVar: 'GITHUB_USER', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-username'],
-    [envVar: 'GITHUB_TOKEN', secretRef: 'op://opensearch-infra-secrets/github-bot/ci-bot-token']
+    [envVar: 'GITHUB_USER', secretRef: 'op://opensearch-release-secrets/github-bot/ci-bot-username'],
+    [envVar: 'GITHUB_TOKEN', secretRef: 'op://opensearch-release-secrets/github-bot/ci-bot-token']
 ]
 
 pipeline {

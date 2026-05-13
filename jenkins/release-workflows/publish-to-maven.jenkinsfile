@@ -10,13 +10,13 @@
 // @job-name: publish-to-maven
 // @description: Publishes OpenSearch artifacts to Maven Central repository.
 
-lib = library(identifier: 'jenkins@11.0.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@12.0.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
 def secret_artifacts = [
-    [envVar: 'ARTIFACT_BUCKET_NAME', secretRef: 'op://opensearch-infra-secrets/aws-resource-arns/jenkins-artifact-bucket-name']
+    [envVar: 'ARTIFACT_BUCKET_NAME', secretRef: 'op://opensearch-release-secrets/aws-resource-arns/jenkins-artifact-bucket-name']
 ]
 
 pipeline {

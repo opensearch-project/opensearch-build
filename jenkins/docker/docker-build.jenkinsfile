@@ -26,8 +26,8 @@ def agent_nodes = [
 ]
 
 def secret_dockerhub_staging = [
-    [envVar: 'DOCKER_USERNAME', secretRef: 'op://opensearch-infra-secrets/dockerhub-staging-credentials/username'],
-    [envVar: 'DOCKER_PASSWORD', secretRef: 'op://opensearch-infra-secrets/dockerhub-staging-credentials/password']
+    [envVar: 'DOCKER_USERNAME', secretRef: 'op://opensearch-release-secrets/dockerhub-staging-credentials/username'],
+    [envVar: 'DOCKER_PASSWORD', secretRef: 'op://opensearch-release-secrets/dockerhub-staging-credentials/password']
 ]
 
 pipeline {

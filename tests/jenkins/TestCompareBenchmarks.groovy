@@ -28,7 +28,7 @@ class TestCompareBenchmarks extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('6.8.2')
+                        .defaultVersion('12.0.0')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
