@@ -23,7 +23,7 @@ class TestValidateArtifacts extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('11.2.1')
+                .defaultVersion('12.0.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
