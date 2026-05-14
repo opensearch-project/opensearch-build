@@ -12,6 +12,7 @@ import sys
 import uuid
 
 from build_workflow.build_args import BuildArgs
+from build_workflow.build_graph import BuildGraph
 from build_workflow.build_incremental import BuildIncremental
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.build_target import BuildTarget
@@ -21,6 +22,8 @@ from manifests.input_manifest import InputManifest
 from paths.build_output_dir import BuildOutputDir
 from system import console
 from system.temporary_directory import TemporaryDirectory
+
+REQUIRED_COMPONENTS = ['OpenSearch', 'job-scheduler', 'common-utils', 'OpenSearch-Dashboards']
 
 
 def main() -> int:
@@ -85,29 +88,86 @@ def main() -> int:
 
         logging.info(f"Building {manifest.build.name} ({target.architecture}) into {target.output_dir}")
 
-        for component in manifest.components.select(focus=components, platform=target.platform):
-            logging.info(f"Building {component.name}")
+        if args.parallel:
+            failed_plugins = _build_parallel(manifest, target, build_recorder, work_dir.name, args, components)
+        else:
+            for component in manifest.components.select(focus=components, platform=target.platform):
+                logging.info(f"Building {component.name}")
 
-            builder = Builders.builder_from(component, target)
-            try:
-                builder.checkout(work_dir.name)
-                builder.build(build_recorder)
-                builder.export_artifacts(build_recorder)
-                logging.info(f"Successfully built {component.name}")
-            except Exception as e:
-                logging.error(f"ERROR: {e}")
-                logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
-                if args.continue_on_error and component.name not in ['OpenSearch', 'job-scheduler', 'common-utils', 'OpenSearch-Dashboards']:
-                    failed_plugins.append(component.name)
-                    continue
-                else:
-                    raise
+                builder = Builders.builder_from(component, target)
+                try:
+                    builder.checkout(work_dir.name)
+                    builder.build(build_recorder)
+                    builder.export_artifacts(build_recorder)
+                    logging.info(f"Successfully built {component.name}")
+                except Exception as e:
+                    logging.error(f"ERROR: {e}")
+                    logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
+                    if args.continue_on_error and component.name not in REQUIRED_COMPONENTS:
+                        failed_plugins.append(component.name)
+                        continue
+                    else:
+                        raise
 
         build_recorder.write_manifest()
     if len(failed_plugins) > 0:
         logging.error(f"Failed plugins are {failed_plugins}")
     logging.info("Done.")
     return 0
+
+
+def _build_parallel(manifest: InputManifest, target: BuildTarget, build_recorder: BuildRecorder, work_dir: str, args: BuildArgs, components: list) -> list:
+
+    selected_components = list(manifest.components.select(focus=components, platform=target.platform))
+    component_map = {c.name: c for c in selected_components}
+    selected_names = set(component_map.keys())
+
+    # Core engines must build first
+    core_name = manifest.build.name.replace(" ", "-")
+    if core_name in component_map:
+        core_component = component_map[core_name]
+        logging.info(f"Building {core_component.name}")
+        builder = Builders.builder_from(core_component, target)
+        try:
+            builder.checkout(work_dir)
+            builder.build(build_recorder)
+            builder.export_artifacts(build_recorder)
+            logging.info(f"Successfully built {core_component.name}")
+        except Exception as e:
+            logging.error(f"ERROR: {e}")
+            logging.error(f"Error building {core_component.name}, retry with: {args.component_command(core_component.name)}")
+            raise
+
+    # Now build remaining components in parallel
+    remaining_components = [c for c in selected_components if c.name != core_name]
+
+    graph = BuildGraph(max_workers=args.parallel)
+
+    for component in remaining_components:
+        deps = getattr(component, 'depends_on', None) or []
+        graph.add_component(component.name, [d for d in deps if d in selected_names and d != core_name])
+
+    def build_component(name: str) -> None:
+        component = component_map[name]
+        logging.info(f"Building {component.name}")
+
+        builder = Builders.builder_from(component, target)
+        builder.checkout(work_dir)
+        builder.build(build_recorder)
+        builder.export_artifacts(build_recorder)
+        logging.info(f"Successfully built {component.name}")
+
+    failed = graph.execute_parallel(
+        build_fn=build_component,
+        required_components=REQUIRED_COMPONENTS,
+        continue_on_error=args.continue_on_error,
+    )
+
+    required_component_failures = [f for f in failed if f in REQUIRED_COMPONENTS]
+    if required_component_failures:
+        raise Exception(f"Required component(s) failed: {required_component_failures}")
+
+    return [f for f in failed if f not in REQUIRED_COMPONENTS]
 
 
 if __name__ == "__main__":

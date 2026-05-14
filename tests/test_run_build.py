@@ -457,3 +457,97 @@ class TestRunBuild(unittest.TestCase):
 
         mock_recorder.assert_called_once()
         mock_recorder.return_value.write_manifest.assert_called()
+
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "linux", "--parallel"])
+    @patch("run_build.Builders.builder_from", return_value=MagicMock())
+    @patch("run_build.BuildRecorder", return_value=MagicMock())
+    @patch("run_build.TemporaryDirectory")
+    def test_main_parallel_builds_all_components(self, mock_temp: Mock, mock_recorder: Mock, mock_builder: Mock, *mocks: Any) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        main()
+        self.assertNotEqual(mock_builder.return_value.build.call_count, 0)
+        self.assertEqual(mock_builder.return_value.build.call_count, mock_builder.return_value.export_artifacts.call_count)
+        mock_recorder.return_value.write_manifest.assert_called()
+
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "linux", "--parallel", "2"])
+    @patch("run_build.Builders.builder_from", return_value=MagicMock())
+    @patch("run_build.BuildRecorder", return_value=MagicMock())
+    @patch("run_build.TemporaryDirectory")
+    def test_main_parallel_with_custom_workers(self, mock_temp: Mock, mock_recorder: Mock, mock_builder: Mock, *mocks: Any) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        main()
+        self.assertNotEqual(mock_builder.return_value.build.call_count, 0)
+        self.assertEqual(mock_builder.return_value.build.call_count, mock_builder.return_value.export_artifacts.call_count)
+        mock_recorder.return_value.write_manifest.assert_called()
+
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST_3_x, "-p", "linux", "--parallel"])
+    @patch("run_build.Builders.builder_from", return_value=MagicMock())
+    @patch("run_build.BuildRecorder", return_value=MagicMock())
+    @patch("run_build.TemporaryDirectory")
+    def test_main_parallel_3x_manifest(self, mock_temp: Mock, mock_recorder: Mock, mock_builder: Mock, *mocks: Any) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        main()
+        self.assertNotEqual(mock_builder.return_value.build.call_count, 0)
+        self.assertEqual(mock_builder.return_value.build.call_count, mock_builder.return_value.export_artifacts.call_count)
+        mock_recorder.return_value.write_manifest.assert_called()
+
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "linux", "--parallel", "--continue-on-error"])
+    @patch("run_build.Builders.builder_from", return_value=MagicMock())
+    @patch("run_build.BuildRecorder", return_value=MagicMock())
+    @patch("run_build.TemporaryDirectory")
+    @patch("run_build.logging.error")
+    def test_main_parallel_continue_on_error_plugin_failure(self, mock_logging_error: Mock, mock_temp: Mock, mock_recorder: Mock, mock_builder_from: Mock, *mocks: Any) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+
+        def side_effect_build(*args: Any, **kwargs: Any) -> None:
+            component = mock_builder_from.call_args[0][0]
+            if component.name == "custom-codecs":
+                raise Exception("custom-codecs build failed")
+
+        mock_builder = MagicMock()
+        mock_builder.build.side_effect = side_effect_build
+        mock_builder_from.return_value = mock_builder
+
+        main()
+        mock_recorder.return_value.write_manifest.assert_called()
+
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "linux", "--parallel"])
+    @patch("run_build.Builders.builder_from", return_value=MagicMock())
+    @patch("run_build.BuildRecorder", return_value=MagicMock())
+    @patch("run_build.TemporaryDirectory")
+    def test_main_parallel_core_builds_first(self, mock_temp: Mock, mock_recorder: Mock, mock_builder_from: Mock, *mocks: Any) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+
+        build_order: list = []
+
+        def track_builder(component: Any, target: Any) -> MagicMock:
+            builder = MagicMock()
+
+            def track_build(*args: Any, **kwargs: Any) -> None:
+                build_order.append(component.name)
+            builder.build.side_effect = track_build
+            return builder
+
+        mock_builder_from.side_effect = track_builder
+        main()
+
+        self.assertEqual(build_order[0], "OpenSearch")
+
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "linux", "--parallel"])
+    @patch("run_build.Builders.builder_from", return_value=MagicMock())
+    @patch("run_build.BuildRecorder", return_value=MagicMock())
+    @patch("run_build.TemporaryDirectory")
+    def test_main_parallel_raises_on_core_failure(self, mock_temp: Mock, mock_recorder: Mock, mock_builder_from: Mock, *mocks: Any) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+
+        def fail_core(component: Any, target: Any) -> MagicMock:
+            builder = MagicMock()
+            if component.name == "OpenSearch":
+                builder.build.side_effect = Exception("OpenSearch build failed")
+            return builder
+
+        mock_builder_from.side_effect = fail_core
+
+        with self.assertRaises(Exception) as ctx:
+            main()
+        self.assertIn("OpenSearch build failed", str(ctx.exception))

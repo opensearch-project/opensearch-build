@@ -103,6 +103,15 @@ class BuildArgs:
             action="store_true",
             help="Do not fail the distribution build on any plugin component failure.",
         )
+        parser.add_argument(
+            "--parallel",
+            dest="parallel",
+            type=int,
+            nargs='?',
+            const=4,
+            default=None,
+            help="Build components in parallel using a dependency graph. Optionally specify max workers (default: 4).",
+        )
         group = parser.add_mutually_exclusive_group()
         group.add_argument(
             "-c",
@@ -135,6 +144,7 @@ class BuildArgs:
         self.continue_on_error = args.continue_on_error
         self.skip_artifact_check = args.skip_artifact_check
         self.incremental = args.incremental
+        self.parallel = args.parallel
 
     def component_command(self, name: str) -> str:
         return " ".join(
