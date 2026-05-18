@@ -81,13 +81,13 @@ DIR="$(dirname "$0")"
 echo $DIR
 cd $DIR
 cp -v ../../../tar/builds/opensearch/core-plugins/arrow-base-$VERSION.zip \
-    "${OUTPUT_REAL}"/plugins/0-arrow-base-$VERSION.zip || \
+    "${OUTPUT_REAL}"/plugins/0-1-arrow-base-$VERSION.zip || \
 cp -v ../../../zip/builds/opensearch/core-plugins/arrow-base-$VERSION.zip \
-    "${OUTPUT_REAL}"/plugins/0-arrow-base-$VERSION.zip
+    "${OUTPUT_REAL}"/plugins/0-1-arrow-base-$VERSION.zip
 cp -v ../../../tar/builds/opensearch/core-plugins/arrow-flight-rpc-$VERSION.zip \
-    "${OUTPUT_REAL}"/plugins/0-arrow-flight-rpc-$VERSION.zip || \
+    "${OUTPUT_REAL}"/plugins/0-2-arrow-flight-rpc-$VERSION.zip || \
 cp -v ../../../zip/builds/opensearch/core-plugins/arrow-flight-rpc-$VERSION.zip \
-    "${OUTPUT_REAL}"/plugins/0-arrow-flight-rpc-$VERSION.zip
+    "${OUTPUT_REAL}"/plugins/0-2-arrow-flight-rpc-$VERSION.zip
 
 cd -
 
