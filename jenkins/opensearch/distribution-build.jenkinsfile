@@ -265,7 +265,8 @@ pipeline {
                                 continueOnError: params.CONTINUE_ON_ERROR,
                                 skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                 incremental: params.INCREMENTAL,
-                                previousBuildId: params.PREVIOUS_BUILD_ID
+                                previousBuildId: params.PREVIOUS_BUILD_ID,
+                                parallel: params.PARALLEL
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
@@ -351,6 +352,7 @@ pipeline {
                                         skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         incremental: params.INCREMENTAL,
                                         previousBuildId: params.PREVIOUS_BUILD_ID,
+                                        parallel: params.PARALLEL,
                                         stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -469,6 +471,7 @@ pipeline {
                                         skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         incremental: params.INCREMENTAL,
                                         previousBuildId: params.PREVIOUS_BUILD_ID,
+                                        parallel: params.PARALLEL,
                                         stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -583,7 +586,8 @@ pipeline {
                                 continueOnError: params.CONTINUE_ON_ERROR,
                                 skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                 incremental: params.INCREMENTAL,
-                                previousBuildId: params.PREVIOUS_BUILD_ID
+                                previousBuildId: params.PREVIOUS_BUILD_ID,
+                                parallel: params.PARALLEL
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
@@ -666,6 +670,7 @@ pipeline {
                                         skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         incremental: params.INCREMENTAL,
                                         previousBuildId: params.PREVIOUS_BUILD_ID,
+                                        parallel: params.PARALLEL,
                                         stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -785,6 +790,7 @@ pipeline {
                                         skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                         incremental: params.INCREMENTAL,
                                         previousBuildId: params.PREVIOUS_BUILD_ID,
+                                        parallel: params.PARALLEL,
                                         stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -904,7 +910,8 @@ pipeline {
                                     continueOnError: params.CONTINUE_ON_ERROR,
                                     skipArtifactCheck: params.SKIP_ARTIFACT_CHECK,
                                     incremental: params.INCREMENTAL,
-                                    previousBuildId: params.PREVIOUS_BUILD_ID
+                                    previousBuildId: params.PREVIOUS_BUILD_ID,
+                                    parallel: params.PARALLEL
                                 )
                                 String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                                 String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
