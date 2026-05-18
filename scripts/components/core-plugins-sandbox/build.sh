@@ -76,14 +76,18 @@ echo OUTPUT_REAL $OUTPUT_REAL
 mkdir -p "${OUTPUT_REAL}"/plugins
 mkdir -p "${OUTPUT_REAL}"/dist/
 
-# Copy arrow as it is needed before analytics-engine
+# Copy arrow plugins as they are needed before analytics-engine
 DIR="$(dirname "$0")"
 echo $DIR
 cd $DIR
+cp -v ../../../tar/builds/opensearch/core-plugins/arrow-base-$VERSION.zip \
+    "${OUTPUT_REAL}"/plugins/0-1-arrow-base-$VERSION.zip || \
+cp -v ../../../zip/builds/opensearch/core-plugins/arrow-base-$VERSION.zip \
+    "${OUTPUT_REAL}"/plugins/0-1-arrow-base-$VERSION.zip
 cp -v ../../../tar/builds/opensearch/core-plugins/arrow-flight-rpc-$VERSION.zip \
-    "${OUTPUT_REAL}"/plugins/0-arrow-flight-rpc-$VERSION.zip || \
+    "${OUTPUT_REAL}"/plugins/0-2-arrow-flight-rpc-$VERSION.zip || \
 cp -v ../../../zip/builds/opensearch/core-plugins/arrow-flight-rpc-$VERSION.zip \
-    "${OUTPUT_REAL}"/plugins/0-arrow-flight-rpc-$VERSION.zip
+    "${OUTPUT_REAL}"/plugins/0-2-arrow-flight-rpc-$VERSION.zip
 
 cd -
 
