@@ -50,7 +50,7 @@ jobs:
           - '3.7'
     steps:
       - name: Check out OpenSearch Dashboards repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: opensearch-project/OpenSearch-Dashboards
           ref: ${{ matrix.branch }}
@@ -58,14 +58,14 @@ jobs:
           persist-credentials: false
       - name: Check out plugin repo
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
           path: OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
           persist-credentials: false
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'
@@ -108,14 +108,14 @@ jobs:
           fi
       - name: GitHub App token
         id: github_app_token
-        uses: tibdex/github-app-token@v1.6.0
+        uses: tibdex/github-app-token@f717b5ecd4534d3c4df4ce9b5c1c2214f0f7cd06 # v1.6.0
         with:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: 22958780
       - name: Check if label exists
         id: check_label
-        uses: actions/github-script@v6
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
         with:
           github-token: ${{ steps.github_app_token.outputs.token }}
           result-encoding: string
@@ -151,7 +151,7 @@ jobs:
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' && matrix.entry.repo
           != 'opensearch-dashboards-functional-test' }}
         id: cpr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           token: ${{ steps.github_app_token.outputs.token }}
           committer: opensearch-ci-bot <opensearch-infra@amazon.com>
@@ -174,7 +174,7 @@ jobs:
       - name: Create Pull Request for opensearch-dashboards-functional-test
         if: ${{ matrix.entry.repo == 'opensearch-dashboards-functional-test' }}
         id: cprft
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           token: ${{ steps.github_app_token.outputs.token }}
           committer: opensearch-ci-bot <opensearch-infra@amazon.com>
