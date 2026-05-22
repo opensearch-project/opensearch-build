@@ -106,7 +106,7 @@ class TestReleaseManifestCommitLock extends BuildPipelineTest {
         addParam('OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE', '3050')
         super.testPipeline('jenkins/release-workflows/release-manifest-commit-lock.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/release-workflows/testManifestCommitLock_createPullRequest')
-        assertCallStack().contains('release-manifest-commit-lock.sh(\n                                gh repo fork \"opensearch-project/opensearch-build\" --clone=false\n                                git remote add fork \"https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-ci/opensearch-build\"\n                                git checkout -b manifest-lock\n                            )')
+        assertCallStack().contains('release-manifest-commit-lock.sh(\n                                gh repo fork \"opensearch-project/opensearch-build\" --clone=false\n                                git remote add fork \"https://opensearch-ci-bot:GITHUB_TOKEN@github.com/opensearch-ci-bot/opensearch-build\"\n                                git checkout -b manifest-lock\n                            )')
         assertCallStack().contains('git push fork manifest-lock --force')
         assertCallStack().contains('gh pr create --repo \"opensearch-project/opensearch-build\"')
     }
