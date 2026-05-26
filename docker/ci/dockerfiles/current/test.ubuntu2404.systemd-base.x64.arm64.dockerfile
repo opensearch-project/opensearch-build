@@ -116,7 +116,7 @@ RUN apt-get update -y && apt-get install -y python3.9-full python3.9-dev && \
 
 # Cannot uninstall packaging 24.0
 # The package's contents are unknown: no RECORD file was found for packaging.
-RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python3 - --no-deps && \
+RUN curl -SfL https://bootstrap.pypa.io/pip/3.9/get-pip.py | python3 - --no-deps && \
     python3 -m pip install --upgrade --ignore-installed packaging && \
     pip3 install awscliv2==2.3.1 pipenv==2023.6.12 cmake==3.26.4 && \
     ln -s `which awsv2` /usr/local/bin/aws && aws --install
