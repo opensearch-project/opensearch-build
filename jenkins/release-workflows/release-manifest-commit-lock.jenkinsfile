@@ -223,18 +223,22 @@ pipeline {
                     withSecrets(secrets: secret_github_bot){
                         try {
                             sh """
-                                git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build"
-                                git config user.email "opensearch-infra@amazon.com"
-                                git config user.name "opensearch-ci"
+                                gh repo fork "opensearch-project/opensearch-build" --clone=false
+                                git remote add fork "https://opensearch-ci-bot:${GITHUB_TOKEN}@github.com/opensearch-ci-bot/opensearch-build"
                                 git checkout -b manifest-lock
                             """
                             def status = sh(returnStdout: true, script: 'git status --porcelain')
                             if (status) {
                                 sh """
                                     git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
-                                    git commit -sm "Manifest Commit Lock for Release ${params.RELEASE_VERSION}"
-                                    git push origin manifest-lock --force
-                                    gh pr create --title '[${params.RELEASE_VERSION}] Manifest Commit Lock with action ${params.MANIFEST_LOCK_ACTION}' --body 'Manifest Commit Lock for Release ${params.RELEASE_VERSION} ' -H manifest-lock -B main
+                                    git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Manifest Commit Lock for Release ${params.RELEASE_VERSION}"
+                                    git push fork manifest-lock --force
+                                    EXISTING_PR=\$(gh pr list --repo "opensearch-project/opensearch-build" --head "opensearch-ci-bot:manifest-lock" --state open --json number --jq '.[0].number')
+                                    if [ -n "\$EXISTING_PR" ]; then
+                                        gh pr edit "\$EXISTING_PR" --repo "opensearch-project/opensearch-build" --body "Manifest Commit Lock for Release ${params.RELEASE_VERSION}"
+                                    else
+                                        gh pr create --repo "opensearch-project/opensearch-build" --title '[${params.RELEASE_VERSION}] Manifest Commit Lock with action ${params.MANIFEST_LOCK_ACTION}' --body 'Manifest Commit Lock for Release ${params.RELEASE_VERSION} ' -H "opensearch-ci-bot:manifest-lock" -B main
+                                    fi
                                 """
                             } else {
                                 println 'Nothing to commit!'
