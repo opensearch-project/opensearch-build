@@ -45,7 +45,7 @@
                                                                              echo "No changes to commit for component ${REPO_NAME}. Skipping PR creation."
                                                                         else
                                                                             git add .
-                                                                            git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci" commit -sm "Add release notes for 2.2.0"
+                                                                            git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Add release notes for 2.2.0"
                                                                             git push origin release-chores/release-notes-2.2.0 --force
 
                                                                             BORDERLINE_FILE="/tmp/workspace/release-notes/opensearch.release-notes-2.2.0-borderline.md"
@@ -61,13 +61,13 @@
                                                                             cat "$PR_BODY_FILE"
                                                                             echo "--- end PR body content ---"
 
-                                                                            EXISTING_PR=$(gh pr list --repo "opensearch-project/$REPO_NAME" --head "opensearch-ci:release-chores/release-notes-2.2.0" --state open --json number --jq '.[0].number')
+                                                                            EXISTING_PR=$(gh pr list --repo "opensearch-project/$REPO_NAME" --head "opensearch-ci-bot:release-chores/release-notes-2.2.0" --state open --json number --jq '.[0].number')
                                                                             if [ -n "$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
                                                                                 gh pr edit "$EXISTING_PR" --repo "opensearch-project/$REPO_NAME" --body-file "$PR_BODY_FILE"
                                                                                 RC=$?
                                                                             else
-                                                                                gh pr create --repo "opensearch-project/$REPO_NAME" --title '[AUTO] Add release notes for 2.2.0' --body-file "$PR_BODY_FILE" -H "opensearch-ci:release-chores/release-notes-2.2.0" -B 2.2
+                                                                                gh pr create --repo "opensearch-project/$REPO_NAME" --title '[AUTO] Add release notes for 2.2.0' --body-file "$PR_BODY_FILE" -H "opensearch-ci-bot:release-chores/release-notes-2.2.0" -B 2.2
                                                                                 RC=$?
                                                                             fi
                                                                             if [ "$RC" -ne 0 ]; then
@@ -113,7 +113,7 @@
                                                                              echo "No changes to commit for component ${REPO_NAME}. Skipping PR creation."
                                                                         else
                                                                             git add .
-                                                                            git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci" commit -sm "Add release notes for 2.2.0"
+                                                                            git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Add release notes for 2.2.0"
                                                                             git push origin release-chores/release-notes-2.2.0 --force
 
                                                                             BORDERLINE_FILE="/tmp/workspace/release-notes/opensearch-sql.release-notes-2.2.0.0-borderline.md"
@@ -129,13 +129,13 @@
                                                                             cat "$PR_BODY_FILE"
                                                                             echo "--- end PR body content ---"
 
-                                                                            EXISTING_PR=$(gh pr list --repo "opensearch-project/$REPO_NAME" --head "opensearch-ci:release-chores/release-notes-2.2.0" --state open --json number --jq '.[0].number')
+                                                                            EXISTING_PR=$(gh pr list --repo "opensearch-project/$REPO_NAME" --head "opensearch-ci-bot:release-chores/release-notes-2.2.0" --state open --json number --jq '.[0].number')
                                                                             if [ -n "$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #${EXISTING_PR} for component ${REPO_NAME} with new release notes."
                                                                                 gh pr edit "$EXISTING_PR" --repo "opensearch-project/$REPO_NAME" --body-file "$PR_BODY_FILE"
                                                                                 RC=$?
                                                                             else
-                                                                                gh pr create --repo "opensearch-project/$REPO_NAME" --title '[AUTO] Add release notes for 2.2.0' --body-file "$PR_BODY_FILE" -H "opensearch-ci:release-chores/release-notes-2.2.0" -B 2.2
+                                                                                gh pr create --repo "opensearch-project/$REPO_NAME" --title '[AUTO] Add release notes for 2.2.0' --body-file "$PR_BODY_FILE" -H "opensearch-ci-bot:release-chores/release-notes-2.2.0" -B 2.2
                                                                                 RC=$?
                                                                             fi
                                                                             if [ "$RC" -ne 0 ]; then
