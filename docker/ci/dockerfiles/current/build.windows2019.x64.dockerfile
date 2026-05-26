@@ -13,7 +13,7 @@
 
 ARG ServerCoreRepo=mcr.microsoft.com/windows
 
-FROM ${ServerCoreRepo}:ltsc2019
+FROM ${ServerCoreRepo}:ltsc2019-amd64
 
 USER ContainerAdministrator
 
