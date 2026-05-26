@@ -130,14 +130,10 @@ pipeline {
                                                                     COMPONENT_REPO_URL="${componentObj.repository}"
                                                                     REPO_NAME=\$(basename "\${COMPONENT_REPO_URL}" .git)
 
-                                                                    git clone -b ${ref} "\${COMPONENT_REPO_URL}"
+                                                                    gh repo fork "opensearch-project/\$REPO_NAME" --clone=true
                                                                     cd "\${REPO_NAME}"
-                                                                    git ls-remote --heads origin release-chores/release-notes-${version} | grep -q release-chores/release-notes-${version}
-                                                                    if [ \$? -ne 0 ]; then
-                                                                        git checkout -b release-chores/release-notes-${version}
-                                                                    else
-                                                                        git checkout release-chores/release-notes-${version}
-                                                                    fi
+                                                                    git fetch upstream ${ref}
+                                                                    git checkout -b release-chores/release-notes-${version} upstream/${ref}
 
                                                                     if [ -f "$WORKSPACE/release-notes/${filename}" ]; then
                                                                         mkdir -p release-notes/
@@ -145,12 +141,10 @@ pipeline {
                                                                         if [ -z "\$(git status --porcelain)" ]; then
                                                                              echo "No changes to commit for component \${REPO_NAME}. Skipping PR creation."
                                                                         else
-                                                                            git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/\$REPO_NAME"
-                                                                            git config user.email "opensearch-infra@amazon.com"
-                                                                            git config user.name "opensearch-ci"
                                                                             git add .
-                                                                            git commit -sm "Add release notes for ${version}"
+                                                                            git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Add release notes for ${version}"
                                                                             git push origin release-chores/release-notes-${version} --force
+
                                                                             BORDERLINE_FILE="$WORKSPACE/release-notes/${filename.replace('.md', '-borderline.md')}"
                                                                             PR_BODY_FILE=\$(mktemp)
                                                                             trap 'rm -f "\$PR_BODY_FILE"' EXIT
@@ -163,14 +157,14 @@ pipeline {
                                                                             echo "--- PR body content ---"
                                                                             cat "\$PR_BODY_FILE"
                                                                             echo "--- end PR body content ---"
-                                                                            gh --version
-                                                                            EXISTING_PR=\$(gh pr list --head release-chores/release-notes-${version} --state open --json number --jq '.[0].number')
+
+                                                                            EXISTING_PR=\$(gh pr list --repo "opensearch-project/\$REPO_NAME" --head "opensearch-ci-bot:release-chores/release-notes-${version}" --state open --json number --jq '.[0].number')
                                                                             if [ -n "\$EXISTING_PR" ]; then
                                                                                 echo "Updating existing PR #\${EXISTING_PR} for component \${REPO_NAME} with new release notes."
-                                                                                gh pr edit "\$EXISTING_PR" --body-file "\$PR_BODY_FILE"
+                                                                                gh pr edit "\$EXISTING_PR" --repo "opensearch-project/\$REPO_NAME" --body-file "\$PR_BODY_FILE"
                                                                                 RC=\$?
                                                                             else
-                                                                                gh pr create --title '[AUTO] Add release notes for ${version}' --body-file "\$PR_BODY_FILE" -H release-chores/release-notes-${version} -B ${ref}
+                                                                                gh pr create --repo "opensearch-project/\$REPO_NAME" --title '[AUTO] Add release notes for ${version}' --body-file "\$PR_BODY_FILE" -H "opensearch-ci-bot:release-chores/release-notes-${version}" -B ${ref}
                                                                                 RC=\$?
                                                                             fi
                                                                             if [ "\$RC" -ne 0 ]; then
