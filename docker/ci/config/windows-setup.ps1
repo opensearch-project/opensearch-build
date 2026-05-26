@@ -226,7 +226,7 @@ scoop install https://raw.githubusercontent.com/ScoopInstaller/Extras/3a512b00c3
 scoop cache rm *
 
 # Pip
-wget https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py
+wget https://bootstrap.pypa.io/pip/3.9/get-pip.py -OutFile get-pip.py
 python get-pip.py
 pip --version
 # Install pipenv

@@ -40,7 +40,7 @@ RUN apt-get install -y python3.9-full python3.9-dev && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3.9 100 && \
     update-alternatives --set python3 /usr/bin/python3.9 && \
     update-alternatives --set python /usr/bin/python3.9 && \
-    curl -SL https://bootstrap.pypa.io/get-pip.py | python3 - && \
+    curl -SfL https://bootstrap.pypa.io/pip/3.9/get-pip.py | python3 - && \
     pip3 install awscliv2==2.3.1 && \
     ln -s `which awsv2` /usr/local/bin/aws && aws --install
 
