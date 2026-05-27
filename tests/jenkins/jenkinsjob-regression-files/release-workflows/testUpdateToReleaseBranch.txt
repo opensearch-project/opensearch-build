@@ -36,8 +36,8 @@
                                     git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
                                     git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Manifest Commit Lock for Release 2.0.0"
                                     git push fork manifest-lock --force
-                                    EXISTING_PR=$(gh pr list --repo "opensearch-project/opensearch-build" --head "opensearch-ci-bot:manifest-lock" --state open --json number --jq '.[0].number')
-                                    if [ -n "$EXISTING_PR" ]; then
+                                    EXISTING_PR=$(gh api "repos/opensearch-project/opensearch-build/pulls?head=opensearch-ci-bot:manifest-lock&state=open" --jq '.[0].number')
+                                    if [ -n "$EXISTING_PR" ] && [ "$EXISTING_PR" != "null" ]; then
                                         gh pr edit "$EXISTING_PR" --repo "opensearch-project/opensearch-build" --body "Manifest Commit Lock for Release 2.0.0"
                                     else
                                         gh pr create --repo "opensearch-project/opensearch-build" --title '[2.0.0] Manifest Commit Lock with action UPDATE_TO_RELEASE_BRANCH' --body 'Manifest Commit Lock for Release 2.0.0 ' -H "opensearch-ci-bot:manifest-lock" -B main

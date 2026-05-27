@@ -42,18 +42,23 @@ pipeline {
                             sh """
                                 set +x
                                 source /etc/profile.d/java_home.sh
-                                git remote set-url origin https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build
-                                git config user.email "opensearch-infra@amazon.com"
-                                git config user.name "opensearch-ci"
+                                gh repo fork "opensearch-project/opensearch-build" --clone=false
+                                git remote add fork "https://opensearch-ci-bot:${GITHUB_TOKEN}@github.com/opensearch-ci-bot/opensearch-build"
                                 git checkout -b update-manifest
                                 ./manifests.sh update
                         """
                             def status = sh(returnStdout: true, script: 'git status --porcelain')
                             if (status) {
                                 sh """
-                                    git add . && git commit -sm "Update manifests"
-                                    git push origin update-manifest --force
-                                    gh pr create --title '[AUTO] Update input manifests' --body 'I have noticed that a repo has incremented a version. This change updates the corresponding input manifests.' -H update-manifest -B main
+                                    git add .
+                                    git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Update manifests"
+                                    git push fork update-manifest --force
+                                    EXISTING_PR=\$(gh api "repos/opensearch-project/opensearch-build/pulls?head=opensearch-ci-bot:update-manifest&state=open" --jq '.[0].number')
+                                    if [ -n "\$EXISTING_PR" ] && [ "\$EXISTING_PR" != "null" ]; then
+                                        gh pr edit "\$EXISTING_PR" --repo "opensearch-project/opensearch-build" --body "I have noticed that a repo has incremented a version. This change updates the corresponding input manifests."
+                                    else
+                                        gh pr create --repo "opensearch-project/opensearch-build" --title '[AUTO] Update input manifests' --body 'I have noticed that a repo has incremented a version. This change updates the corresponding input manifests.' -H "opensearch-ci-bot:update-manifest" -B main
+                                    fi
                                 """
                             } else {
                                 println 'Nothing to commit!'

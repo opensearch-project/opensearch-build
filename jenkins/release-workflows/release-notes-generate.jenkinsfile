@@ -160,8 +160,8 @@ pipeline {
                                                                             cat "\$PR_BODY_FILE"
                                                                             echo "--- end PR body content ---"
 
-                                                                            EXISTING_PR=\$(gh pr list --repo "opensearch-project/\$REPO_NAME" --head "opensearch-ci-bot:release-chores/release-notes-${version}" --state open --json number --jq '.[0].number')
-                                                                            if [ -n "\$EXISTING_PR" ]; then
+                                                                            EXISTING_PR=\$(gh api "repos/opensearch-project/\$REPO_NAME/pulls?head=opensearch-ci-bot:release-chores/release-notes-${version}&state=open" --jq '.[0].number')
+                                                                            if [ -n "\$EXISTING_PR" ] && [ "\$EXISTING_PR" != "null" ]; then
                                                                                 echo "Updating existing PR #\${EXISTING_PR} for component \${REPO_NAME} with new release notes."
                                                                                 gh pr edit "\$EXISTING_PR" --repo "opensearch-project/\$REPO_NAME" --body-file "\$PR_BODY_FILE"
                                                                             else
