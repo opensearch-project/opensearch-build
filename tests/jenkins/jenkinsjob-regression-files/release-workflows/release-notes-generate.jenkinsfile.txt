@@ -30,11 +30,13 @@
                                                                     echo "Release notes generation failed for component OpenSearch"
                                                                     exit 1
                                                                 else
+                                                                    set -e
                                                                     COMPONENT_REPO_URL="https://github.com/opensearch-project/OpenSearch.git"
                                                                     REPO_NAME=$(basename "${COMPONENT_REPO_URL}" .git)
 
                                                                     gh repo fork "opensearch-project/$REPO_NAME" --clone=true
                                                                     cd "${REPO_NAME}"
+                                                                    git remote set-url origin "https://opensearch-ci-bot:GITHUB_TOKEN@github.com/opensearch-ci-bot/$REPO_NAME"
                                                                     git fetch upstream 2.2
                                                                     git checkout -b release-chores/release-notes-2.2.0 upstream/2.2
 
@@ -93,11 +95,13 @@
                                                                     echo "Release notes generation failed for component sql"
                                                                     exit 1
                                                                 else
+                                                                    set -e
                                                                     COMPONENT_REPO_URL="https://github.com/opensearch-project/sql.git"
                                                                     REPO_NAME=$(basename "${COMPONENT_REPO_URL}" .git)
 
                                                                     gh repo fork "opensearch-project/$REPO_NAME" --clone=true
                                                                     cd "${REPO_NAME}"
+                                                                    git remote set-url origin "https://opensearch-ci-bot:GITHUB_TOKEN@github.com/opensearch-ci-bot/$REPO_NAME"
                                                                     git fetch upstream 2.2
                                                                     git checkout -b release-chores/release-notes-2.2.0 upstream/2.2
 
