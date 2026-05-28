@@ -10,7 +10,7 @@
 // @job-name: distribution-validation
 // @description: Validates OpenSearch and OpenSearch Dashboards distribution artifacts.
 
-lib = library(identifier: 'jenkins@12.0.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@12.0.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -112,6 +112,11 @@ pipeline {
             name: 'ARTIFACT_TYPE',
             description: '<Optional> Determine the artifact type among staging or production. Defaults to production.',
             choices: ['production', 'staging'],
+        )
+        booleanParam(
+            name: 'SKIP_CORE_PLUGINS',
+            description: '<Optional> Skips the native plugin validation',
+            defaultValue: false
         )
         booleanParam(
             name: 'ALLOW_HTTP',
@@ -221,7 +226,8 @@ pipeline {
                                                         osd_build_number: "$OSD_BUILD_NUMBER",
                                                         projects: "$PROJECTS",
                                                         docker_args: "$OPTIONAL_ARGS",
-                                                        docker_source: "$DOCKER_SOURCE"
+                                                        docker_source: "$DOCKER_SOURCE",
+                                                        skip_core_plugins: params.SKIP_CORE_PLUGINS
                                                     )
                                                 }
                                             } catch (e) {
@@ -252,7 +258,8 @@ pipeline {
                                                                         osd_build_number: "$OSD_BUILD_NUMBER",
                                                                         projects: "$PROJECTS",
                                                                         artifact_type: "$ARTIFACT_TYPE",
-                                                                        allow_http: params.ALLOW_HTTP
+                                                                        allow_http: params.ALLOW_HTTP,
+                                                                        skip_core_plugins: local_distribution == "zip" ? true : params.SKIP_CORE_PLUGINS
                                                                     )
                                                                 } else {
                                                                     validateArtifacts(

@@ -29,8 +29,8 @@ class TestValidateZip(unittest.TestCase):
     @patch('os.path.basename')
     @patch('os.listdir')
     @patch('validation_workflow.validation.Validation.install_native_plugin')
-    def test_installation_with_skip_core_plugins(self, mock_native_plugin: Mock, mock_list_dir: Mock, mock_basename: Mock, mock_zip_file: MagicMock) -> None:
-        self.mock_args.skip_core_plugins = True
+    def test_installation(self, mock_native_plugin: Mock, mock_list_dir: Mock, mock_basename: Mock, mock_zip_file: MagicMock) -> None:
+        self.mock_args.skip_core_plugins = False
         mock_zip_file_instance = mock_zip_file.return_value.__enter__()
         mock_extractall = MagicMock()
         mock_zip_file_instance.extractall = mock_extractall
@@ -48,8 +48,8 @@ class TestValidateZip(unittest.TestCase):
     @patch("validation_workflow.zip.validation_zip.ZipFile")
     @patch('os.path.basename')
     @patch('validation_workflow.validation.Validation.install_native_plugin')
-    def test_installation_without_skip_core_plugins(self, mock_native_plugin: Mock, mock_basename: Mock, mock_zip_file: MagicMock) -> None:
-        self.mock_args.skip_core_plugins = False
+    def test_installation_skip_core_plugins(self, mock_native_plugin: Mock, mock_basename: Mock, mock_zip_file: MagicMock) -> None:
+        self.mock_args.skip_core_plugins = True
         mock_zip_file_instance = mock_zip_file.return_value.__enter__()
         mock_extractall = MagicMock()
         mock_zip_file_instance.extractall = mock_extractall
