@@ -133,6 +133,7 @@ pipeline {
             agent { label AGENT_LABEL }
             steps {
                 script {
+                    sh 'pyenv global system'
                     echo "security-enabled: ${SECURITY_ENABLED}"
 
                     runBenchmarkTestScript(
