@@ -49,7 +49,7 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
 
         if self.args.workload in self.DATA_WORKLOADS:
             self.command += (f" -v /home/ec2-user/.benchmark/benchmarks/data/{self.args.workload}"
-                            f":/root/.benchmark/benchmarks/data/{self.args.workload}")
+                            f":/opensearch-benchmark/{self.args.workload}")
 
         self.command += f" opensearchproject/opensearch-benchmark:1.18.0 execute-test --workload={self.args.workload} " \
                         f"--pipeline=benchmark-only --target-hosts={self.endpoint}"
