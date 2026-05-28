@@ -49,7 +49,9 @@ class TestBenchmarkTestSuite(unittest.TestCase):
             test_suite.execute()
         self.assertEqual(mock_check_call.call_count, 2)
         self.assertEqual(test_suite.command,
-                         f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.15.0 execute-test '
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix}'
+                         f' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                         f' opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          f'--workload=nyc_taxis --pipeline=benchmark-only --target-hosts=abc.com:80 --client-options="timeout:120" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
@@ -63,7 +65,9 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         mock_check_call.assert_called_with(
             f"docker rm -f docker-container-{test_suite.args.stack_suffix}", cwd=os.getcwd(), shell=True)
         self.assertEqual(test_suite.command,
-                         f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.15.0 execute-test'
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix}'
+                         f' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                         f' opensearchproject/opensearch-benchmark:1.15.0 execute-test'
                          f' --workload=nyc_taxis --pipeline=benchmark-only '
                          f'--target-hosts=abc.com:443 '
                          f'--client-options="timeout:120,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'myStrongPassword123!\'" --results-file=final_result.md')
@@ -79,7 +83,9 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         mock_check_call.assert_called_with(
             f"docker rm -f docker-container-{test_suite.args.stack_suffix}", cwd=os.getcwd(), shell=True)
         self.assertEqual(test_suite.command,
-                         f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.15.0 execute-test '
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix}'
+                         f' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                         f' opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis --pipeline=benchmark-only '
                          '--target-hosts=abc.com:443 --client-options="timeout:120,use_ssl:true,'
                          'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'" --results-file=final_result.md')
@@ -98,9 +104,10 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         mock_check_call.assert_called_with(
             f"docker rm -f docker-container-{test_suite.args.stack_suffix}", cwd=os.getcwd(), shell=True)
         self.assertEqual(test_suite.command,
-                         f'docker run --name docker-container-{test_suite.args.stack_suffix} '
-                         '-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN '
-                         'opensearchproject/opensearch-benchmark:1.15.0 execute-test '
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix} '
+                         '-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN'
+                         ' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                         ' opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis --pipeline=benchmark-only '
                          '--target-hosts=abc.com:443 --client-options="timeout:120,amazon_aws_log_in:session,'
                          f'region:{self.args.region},service:{self.args.service}" --results-file=final_result.md')
@@ -120,9 +127,10 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         mock_check_call.assert_called_with(
             f"docker rm -f docker-container-{test_suite.args.stack_suffix}", cwd=os.getcwd(), shell=True)
         self.assertEqual(test_suite.command,
-                         f'docker run --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
-                         '/opensearch-benchmark/.benchmark/benchmark.ini '
-                         'opensearchproject/opensearch-benchmark:1.15.0 execute-test '
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
+                         '/root/.benchmark/benchmark.ini'
+                         ' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                         ' opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis '
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
@@ -141,9 +149,10 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         mock_check_call.assert_called_with(
             f"docker rm -f docker-container-{test_suite.args.stack_suffix}", cwd=os.getcwd(), shell=True)
         self.assertEqual(test_suite.command,
-                         f'docker run --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
-                         '/opensearch-benchmark/.benchmark/benchmark.ini '
-                         'opensearchproject/opensearch-benchmark:1.15.0 execute-test '
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
+                         '/root/.benchmark/benchmark.ini'
+                         ' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                         ' opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis '
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
@@ -163,9 +172,10 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         mock_check_call.assert_called_with(
             f"docker rm -f docker-container-{test_suite.args.stack_suffix}", cwd=os.getcwd(), shell=True)
         self.assertEqual(test_suite.command,
-                         f'docker run --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
-                         '/opensearch-benchmark/.benchmark/benchmark.ini '
-                         'opensearchproject/opensearch-benchmark:1.15.0 execute-test '
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
+                         '/root/.benchmark/benchmark.ini'
+                         ' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                         ' opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis '
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
@@ -187,9 +197,10 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         mock_check_call.assert_called_with(
             f"docker rm -f docker-container-{test_suite.args.stack_suffix}", cwd=os.getcwd(), shell=True)
         self.assertEqual(test_suite.command,
-                         f'docker run --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
-                         '/opensearch-benchmark/.benchmark/benchmark.ini '
-                         'opensearchproject/opensearch-benchmark:1.15.0 execute-test '
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
+                         '/root/.benchmark/benchmark.ini'
+                         ' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                         ' opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis '
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
@@ -210,9 +221,10 @@ class TestBenchmarkTestSuite(unittest.TestCase):
             self.assertEqual(mock_check_call.call_count, 2)
             mock_check_call.assert_called_with(
                 f"docker rm -f docker-container-{test_suite.args.stack_suffix}", cwd=os.getcwd(), shell=True)
-            self.assertEqual(test_suite.command, f'docker run --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
-                                                 '/opensearch-benchmark/.benchmark/benchmark.ini '
-                                                 'opensearchproject/opensearch-benchmark:1.15.0 execute-test '
+            self.assertEqual(test_suite.command, f'docker run --user root --name docker-container-{test_suite.args.stack_suffix} -v /home/test/benchmark.ini:'
+                                                 '/root/.benchmark/benchmark.ini'
+                                                 ' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                                                 ' opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                                                  '--workload=nyc_taxis '
                                                  '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                                                  '--workload-params \'{"number_of_replicas":"1"}\' '
@@ -235,7 +247,9 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         mock_check_call.assert_called_with(
             f"docker rm -f docker-container-{test_suite.args.stack_suffix}", cwd=os.getcwd(), shell=True)
         self.assertEqual(test_suite.command,
-                         f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.15.0 execute-test '
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix}'
+                         f' -v /home/ec2-user/.benchmark/benchmarks/data/nyc_taxis:/root/.benchmark/benchmarks/data/nyc_taxis'
+                         f' opensearchproject/opensearch-benchmark:1.15.0 execute-test '
                          '--workload=nyc_taxis --pipeline=benchmark-only '
                          '--target-hosts=abc.com:443 --client-options="timeout:120,use_ssl:true,'
                          'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'" --results-file=final_result.md')
