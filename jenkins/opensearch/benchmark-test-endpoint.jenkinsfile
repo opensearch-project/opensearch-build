@@ -176,6 +176,7 @@ pipeline {
                 script {
                     echo "security-enabled: ${SECURITY_ENABLED}"
 
+                    sh 'pyenv global system'
                     runBenchmarkTestScript(
                         command: 'execute-test',
                         endpoint: CLUSTER_ENDPOINT,
