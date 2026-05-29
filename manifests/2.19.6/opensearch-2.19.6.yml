@@ -98,6 +98,7 @@ components:
     depends_on:
       - ml-commons
       - k-NN
+      - job-scheduler
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
     ref: '2.19'
@@ -141,6 +142,7 @@ components:
       - windows
     depends_on:
       - ml-commons
+      - job-scheduler
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
     ref: '2.19'
@@ -166,6 +168,8 @@ components:
       - windows
     depends_on:
       - common-utils
+      - notifications-core
+      - notifications
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
     ref: '2.19'
@@ -208,6 +212,7 @@ components:
       - ml-commons
       - k-NN
       - neural-search
+      - job-scheduler
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
     ref: '2.19'
@@ -219,6 +224,9 @@ components:
       - anomaly-detection
       - sql
       - ml-commons
+      - alerting
+      - neural-search
+      - k-NN
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
     ref: '2.19'
