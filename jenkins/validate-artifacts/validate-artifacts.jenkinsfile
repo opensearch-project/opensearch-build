@@ -217,18 +217,19 @@ pipeline {
                                             try {
                                                 stage("${local_distribution}-${local_architecture}") {
                                                     unstash "validate-artifacts-$BUILD_NUMBER"
-
-                                                    validateArtifacts(
-                                                        version: "$VERSION",
-                                                        distribution: "${local_distribution}",
-                                                        arch: "${local_architecture}",
-                                                        os_build_number: "$OS_BUILD_NUMBER",
-                                                        osd_build_number: "$OSD_BUILD_NUMBER",
-                                                        projects: "$PROJECTS",
-                                                        docker_args: "$OPTIONAL_ARGS",
-                                                        docker_source: "$DOCKER_SOURCE",
-                                                        skip_core_plugins: params.SKIP_CORE_PLUGINS
-                                                    )
+                                                    retry(2) {
+                                                        validateArtifacts(
+                                                            version: "$VERSION",
+                                                            distribution: "${local_distribution}",
+                                                            arch: "${local_architecture}",
+                                                            os_build_number: "$OS_BUILD_NUMBER",
+                                                            osd_build_number: "$OSD_BUILD_NUMBER",
+                                                            projects: "$PROJECTS",
+                                                            docker_args: "$OPTIONAL_ARGS",
+                                                            docker_source: "$DOCKER_SOURCE",
+                                                            skip_core_plugins: params.SKIP_CORE_PLUGINS
+                                                        )
+                                                    }
                                                 }
                                             } catch (e) {
                                                 echo "Error occurred while validating ${local_distribution}-${local_architecture}"
