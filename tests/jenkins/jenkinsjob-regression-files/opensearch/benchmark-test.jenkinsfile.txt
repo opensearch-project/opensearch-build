@@ -150,6 +150,7 @@
                benchmark-test.echo(BUNDLE_MANIFEST: tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml)
                benchmark-test.echo(BUILD_ID: 1234)
                benchmark-test.echo(Architecture: x64)
+               benchmark-test.sh(pyenv global system)
                benchmark-test.runBenchmarkTestScript({command=execute-test, bundleManifest=tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml, distributionUrl=, distributionVersion=, pluginUrl=, workload=nyc-taxis, insecure=true, singleNode=false, minDistribution=false, heapSizeInGb=, enableRemoteStore=false, suffix=307, managerNodeCount=3, dataNodeCount=3, clientNodeCount=, ingestNodeCount=, mlNodeCount=, dataInstanceType=r5-4xlarge, userTag=run-type:test,security-enabled:false,jenkins-build-id:307, workloadParams=, testProcedure=append-no-conflicts, excludeTasks=type:search,scroll, includeTasks=type:search,scroll, additionalConfig=, dataStorageSize=100, mlStorageSize=, enableInstanceStorage=true, jvmSysProps=, captureNodeStat=false, captureSegmentReplicationStat=false, telemetryParams=, preserveCluster=false})
                   runBenchmarkTestScript.legacySCM(groovy.lang.Closure)
                   runBenchmarkTestScript.library({identifier=jenkins@12.0.0, retriever=null})
