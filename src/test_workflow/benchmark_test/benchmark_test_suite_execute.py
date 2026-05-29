@@ -21,7 +21,7 @@ from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
 
 class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
 
-    DATA_WORKLOADS = ["clickbench", "textbench"]
+    DATA_WORKLOADS = ["clickbench", "textbench", "big5"]
 
     def __init__(self, endpoint: str, security: bool, args: BenchmarkArgs, password: str):
         super().__init__(args, endpoint, security, password)
