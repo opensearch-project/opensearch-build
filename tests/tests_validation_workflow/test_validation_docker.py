@@ -75,6 +75,7 @@ class TestValidateDocker(unittest.TestCase):
         mock_digest.return_value = True
         mock_check_http.return_value = True
         mock_validation_args.return_value.artifact_type = "production"
+        mock_validation_args.return_value.skip_core_plugins = False
         mock_temporary_directory.return_value.name = "/tmp/trytytyuit"
         mock_subprocess_run.side_effect = self.subprocess_side_effect
         mock_native_plugin.return_value = ["analysis-icu", "analysis-nori"]

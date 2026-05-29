@@ -129,6 +129,7 @@
             benchmark-test.script(groovy.lang.Closure)
                benchmark-test.echo(DISTRIBUTION_URL: https://artifacts.com/artifact.tar.gz)
                benchmark-test.echo(DISTRIBUTION_VERSION: 3.0.0)
+               benchmark-test.sh(pyenv global system)
                benchmark-test.runBenchmarkTestScript({command=execute-test, bundleManifest=, distributionUrl=https://artifacts.com/artifact.tar.gz, distributionVersion=3.0.0, pluginUrl=https://artifacts.com/plugin.zip, workload=nyc-taxis, insecure=true, singleNode=false, minDistribution=false, heapSizeInGb=8, enableRemoteStore=false, suffix=307, managerNodeCount=3, dataNodeCount=3, clientNodeCount=, ingestNodeCount=, mlNodeCount=, dataInstanceType=r5-4xlarge, userTag=run-type:test,security-enabled:false,jenkins-build-id:307, workloadParams=, testProcedure=append-no-conflicts, excludeTasks=, includeTasks=, additionalConfig=, dataStorageSize=100, mlStorageSize=, enableInstanceStorage=true, jvmSysProps=, captureNodeStat=false, captureSegmentReplicationStat=false, telemetryParams=, preserveCluster=true})
                   runBenchmarkTestScript.legacySCM(groovy.lang.Closure)
                   runBenchmarkTestScript.library({identifier=jenkins@12.0.0, retriever=null})

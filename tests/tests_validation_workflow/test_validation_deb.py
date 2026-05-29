@@ -21,6 +21,7 @@ class TestValidateDeb(unittest.TestCase):
         self.mock_args.projects = ["opensearch"]
         self.mock_args.file_path = {"opensearch": "/src/opensearch/opensearch-1.3.12.staging.deb"}
         self.mock_args.platform = "linux"
+        self.mock_args.skip_core_plugins = False
         self.call_methods = ValidateDeb(self.mock_args, self.tmp_dir)
 
     @patch("validation_workflow.deb.validation_deb.execute")

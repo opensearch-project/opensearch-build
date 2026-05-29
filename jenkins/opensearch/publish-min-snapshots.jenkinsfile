@@ -56,7 +56,7 @@ pipeline {
                     // default to linux-tar in INPUT_MANIFEST schemaVersion >= 1.2
                     // Everything except macos and windows can be built on the default linux-tar images
                     // macos currently built directly on VMs, and windows has its own windows images
-                    dockerAgent = detectDockerAgent() 
+                    dockerAgent = detectDockerAgent()
                     dockerAgentWindowsZip = detectDockerAgent(
                         distribution: "zip",
                         platform: "windows"
