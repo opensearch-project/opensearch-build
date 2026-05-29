@@ -35,6 +35,8 @@ components:
     platforms:
       - linux
       - windows
+    depends_on:
+      - common-utils
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
     ref: '2.19'
@@ -229,3 +231,5 @@ components:
     platforms:
       - linux
       - windows
+    depends_on:
+      - custom-codecs
