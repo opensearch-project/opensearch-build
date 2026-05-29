@@ -35,6 +35,8 @@ components:
     platforms:
       - linux
       - windows
+    depends_on:
+      - common-utils
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
     ref: '3.7'
@@ -234,12 +236,16 @@ components:
     platforms:
       - linux
       - windows
+    depends_on:
+      - custom-codecs
   - name: user-behavior-insights
     repository: https://github.com/opensearch-project/user-behavior-insights.git
     ref: '3.7'
     platforms:
       - linux
       - windows
+    depends_on:
+      - job-scheduler
   - name: search-relevance
     repository: https://github.com/opensearch-project/search-relevance.git
     ref: '3.7'
