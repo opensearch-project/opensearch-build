@@ -20,6 +20,9 @@ from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
 
 
 class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
+
+    DATA_WORKLOADS = ["http_logs", "big5", "nyc_taxis", "clickbench", "textbench"]
+
     def __init__(self, endpoint: str, security: bool, args: BenchmarkArgs, password: str):
         super().__init__(args, endpoint, security, password)
 
@@ -36,14 +39,21 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
 
     def form_command(self) -> str:
         # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
-        self.command = f'docker run --name docker-container-{self.args.stack_suffix}'
+        self.command = f'docker run --user root --name docker-container-{self.args.stack_suffix}'
 
         if self.security and self.args.sigv4:
             self.command += ' -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN'
 
         if self.args.benchmark_config:
-            self.command += f" -v {self.args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini"
-        self.command += f" opensearchproject/opensearch-benchmark:1.15.0 execute-test --workload={self.args.workload} " \
+            self.command += f" -v {self.args.benchmark_config}:/root/.benchmark/benchmark.ini"
+
+        if self.args.workload in self.DATA_WORKLOADS:
+            self.command += (
+                f" -v /home/ec2-user/.benchmark/benchmarks/data/{self.args.workload}"
+                f":/opensearch-benchmark/{self.args.workload}"
+            )
+
+        self.command += f" opensearchproject/opensearch-benchmark:1.18.0 execute-test --workload={self.args.workload} " \
                         f"--pipeline=benchmark-only --target-hosts={self.endpoint}"
 
         if self.args.workload_params:
