@@ -117,12 +117,22 @@ elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
     cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install-datafusion.bat "$OUTPUT/"
 fi
 
-## Major 3 rustlib, since 3.7 version
+## Major 3, since 3.7 version
 if [ "$MAJOR_VERSION" -ge "3" ]; then
-  echo "Setting datafusion rustlib..."
-  mkdir -p "$OUTPUT/lib/rust"
-  cp -v ../../../$DISTRIBUTION/builds/opensearch/dist/libopensearch_native.* "$OUTPUT/lib/rust"
-  ls "$OUTPUT/lib/rust"
+  # Append datafusion JVM options first. arrow-base requires io.netty.noUnsafe=false /
+  # io.netty.allocator.numDirectArenas=1 / io.netty.tryUnsafe=true / io.netty.tryReflectionSetAccessible=true
+  # at node startup or its Netty allocation manager fails clinit. Do this before the rustlib copy
+  # so a rustlib failure cannot leave the bundle without these flags.
   echo "Updating jvmopts settings..."
   cat ./jvmopts.txt >> "$OUTPUT/config/jvm.options"
+
+  echo "Setting datafusion rustlib..."
+  mkdir -p "$OUTPUT/lib/rust"
+  # Cargo cdylib naming: libopensearch_native.{so,dylib} on linux/darwin, opensearch_native.dll on windows.
+  if [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
+    cp -v ../../../$DISTRIBUTION/builds/opensearch/dist/opensearch_native.dll "$OUTPUT/lib/rust"
+  else
+    cp -v ../../../$DISTRIBUTION/builds/opensearch/dist/libopensearch_native.* "$OUTPUT/lib/rust"
+  fi
+  ls "$OUTPUT/lib/rust"
 fi
