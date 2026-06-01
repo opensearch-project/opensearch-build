@@ -30,7 +30,7 @@ class TestValidateZip(unittest.TestCase):
     @patch('os.listdir')
     @patch('validation_workflow.validation.Validation.install_native_plugin')
     def test_installation(self, mock_native_plugin: Mock, mock_list_dir: Mock, mock_basename: Mock, mock_zip_file: MagicMock) -> None:
-        self.mock_args.skip_core_plugins = False
+        self.mock_args.skip_core_plugins = None
         mock_zip_file_instance = mock_zip_file.return_value.__enter__()
         mock_extractall = MagicMock()
         mock_zip_file_instance.extractall = mock_extractall
@@ -49,7 +49,7 @@ class TestValidateZip(unittest.TestCase):
     @patch('os.path.basename')
     @patch('validation_workflow.validation.Validation.install_native_plugin')
     def test_installation_skip_core_plugins(self, mock_native_plugin: Mock, mock_basename: Mock, mock_zip_file: MagicMock) -> None:
-        self.mock_args.skip_core_plugins = True
+        self.mock_args.skip_core_plugins = []
         mock_zip_file_instance = mock_zip_file.return_value.__enter__()
         mock_extractall = MagicMock()
         mock_zip_file_instance.extractall = mock_extractall
@@ -62,6 +62,23 @@ class TestValidateZip(unittest.TestCase):
         mock_native_plugin.assert_not_called()
         expected_calls = [call((validate_zip.tmp_dir.path))] * len(self.mock_args.projects)
         mock_extractall.assert_has_calls(expected_calls)
+
+    @patch("validation_workflow.zip.validation_zip.ZipFile")
+    @patch('os.path.basename')
+    @patch('os.listdir', return_value=["plugin-a"])
+    @patch('validation_workflow.validation.Validation.install_native_plugin')
+    def test_installation_skip_specific_plugins(self, mock_native_plugin: Mock, mock_listdir: Mock, mock_basename: Mock, mock_zip_file: MagicMock) -> None:
+        self.mock_args.skip_core_plugins = ["arrow-base", "arrow-flight-rpc"]
+        mock_zip_file_instance = mock_zip_file.return_value.__enter__()
+        mock_extractall = MagicMock()
+        mock_zip_file_instance.extractall = mock_extractall
+        mock_basename.side_effect = lambda path: "mocked_filename"
+        validate_zip = ValidateZip(self.mock_args, self.tmp_dir)
+
+        result = validate_zip.installation()
+        self.assertTrue(result)
+
+        mock_native_plugin.assert_called()
 
     @patch("validation_workflow.zip.validation_zip.ZipFile")
     @patch('os.path.basename')

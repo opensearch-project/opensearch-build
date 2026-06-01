@@ -58,6 +58,8 @@ class Validation(ABC):
 
     def install_native_plugin(self, path: str, installed_plugins_list: list) -> None:
         native_plugins_list = self.get_native_plugin_list(path, installed_plugins_list)
+        if self.args.skip_core_plugins:
+            native_plugins_list = [p for p in native_plugins_list if p not in self.args.skip_core_plugins]
         install_script = ".\\opensearch-plugin.bat" if current_platform() == "windows" else "./opensearch-plugin"
         try:
             if self.args.artifact_type == "staging":

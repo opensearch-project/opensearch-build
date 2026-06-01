@@ -113,10 +113,10 @@ pipeline {
             description: '<Optional> Determine the artifact type among staging or production. Defaults to production.',
             choices: ['production', 'staging'],
         )
-        booleanParam(
+        string(
             name: 'SKIP_CORE_PLUGINS',
-            description: '<Optional> Skips the native plugin validation',
-            defaultValue: false
+            description: '<Optional> Skip native plugin validation. Empty = do not skip, "all" = skip all, or comma-separated plugin names to skip (e.g. "arrow-base,arrow-flight-rpc").',
+            defaultValue: ''
         )
         booleanParam(
             name: 'ALLOW_HTTP',
@@ -260,7 +260,7 @@ pipeline {
                                                                         projects: "$PROJECTS",
                                                                         artifact_type: "$ARTIFACT_TYPE",
                                                                         allow_http: params.ALLOW_HTTP,
-                                                                        skip_core_plugins: local_distribution == "zip" ? true : params.SKIP_CORE_PLUGINS
+                                                                        skip_core_plugins: params.SKIP_CORE_PLUGINS
                                                                     )
                                                                 } else {
                                                                     validateArtifacts(
