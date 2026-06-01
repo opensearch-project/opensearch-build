@@ -253,8 +253,6 @@ components:
     platforms:
       - linux
       - windows
-    depends_on:
-      - job-scheduler
   - name: search-relevance
     repository: https://github.com/opensearch-project/search-relevance.git
     ref: '3.7'
