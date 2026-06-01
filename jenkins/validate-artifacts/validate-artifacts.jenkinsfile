@@ -10,7 +10,7 @@
 // @job-name: distribution-validation
 // @description: Validates OpenSearch and OpenSearch Dashboards distribution artifacts.
 
-lib = library(identifier: 'jenkins@12.0.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@12.1.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -113,10 +113,10 @@ pipeline {
             description: '<Optional> Determine the artifact type among staging or production. Defaults to production.',
             choices: ['production', 'staging'],
         )
-        booleanParam(
+        string(
             name: 'SKIP_CORE_PLUGINS',
-            description: '<Optional> Skips the native plugin validation',
-            defaultValue: false
+            description: '<Optional> Skip native plugin validation. "None" = install all, "" (empty) = skip all, or comma-separated plugin names to skip (e.g. "arrow-base,arrow-flight-rpc").',
+            defaultValue: 'arrow-base,arrow-flight-rpc'
         )
         booleanParam(
             name: 'ALLOW_HTTP',
@@ -260,7 +260,7 @@ pipeline {
                                                                         projects: "$PROJECTS",
                                                                         artifact_type: "$ARTIFACT_TYPE",
                                                                         allow_http: params.ALLOW_HTTP,
-                                                                        skip_core_plugins: local_distribution == "zip" ? true : params.SKIP_CORE_PLUGINS
+                                                                        skip_core_plugins: params.SKIP_CORE_PLUGINS
                                                                     )
                                                                 } else {
                                                                     validateArtifacts(

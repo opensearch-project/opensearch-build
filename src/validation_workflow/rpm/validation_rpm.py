@@ -32,7 +32,7 @@ class ValidateRpm(Validation, DownloadUtils):
                 self.validate_signature()
                 execute(f'sudo yum remove {project} -y', ".")
                 execute(f'sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))} rpm -ivh {os.path.join(self.tmp_dir.path, self.filename)}', str(self.tmp_dir.path), True, False)  # noqa: 501
-                if not self.args.skip_core_plugins:
+                if self.args.skip_core_plugins is None or self.args.skip_core_plugins:
                     installed_plugins_list = os.listdir(os.path.join(os.sep, "usr", "share", "opensearch", "plugins"))
                     self.install_native_plugin(os.path.join(os.sep, "usr", "share", "opensearch"), installed_plugins_list)
 
