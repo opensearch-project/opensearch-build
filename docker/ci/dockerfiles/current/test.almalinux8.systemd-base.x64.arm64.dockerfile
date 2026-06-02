@@ -75,6 +75,11 @@ RUN npm install -g yarn@`/tmp/yarn-version.sh main`
 # Update to 13.17.0 per https://github.com/opensearch-project/opensearch-dashboards-functional-test/issues/1996
 RUN for cypress_version in $CYPRESS_VERSION_LIST; do npm install -g cypress@$cypress_version && npm cache verify; done
 
+# Patch for glibc 2.28 version specifically
+RUN if [ `uname -m` = "aarch64" ]; then curl -SfL https://ci.opensearch.org/ci/dbc/tools/polyfill-glibc/polyfill-glibc-dd59051-arm64 -o ./polyfill-glibc && \
+    chmod u+x ./polyfill-glibc && ./polyfill-glibc --target-glibc=2.28 /home/ci-runner/.cache/Cypress/$CYPRESS_VERSION/Cypress/resources/app/packages/server/lib/modes/addon/addon-native.node && \
+    rm -v ./polyfill-glibc; fi
+
 # Need root to get pass the build due to chrome sandbox needs to own by the root
 USER 0
 
