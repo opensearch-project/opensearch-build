@@ -16,17 +16,21 @@
                     )
                release-notes-check.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-token}]}, groovy.lang.Closure)
                   release-notes-check.sh(
-                                git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/opensearch-build"
-                                git config user.email "opensearch-infra@amazon.com"
-                                git config user.name "opensearch-ci"
-                                git checkout -b release-notes
+                                gh repo fork "opensearch-project/opensearch-build" --clone=false
+                                git remote add fork "https://opensearch-ci-bot:GITHUB_TOKEN@github.com/opensearch-ci-bot/opensearch-build"
+                                git checkout -b release-notes/compiled
                             )
                   release-notes-check.sh({returnStdout=true, script=git status --porcelain})
                   release-notes-check.sh(
                                     git add .
-                                    git commit -sm "Add consolidated release notes for 3.0.0"
-                                    git push origin release-notes --force
-                                    gh pr create --title 'Add consolidated release notes for 3.0.0' --body 'Add consolidated release notes for 3.0.0' -H release-notes -B main
+                                    git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Add consolidated release notes for 3.0.0"
+                                    git push fork release-notes/compiled --force
+                                    EXISTING_PR=$(gh api "repos/opensearch-project/opensearch-build/pulls?head=opensearch-ci-bot:release-notes/compiled&state=open" --jq '.[0].number')
+                                    if [ -n "$EXISTING_PR" ] && [ "$EXISTING_PR" != "null" ]; then
+                                        gh pr edit "$EXISTING_PR" --repo "opensearch-project/opensearch-build" --body "Add consolidated release notes for 3.0.0"
+                                    else
+                                        gh pr create --repo "opensearch-project/opensearch-build" --title 'Add consolidated release notes for 3.0.0' --body 'Add consolidated release notes for 3.0.0' -H "opensearch-ci-bot:release-notes/compiled" -B main
+                                    fi
                                 )
          release-notes-check.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
