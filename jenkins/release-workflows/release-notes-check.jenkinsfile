@@ -139,18 +139,22 @@ pipeline {
                     withSecrets(secrets: secret_github_bot){
                         try {
                             sh """
-                                git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build"
-                                git config user.email "opensearch-infra@amazon.com"
-                                git config user.name "opensearch-ci"
-                                git checkout -b release-notes
+                                gh repo fork "opensearch-project/opensearch-build" --clone=false
+                                git remote add fork "https://opensearch-ci-bot:${GITHUB_TOKEN}@github.com/opensearch-ci-bot/opensearch-build"
+                                git checkout -b release-notes/compiled
                             """
                             def status = sh(returnStdout: true, script: 'git status --porcelain')
                             if (status) {
                                 sh """
                                     git add .
-                                    git commit -sm "Add consolidated release notes for ${params.RELEASE_VERSION}"
-                                    git push origin release-notes --force
-                                    gh pr create --title 'Add consolidated release notes for ${params.RELEASE_VERSION}' --body 'Add consolidated release notes for ${params.RELEASE_VERSION}' -H release-notes -B main
+                                    git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Add consolidated release notes for ${params.RELEASE_VERSION}"
+                                    git push fork release-notes/compiled --force
+                                    EXISTING_PR=\$(gh api "repos/opensearch-project/opensearch-build/pulls?head=opensearch-ci-bot:release-notes/compiled&state=open" --jq '.[0].number')
+                                    if [ -n "\$EXISTING_PR" ] && [ "\$EXISTING_PR" != "null" ]; then
+                                        gh pr edit "\$EXISTING_PR" --repo "opensearch-project/opensearch-build" --body "Add consolidated release notes for ${params.RELEASE_VERSION}"
+                                    else
+                                        gh pr create --repo "opensearch-project/opensearch-build" --title 'Add consolidated release notes for ${params.RELEASE_VERSION}' --body 'Add consolidated release notes for ${params.RELEASE_VERSION}' -H "opensearch-ci-bot:release-notes/compiled" -B main
+                                    fi
                                 """
                             } else {
                                 println 'Nothing to commit!'
