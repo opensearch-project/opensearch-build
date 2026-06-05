@@ -6,15 +6,15 @@ ci:
     linux:
       tar:
         name: opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v2
-        args: -u 1000 --cpus 4 -m 16g -e BROWSER_PATH=electron
+        args: -u 1000 --cpus 4 -m 16g
       deb:
         name: opensearchstaging/ci-runner:ci-runner-ubuntu2404-systemd-base-integtest-v2
         args: --entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw
-          --cgroupns=host --cpus 4 -m 16g -e BROWSER_PATH=electron
+          --cgroupns=host --cpus 4 -m 16g
       rpm:
         name: opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v2
         args: --entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw
-          --cgroupns=host --cpus 4 -m 16g -e BROWSER_PATH=electron
+          --cgroupns=host --cpus 4 -m 16g
     windows:
       zip:
         name: opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1
