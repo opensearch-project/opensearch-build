@@ -60,8 +60,8 @@ pipeline {
         }
         stage('packer-build') {
             environment {
-                PACKER_BUILD_GIT_REPOSITORY_REFERENCE = "migrate-packer"
-                PACKER_BUILD_GIT_REPOSITORY = "https://github.com/peterzhuamazon/opensearch-ci"
+                PACKER_BUILD_GIT_REPOSITORY_REFERENCE = "main"
+                PACKER_BUILD_GIT_REPOSITORY = "https://github.com/opensearch-project/opensearch-ci"
             }
             steps {
                 script {
