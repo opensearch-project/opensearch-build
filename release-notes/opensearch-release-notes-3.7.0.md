@@ -9,8 +9,6 @@
 
 * **Explore Metrics:** A visual metrics exploration experience that auto-detects Prometheus datasources and lets you navigate from metric name to labels to aggregation to functions, generating valid PromQL live at every step — with builder and raw editor kept in sync.
 
-* **Unified alerts view:** Merges OpenSearch monitors and Prometheus alerting rules into a single inbox sorted by severity and grouped by service, with a read-only rendering of your Alertmanager routing tree for at-a-glance incident context.
-
 * **Dashboard variables:** Template-driven dashboards with reusable placeholders using `$name` or `${name}` syntax. Variables modify query structure through text substitution — field names, filters, aggregations, or dimensions — so one template serves any combination of services, environments, and metrics.
 
 * **Data transformation:** Transform query results directly in the visualization editor without re-running queries. Pipeline settings including limit, sort, filter, computed fields, and aggregations reshape results from a single base query, with cross-query PromQL support for richer composite views.
@@ -41,6 +39,9 @@
 
 ### Experimental Features
 * **SLO catalog:** Ranks every service-level objective by remaining error budget so the objective closest to breaching is always first. Includes burn-rate alerts, multi-window evaluation, and direct links to underlying metrics.
+* **Unified alerts view:** Merges OpenSearch monitors and Prometheus alerting rules into a single inbox sorted by severity and grouped by service, with a read-only rendering of your Alertmanager routing tree for at-a-glance incident context.
+
+
 ## FEATURES
 
 
