@@ -1,6 +1,46 @@
 # OpenSearch and OpenSearch Dashboards 3.7.0 Release Notes
 
+## Release Highlights
 
+### New and Updated Features
+
+#### Observability and Analytics
+* **Query Prometheus metrics natively in OpenSearch Dashboards:** Enabled as part of the OpenSearch Observability Stack, new functionality lets you connect directly to your existing Prometheus instances as a datasource. Now, you can query metrics with PromQL alongside logs and traces in a single interface without migrating data or changing your stack.
+
+* **Explore Metrics:** A visual metrics exploration experience that auto-detects Prometheus datasources and lets you navigate from metric name to labels to aggregation to functions, generating valid PromQL live at every step — with builder and raw editor kept in sync.
+
+* **Unified alerts view:** Merges OpenSearch monitors and Prometheus alerting rules into a single inbox sorted by severity and grouped by service, with a read-only rendering of your Alertmanager routing tree for at-a-glance incident context.
+
+* **Dashboard variables:** Template-driven dashboards with reusable placeholders using `$name` or `${name}` syntax. Variables modify query structure through text substitution — field names, filters, aggregations, or dimensions — so one template serves any combination of services, environments, and metrics.
+
+* **Data transformation:** Transform query results directly in the visualization editor without re-running queries. Pipeline settings including limit, sort, filter, computed fields, and aggregations reshape results from a single base query, with cross-query PromQL support for richer composite views.
+
+#### Search Modernization
+* **Retrieve vectors up to 5.5× faster with doc values:** Fetch k-NN vectors using `docvalue_fields` instead of `_source` for with performance benefits. Delivers up to 5.5× faster latency at k=1000 on 768-dimensional vectors, with support for Lucene and Faiss engines at all compression levels and no reindexing required.
+
+* **Upload judgment sets directly from the UI:** Search Relevance Workbench now accepts judgment file uploads in standard CSV format directly from the Dashboards interface, supporting up to 10,000 rows. Import ratings from tools like Quepid and use them in experiments with no need to write code or make an API call.
+
+* **Expanded hybrid search optimization:** The hybrid optimizer now evaluates 82 variants per query with the addition of z_score normalization and Reciprocal Rank Fusion (RRF) across empirically selected rank_constant values. Opt into specific techniques per experiment for faster, targeted tuning.
+
+* **Dynamic headers for ML connectors:** Pass runtime metadata — such as trace IDs or debug flags — to external model services on prediction requests using `${parameters.*}` placeholder substitution in connector headers.
+
+* **Semantic and hybrid search for agentic memory:** New `_semantic_search` and `_hybrid_search` endpoints accept plain text queries against long-term agent memory, automatically generating embeddings using the memory container's configured model. Built-in namespace, tag, and filter support ensures agents retrieve the right memory slice without manual query construction.
+
+* **Unified agent registration and conversational_v2 agent type:** The unified registration API and conversational_v2 agent type, introduced as experimental in prior releases, are now production-ready. Register an agent in a single API call with automatic connector and model provisioning, and use a standardized input interface supporting plain text, multimodal content, and full conversation history.
+* **Semantic highlighting with nested inner_hits:** Batch semantic highlighting now extends to `inner_hits` on nested documents, correctly identifying and surfacing the most relevant nested passage for data models where content lives in nested arrays such as chunked passages or multi-section documents.
+
+#### Scalability and Resiliency
+* **ISM Simulate API:** Preview how an ISM policy would affect your indices without modifying cluster state. The simulate API evaluates every transition condition against live index metrics and reports the next state, letting you verify progressions before irreversible actions can execute.
+
+* **Query profiler in Dashboards:** A new query profiler tool integrated with Query Insights provides a split-pane editor with color-coded execution timing, shard-level detail, and a collapsible query hierarchy. An "Open in Profiler" option on the Query Details page connects detection to diagnosis with one click.
+
+* **Per-group search settings for Workload Management:** WLM now supports per-group setting overrides for settings including search timeout, cancel interval, max buckets, and more. Limits automatically apply to all requests routed to a group, giving operators finer-grained, per-tenant control in multi-tenant domains.
+
+#### Security and Infrastructure
+* **Scoped API keys:** Issue long-lived credentials with cluster and index permissions directly on the key, independent of user roles. Keys enforce least privilege with configurable expiration, synchronous cluster-wide revocation, and automatic system-index protection—well suited for service-to-service communication and CI/CD pipelines.
+
+### Experimental Features
+* **SLO catalog:** Ranks every service-level objective by remaining error budget so the objective closest to breaching is always first. Includes burn-rate alerts, multi-window evaluation, and direct links to underlying metrics.
 ## FEATURES
 
 
