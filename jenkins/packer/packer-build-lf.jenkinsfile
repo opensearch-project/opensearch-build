@@ -18,7 +18,8 @@ lib = library(identifier: 'jenkins@12.0.0', retriever: modernSCM([
 def secret_packer_ids = [
     [envVar: 'vpc_id', secretRef: 'op://opensearch-release-secrets/packer-build-ids/jenkins-agent-vpc-id-lf'],
     [envVar: 'subnet_id', secretRef: 'op://opensearch-release-secrets/packer-build-ids/jenkins-agent-subnet-id-lf'],
-    [envVar: 'sg_id', secretRef: 'op://opensearch-release-secrets/packer-build-ids/jenkins-agent-sg-id-lf']
+    [envVar: 'sg_id', secretRef: 'op://opensearch-release-secrets/packer-build-ids/jenkins-agent-sg-id-lf'],
+    [envVar: 'region_id', secretRef: 'op://opensearch-release-secrets/packer-build-ids/jenkins-agent-region-id-lf']
 ]
 
 def secret_aws_account = [
@@ -59,8 +60,8 @@ pipeline {
         }
         stage('packer-build') {
             environment {
-                PACKER_BUILD_GIT_REPOSITORY_REFERENCE = "main"
-                PACKER_BUILD_GIT_REPOSITORY = "https://github.com/opensearch-project/opensearch-ci"
+                PACKER_BUILD_GIT_REPOSITORY_REFERENCE = "migrate-packer"
+                PACKER_BUILD_GIT_REPOSITORY = "https://github.com/peterzhuamazon/opensearch-ci"
             }
             steps {
                 script {
@@ -71,6 +72,8 @@ pipeline {
                         packer_jenkins_agent_json["variables"]["build-vpc"] = vpc_id
                         packer_jenkins_agent_json["variables"]["build-subnet"] = subnet_id
                         packer_jenkins_agent_json["variables"]["build-secgrp"] = sg_id
+                        packer_jenkins_agent_json["variables"]["build-region"] = region_id
+                        packer_jenkins_agent_json["variables"]["aws_ami_region"] = region_id
                     }
                     def PACKER_TEMPLATE_NAME_SUBSTITUTE = "substitute_" + "$PACKER_TEMPLATE_NAME"
                     print("$PACKER_TEMPLATE_NAME_SUBSTITUTE")
