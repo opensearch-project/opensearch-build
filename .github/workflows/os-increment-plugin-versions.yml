@@ -57,7 +57,6 @@ jobs:
         branch:
           - '2.19'
           - 'main'
-          - '3.6'
           - '3.7'
     steps:
       - name: Check out OpenSearch repo
@@ -66,23 +65,27 @@ jobs:
           repository: opensearch-project/OpenSearch
           ref: ${{ matrix.branch }}
           persist-credentials: false
+
       - name: Fetch OpenSearch version
         run: |
           OPENSEARCH_VERSION=$(cat buildSrc/version.properties | grep opensearch | cut -d= -f2 | grep -oE '[0-9.]+')
           echo "OPENSEARCH_VERSION_NUMBER=$OPENSEARCH_VERSION" >> $GITHUB_ENV
           OPENSEARCH_VERSION=$OPENSEARCH_VERSION-SNAPSHOT
           echo "OPENSEARCH_VERSION=$OPENSEARCH_VERSION" >> $GITHUB_ENV
+
       - name: Get JDK version
         run: |
           OS_VERSION=${{ env.OPENSEARCH_VERSION_NUMBER }}
           OPENSEARCH_JAVA_VERSION_NUMBER=`curl -sSfL https://raw.githubusercontent.com/opensearch-project/opensearch-build/refs/heads/main/manifests/$OS_VERSION/opensearch-$OS_VERSION.yml | yq -r '.ci.image.linux.tar.args' | grep -oE 'openjdk-[0-9]*' | awk -F'-' '{ print $NF }'`
           echo "OPENSEARCH_JAVA_VERSION=$OPENSEARCH_JAVA_VERSION_NUMBER" >> $GITHUB_ENV
+
       - name: Set up JDK ${{ env.OPENSEARCH_JAVA_VERSION }}
         uses: actions/setup-java@v5
         with:
           java-version: ${{ env.OPENSEARCH_JAVA_VERSION }}
           distribution: 'temurin'
           cache: gradle
+
       - name: Check out plugin repo
         if: ${{ matrix.entry.repo != 'OpenSearch' }}
         uses: actions/checkout@v6
@@ -90,6 +93,7 @@ jobs:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
           persist-credentials: false
+
       - name: Increment Version in ${{ matrix.entry.repo }}
         if: ${{ matrix.entry.repo != 'OpenSearch' }}
         run: |
@@ -100,53 +104,14 @@ jobs:
             cd ${{ matrix.entry.path }}
           fi
           ./gradlew updateVersion -DnewVersion=${{ env.OPENSEARCH_VERSION }}
-      - name: GitHub App token
-        id: github_app_token
-        uses: tibdex/github-app-token@v1.6.0
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          installation_id: 22958780
-      - name: Check and Create label
-        id: check_create_label
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ steps.github_app_token.outputs.token }}
-          result-encoding: string
-          script: |
-            const labelName = "v${{ env.OPENSEARCH_VERSION_NUMBER }}";
-            let labelFound = false;
-            try {
-              const label = await github.rest.issues.getLabel({
-                owner: context.repo.owner,
-                repo: "${{ matrix.entry.repo }}",
-                name: labelName
-              });
-              labelFound = true;
-            } catch (error) {
-              if (error.status === 404) {
-                const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-                const newLabel = {
-                  owner: context.repo.owner,
-                  repo: "${{ matrix.entry.repo }}",
-                  name: labelName,
-                  color: randomColor,
-                  description: "Issues targeting release " + labelName
-                };
-                await github.rest.issues.createLabel(newLabel);
-                labelFound = true;
-              } else {
-                throw error;
-              }
-            }
-            console.log(labelFound);
-            return labelFound
+
       - name: Create Pull Request
         if: ${{ matrix.entry.repo != 'OpenSearch' }}
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ steps.github_app_token.outputs.token }}
+          token: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+          push-to-fork: opensearch-ci-bot/${{ matrix.entry.repo }}
           committer: opensearch-ci-bot <opensearch-infra@amazon.com>
           author: opensearch-ci-bot <opensearch-infra@amazon.com>
           commit-message: |
@@ -156,11 +121,11 @@ jobs:
           delete-branch: true
           branch: create-pull-request/${{ env.OPENSEARCH_VERSION }}
           title: '[AUTO] Increment version to ${{ env.OPENSEARCH_VERSION }}'
-          labels: |
-            v${{ env.OPENSEARCH_VERSION_NUMBER }}
           body: |
             - Incremented version to **${{ env.OPENSEARCH_VERSION }}**.
+
       - name: Check outputs
+        if: ${{ matrix.entry.repo != 'OpenSearch' }}
         run: |-
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
