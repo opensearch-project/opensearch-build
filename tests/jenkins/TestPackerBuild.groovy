@@ -41,17 +41,18 @@ class TestPackerBuild extends BuildPipelineTest {
         binding.setVariable('vpc_id', 'vpc_id_123')
         binding.setVariable('subnet_id', 'subnet_id_123')
         binding.setVariable('sg_id', 'sg_id_123')
+        binding.setVariable('region_id', 'region_id_123')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'aws_account_public_123')
         def sample_json = [
             "variables" : [
                 "name-base" : "Jenkins-Agent-AL2-X64" ,
                 "os-version" : "AL2" ,
-                "build-region" : "us-east-1" ,
+                "build-region" : "region-<>" ,
                 "build-vpc" : "vpc-<>" ,
                 "build-subnet" : "subnet-<>" ,
                 "build-secgrp" : "sg-<>" ,
                 "build-time" : "{{isotime \"2006-01-02T03-04-05Z\"}}" ,
-                "aws_ami_region" : "us-east-1"
+                "aws_ami_region" : "region-<>"
             ]
         ]
         helper.registerAllowedMethod("readJSON", [Map.class], {c -> sample_json})
@@ -59,12 +60,12 @@ class TestPackerBuild extends BuildPipelineTest {
                 "variables" : [
                         "name-base" : "Jenkins-Agent-AL2-X64" ,
                         "os-version" : "AL2" ,
-                        "build-region" : "us-east-1" ,
+                        "build-region" : "region_id_123" ,
                         "build-vpc" : "vpc-123" ,
                         "build-subnet" : "subnet-123" ,
                         "build-secgrp" : "sg-123" ,
                         "build-time" : "{{isotime \"2006-01-02T03-04-05Z\"}}" ,
-                        "aws_ami_region" : "us-east-1"
+                        "aws_ami_region" : "region_id_123"
                 ]
         ]
         helper.registerAllowedMethod("writeJSON", [Map.class], {c -> sample_json_output})
