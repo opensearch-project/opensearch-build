@@ -160,5 +160,5 @@ jobs:
       - name: Check outputs
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         run: |-
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}${{ steps.cprft.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}${{ steps.cprft.outputs.pull-request-url }}"
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
