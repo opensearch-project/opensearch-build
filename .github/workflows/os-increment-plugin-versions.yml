@@ -59,6 +59,7 @@ jobs:
           - 'main'
           - '3.6'
           - '3.7'
+          - '3.8'
     steps:
       - name: Check out OpenSearch repo
         uses: actions/checkout@v6
