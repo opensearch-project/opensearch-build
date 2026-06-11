@@ -265,3 +265,13 @@ components:
       - k-NN
       - ml-commons
       - user-behavior-insights
+  - name: opensearch-jvector
+    repository: https://github.com/opensearch-project/opensearch-jvector.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - security
+      - custom-codecs
