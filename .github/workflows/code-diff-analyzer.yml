@@ -128,7 +128,7 @@ jobs:
           cat $DIFF_CONTENT_PATH
           echo "-------------------------------------------------------"
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
         with:
           node-version: 24
@@ -141,7 +141,7 @@ jobs:
 
       - name: Configure AWS credentials
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6
         with:
           role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE }}
           aws-region: us-east-1
@@ -306,7 +306,7 @@ jobs:
       - name: Find existing PR Code Analyzer comment
         if: ${{ always() && github.event_name == 'pull_request_target' && inputs.update_pr_comment_with_analyzer_report && env.diff_analyzer != '0' && env.diff_analyzer != '9' }}
         id: find-comment
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
         with:
           issue-number: ${{ github.event.number }}
           comment-author: 'github-actions[bot]'
@@ -314,7 +314,7 @@ jobs:
 
       - name: Create Comment Failure Git Diff Analyzer
         if: ${{ always() && github.event_name == 'pull_request_target' && inputs.update_pr_comment_with_analyzer_report && env.diff_analyzer != '0' && env.diff_analyzer != '9' }}
-        uses: peter-evans/create-or-update-comment@v5
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
         with:
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           repository: ${{ github.repository }}

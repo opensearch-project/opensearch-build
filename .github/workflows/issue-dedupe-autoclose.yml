@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Auto-close duplicate issues past grace period
-        uses: actions/github-script@v7
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GRACE_DAYS: ${{ inputs.grace_days }}
         with:
