@@ -64,7 +64,7 @@ jobs:
           fi
       - name: Configure AWS credentials
         if: ${{ env.skip_diff_reviewer != 'true' }}
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6
         with:
           role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE }}
           aws-region: us-east-1
