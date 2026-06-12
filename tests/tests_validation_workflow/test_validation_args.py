@@ -141,3 +141,15 @@ class TestValidationArgs(unittest.TestCase):
     def test_get_distribution_type_deb(self) -> None:
         result = ValidationArgs().get_distribution_type(ValidationArgs().file_path)
         self.assertEqual(result, "deb")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.3.0"])
+    def test_skip_core_plugins_default(self) -> None:
+        self.assertEqual(ValidationArgs().skip_core_plugins, None)
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.3.0", "--skip-core-plugins"])
+    def test_skip_core_plugins(self) -> None:
+        self.assertEqual(ValidationArgs().skip_core_plugins, [])
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.3.0", "--skip-core-plugins", "arrow-base", "arrow-flight-rpc"])
+    def test_skip_core_plugins_specific(self) -> None:
+        self.assertEqual(ValidationArgs().skip_core_plugins, ["arrow-base", "arrow-flight-rpc"])

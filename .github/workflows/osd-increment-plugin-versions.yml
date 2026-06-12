@@ -46,8 +46,8 @@ jobs:
         branch:
           - 'main'
           - '2.19'
-          - '3.6'
           - '3.7'
+          - '3.8'
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -56,6 +56,7 @@ jobs:
           ref: ${{ matrix.branch }}
           path: OpenSearch-Dashboards
           persist-credentials: false
+
       - name: Check out plugin repo
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -64,11 +65,13 @@ jobs:
           ref: ${{ matrix.branch }}
           path: OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
           persist-credentials: false
+
       - name: Setup Node
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Install Yarn and Setup Dashboard Version
         shell: bash
         run: |
@@ -78,8 +81,10 @@ jobs:
           npm i -g yarn@$YARN_VERSION
           DASHBOARD_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').version")
           echo "DASHBOARD_VERSION=$DASHBOARD_VERSION" >> $GITHUB_ENV
+
       - run: node -v
       - run: yarn -v
+
       - name: Bootstrap and Version Increment
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         run: |
@@ -106,54 +111,15 @@ jobs:
               OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
               echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
           fi
-      - name: GitHub App token
-        id: github_app_token
-        uses: tibdex/github-app-token@f717b5ecd4534d3c4df4ce9b5c1c2214f0f7cd06 # v1.6.0
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          installation_id: 22958780
-      - name: Check if label exists
-        id: check_label
-        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410 # v6
-        with:
-          github-token: ${{ steps.github_app_token.outputs.token }}
-          result-encoding: string
-          script: |
-            const labelName = "v${{ env.DASHBOARD_VERSION }}";
-            let labelFound = false;
-            try {
-              const label = await github.rest.issues.getLabel({
-                owner: context.repo.owner,
-                repo: "${{ matrix.entry.repo }}",
-                name: labelName
-              });
-              labelFound = true;
-            } catch (error) {
-              if (error.status === 404) {
-                const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-                const newLabel = {
-                  owner: context.repo.owner,
-                  repo: "${{ matrix.entry.repo }}",
-                  name: labelName,
-                  color: randomColor,
-                  description: "Issues targeting release " + labelName
-                };
-                await github.rest.issues.createLabel(newLabel);
-                labelFound = true;
-              } else {
-                throw error;
-              }
-            }
-            console.log(labelFound);
-            return labelFound
+      
       - name: Create Pull Request for plugins
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' && matrix.entry.repo
           != 'opensearch-dashboards-functional-test' }}
         id: cpr
         uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
-          token: ${{ steps.github_app_token.outputs.token }}
+          token: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+          push-to-fork: opensearch-ci-bot/${{ matrix.entry.repo }}
           committer: opensearch-ci-bot <opensearch-infra@amazon.com>
           author: opensearch-ci-bot <opensearch-infra@amazon.com>
           commit-message: |
@@ -163,20 +129,20 @@ jobs:
           delete-branch: true
           branch: create-pull-request/${{ env.OSD_PLUGIN_VERSION }}
           title: '[AUTO] Increment version to ${{ env.OSD_PLUGIN_VERSION }}'
-          labels: |
-            v${{ env.DASHBOARD_VERSION }}
           body: |
             - Incremented version to **${{ env.OSD_PLUGIN_VERSION }}**.
           path: 'OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}'
           add-paths: |
             opensearch_dashboards.json
             package.json
+
       - name: Create Pull Request for opensearch-dashboards-functional-test
         if: ${{ matrix.entry.repo == 'opensearch-dashboards-functional-test' }}
         id: cprft
         uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
-          token: ${{ steps.github_app_token.outputs.token }}
+          token: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+          push-to-fork: opensearch-ci-bot/${{ matrix.entry.repo }}
           committer: opensearch-ci-bot <opensearch-infra@amazon.com>
           author: opensearch-ci-bot <opensearch-infra@amazon.com>
           commit-message: |
@@ -186,14 +152,14 @@ jobs:
           delete-branch: true
           branch: create-pull-request/${{ env.OSD_PLUGIN_VERSION }}
           title: '[AUTO] Increment version to ${{ env.OSD_PLUGIN_VERSION }}'
-          labels: |
-            v${{ env.DASHBOARD_VERSION }}
           body: |
             - Incremented version to **${{ env.OSD_PLUGIN_VERSION }}**.
           path: 'OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}'
           add-paths: |
             package.json
+
       - name: Check outputs
+        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         run: |-
-          echo "Pull Request Number - ${{ steps.cprft.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cprft.outputs.pull-request-url }}"
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"

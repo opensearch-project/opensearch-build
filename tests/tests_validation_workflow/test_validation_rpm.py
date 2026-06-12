@@ -105,6 +105,7 @@ class TestValidationRpm(unittest.TestCase):
         mock_validation_args.return_value.platform = 'linux'
         mock_validation_args.return_value.allow_http = True
         mock_validation_args.return_value.projects = ["opensearch"]
+        mock_validation_args.return_value.skip_core_plugins = None
         mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
         mock_list_dir.return_value = ["query-insights", "ml-commons"]
 

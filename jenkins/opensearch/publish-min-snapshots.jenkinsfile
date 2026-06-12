@@ -29,8 +29,8 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H */4 * * * %INPUT_MANIFEST=3.6.1/opensearch-3.6.1.yml
-            H */4 * * * %INPUT_MANIFEST=3.7.0/opensearch-3.7.0.yml
+            H */4 * * * %INPUT_MANIFEST=3.8.0/opensearch-3.8.0.yml
+            H */4 * * * %INPUT_MANIFEST=3.7.1/opensearch-3.7.1.yml
             H */4 * * * %INPUT_MANIFEST=2.19.6/opensearch-2.19.6.yml
         '''
     }
@@ -56,7 +56,7 @@ pipeline {
                     // default to linux-tar in INPUT_MANIFEST schemaVersion >= 1.2
                     // Everything except macos and windows can be built on the default linux-tar images
                     // macos currently built directly on VMs, and windows has its own windows images
-                    dockerAgent = detectDockerAgent() 
+                    dockerAgent = detectDockerAgent()
                     dockerAgentWindowsZip = detectDockerAgent(
                         distribution: "zip",
                         platform: "windows"

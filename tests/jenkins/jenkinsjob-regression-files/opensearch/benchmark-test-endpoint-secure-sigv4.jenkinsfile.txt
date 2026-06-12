@@ -33,6 +33,7 @@
             benchmark-test-endpoint.echo(Executing on agent [label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host])
             benchmark-test-endpoint.script(groovy.lang.Closure)
                benchmark-test-endpoint.echo(security-enabled: true)
+               benchmark-test-endpoint.sh(pyenv global system)
                benchmark-test-endpoint.runBenchmarkTestScript({command=execute-test, endpoint=opensearch-ABCxdfdfhyfk.com, insecure=false, username=, password=, sigv4=true, region=us-east-1, service=es, workload=nyc-taxis, userTag=run-type:test,security-enabled:true, suffix=307, workloadParams=, testProcedure=append-no-conflicts, excludeTasks=, includeTasks=, captureNodeStat=false, captureSegmentReplicationStat=false, telemetryParams={"telemetry_setting":"value"}})
                   runBenchmarkTestScript.legacySCM(groovy.lang.Closure)
                   runBenchmarkTestScript.library({identifier=jenkins@12.0.0, retriever=null})

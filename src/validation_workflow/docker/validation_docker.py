@@ -80,13 +80,15 @@ class ValidateDocker(Validation):
                 if self.check_cluster_readiness():
                     # STEP 4 . OS, OSD API validation
 
-                    if self.args.artifact_type == "production":
+                    if self.args.artifact_type == "production" and (self.args.skip_core_plugins is None or self.args.skip_core_plugins):
                         try:
                             subprocess.run(f'docker cp opensearch-node1:/usr/share/opensearch/manifest.yml {self.tmp_dir.name}/manifest.yml',
                                            shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
                             result = subprocess.run('docker exec opensearch-node1 ls /usr/share/opensearch/plugins',
                                                     shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
                             native_plugins_list = self.get_native_plugin_list(self.tmp_dir.name, result.stdout.strip().split('\n'))
+                            if self.args.skip_core_plugins:
+                                native_plugins_list = [p for p in native_plugins_list if p not in self.args.skip_core_plugins]
                             for native_plugin in native_plugins_list:
                                 command = 'docker exec opensearch-node1 sh .' + os.sep + 'bin' + os.sep + f'opensearch-plugin install --batch {native_plugin}'
                                 logging.info(f"Executing {command}")

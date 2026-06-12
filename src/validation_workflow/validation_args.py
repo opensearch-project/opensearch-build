@@ -132,6 +132,12 @@ class ValidationArgs:
             help="(optional) Use only staging artifact to run docker and API test, will not validate digest",
             dest="using_staging_artifact_only"
         )
+        parser.add_argument(
+            "--skip-core-plugins",
+            nargs='*',
+            default=None,
+            help="Skip native plugin installations. No args = skip all, with args = skip only listed plugins (e.g. --skip-core-plugins plugin-a plugin-b)"
+        )
 
         args = parser.parse_args()
 
@@ -164,6 +170,7 @@ class ValidationArgs:
         self.docker_source = args.docker_source
         self.validate_digest_only = args.validate_digest_only
         self.using_staging_artifact_only = args.using_staging_artifact_only
+        self.skip_core_plugins = args.skip_core_plugins
 
     def get_distribution_type(self, file_path: dict) -> str:
         if (any("tar" in value for value in file_path.values())):

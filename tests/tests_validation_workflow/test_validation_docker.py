@@ -75,6 +75,7 @@ class TestValidateDocker(unittest.TestCase):
         mock_digest.return_value = True
         mock_check_http.return_value = True
         mock_validation_args.return_value.artifact_type = "production"
+        mock_validation_args.return_value.skip_core_plugins = None
         mock_temporary_directory.return_value.name = "/tmp/trytytyuit"
         mock_subprocess_run.side_effect = self.subprocess_side_effect
         mock_native_plugin.return_value = ["analysis-icu", "analysis-nori"]
@@ -96,6 +97,45 @@ class TestValidateDocker(unittest.TestCase):
             'docker-compose -f test_file.yml restart', shell=True, stdout=-1, stderr=-1, universal_newlines=True)
 
         mock_test.assert_has_calls([call(), call().test_apis("1.0.0.1000", ['opensearch'], True)])
+
+    @patch('validation_workflow.docker.validation_docker.ValidateDocker.check_http_request')
+    @patch('validation_workflow.docker.validation_docker.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    @patch('validation_workflow.docker.validation_docker.InspectDockerImage')
+    @patch('validation_workflow.docker.validation_docker.ApiTestCases')
+    @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
+    @patch('validation_workflow.docker.validation_docker.InspectDockerImage.inspect_digest')
+    @patch('validation_workflow.docker.validation_docker.subprocess.run')
+    @patch('validation_workflow.validation.Validation.get_native_plugin_list')
+    def test_staging_skip_specific_plugins(self, mock_native_plugin: Mock, mock_subprocess_run: Mock, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock,
+                                           mock_temporary_directory: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
+        mock_validation_args.return_value.version = '1.0.0.1000'
+        mock_validation_args.return_value.validate_digest_only = False
+        mock_validation_args.return_value.allow_http = False
+        mock_validation_args.return_value.projects = ["opensearch"]
+        mock_docker_image.return_value = MagicMock()
+        mock_container.return_value = (True, 'test_file.yml')
+        mock_test_apis_instance = mock_test.return_value
+        mock_test_apis_instance.test_apis.return_value = (True, 2)
+        mock_digest.return_value = True
+        mock_check_http.return_value = True
+        mock_validation_args.return_value.artifact_type = "production"
+        mock_validation_args.return_value.skip_core_plugins = ["analysis-icu"]
+        mock_temporary_directory.return_value.name = "/tmp/trytytyuit"
+        mock_subprocess_run.side_effect = self.subprocess_side_effect
+        mock_native_plugin.return_value = ["analysis-icu", "analysis-nori"]
+
+        validate_docker = ValidateDocker(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        validate_docker.image_ids = {'opensearch': 'images_id_0'}
+        validate_docker.replacements = [('opensearchproject/opensearch:1', 'images_id_0')]
+
+        result = validate_docker.validation()
+        self.assertTrue(result)
+
+        # Only analysis-nori should be installed (analysis-icu is skipped)
+        install_calls = [c for c in mock_subprocess_run.call_args_list if 'opensearch-plugin install' in str(c)]
+        self.assertEqual(len(install_calls), 1)
+        self.assertIn('analysis-nori', str(install_calls[0]))
 
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.check_cluster_readiness')
     @patch('validation_workflow.docker.validation_docker.ValidationArgs')

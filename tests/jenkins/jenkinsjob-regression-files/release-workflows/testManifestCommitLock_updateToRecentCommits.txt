@@ -31,17 +31,21 @@ ccc, repository=https://github.com/opensearch-project/OpenSearch.git, checks=[gr
             release-manifest-commit-lock.script(groovy.lang.Closure)
                release-manifest-commit-lock.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-token}]}, groovy.lang.Closure)
                   release-manifest-commit-lock.sh(
-                                git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/opensearch-build"
-                                git config user.email "opensearch-infra@amazon.com"
-                                git config user.name "opensearch-ci"
+                                gh repo fork "opensearch-project/opensearch-build" --clone=false
+                                git remote add fork "https://opensearch-ci-bot:GITHUB_TOKEN@github.com/opensearch-ci-bot/opensearch-build"
                                 git checkout -b manifest-lock
                             )
                   release-manifest-commit-lock.sh({returnStdout=true, script=git status --porcelain})
                   release-manifest-commit-lock.sh(
                                     git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
-                                    git commit -sm "Manifest Commit Lock for Release 2.0.0"
-                                    git push origin manifest-lock --force
-                                    gh pr create --title '[2.0.0] Manifest Commit Lock with action UPDATE_TO_RECENT_COMMITS' --body 'Manifest Commit Lock for Release 2.0.0 ' -H manifest-lock -B main
+                                    git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Manifest Commit Lock for Release 2.0.0"
+                                    git push fork manifest-lock --force
+                                    EXISTING_PR=$(gh api "repos/opensearch-project/opensearch-build/pulls?head=opensearch-ci-bot:manifest-lock&state=open" --jq '.[0].number')
+                                    if [ -n "$EXISTING_PR" ] && [ "$EXISTING_PR" != "null" ]; then
+                                        gh pr edit "$EXISTING_PR" --repo "opensearch-project/opensearch-build" --body "Manifest Commit Lock for Release 2.0.0"
+                                    else
+                                        gh pr create --repo "opensearch-project/opensearch-build" --title '[2.0.0] Manifest Commit Lock with action UPDATE_TO_RECENT_COMMITS' --body 'Manifest Commit Lock for Release 2.0.0 ' -H "opensearch-ci-bot:manifest-lock" -B main
+                                    fi
                                 )
          release-manifest-commit-lock.script(groovy.lang.Closure)
             release-manifest-commit-lock.postCleanup()

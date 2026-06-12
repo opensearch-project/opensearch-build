@@ -114,7 +114,7 @@ $JAVA_HOME_TEMP
 java -version
 
 # Install python and lock onto 3.9.13 now
-scoop install https://raw.githubusercontent.com/ScoopInstaller/Versions/cadc6e36c880e99965d4b8e1f1bf81e91421ec97/bucket/python39.json
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Versions/be3119e697579823fe40c1fc97e9944c449cb686/bucket/python39.json
 python --version
 # Reg PEP
 $versionInfo = (scoop info python39 | out-string -stream | Select-String 'Version.*:')
@@ -159,7 +159,7 @@ yq --version
 # https://github.com/opensearch-project/opensearch-ci/issues/281#issuecomment-1654424423
 scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/49d6f71e5bd7096d49b3286ad02d5d482726b467/bucket/volta.json
 volta --version
-$nodeVersionList = "18.19.0", "20.18.3", "22.22.0"
+$nodeVersionList = "18.19.0", "20.18.3", "22.22.0", "22.22.3"
 Foreach ($nodeVersion in $nodeVersionList)
 {
     $nodeVersion
@@ -226,7 +226,7 @@ scoop install https://raw.githubusercontent.com/ScoopInstaller/Extras/3a512b00c3
 scoop cache rm *
 
 # Pip
-wget https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py
+wget https://bootstrap.pypa.io/pip/3.9/get-pip.py -OutFile get-pip.py
 python get-pip.py
 pip --version
 # Install pipenv

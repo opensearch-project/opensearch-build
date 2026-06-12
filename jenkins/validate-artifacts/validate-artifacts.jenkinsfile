@@ -10,7 +10,7 @@
 // @job-name: distribution-validation
 // @description: Validates OpenSearch and OpenSearch Dashboards distribution artifacts.
 
-lib = library(identifier: 'jenkins@12.0.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@12.1.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -113,6 +113,11 @@ pipeline {
             description: '<Optional> Determine the artifact type among staging or production. Defaults to production.',
             choices: ['production', 'staging'],
         )
+        string(
+            name: 'SKIP_CORE_PLUGINS',
+            description: '<Optional> Skip native plugin validation. "None" = install all, "" (empty) = skip all, or comma-separated plugin names to skip (e.g. "arrow-base,arrow-flight-rpc").',
+            defaultValue: 'arrow-base,arrow-flight-rpc'
+        )
         booleanParam(
             name: 'ALLOW_HTTP',
             description: '<Optional> Allow validation even when the security plugin is absent.',
@@ -212,17 +217,19 @@ pipeline {
                                             try {
                                                 stage("${local_distribution}-${local_architecture}") {
                                                     unstash "validate-artifacts-$BUILD_NUMBER"
-
-                                                    validateArtifacts(
-                                                        version: "$VERSION",
-                                                        distribution: "${local_distribution}",
-                                                        arch: "${local_architecture}",
-                                                        os_build_number: "$OS_BUILD_NUMBER",
-                                                        osd_build_number: "$OSD_BUILD_NUMBER",
-                                                        projects: "$PROJECTS",
-                                                        docker_args: "$OPTIONAL_ARGS",
-                                                        docker_source: "$DOCKER_SOURCE"
-                                                    )
+                                                    retry(2) {
+                                                        validateArtifacts(
+                                                            version: "$VERSION",
+                                                            distribution: "${local_distribution}",
+                                                            arch: "${local_architecture}",
+                                                            os_build_number: "$OS_BUILD_NUMBER",
+                                                            osd_build_number: "$OSD_BUILD_NUMBER",
+                                                            projects: "$PROJECTS",
+                                                            docker_args: "$OPTIONAL_ARGS",
+                                                            docker_source: "$DOCKER_SOURCE",
+                                                            skip_core_plugins: params.SKIP_CORE_PLUGINS
+                                                        )
+                                                    }
                                                 }
                                             } catch (e) {
                                                 echo "Error occurred while validating ${local_distribution}-${local_architecture}"
@@ -252,7 +259,8 @@ pipeline {
                                                                         osd_build_number: "$OSD_BUILD_NUMBER",
                                                                         projects: "$PROJECTS",
                                                                         artifact_type: "$ARTIFACT_TYPE",
-                                                                        allow_http: params.ALLOW_HTTP
+                                                                        allow_http: params.ALLOW_HTTP,
+                                                                        skip_core_plugins: params.SKIP_CORE_PLUGINS
                                                                     )
                                                                 } else {
                                                                     validateArtifacts(

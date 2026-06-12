@@ -57,7 +57,7 @@ WORKDIR $CONTAINER_USER_HOME
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
-ENV NODE_VERSION 22.22.0
+ENV NODE_VERSION 22.22.3
 ENV CYPRESS_VERSION 13.17.0
 ARG CYPRESS_VERSION_LIST="13.17.0"
 ENV CYPRESS_LOCATION $CONTAINER_USER_HOME/.cache/Cypress/$CYPRESS_VERSION
@@ -116,7 +116,7 @@ RUN apt-get update -y && apt-get install -y python3.9-full python3.9-dev && \
 
 # Cannot uninstall packaging 24.0
 # The package's contents are unknown: no RECORD file was found for packaging.
-RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python3 - --no-deps && \
+RUN curl -SfL https://bootstrap.pypa.io/pip/3.9/get-pip.py | python3 - --no-deps && \
     python3 -m pip install --upgrade --ignore-installed packaging && \
     pip3 install awscliv2==2.3.1 pipenv==2023.6.12 cmake==3.26.4 && \
     ln -s `which awsv2` /usr/local/bin/aws && aws --install
@@ -140,7 +140,7 @@ RUN apt-get install -y sudo && \
 # Copy from Stage0
 COPY --from=linux_stage_0 --chown=$CONTAINER_USER:$CONTAINER_USER $CONTAINER_USER_HOME $CONTAINER_USER_HOME
 ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
-ENV NODE_VERSION 22.22.0
+ENV NODE_VERSION 22.22.3
 ENV CYPRESS_VERSION 13.17.0
 ENV CYPRESS_LOCATION $CONTAINER_USER_HOME/.cache/Cypress/$CYPRESS_VERSION
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules

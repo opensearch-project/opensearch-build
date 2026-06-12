@@ -53,7 +53,7 @@ WORKDIR $CONTAINER_USER_HOME
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
-ENV NODE_VERSION 22.22.0
+ENV NODE_VERSION 22.22.3
 ENV CYPRESS_VERSION 13.17.0
 ARG CYPRESS_VERSION_LIST="13.17.0"
 ENV CYPRESS_LOCATION $CONTAINER_USER_HOME/.cache/Cypress/$CYPRESS_VERSION
@@ -74,6 +74,11 @@ COPY --chown=$CONTAINER_USER:$CONTAINER_USER config/yarn-version.sh /tmp
 RUN npm install -g yarn@`/tmp/yarn-version.sh main`
 # Update to 13.17.0 per https://github.com/opensearch-project/opensearch-dashboards-functional-test/issues/1996
 RUN for cypress_version in $CYPRESS_VERSION_LIST; do npm install -g cypress@$cypress_version && npm cache verify; done
+
+# Patch for glibc 2.28 version specifically
+RUN if [ `uname -m` = "aarch64" ]; then curl -SfL https://ci.opensearch.org/ci/dbc/tools/polyfill-glibc/polyfill-glibc-dd59051-arm64 -o ./polyfill-glibc && \
+    chmod u+x ./polyfill-glibc && ./polyfill-glibc --target-glibc=2.28 /home/ci-runner/.cache/Cypress/$CYPRESS_VERSION/Cypress/resources/app/packages/server/lib/modes/addon/addon-native.node && \
+    rm -v ./polyfill-glibc; fi
 
 # Need root to get pass the build due to chrome sandbox needs to own by the root
 USER 0
@@ -121,7 +126,7 @@ RUN dnf install -y sudo && \
 # Copy from Stage0
 COPY --from=linux_stage_0 --chown=$CONTAINER_USER:$CONTAINER_USER $CONTAINER_USER_HOME $CONTAINER_USER_HOME
 ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
-ENV NODE_VERSION 22.22.0
+ENV NODE_VERSION 22.22.3
 ENV CYPRESS_VERSION 13.17.0
 ENV CYPRESS_LOCATION $CONTAINER_USER_HOME/.cache/Cypress/$CYPRESS_VERSION
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
