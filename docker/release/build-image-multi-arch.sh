@@ -12,12 +12,14 @@ set -e
 
 # Import libs
 . ../../lib/shell/file_management.sh
+. ../../lib/shell/version_management.sh
 
 # Variable
 OLDIFS=$IFS
 BUILDER_NUM=`date +%s`
 BUILDER_NAME="multiarch_${BUILDER_NUM}"
 DIR=""
+TAG_LATEST=false
 
 function usage() {
     echo ""
@@ -34,6 +36,7 @@ function usage() {
     echo ""
     echo "Optional arguments:"
     echo -e "-t TARBALL\tSpecify multiple opensearch or opensearch-dashboards tarballs, use the same order as the input for '-a' param, e.g. 'opensearch-1.0.0-linux-x64.tar.gz,opensearch-1.0.0-linux-arm64.tar.gz'. You still need to specify the version - this tool does not attempt to parse the filename."
+    echo -e "-l\t\tTag the built image as :latest if this version is the highest semver tag in the repository. Uses the Docker Hub API to compare existing tags. Only applies to GA releases; skip for snapshots or patch backports where a newer minor already exists."
     echo -e "-n NOTES\tSpecify Pipeline Notes of the run, defaults to None."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
@@ -50,7 +53,7 @@ function cleanup_all() {
     cleanup_docker_buildx
     File_Delete $DIR
 }
-while getopts ":ht:n:v:f:p:a:r:" arg; do
+while getopts ":ht:n:v:f:p:a:r:l" arg; do
     case $arg in
         h)
             usage
@@ -76,6 +79,9 @@ while getopts ":ht:n:v:f:p:a:r:" arg; do
             ;;
         r)
             REPOSITORY=$OPTARG
+            ;;
+        l)
+            TAG_LATEST=true
             ;;
         :)
             echo "-${OPTARG} requires an argument"
@@ -172,7 +178,17 @@ else
     ls -l $DIR
 fi
 
+# Determine image tags for the build
+REGISTRY_NAME="${REPOSITORY%%/*}"
+IMAGE_NAME="${REPOSITORY##*/}"
+IMAGE_TAGS="-t ${REPOSITORY}:${VERSION}"
+
+if [ "$TAG_LATEST" = true ]; then
+    if is_latest_version "$REGISTRY_NAME" "$IMAGE_NAME" "$VERSION"; then
+        IMAGE_TAGS="$IMAGE_TAGS -t ${REPOSITORY}:latest"
+    fi
+fi
+
 # Build multi-arch images
 PLATFORMS=`echo "${ARCHITECTURE_ARRAY[@]/#/linux/}" | sed 's/x64/amd64/g;s/ /,/g'` && echo PLATFORMS $PLATFORMS
-docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=$NOTES -t ${REPOSITORY}:${VERSION} -f $DOCKERFILE --push $DIR
-
+docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=$NOTES $IMAGE_TAGS -f $DOCKERFILE --push $DIR
