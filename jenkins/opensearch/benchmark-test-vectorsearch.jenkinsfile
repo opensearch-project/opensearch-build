@@ -317,7 +317,6 @@ pipeline {
                                 echo "DISTRIBUTION_VERSION: ${DISTRIBUTION_VERSION}"
                             }
 
-                            sh 'pyenv global system'
                             runBenchmarkTestScript(
                                 command: 'execute-test',
                                 bundleManifest: BUNDLE_MANIFEST,
@@ -378,7 +377,6 @@ pipeline {
                                 echo "DISTRIBUTION_VERSION: ${DISTRIBUTION_VERSION}"
                             }
 
-                            sh 'pyenv global system' 
                             runBenchmarkTestScript(
                                 command: 'execute-test',
                                 bundleManifest: BUNDLE_MANIFEST,
