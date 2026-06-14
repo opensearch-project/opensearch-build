@@ -1,3 +1,4 @@
+---
 name: 'Launch OpenSearch with or without plugins'
 description: 'Downloads latest build of OpenSearch, optionally installs plugins, and then starts OpenSearch on localhost:9200'
 
@@ -43,7 +44,7 @@ inputs:
     default: '45'
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
 
     # Configure longpath names if on Windows
