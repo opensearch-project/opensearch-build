@@ -43,6 +43,11 @@ inputs:
     required: false
     default: '45'
 
+  build-type:
+    description: 'Type of OpenSearch build to download: "snapshot" or "release"'
+    required: false
+    default: 'snapshot'
+
 runs:
   using: 'composite'
   steps:
@@ -63,31 +68,46 @@ runs:
     - name: Download OpenSearch for Windows
       if: ${{ runner.os == 'Windows' }}
       run: |
-        Invoke-WebRequest -Uri https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip -OutFile opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip
+        if ("${{ inputs.build-type }}" -eq "release") {
+          $url = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${{ inputs.opensearch-version }}/latest/windows/x64/zip/builds/opensearch/dist/opensearch-min-${{ inputs.opensearch-version }}-windows-x64.zip"
+        } else {
+          $url = "https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip"
+        }
+        Invoke-WebRequest -Uri $url -OutFile opensearch.zip
       shell: pwsh
 
 
     - name: Download OpenSearch for Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
-        curl -L -o opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-linux-x64-latest.tar.gz https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-linux-x64-latest.tar.gz
+        if [ "${{ inputs.build-type }}" = "release" ]; then
+          url="https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${{ inputs.opensearch-version }}/latest/linux/x64/tar/builds/opensearch/dist/opensearch-min-${{ inputs.opensearch-version }}-linux-x64.tar.gz"
+        else
+          url="https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-linux-x64-latest.tar.gz"
+        fi
+        curl -L -o opensearch.tar.gz "$url"
       shell: bash
 
-    # Extract downloaded zip
+    # Extract downloaded archive
     - name: Extract downloaded tar
       if: ${{ runner.os == 'Linux' }}
       run: |
-        tar -xzf opensearch-*.tar.gz && mv opensearch-${{ inputs.opensearch-version }}-SNAPSHOT opensearch-${{inputs.opensearch-version}}-SNAPSHOT${{ inputs.port }}
-        rm -f opensearch-*.tar.gz
+        tar -xzf opensearch.tar.gz
+        if [ -d "opensearch-${{ inputs.opensearch-version }}-SNAPSHOT" ]; then
+          mv opensearch-${{ inputs.opensearch-version }}-SNAPSHOT opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}
+        elif [ -d "opensearch-${{ inputs.opensearch-version }}" ]; then
+          mv opensearch-${{ inputs.opensearch-version }} opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}
+        fi
+        rm -f opensearch.tar.gz
       shell: bash
 
     - name: Extract downloaded zip
       if: ${{ runner.os == 'Windows' }}
       run: |
-        Expand-Archive -Path "opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip" -DestinationPath "temp"
+        Expand-Archive -Path "opensearch.zip" -DestinationPath "temp"
         Move-Item -Path "temp/*" -Destination "opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}"
         Remove-Item -Path "temp" -Recurse
-        Remove-Item -Path "opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip"
+        Remove-Item -Path "opensearch.zip"
       shell: pwsh
 
     - name: Install plugin(s) into OpenSearch for Linux
