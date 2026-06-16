@@ -43,10 +43,10 @@ inputs:
     required: false
     default: '45'
 
-  build-type:
-    description: 'Type of OpenSearch build to download: "snapshot" or "release"'
+  snapshot:
+    description: 'Whether to download a snapshot build. Set to false to download from ci.opensearch.org release artifacts.'
     required: false
-    default: 'snapshot'
+    default: 'true'
 
 runs:
   using: 'composite'
@@ -68,7 +68,7 @@ runs:
     - name: Download OpenSearch for Windows
       if: ${{ runner.os == 'Windows' }}
       run: |
-        if ("${{ inputs.build-type }}" -eq "release") {
+        if ("${{ inputs.snapshot }}" -eq "false") {
           $url = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${{ inputs.opensearch-version }}/latest/windows/x64/zip/builds/opensearch/dist/opensearch-min-${{ inputs.opensearch-version }}-windows-x64.zip"
         } else {
           $url = "https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip"
@@ -80,7 +80,7 @@ runs:
     - name: Download OpenSearch for Linux
       if: ${{ runner.os == 'Linux' }}
       run: |
-        if [ "${{ inputs.build-type }}" = "release" ]; then
+        if [ "${{ inputs.snapshot }}" = "false" ]; then
           url="https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${{ inputs.opensearch-version }}/latest/linux/x64/tar/builds/opensearch/dist/opensearch-min-${{ inputs.opensearch-version }}-linux-x64.tar.gz"
         else
           url="https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-linux-x64-latest.tar.gz"
