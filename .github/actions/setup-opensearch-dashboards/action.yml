@@ -126,16 +126,28 @@ runs:
         registry-url: 'https://registry.npmjs.org'
 
     - name: Set up OpenSearch Dashboards
-      uses: Wandalen/wretry.action@e94c43bf2e865e7dbbd90b0c1061053f5888932a # master
-      with:
-        attempts: 3
-        command: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ steps.tool-versions.outputs.yarn_version }}"
-          npm i -g yarn@${{ steps.tool-versions.outputs.yarn_version }}
-          yarn cache clean
-          yarn add sha.js
-        current_path: OpenSearch-Dashboards
+      run: |
+        for attempt in {1..3}; do
+          echo "Setting up OpenSearch Dashboards attempt ${attempt}/3."
+          if (
+            cd OpenSearch-Dashboards
+            npm uninstall -g yarn
+            echo "Installing yarn ${{ steps.tool-versions.outputs.yarn_version }}"
+            npm i -g yarn@${{ steps.tool-versions.outputs.yarn_version }}
+            yarn cache clean
+            yarn add sha.js
+          ); then
+            exit 0
+          fi
+
+          if [ "${attempt}" -eq 3 ]; then
+            echo "Failed to set up OpenSearch Dashboards after ${attempt} attempts."
+            exit 1
+          fi
+
+          sleep 2
+        done
+      shell: bash
 
     - name: Bootstrap OpenSearch Dashboards
       uses: nick-fields/retry@14672906e672a08bd6eeb15720e9ed3ce869cdd4 # v2
