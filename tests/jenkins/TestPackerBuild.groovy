@@ -86,8 +86,8 @@ class TestPackerBuild extends BuildPipelineTest {
 
     @Test
     void PackerBuildRegression() {
-        super.testPipeline('jenkins/packer/packer-build.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/packer/packer-build.jenkinsfile')
+        super.testPipeline('jenkins/packer/packer-build-lf.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/packer/packer-build-lf.jenkinsfile')
 
         def gitCheckoutCommands = getCommands('checkout', 'GitSCM').findAll {
             shCommand -> shCommand.contains('git')

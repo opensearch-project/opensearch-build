@@ -29,7 +29,7 @@ class TestDockerCopy extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('12.0.0')
+                .defaultVersion('13.2.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -55,13 +55,13 @@ class TestDockerCopy extends BuildPipelineTest {
 
     @Test
     void DockerCopyRegression() {
-        super.testPipeline('jenkins/docker/docker-copy.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/docker/docker-copy.jenkinsfile')
+        super.testPipeline('jenkins/docker/docker-copy-lf.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/docker/docker-copy-if.jenkinsfile')
     }
 
     @Test
     public void DockerCopyExecuteWithoutErrors() {
-        runScript("jenkins/docker/docker-copy.jenkinsfile")
+        runScript("jenkins/docker/docker-copy-lf.jenkinsfile")
 
         assertJobStatusSuccess()
 
@@ -71,8 +71,8 @@ class TestDockerCopy extends BuildPipelineTest {
         }
         assertThat(copyContainerCommand.size(), equalTo(1))
 
-        // Validating docker-copy.jenkinsfile does run copyContainer.groovy 
-        assertCallStack().contains("docker-copy.copyContainer")
+        // Validating the jenkinsfile does run copyContainer.groovy 
+        assertCallStack().contains("docker-copy-lf.copyContainer")
 
         printCallStack()
     }
@@ -80,7 +80,7 @@ class TestDockerCopy extends BuildPipelineTest {
     @Test
     public void DockerCopyExecuteAllTagsWithoutErrors() {
         addParam('ALL_TAGS', true)
-        runScript("jenkins/docker/docker-copy.jenkinsfile")
+        runScript("jenkins/docker/docker-copy-lf.jenkinsfile")
 
         assertJobStatusSuccess()
 
@@ -90,8 +90,8 @@ class TestDockerCopy extends BuildPipelineTest {
         }
         assertThat(copyContainerCommand.size(), equalTo(1))
 
-        // Validating docker-copy.jenkinsfile does run copyContainer.groovy 
-        assertCallStack().contains("docker-copy.copyContainer")
+        // Validating the jenkinsfile does run copyContainer.groovy 
+        assertCallStack().contains("docker-copy-lf.copyContainer")
 
         printCallStack()
     }

@@ -1,0 +1,99 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+ 
+// @job-name: docker-copy
+// @description: Copies Docker images from one registry to another.
+
+lib = library(identifier: 'jenkins@13.2.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    options {
+        timeout(time: 30)
+    }
+    agent none  
+    parameters {
+        booleanParam(
+            name: 'ALL_TAGS', 
+            description: '<Optional> If true, will copy all the tags of SOURCE_IMAGE_REGISTRY/SOURCE_IMAGE to DESTINATION_IMAGE_REGISTRY/DESTINATION_IMAGE, while ignoring IMAGE_TAG even if specified, default to false',
+            defaultValue: false
+        )
+        // Only allow limited source from staging only, to help prevent unexpected image overriding
+        choice(
+            name: 'SOURCE_IMAGE_REGISTRY', 
+            choices: ['opensearchstaging', 'public.ecr.aws/opensearchorg/opensearchstaging', 'public.ecr.aws/t2m2d0w1'],
+            description: '<Optional> Choose the source image registry. Defaults to opensearchstaging.'
+        )
+        string(
+            name: 'SOURCE_IMAGE',
+            description: '<Required> Image name and tag <IMAGE_NAME>:<IMAGE_TAG>, Eg: opensearch:1.3.2, tag is ignored when ALL_TAGS=true',
+            trim: true
+        )
+        choice(
+            name: 'DESTINATION_IMAGE_REGISTRY', 
+            choices: ['opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchorg/opensearchstaging', 'public.ecr.aws/opensearchorg/opensearchproject'],
+            description: '<Optional> Choose the destination image registry. Defaults to opensearchstaging.'
+        )
+        // TODO: MIGRATION - pending removal - opensearch:1.3.2 (old)
+        string(
+            name: 'DESTINATION_IMAGE',
+            description: '<Required> Image name and tag <IMAGE_NAME>:<IMAGE_TAG>, Eg: opensearch:1.3.2, tag is ignored when ALL_TAGS=true',
+            trim: true
+        )
+    }
+    stages {
+        stage("Image Copy") {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder'
+                    image 'opensearchorg/opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1'
+                    args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                    registryUrl 'https://public.ecr.aws/'
+                    alwaysPull true
+                }
+            }
+            stages {
+                stage('Parameters Check') {
+                    steps {
+                        script {
+                            currentBuild.description = """ALL_TAGS: ${ALL_TAGS}<br>Copying: ${SOURCE_IMAGE_REGISTRY}/${SOURCE_IMAGE} to ${DESTINATION_IMAGE_REGISTRY}/${DESTINATION_IMAGE}"""
+                            if( SOURCE_IMAGE.isEmpty() || DESTINATION_IMAGE.isEmpty()) {
+                                        currentBuild.result = 'ABORTED'
+                                        error('Make sure all the parameters are passed in.')
+                            }
+                        }
+                    }
+                }
+                stage('Copy Image to ECR/DockerHub') {
+                    steps {
+                        script {
+                            copyContainer(
+                                allTags: params.ALL_TAGS,
+                                sourceImage: "${SOURCE_IMAGE}",
+                                sourceRegistry: "${SOURCE_IMAGE_REGISTRY}",
+                                destinationImage: "${DESTINATION_IMAGE}",
+                                destinationRegistry: "${DESTINATION_IMAGE_REGISTRY}"
+                            )
+                        }
+                    }
+                }
+            }  
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                        sh "docker logout && docker logout public.ecr.aws && docker image prune -f --all"
+                    }
+                }
+            }     
+        }
+    }
+}
