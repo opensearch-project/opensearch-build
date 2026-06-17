@@ -54,6 +54,7 @@ jobs:
           - {repo: opensearch-learning-to-rank-base}
           - {repo: search-relevance}
           - {repo: user-behavior-insights}
+          - {repo: opensearch-jvector}
         branch:
           - '2.19'
           - 'main'
