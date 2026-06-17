@@ -152,10 +152,15 @@ def _build_parallel(manifest: InputManifest, target: BuildTarget, build_recorder
         logging.info(f"Building {component.name}")
 
         builder = Builders.builder_from(component, target)
-        builder.checkout(work_dir)
-        builder.build(build_recorder)
-        builder.export_artifacts(build_recorder)
-        logging.info(f"Successfully built {component.name}")
+        try:
+            builder.checkout(work_dir)
+            builder.build(build_recorder)
+            builder.export_artifacts(build_recorder)
+            logging.info(f"Successfully built {component.name}")
+        except Exception as e:
+            logging.error(f"ERROR: {e}")
+            logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
+            raise
 
     failed = graph.execute_parallel(
         build_fn=build_component,
