@@ -160,9 +160,9 @@ runs:
       if: ${{ inputs.install_zip == 'true' && runner.os == 'Linux' }}
       run: |
         if [ "${{ inputs.snapshot }}" = "false" ]; then
-          url="https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${{ steps.osd-version.outputs.plugin-version }}/latest/linux/x64/tar/builds/opensearch-dashboards/dist/opensearch-dashboards-min-${{ steps.osd-version.outputs.plugin-version }}-linux-x64.tar.gz"
+          url="https://artifacts.opensearch.org/releases/core/opensearch-dashboards/${{ steps.osd-version.outputs.plugin-version }}/opensearch-dashboards-min-${{ steps.osd-version.outputs.plugin-version }}-linux-x64.tar.gz"
         else
-          url="https://artifacts.opensearch.org/snapshots/core/opensearch-dashboards/${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT/opensearch-dashboards-min-${{ steps.osd-version.outputs.plugin-version }}-SNAPSHOT-linux-x64-latest.tar.gz"
+          url="https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${{ steps.osd-version.outputs.plugin-version }}/latest/linux/x64/tar/builds/opensearch-dashboards/dist/opensearch-dashboards-min-${{ steps.osd-version.outputs.plugin-version }}-linux-x64.tar.gz"
         fi
         curl -L -o opensearch-dashboards.tar.gz "$url"
       shell: bash
