@@ -22,8 +22,8 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
                 "..",
                 "..",
                 "manifests",
-                "3.5.0",
-                "opensearch-3.5.0.yml",
+                "3.8.0",
+                "opensearch-3.8.0.yml",
             )
         )
         self.assertTrue(manifest in files)
@@ -31,11 +31,13 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
     @patch("os.makedirs")
     @patch("os.chdir")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron_os_min_snapshots")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
     @patch("manifests.manifest.Manifest.to_file")
     @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearchMin")
     def test_update(self, mock_component_opensearch_min: MagicMock, mock_manifest_to_file: MagicMock,
-                    mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
+                    mock_add_to_cron: MagicMock, mock_add_to_cron_os_min_snapshots: MagicMock,
+                    mock_add_to_versionincrement_workflow: MagicMock,
                     *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
         mock_component_opensearch_min.branches.return_value = ["2.1000"]
