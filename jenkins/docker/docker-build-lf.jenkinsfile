@@ -1,0 +1,119 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+// @job-name: docker-build
+// @description: Builds and publishes Docker images for OpenSearch and OpenSearch Dashboards.
+
+def docker_images = [
+    "linux": "opensearchorg/opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1",
+    "windows": "opensearchorg/opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1"
+]
+
+def docker_args = [
+    "linux": "-u root -v /var/run/docker.sock:/var/run/docker.sock",
+    "windows": "-u ContainerAdministrator -v //./pipe/docker_engine://./pipe/docker_engine"
+]
+
+def agent_nodes = [
+    "linux": "Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder",
+    "windows": "Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Builder",
+]
+
+def secret_dockerhub_staging = [
+    [envVar: 'DOCKER_USERNAME', secretRef: 'op://opensearch-release-secrets/dockerhub-staging-credentials/username'],
+    [envVar: 'DOCKER_PASSWORD', secretRef: 'op://opensearch-release-secrets/dockerhub-staging-credentials/password']
+]
+
+pipeline {
+    options {
+        timeout(time: 6, unit: 'HOURS')
+    }
+    agent none
+    parameters {
+        string(
+            defaultValue: 'https://github.com/opensearch-project/opensearch-build',
+            name: 'DOCKER_BUILD_GIT_REPOSITORY',
+            description: '<Optional> The git repository name that contains dockerfiles and the docker build script.',
+            trim: true
+        )
+        string(
+            defaultValue: 'main',
+            name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE',
+            description: '<Optional> The git reference (branch/tag/commit_id) of above repository.',
+            trim: true
+        )
+        string(
+            name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS',
+            description: '<Required> The script path of the docker build script, assuming you are already in root dir of DOCKER_BUILD_GIT_REPOSITORY. Example: cd docker/ci && bash build-image-multi-arch.sh -r <REPO_NAME> -v <TAG_NAME> -f <DOCKERFILE PATH> -a <(Optional, default to amd64+arm64) linux/amd64,linux/arm64,linux/ppc64le>',
+            trim: true
+        )
+        choice(
+            name: 'DOCKER_BUILD_OS',
+            description: '<Optional> Build docker image on which operating system. Defaults to linux.',
+            choices: ['linux', 'windows'],
+        )
+    }
+    stages {
+        stage('Parameters Check') {
+            steps {
+                script {
+                    if (! DOCKER_BUILD_GIT_REPOSITORY.startsWith('https://github.com/opensearch-project/')) {
+                        currentBuild.result = 'ABORTED'
+                        error('The repository needs to be an opensearch-project repository')
+                    }
+                }
+            }
+        }
+        stage('docker-build') {
+            agent {
+                docker {
+                    label agent_nodes["${DOCKER_BUILD_OS}"]
+                    image docker_images["${DOCKER_BUILD_OS}"]
+                    args docker_args["${DOCKER_BUILD_OS}"]
+                    registryUrl 'https://public.ecr.aws/'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    echo 'The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories'
+                    checkout([$class: 'GitSCM', branches: [[name: "${DOCKER_BUILD_GIT_REPOSITORY_REFERENCE}" ]], userRemoteConfigs: [[url: "${DOCKER_BUILD_GIT_REPOSITORY}" ]]])
+                    echo "Account: dockerhub staging"
+                    withSecrets(secrets: secret_dockerhub_staging){
+                        if (isUnix()){
+                            sh """
+                                set -e
+                                set +x
+                                docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
+                            """
+                        } else {
+                            bat"""
+                                bash -c "set -e && set +x && docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS"
+                            """
+                        }
+                    }
+                }
+            }
+            post() {
+                always {
+                    script {
+                        cleanWs disableDeferredWipeout: true, deleteDirs: true
+                        if (isUnix()){
+                            sh("docker logout && docker image prune -f --all")
+                        } else {
+                            bat"""
+                                bash -c "docker logout && docker image prune -f --all"
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
