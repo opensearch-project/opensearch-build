@@ -18,10 +18,10 @@ class TestInputManifests(unittest.TestCase):
         self.assertTrue(len(self.manifests))
 
     def test_3_0_plus(self) -> None:
-        manifest = self.manifests["3.5.0"]
+        manifest = self.manifests["3.8.0"]
         self.assertIsNotNone(manifest)
         self.assertEqual(manifest.version, "1.2")
-        self.assertEqual(manifest.build.version, "3.5.0")
+        self.assertEqual(manifest.build.version, "3.8.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.filename, "opensearch")
 
