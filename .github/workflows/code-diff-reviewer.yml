@@ -73,7 +73,7 @@ jobs:
         # Temporary fix due to pr-agent not lock to the specific docker image in github tag
         # Causing PRs like this to break bedrock integration:
         # https://github.com/qodo-ai/pr-agent/pull/2278
-        uses: peterzhuamazon/pr-agent@968a89d95bc777bbcda7ff143c1f26921d0275d4  # v0.34.3
+        uses: peterzhuamazon/pr-agent@a7242590efd34e0c424cc5cffc6cc0fc9a338cb9 # v0.36.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           github_action_config.auto_review: true
@@ -99,5 +99,5 @@ jobs:
           pr_code_suggestions.allow_thumbs_up_down: true
           pr_code_suggestions.publish_output_no_suggestions: false  # avoid comment even if there is no suggestions
           config.max_model_tokens: 50000
-          config.model: 'bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0'
-          config.fallback_models: '["bedrock/us.anthropic.claude-sonnet-4-6"]'
+          config.model: 'bedrock/us.anthropic.claude-sonnet-4-6'
+          config.fallback_models: '["bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0"]'
