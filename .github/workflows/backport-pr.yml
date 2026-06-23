@@ -27,9 +27,11 @@ jobs:
           echo "PR labels: $labels"
           branches="[]"
           for label in $labels; do
-            if [[ "$label" =~ ^backport\ [^\ ]+$ ]]; then
+            if [[ "$label" =~ ^backport\ [a-zA-Z0-9._/\-]+$ ]]; then
               branch="${label#backport }"
               branches=$(echo "$branches" | jq --arg b "$branch" '. + [$b]')
+            elif [[ "$label" == backport* ]]; then
+              echo "::warning::Invalid backport label format: '$label'. Expected 'backport <branch>' with alphanumeric, dot, slash, dash, or underscore characters."
             fi
           done
           echo "branches=$branches" >> $GITHUB_OUTPUT
@@ -56,32 +58,39 @@ jobs:
         run: |
           git config user.name "opensearch-ci-bot"
           git config user.email "opensearch-infra@amazon.com"
-          BACKPORT_BRANCH="backport/backport-${{ github.event.pull_request.number }}-to-${{ matrix.branch }}"
+          BACKPORT_BRANCH="backport/backport-${PR_NUMBER}-to-${BASE_BRANCH}"
           git checkout -b "$BACKPORT_BRANCH"
-          PARENT_COUNT=$(git cat-file -p ${{ github.event.pull_request.merge_commit_sha }} | grep -c '^parent')
+          PARENT_COUNT=$(git cat-file -p "$MERGE_COMMIT_SHA" | grep -c '^parent')
           if [ "$PARENT_COUNT" -gt 1 ]; then
-            echo "::error::PR #${{ github.event.pull_request.number }} was not squash-merged (merge commit has $PARENT_COUNT parents). Automatic backport is only supported for squash merges."
+            echo "::error::PR #${PR_NUMBER} was not squash-merged (merge commit has $PARENT_COUNT parents). Automatic backport is only supported for squash merges."
             exit 1
           fi
-          git cherry-pick -x --signoff ${{ github.event.pull_request.merge_commit_sha }}
-          git remote add fork "https://x-access-token:${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}@github.com/opensearch-ci-bot/${{ github.event.repository.name }}.git"
+          git cherry-pick -x --signoff "$MERGE_COMMIT_SHA"
+          git remote add fork "https://x-access-token:${GH_TOKEN}@github.com/opensearch-ci-bot/${REPO_NAME}.git"
           git push fork "$BACKPORT_BRANCH"
           gh pr create \
             --repo "${{ github.repository }}" \
-            --base "${{ matrix.branch }}" \
+            --base "$BASE_BRANCH" \
             --head "opensearch-ci-bot:${BACKPORT_BRANCH}" \
-            --title "[Backport ${{ matrix.branch }}] ${{ github.event.pull_request.title }}" \
-            --body "Backport ${{ github.event.pull_request.merge_commit_sha }} from #${{ github.event.pull_request.number }}."
+            --title "[Backport ${BASE_BRANCH}] ${PR_TITLE}" \
+            --body "Backport ${MERGE_COMMIT_SHA} from #${PR_NUMBER}."
         env:
           GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          BASE_BRANCH: ${{ matrix.branch }}
+          REPO_NAME: ${{ github.event.repository.name }}
 
       - name: Comment on failure
         if: failure()
         run: |
-          gh issue comment ${{ github.event.pull_request.number }} \
+          gh issue comment "$PR_NUMBER" \
             --repo "${{ github.repository }}" \
-            --body "The backport to \`${{ matrix.branch }}\` failed. Please backport manually.
+            --body "The backport to \`${BASE_BRANCH}\` failed. Please backport manually.
 
           See failed workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         env:
           GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_BRANCH: ${{ matrix.branch }}
