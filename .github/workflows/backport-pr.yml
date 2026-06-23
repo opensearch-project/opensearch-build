@@ -67,7 +67,7 @@ jobs:
           fi
           git cherry-pick -x --signoff "$MERGE_COMMIT_SHA"
           git remote add fork "https://x-access-token:${GH_TOKEN}@github.com/opensearch-ci-bot/${REPO_NAME}.git"
-          git push fork "$BACKPORT_BRANCH"
+          git push --force fork "$BACKPORT_BRANCH"
           gh pr create \
             --repo "${{ github.repository }}" \
             --base "$BASE_BRANCH" \
