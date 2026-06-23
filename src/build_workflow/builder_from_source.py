@@ -54,7 +54,7 @@ class BuilderFromSource(Builder):
         )
 
         self.git_repo.execute(build_command)
-        build_recorder.record_component(self.component.name, self.git_repo)
+        build_recorder.record_component(self.component.name, self.git_repo, self.component.optional)
 
     def export_artifacts(self, build_recorder: BuildRecorder) -> None:
         artifacts_path = os.path.join(self.git_repo.working_directory, self.output_path)

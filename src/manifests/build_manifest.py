@@ -83,6 +83,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
                     "ref": {"required": True, "type": "string"},
                     "repository": {"required": True, "type": "string"},
                     "version": {"required": True, "type": "string"},
+                    "optional": {"type": "boolean", "nullable": True},
                 },
             },
         },
@@ -138,6 +139,8 @@ class BuildComponent(Component):
         self.commit_id = data["commit_id"]
         self.artifacts = data.get("artifacts", {})
         self.version = data["version"]
+        # When true, the component is built and may be tested but not bundled into the distribution.
+        self.optional = data.get("optional", None)
 
     def __to_dict__(self) -> dict:
         return {
@@ -147,6 +150,7 @@ class BuildComponent(Component):
             "commit_id": self.commit_id,
             "artifacts": self.artifacts,
             "version": self.version,
+            "optional": self.optional,
         }
 
 
