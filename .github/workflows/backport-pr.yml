@@ -1,0 +1,87 @@
+---
+name: Backport PR
+on:
+  workflow_call:
+    secrets:
+      OPENSEARCH_CI_BOT_TOKEN:
+        required: true
+
+jobs:
+  Get-Backport-Branches:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    outputs:
+      branches: ${{ steps.parse.outputs.branches }}
+    steps:
+      - name: Verify event
+        run: |
+          if [[ "${{ github.event_name }}" != "pull_request_target" ]]; then
+            echo "::error::This workflow only supports pull_request_target events, got '${{ github.event_name }}'"
+            exit 1
+          fi
+
+      - name: Parse backport labels
+        id: parse
+        run: |
+          labels=$(echo '${{ toJSON(github.event.pull_request.labels.*.name) }}' | jq -r '.[]')
+          echo "PR labels: $labels"
+          branches="[]"
+          for label in $labels; do
+            if [[ "$label" =~ ^backport\ [^\ ]+$ ]]; then
+              branch="${label#backport }"
+              branches=$(echo "$branches" | jq --arg b "$branch" '. + [$b]')
+            fi
+          done
+          echo "branches=$branches" >> $GITHUB_OUTPUT
+          echo "Backport target branches: $branches"
+
+  Backport:
+    needs: Get-Backport-Branches
+    if: needs.Get-Backport-Branches.outputs.branches != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: ${{ fromJSON(needs.Get-Backport-Branches.outputs.branches) }}
+    timeout-minutes: 10
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          ref: ${{ matrix.branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Cherry-pick and create backport PR
+        run: |
+          git config user.name "opensearch-ci-bot"
+          git config user.email "opensearch-infra@amazon.com"
+          BACKPORT_BRANCH="backport/backport-${{ github.event.pull_request.number }}-to-${{ matrix.branch }}"
+          git checkout -b "$BACKPORT_BRANCH"
+          PARENT_COUNT=$(git cat-file -p ${{ github.event.pull_request.merge_commit_sha }} | grep -c '^parent')
+          if [ "$PARENT_COUNT" -gt 1 ]; then
+            echo "::error::PR #${{ github.event.pull_request.number }} was not squash-merged (merge commit has $PARENT_COUNT parents). Automatic backport is only supported for squash merges."
+            exit 1
+          fi
+          git cherry-pick -x --signoff ${{ github.event.pull_request.merge_commit_sha }}
+          git remote add fork "https://x-access-token:${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}@github.com/opensearch-ci-bot/${{ github.event.repository.name }}.git"
+          git push fork "$BACKPORT_BRANCH"
+          gh pr create \
+            --repo "${{ github.repository }}" \
+            --base "${{ matrix.branch }}" \
+            --head "opensearch-ci-bot:${BACKPORT_BRANCH}" \
+            --title "[Backport ${{ matrix.branch }}] ${{ github.event.pull_request.title }}" \
+            --body "Backport ${{ github.event.pull_request.merge_commit_sha }} from #${{ github.event.pull_request.number }}."
+        env:
+          GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+
+      - name: Comment on failure
+        if: failure()
+        run: |
+          gh issue comment ${{ github.event.pull_request.number }} \
+            --repo "${{ github.repository }}" \
+            --body "The backport to \`${{ matrix.branch }}\` failed. Please backport manually.
+
+          See failed workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        env:
+          GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
