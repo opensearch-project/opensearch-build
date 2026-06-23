@@ -61,6 +61,7 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
                     "name": {"required": True, "type": "string"},
                     "ref": {"required": True, "type": "string"},
                     "repository": {"required": True, "type": "string"},
+                    "optional": {"type": "boolean"},
                 },
             },
         },
@@ -117,6 +118,8 @@ class BundleComponent(Component):
         self.ref = data["ref"]
         self.commit_id = data["commit_id"]
         self.location = data.get("location", None)
+        # When true, the component was built and may be tested but was not bundled into the distribution.
+        self.optional = data.get("optional", None)
 
     def __to_dict__(self) -> dict:
         return {
@@ -124,7 +127,8 @@ class BundleComponent(Component):
             "repository": self.repository,
             "ref": self.ref,
             "commit_id": self.commit_id,
-            "location": self.location
+            "location": self.location,
+            "optional": self.optional
         }
 
 
