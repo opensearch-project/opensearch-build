@@ -53,8 +53,10 @@ jobs:
           ref: ${{ matrix.branch }}
           fetch-depth: 0
           persist-credentials: false
+          path: backport-repo
 
       - name: Cherry-pick and create backport PR
+        working-directory: backport-repo
         run: |
           git config user.name "opensearch-ci-bot"
           git config user.email "opensearch-infra@amazon.com"
@@ -81,6 +83,10 @@ jobs:
           MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
           BASE_BRANCH: ${{ matrix.branch }}
           REPO_NAME: ${{ github.event.repository.name }}
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf backport-repo
 
       - name: Comment on failure
         if: failure()
