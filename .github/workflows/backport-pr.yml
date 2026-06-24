@@ -3,6 +3,16 @@ name: Backport PR
 on:
   workflow_call:
     inputs:
+      backport_user_name:
+        description: 'GitHub user/org that owns the fork to push backport branches to'
+        type: string
+        default: 'opensearch-ci-bot'
+        required: false
+      backport_user_email:
+        description: 'Email address used for git commit identity'
+        type: string
+        default: 'opensearch-infra@amazon.com'
+        required: false
       delete_branch:
         description: 'Delete the backport branch on the fork after the backport PR is merged'
         type: boolean
@@ -63,13 +73,9 @@ jobs:
       - name: Cherry-pick and create backport PR
         working-directory: backport-repo
         run: |
-          git config user.name "opensearch-ci-bot"
-          git config user.email "opensearch-infra@amazon.com"
+          git config user.name "$BACKPORT_USER_NAME"
+          git config user.email "$BACKPORT_USER_EMAIL"
           BACKPORT_BRANCH="backport/backport-${PR_NUMBER}-to-${BASE_BRANCH}"
-          if gh pr list --repo "$GITHUB_REPO" --head "${BACKPORT_BRANCH}" --state open --json number,headRepositoryOwner --jq '.[] | select(.headRepositoryOwner.login=="opensearch-ci-bot") | .number' | grep -q .; then
-            echo "Backport PR for ${BACKPORT_BRANCH} already exists, skipping."
-            exit 0
-          fi
           git checkout -b "$BACKPORT_BRANCH"
           if [ -z "$MERGE_COMMIT_SHA" ]; then
             echo "::error::merge_commit_sha is empty for PR #${PR_NUMBER}; cannot backport."
@@ -82,13 +88,13 @@ jobs:
             exit 1
           fi
           git cherry-pick -x --signoff "$MERGE_COMMIT_SHA"
-          git remote add fork "https://github.com/opensearch-ci-bot/${REPO_NAME}.git"
+          git remote add fork "https://github.com/${BACKPORT_USER_NAME}/${REPO_NAME}.git"
           gh auth setup-git
           git push --force fork "$BACKPORT_BRANCH"
           gh pr create \
             --repo "$GITHUB_REPO" \
             --base "$BASE_BRANCH" \
-            --head "opensearch-ci-bot:${BACKPORT_BRANCH}" \
+            --head "${BACKPORT_USER_NAME}:${BACKPORT_BRANCH}" \
             --title "[Backport ${BASE_BRANCH}] ${PR_TITLE}" \
             --body "Backport ${MERGE_COMMIT_SHA} from #${PR_NUMBER}."
         env:
@@ -99,6 +105,8 @@ jobs:
           BASE_BRANCH: ${{ matrix.branch }}
           REPO_NAME: ${{ github.event.repository.name }}
           GITHUB_REPO: ${{ github.repository }}
+          BACKPORT_USER_NAME: ${{ inputs.backport_user_name }}
+          BACKPORT_USER_EMAIL: ${{ inputs.backport_user_email }}
 
       - name: Cleanup
         if: always()
@@ -124,11 +132,12 @@ jobs:
       github.event.action == 'closed' &&
       github.event.pull_request.merged == true &&
       startsWith(github.event.pull_request.head.ref, 'backport/') &&
-      github.event.pull_request.head.repo.owner.login == 'opensearch-ci-bot'
+      github.event.pull_request.head.repo.owner.login == inputs.backport_user_name
     steps:
       - name: Delete branch on fork
-        run: gh api -X DELETE "repos/opensearch-ci-bot/${REPO_NAME}/git/refs/heads/${BRANCH_NAME}"
+        run: gh api -X DELETE "repos/${BACKPORT_USER_NAME}/${REPO_NAME}/git/refs/heads/${BRANCH_NAME}"
         env:
           GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
           REPO_NAME: ${{ github.event.repository.name }}
           BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+          BACKPORT_USER_NAME: ${{ inputs.backport_user_name }}
