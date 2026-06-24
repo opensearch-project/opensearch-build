@@ -60,7 +60,7 @@ jobs:
           git config user.name "opensearch-ci-bot"
           git config user.email "opensearch-infra@amazon.com"
           BACKPORT_BRANCH="backport/backport-${PR_NUMBER}-to-${BASE_BRANCH}"
-          if gh pr list --repo "$GITHUB_REPO" --head "opensearch-ci-bot:${BACKPORT_BRANCH}" --state open --json number --jq '.[0].number' | grep -q .; then
+          if gh pr list --repo "$GITHUB_REPO" --head "${BACKPORT_BRANCH}" --state open --json number,headRepositoryOwner --jq '.[] | select(.headRepositoryOwner.login=="opensearch-ci-bot") | .number' | grep -q .; then
             echo "Backport PR for ${BACKPORT_BRANCH} already exists, skipping."
             exit 0
           fi
@@ -69,6 +69,7 @@ jobs:
             echo "::error::merge_commit_sha is empty for PR #${PR_NUMBER}; cannot backport."
             exit 1
           fi
+          git fetch origin "$MERGE_COMMIT_SHA"
           PARENT_COUNT=$(git cat-file -p "$MERGE_COMMIT_SHA" | grep -c '^parent')
           if [ "$PARENT_COUNT" -gt 1 ]; then
             echo "::error::PR #${PR_NUMBER} was not squash-merged (merge commit has $PARENT_COUNT parents). Automatic backport is only supported for squash merges."
@@ -76,7 +77,8 @@ jobs:
           fi
           git cherry-pick -x --signoff "$MERGE_COMMIT_SHA"
           git remote add fork "https://github.com/opensearch-ci-bot/${REPO_NAME}.git"
-          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push --force fork "$BACKPORT_BRANCH"
+          gh auth setup-git
+          git push --force fork "$BACKPORT_BRANCH"
           gh pr create \
             --repo "$GITHUB_REPO" \
             --base "$BASE_BRANCH" \
