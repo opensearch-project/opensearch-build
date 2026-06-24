@@ -60,7 +60,15 @@ jobs:
           git config user.name "opensearch-ci-bot"
           git config user.email "opensearch-infra@amazon.com"
           BACKPORT_BRANCH="backport/backport-${PR_NUMBER}-to-${BASE_BRANCH}"
+          if gh pr list --repo "$GITHUB_REPO" --head "opensearch-ci-bot:${BACKPORT_BRANCH}" --state open --json number --jq '.[0].number' | grep -q .; then
+            echo "Backport PR for ${BACKPORT_BRANCH} already exists, skipping."
+            exit 0
+          fi
           git checkout -b "$BACKPORT_BRANCH"
+          if [ -z "$MERGE_COMMIT_SHA" ]; then
+            echo "::error::merge_commit_sha is empty for PR #${PR_NUMBER}; cannot backport."
+            exit 1
+          fi
           PARENT_COUNT=$(git cat-file -p "$MERGE_COMMIT_SHA" | grep -c '^parent')
           if [ "$PARENT_COUNT" -gt 1 ]; then
             echo "::error::PR #${PR_NUMBER} was not squash-merged (merge commit has $PARENT_COUNT parents). Automatic backport is only supported for squash merges."
@@ -68,17 +76,13 @@ jobs:
           fi
           git cherry-pick -x --signoff "$MERGE_COMMIT_SHA"
           git remote add fork "https://github.com/opensearch-ci-bot/${REPO_NAME}.git"
-          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64)" push --force fork "$BACKPORT_BRANCH"
-          if gh pr list --repo "${{ github.repository }}" --head "opensearch-ci-bot:${BACKPORT_BRANCH}" --state open --json number --jq '.[0].number' | grep -q .; then
-            echo "Backport PR for ${BACKPORT_BRANCH} already exists, skipping creation."
-          else
-            gh pr create \
-              --repo "${{ github.repository }}" \
-              --base "$BASE_BRANCH" \
-              --head "opensearch-ci-bot:${BACKPORT_BRANCH}" \
-              --title "[Backport ${BASE_BRANCH}] ${PR_TITLE}" \
-              --body "Backport ${MERGE_COMMIT_SHA} from #${PR_NUMBER}."
-          fi
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" push --force fork "$BACKPORT_BRANCH"
+          gh pr create \
+            --repo "$GITHUB_REPO" \
+            --base "$BASE_BRANCH" \
+            --head "opensearch-ci-bot:${BACKPORT_BRANCH}" \
+            --title "[Backport ${BASE_BRANCH}] ${PR_TITLE}" \
+            --body "Backport ${MERGE_COMMIT_SHA} from #${PR_NUMBER}."
         env:
           GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -86,6 +90,7 @@ jobs:
           MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
           BASE_BRANCH: ${{ matrix.branch }}
           REPO_NAME: ${{ github.event.repository.name }}
+          GITHUB_REPO: ${{ github.repository }}
 
       - name: Cleanup
         if: always()
@@ -95,11 +100,12 @@ jobs:
         if: failure()
         run: |
           gh issue comment "$PR_NUMBER" \
-            --repo "${{ github.repository }}" \
+            --repo "$GITHUB_REPO" \
             --body "The backport to \`${BASE_BRANCH}\` failed. Please backport manually.
 
-          See failed workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          See failed workflow run: https://github.com/${GITHUB_REPO}/actions/runs/${{ github.run_id }}"
         env:
           GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           BASE_BRANCH: ${{ matrix.branch }}
+          GITHUB_REPO: ${{ github.repository }}
