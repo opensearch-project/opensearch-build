@@ -1,0 +1,145 @@
+---
+name: Backport PR
+on:
+  workflow_call:
+    inputs:
+      backport_user_name:
+        description: 'GitHub user/org that owns the fork to push backport branches to'
+        type: string
+        default: 'opensearch-ci-bot'
+        required: false
+      backport_user_email:
+        description: 'Email address used for git commit identity'
+        type: string
+        default: 'opensearch-infra@amazon.com'
+        required: false
+      delete_branch:
+        description: 'Delete the backport branch on the fork after the backport PR is merged'
+        type: boolean
+        default: true
+        required: false
+    secrets:
+      OPENSEARCH_CI_BOT_TOKEN:
+        required: true
+
+jobs:
+  Get-Backport-Branches:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    timeout-minutes: 5
+    outputs:
+      branches: ${{ steps.parse.outputs.branches }}
+    steps:
+      - name: Verify event
+        run: |
+          if [[ "$EVENT_NAME" != "pull_request_target" ]]; then
+            echo "::error::This workflow only supports pull_request_target events, got '$EVENT_NAME'"
+            exit 1
+          fi
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+
+      - name: Parse backport labels
+        id: parse
+        run: |
+          echo "PR labels: $LABELS"
+          branches=$(echo "$LABELS" | jq -c '[.[] | select(test("^backport [a-zA-Z0-9._/\\-]+$")) | sub("^backport "; "")]')
+          echo "branches=$branches" >> $GITHUB_OUTPUT
+          echo "Backport target branches: $branches"
+          invalid=$(echo "$LABELS" | jq -r '.[] | select(startswith("backport ")) | select(test("^backport [a-zA-Z0-9._/\\-]+$") | not)')
+          if [ -n "$invalid" ]; then
+            echo "::warning::Invalid backport labels found: $invalid"
+          fi
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+
+  Backport:
+    needs: Get-Backport-Branches
+    if: needs.Get-Backport-Branches.outputs.branches != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: ${{ fromJSON(needs.Get-Backport-Branches.outputs.branches) }}
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          ref: ${{ matrix.branch }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: backport-repo
+
+      - name: Cherry-pick and create backport PR
+        working-directory: backport-repo
+        run: |
+          git config user.name "$BACKPORT_USER_NAME"
+          git config user.email "$BACKPORT_USER_EMAIL"
+          BACKPORT_BRANCH="backport/backport-${PR_NUMBER}-to-${BASE_BRANCH}"
+          git checkout -b "$BACKPORT_BRANCH"
+          if [ -z "$MERGE_COMMIT_SHA" ]; then
+            echo "::error::merge_commit_sha is empty for PR #${PR_NUMBER}; cannot backport."
+            exit 1
+          fi
+          git fetch origin "$MERGE_COMMIT_SHA"
+          PARENT_COUNT=$(git cat-file -p "$MERGE_COMMIT_SHA" | grep -c '^parent')
+          if [ "$PARENT_COUNT" -gt 1 ]; then
+            echo "::error::PR #${PR_NUMBER} was not squash-merged (merge commit has $PARENT_COUNT parents). Automatic backport is only supported for squash merges."
+            exit 1
+          fi
+          git cherry-pick -x --signoff "$MERGE_COMMIT_SHA"
+          git remote add fork "https://github.com/${BACKPORT_USER_NAME}/${REPO_NAME}.git"
+          gh auth setup-git
+          git push --force fork "$BACKPORT_BRANCH"
+          gh pr create \
+            --repo "$GITHUB_REPO" \
+            --base "$BASE_BRANCH" \
+            --head "${BACKPORT_USER_NAME}:${BACKPORT_BRANCH}" \
+            --title "[Backport ${BASE_BRANCH}] ${PR_TITLE}" \
+            --body "Backport ${MERGE_COMMIT_SHA} from #${PR_NUMBER}."
+        env:
+          GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          BASE_BRANCH: ${{ matrix.branch }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          GITHUB_REPO: ${{ github.repository }}
+          BACKPORT_USER_NAME: ${{ inputs.backport_user_name }}
+          BACKPORT_USER_EMAIL: ${{ inputs.backport_user_email }}
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf backport-repo
+
+      - name: Comment on failure
+        if: failure()
+        run: |
+          gh issue comment "$PR_NUMBER" \
+            --repo "$GITHUB_REPO" \
+            --body "The backport to \`${BASE_BRANCH}\` failed. Please backport manually. See failed workflow run: https://github.com/${GITHUB_REPO}/actions/runs/${GITHUB_RUN_ID}"
+        env:
+          GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_BRANCH: ${{ matrix.branch }}
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+
+  Delete-Backport-Branch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: |
+      inputs.delete_branch &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'backport/') &&
+      github.event.pull_request.head.repo.owner.login == inputs.backport_user_name
+    steps:
+      - name: Delete branch on fork
+        run: gh api -X DELETE "repos/${BACKPORT_USER_NAME}/${REPO_NAME}/git/refs/heads/${BRANCH_NAME}"
+        env:
+          GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+          BACKPORT_USER_NAME: ${{ inputs.backport_user_name }}
