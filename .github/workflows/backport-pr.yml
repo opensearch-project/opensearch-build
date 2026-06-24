@@ -15,10 +15,12 @@ jobs:
     steps:
       - name: Verify event
         run: |
-          if [[ "${{ github.event_name }}" != "pull_request_target" ]]; then
-            echo "::error::This workflow only supports pull_request_target events, got '${{ github.event_name }}'"
+          if [[ "$EVENT_NAME" != "pull_request_target" ]]; then
+            echo "::error::This workflow only supports pull_request_target events, got '$EVENT_NAME'"
             exit 1
           fi
+        env:
+          EVENT_NAME: ${{ github.event_name }}
 
       - name: Parse backport labels
         id: parse
@@ -65,14 +67,18 @@ jobs:
             exit 1
           fi
           git cherry-pick -x --signoff "$MERGE_COMMIT_SHA"
-          git remote add fork "https://x-access-token:${GH_TOKEN}@github.com/opensearch-ci-bot/${REPO_NAME}.git"
-          git push --force fork "$BACKPORT_BRANCH"
-          gh pr create \
-            --repo "${{ github.repository }}" \
-            --base "$BASE_BRANCH" \
-            --head "opensearch-ci-bot:${BACKPORT_BRANCH}" \
-            --title "[Backport ${BASE_BRANCH}] ${PR_TITLE}" \
-            --body "Backport ${MERGE_COMMIT_SHA} from #${PR_NUMBER}."
+          git remote add fork "https://github.com/opensearch-ci-bot/${REPO_NAME}.git"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64)" push --force fork "$BACKPORT_BRANCH"
+          if gh pr list --repo "${{ github.repository }}" --head "opensearch-ci-bot:${BACKPORT_BRANCH}" --state open --json number --jq '.[0].number' | grep -q .; then
+            echo "Backport PR for ${BACKPORT_BRANCH} already exists, skipping creation."
+          else
+            gh pr create \
+              --repo "${{ github.repository }}" \
+              --base "$BASE_BRANCH" \
+              --head "opensearch-ci-bot:${BACKPORT_BRANCH}" \
+              --title "[Backport ${BASE_BRANCH}] ${PR_TITLE}" \
+              --body "Backport ${MERGE_COMMIT_SHA} from #${PR_NUMBER}."
+          fi
         env:
           GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
