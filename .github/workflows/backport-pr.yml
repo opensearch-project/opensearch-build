@@ -23,19 +23,16 @@ jobs:
       - name: Parse backport labels
         id: parse
         run: |
-          labels=$(echo '${{ toJSON(github.event.pull_request.labels.*.name) }}' | jq -r '.[]')
-          echo "PR labels: $labels"
-          branches="[]"
-          for label in $labels; do
-            if [[ "$label" =~ ^backport\ [a-zA-Z0-9._/\-]+$ ]]; then
-              branch="${label#backport }"
-              branches=$(echo "$branches" | jq --arg b "$branch" '. + [$b]')
-            elif [[ "$label" == backport* ]]; then
-              echo "::warning::Invalid backport label format: '$label'. Expected 'backport <branch>' with alphanumeric, dot, slash, dash, or underscore characters."
-            fi
-          done
+          echo "PR labels: $LABELS"
+          branches=$(echo "$LABELS" | jq -c '[.[] | select(test("^backport [a-zA-Z0-9._/\\-]+$")) | sub("^backport "; "")]')
           echo "branches=$branches" >> $GITHUB_OUTPUT
           echo "Backport target branches: $branches"
+          invalid=$(echo "$LABELS" | jq -r '.[] | select(startswith("backport")) | select(test("^backport [a-zA-Z0-9._/\\-]+$") | not)')
+          if [ -n "$invalid" ]; then
+            echo "::warning::Invalid backport labels found: $invalid"
+          fi
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
 
   Backport:
     needs: Get-Backport-Branches
