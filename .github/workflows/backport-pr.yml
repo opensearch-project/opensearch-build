@@ -103,11 +103,10 @@ jobs:
         run: |
           gh issue comment "$PR_NUMBER" \
             --repo "$GITHUB_REPO" \
-            --body "The backport to \`${BASE_BRANCH}\` failed. Please backport manually.
-
-          See failed workflow run: https://github.com/${GITHUB_REPO}/actions/runs/${{ github.run_id }}"
+            --body "The backport to \`${BASE_BRANCH}\` failed. Please backport manually. See failed workflow run: https://github.com/${GITHUB_REPO}/actions/runs/${GITHUB_RUN_ID}"
         env:
           GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           BASE_BRANCH: ${{ matrix.branch }}
           GITHUB_REPO: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
