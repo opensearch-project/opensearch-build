@@ -42,16 +42,23 @@ jobs:
       - name: Parse backport labels
         id: parse
         run: |
-          echo "PR labels: $LABELS"
-          branches=$(echo "$LABELS" | jq -c '[.[] | select(test("^backport [a-zA-Z0-9._/\\-]+$")) | sub("^backport "; "")]')
+          if [ "$EVENT_ACTION" = "labeled" ]; then
+            PARSE_LABELS=$(jq -nc --arg l "$SINGLE_LABEL" '[$l]')
+          else
+            PARSE_LABELS="$LABELS"
+          fi
+          echo "PR labels to process: $PARSE_LABELS"
+          branches=$(echo "$PARSE_LABELS" | jq -c '[.[] | select(test("^backport [a-zA-Z0-9._/\\-]+$")) | sub("^backport "; "")]')
           echo "branches=$branches" >> $GITHUB_OUTPUT
           echo "Backport target branches: $branches"
-          invalid=$(echo "$LABELS" | jq -r '.[] | select(startswith("backport ")) | select(test("^backport [a-zA-Z0-9._/\\-]+$") | not)')
+          invalid=$(echo "$PARSE_LABELS" | jq -r '.[] | select(startswith("backport ")) | select(test("^backport [a-zA-Z0-9._/\\-]+$") | not)')
           if [ -n "$invalid" ]; then
             echo "::warning::Invalid backport labels found: $invalid"
           fi
         env:
           LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          SINGLE_LABEL: ${{ github.event.label.name }}
+          EVENT_ACTION: ${{ github.event.action }}
 
   Backport:
     needs: Get-Backport-Branches
