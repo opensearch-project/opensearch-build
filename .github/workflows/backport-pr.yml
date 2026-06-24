@@ -43,6 +43,10 @@ jobs:
         id: parse
         run: |
           if [ "$EVENT_ACTION" = "labeled" ]; then
+            if [ -z "$SINGLE_LABEL" ]; then
+              echo "::error::Labeled event received but label name is empty"
+              exit 1
+            fi
             PARSE_LABELS=$(jq -nc --arg l "$SINGLE_LABEL" '[$l]')
           else
             PARSE_LABELS="$LABELS"
