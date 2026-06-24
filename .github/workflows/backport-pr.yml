@@ -26,6 +26,7 @@ jobs:
   Get-Backport-Branches:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
+    timeout-minutes: 5
     outputs:
       branches: ${{ steps.parse.outputs.branches }}
     steps:
@@ -127,6 +128,7 @@ jobs:
 
   Delete-Backport-Branch:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: |
       inputs.delete_branch &&
       github.event.action == 'closed' &&
