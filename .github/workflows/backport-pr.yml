@@ -46,7 +46,7 @@ jobs:
           branches=$(echo "$LABELS" | jq -c '[.[] | select(test("^backport [a-zA-Z0-9._/\\-]+$")) | sub("^backport "; "")]')
           echo "branches=$branches" >> $GITHUB_OUTPUT
           echo "Backport target branches: $branches"
-          invalid=$(echo "$LABELS" | jq -r '.[] | select(startswith("backport")) | select(test("^backport [a-zA-Z0-9._/\\-]+$") | not)')
+          invalid=$(echo "$LABELS" | jq -r '.[] | select(startswith("backport ")) | select(test("^backport [a-zA-Z0-9._/\\-]+$") | not)')
           if [ -n "$invalid" ]; then
             echo "::warning::Invalid backport labels found: $invalid"
           fi
