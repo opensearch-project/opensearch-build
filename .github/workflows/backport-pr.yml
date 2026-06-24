@@ -2,6 +2,12 @@
 name: Backport PR
 on:
   workflow_call:
+    inputs:
+      delete_branch:
+        description: 'Delete the backport branch on the fork after the backport PR is merged'
+        type: boolean
+        default: true
+        required: false
     secrets:
       OPENSEARCH_CI_BOT_TOKEN:
         required: true
@@ -110,3 +116,19 @@ jobs:
           BASE_BRANCH: ${{ matrix.branch }}
           GITHUB_REPO: ${{ github.repository }}
           GITHUB_RUN_ID: ${{ github.run_id }}
+
+  Delete-Backport-Branch:
+    runs-on: ubuntu-latest
+    if: |
+      inputs.delete_branch &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'backport/') &&
+      github.event.pull_request.head.repo.owner.login == 'opensearch-ci-bot'
+    steps:
+      - name: Delete branch on fork
+        run: gh api -X DELETE "repos/opensearch-ci-bot/${REPO_NAME}/git/refs/heads/${BRANCH_NAME}"
+        env:
+          GH_TOKEN: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
