@@ -57,13 +57,13 @@ class TestDockerBuild extends BuildPipelineTest {
 
     @Test
     void DockerBuildRegression() {
-        super.testPipeline('jenkins/docker/docker-build.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/docker/docker-build.jenkinsfile')
+        super.testPipeline('jenkins/docker/docker-build-lf.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/docker/docker-build-lf.jenkinsfile')
     }
 
     @Test
     public void DockerBuildExecuteWithoutErrors() {
-        runScript("jenkins/docker/docker-build.jenkinsfile")
+        runScript("jenkins/docker/docker-build-lf.jenkinsfile")
 
         assertJobStatusSuccess()
 
@@ -74,10 +74,10 @@ class TestDockerBuild extends BuildPipelineTest {
         assertThat(dockerLoginCommand.size(), equalTo(1))
 
         // Validate the docker-build.sh is called with correct predefined credential
-        assertCallStack().contains("docker-build.echo(Account: dockerhub staging)")
+        assertCallStack().contains("docker-build-lf.echo(Account: dockerhub staging)")
 
         // Make sure dockerBuildOS is deciding agent_node docker_nodes docker_args correctly
-        assertCallStack().contains("docker-build.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])")
+        assertCallStack().contains("docker-build-lf.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder, image:opensearchorg/opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])")
 
         printCallStack()
     }

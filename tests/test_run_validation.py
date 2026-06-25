@@ -37,6 +37,12 @@ class TestRunValidation(unittest.TestCase):
         result = main()
         self.assertEqual(result, 0)
 
+    @patch("argparse._sys.argv", ["run_validation.py", "--version", "2.1.0", "--distribution", "tar", "--skip-core-plugins"])
+    @patch('run_validation.ValidationTestRunner')
+    def test_main_skip_all_plugins(self, mock_tar: Mock, *mocks: Any) -> None:
+        result = main()
+        self.assertEqual(result, 0)
+
     @patch("argparse._sys.argv",
            ["run_validation.py", "--version", "2.1.0", "--distribution", "docker", "--docker_source",
             "dockerhub,ecr"])

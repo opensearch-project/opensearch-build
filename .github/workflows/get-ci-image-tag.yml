@@ -41,11 +41,11 @@ jobs:
       output-ci-image-start-options: ${{ steps.step-ci-image-setups.outputs.ci-image-start-options }}
     steps:
       - name: Install crane
-        uses: iarekylew00t/crane-installer@v1
+        uses: iarekylew00t/crane-installer@129958071ac638780427317f25d7c5e66f5e88e4 # v1
         with:
           crane-release: v0.15.2
       - name: Checkout opensearch-build repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: 'opensearch-project/opensearch-build'
           ref: ${{ inputs.build_ref }}

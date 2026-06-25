@@ -102,7 +102,7 @@ class TestValidationYum(unittest.TestCase):
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.artifact_type = "production"
-        mock_validation_args.return_value.skip_core_plugins = False
+        mock_validation_args.return_value.skip_core_plugins = None
         mock_list_dir.return_value = ["query-insights", "ml-commons"]
 
         mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]

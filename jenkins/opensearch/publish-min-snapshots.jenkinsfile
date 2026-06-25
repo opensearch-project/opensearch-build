@@ -23,15 +23,14 @@ pipeline {
     environment {
         AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
         AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host'
-        AGENT_MACOS_X64 = 'Jenkins-Agent-MacOS13-X64-Mac1Metal-Multi-Host'
-        AGENT_MACOS_ARM64 = 'Jenkins-Agent-MacOS13-ARM64-Mac2M2proMetal-Multi-Host'
+        AGENT_MACOS_X64 = 'Jenkins-Agent-MacOS14-X64-Mac1-Multi-Host'
+        AGENT_MACOS_ARM64 = 'Jenkins-Agent-MacOS14-ARM64-Mac2-Multi-Host'
         AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
     }
     triggers {
         parameterizedCron '''
-            H */4 * * * %INPUT_MANIFEST=2.1000.1000/opensearch-2.1000.1000.yml
-            H */4 * * * %INPUT_MANIFEST=3.6.1/opensearch-3.6.1.yml
-            H */4 * * * %INPUT_MANIFEST=3.7.0/opensearch-3.7.0.yml
+            H */4 * * * %INPUT_MANIFEST=3.8.0/opensearch-3.8.0.yml
+            H */4 * * * %INPUT_MANIFEST=3.7.1/opensearch-3.7.1.yml
             H */4 * * * %INPUT_MANIFEST=2.19.6/opensearch-2.19.6.yml
         '''
     }

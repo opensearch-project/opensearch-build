@@ -106,7 +106,8 @@ for plugin in ./*; do
        [ "$PLUGIN_NAME" = "dsl-query-executor" ] ||
        [ "$PLUGIN_NAME" = "parquet-data-format" ]; then
       PLUGIN_ARTIFACT_BUILD_NAME=`ls "$plugin"/build/distributions/ | grep "$PLUGIN_NAME-$VERSION.zip"`
-      if [ "$PLUGIN_NAME" = "analytics-engine" ]; then
+      if [ "$PLUGIN_NAME" = "analytics-engine" ] ||
+         [ "$PLUGIN_NAME" = "composite-engine" ]; then
         PLUGIN_NAME=$INSTALL_ORDER-$PLUGIN_NAME
         INSTALL_ORDER=$((INSTALL_ORDER + 1))
       fi

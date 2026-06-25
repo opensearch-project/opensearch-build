@@ -1,0 +1,100 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+// @job-name: packer-build
+// @description: Builds Jenkins agent AMIs using Packer for OpenSearch CI infrastructure.
+
+lib = library(identifier: 'jenkins@12.0.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+def secret_packer_ids = [
+    [envVar: 'vpc_id', secretRef: 'op://opensearch-release-secrets/packer-build-ids/jenkins-agent-vpc-id'],
+    [envVar: 'subnet_id', secretRef: 'op://opensearch-release-secrets/packer-build-ids/jenkins-agent-subnet-id'],
+    [envVar: 'sg_id', secretRef: 'op://opensearch-release-secrets/packer-build-ids/jenkins-agent-sg-id'],
+    [envVar: 'region_id', secretRef: 'op://opensearch-release-secrets/packer-build-ids/jenkins-agent-region-id']
+]
+
+def secret_aws_account = [
+    [envVar: 'AWS_ACCOUNT_PUBLIC', secretRef: 'op://opensearch-release-secrets/aws-accounts/jenkins-aws-account-public']
+]
+
+pipeline {
+    options {
+        timeout(time: 4, unit: 'HOURS')
+    }
+    agent {
+        docker {
+            label 'Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder'
+            image 'opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1'
+            registryUrl 'https://public.ecr.aws/'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(
+            name: 'PACKER_TEMPLATE_NAME',
+            description: '<Required> The packer template file name of Jenkins agent. e.g. jenkins-agent-al2-arm64.json. Files exist in https://github.com/opensearch-project/opensearch-ci/tree/main/packer',
+            trim: true
+        )
+    }
+    stages {
+        stage('Parameters Check') {
+            steps {
+                script {
+                    currentBuild.description = "$PACKER_TEMPLATE_NAME"
+                    if (PACKER_TEMPLATE_NAME.isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error("PACKER_TEMPLATE_NAME parameter cannot be empty.")
+                    }
+                    print("Passing parameter checks.")
+                }
+            }
+        }
+        stage('packer-build') {
+            environment {
+                PACKER_BUILD_GIT_REPOSITORY_REFERENCE = "main"
+                PACKER_BUILD_GIT_REPOSITORY = "https://github.com/opensearch-project/opensearch-ci"
+            }
+            steps {
+                script {
+                    print("Getting $PACKER_TEMPLATE_NAME from $PACKER_BUILD_GIT_REPOSITORY repository with reference $PACKER_BUILD_GIT_REPOSITORY_REFERENCE")
+                    checkout([$class: 'GitSCM', branches: [[name: PACKER_BUILD_GIT_REPOSITORY_REFERENCE ]], userRemoteConfigs: [[url: PACKER_BUILD_GIT_REPOSITORY ]]])
+                    def packer_jenkins_agent_json = readJSON file: "./packer/$PACKER_TEMPLATE_NAME"
+                    withSecrets(secrets: secret_packer_ids){
+                        packer_jenkins_agent_json["variables"]["build-vpc"] = vpc_id
+                        packer_jenkins_agent_json["variables"]["build-subnet"] = subnet_id
+                        packer_jenkins_agent_json["variables"]["build-secgrp"] = sg_id
+                        packer_jenkins_agent_json["variables"]["build-region"] = region_id
+                        packer_jenkins_agent_json["variables"]["aws_ami_region"] = region_id
+                    }
+                    def PACKER_TEMPLATE_NAME_SUBSTITUTE = "substitute_" + "$PACKER_TEMPLATE_NAME"
+                    print("$PACKER_TEMPLATE_NAME_SUBSTITUTE")
+                    writeJSON file: "./packer/$PACKER_TEMPLATE_NAME_SUBSTITUTE", json: packer_jenkins_agent_json, pretty: 2
+
+                    // Start to build packer
+                    withSecrets(secrets: secret_aws_account) {
+                        withAWS(role: 'opensearch-packer', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 3600, roleSessionName: 'jenkins-session', useNode: true) {
+                            sh ("cd packer && packer build -color=false $PACKER_TEMPLATE_NAME_SUBSTITUTE")
+                        }
+                    }
+
+                }
+            }
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
+            }
+        }
+    }
+}

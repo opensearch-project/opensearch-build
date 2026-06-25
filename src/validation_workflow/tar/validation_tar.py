@@ -31,7 +31,7 @@ class ValidateTar(Validation, DownloadUtils):
                 try:
                     self.filename = os.path.basename(self.args.file_path.get(project))
                     execute('mkdir ' + os.path.join(self.tmp_dir.path, project) + ' | tar -xzf ' + os.path.join(str(self.tmp_dir.path), self.filename) + ' -C ' + os.path.join(self.tmp_dir.path, project) + ' --strip-components=1', ".", True, False)  # noqa: E501
-                    if not self.args.skip_core_plugins:
+                    if self.args.skip_core_plugins is None or self.args.skip_core_plugins:
                         installed_plugins_list = os.listdir(os.path.join(self.tmp_dir.path, "opensearch", "plugins"))
                         self.install_native_plugin(os.path.join(self.tmp_dir.path, "opensearch"), installed_plugins_list)
                 except:

@@ -1,0 +1,23 @@
+   docker-build-lf.run()
+      docker-build-lf.pipeline(groovy.lang.Closure)
+         docker-build-lf.timeout({time=6, unit=HOURS})
+         docker-build-lf.echo(Executing on agent [label:none])
+         docker-build-lf.stage(Parameters Check, groovy.lang.Closure)
+            docker-build-lf.script(groovy.lang.Closure)
+         docker-build-lf.stage(docker-build, groovy.lang.Closure)
+            docker-build-lf.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder, image:opensearchorg/opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+            docker-build-lf.script(groovy.lang.Closure)
+               docker-build-lf.echo(The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories)
+               docker-build-lf.checkout({$class=GitSCM, branches=[{name=main}], userRemoteConfigs=[{url=https://github.com/opensearch-project/opensearch-build}]})
+               docker-build-lf.echo(Account: dockerhub staging)
+               docker-build-lf.withSecrets({secrets=[{envVar=DOCKER_USERNAME, secretRef=op://opensearch-release-secrets/dockerhub-staging-credentials/username}, {envVar=DOCKER_PASSWORD, secretRef=op://opensearch-release-secrets/dockerhub-staging-credentials/password}]}, groovy.lang.Closure)
+                  docker-build-lf.isUnix()
+                  docker-build-lf.sh(
+                                set -e
+                                set +x
+                                docker logout && echo dockerPassword | docker login -u dockerUsername --password-stdin && eval bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>
+                            )
+         docker-build-lf.script(groovy.lang.Closure)
+            docker-build-lf.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
+            docker-build-lf.isUnix()
+            docker-build-lf.sh(docker logout && docker image prune -f --all)

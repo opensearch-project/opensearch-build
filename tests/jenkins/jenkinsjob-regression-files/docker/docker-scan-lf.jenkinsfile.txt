@@ -1,0 +1,24 @@
+   docker-scan-lf.run()
+      docker-scan-lf.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      docker-scan-lf.library({identifier=jenkins@12.0.0, retriever=null})
+      docker-scan-lf.pipeline(groovy.lang.Closure)
+         docker-scan-lf.timeout({time=30})
+         docker-scan-lf.echo(Executing on agent [label:none])
+         docker-scan-lf.stage(Parameters Check, groovy.lang.Closure)
+            docker-scan-lf.script(groovy.lang.Closure)
+         docker-scan-lf.stage(Scan Images, groovy.lang.Closure)
+            docker-scan-lf.script(groovy.lang.Closure)
+               docker-scan-lf.scanDockerImage({imageFullName=alpine:3, imageResultFile=scan_docker_image})
+                  scanDockerImage.sh(
+        touch scan_docker_image.txt scan_docker_image.json
+        trivy clean --all
+        docker rmi `docker images -f "dangling=true" -q` || echo
+        docker rmi alpine:3 || echo
+        trivy image --format table --table-mode detailed --output scan_docker_image.txt alpine:3
+        trivy image --format json --output scan_docker_image.json alpine:3
+    )
+         docker-scan-lf.archiveArtifacts({artifacts=scan_docker_image.*})
+         docker-scan-lf.script(groovy.lang.Closure)
+            docker-scan-lf.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
+            docker-scan-lf.sh(trivy clean --all)

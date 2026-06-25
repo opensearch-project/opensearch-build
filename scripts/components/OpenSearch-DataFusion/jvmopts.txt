@@ -1,6 +1,6 @@
 
 # DataFusion JVM Opts
--Dio.netty.allocator.numDirectArenas=1
+-Dio.netty.allocator.numDirectArenas=32
 -Dio.netty.noUnsafe=false
 -Dio.netty.tryUnsafe=true
 -Dio.netty.tryReflectionSetAccessible=true

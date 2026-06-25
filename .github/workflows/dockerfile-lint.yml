@@ -11,8 +11,8 @@ jobs:
   dockerfile-lint-test_ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: jbergstroem/hadolint-gh-action@v1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: jbergstroem/hadolint-gh-action@d2f58da7f4f242dc0b6c5ef882ad4f8e871ba96b # v1
         with:
           dockerfile: 'docker/ci/dockerfiles/current/*.dockerfile'
           annotate: false
@@ -20,8 +20,8 @@ jobs:
   dockerfile-lint-test_release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: jbergstroem/hadolint-gh-action@v1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: jbergstroem/hadolint-gh-action@d2f58da7f4f242dc0b6c5ef882ad4f8e871ba96b # v1
         with:
           dockerfile: 'docker/release/dockerfiles/*.dockerfile'
           annotate: false

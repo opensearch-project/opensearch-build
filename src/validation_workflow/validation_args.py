@@ -133,11 +133,10 @@ class ValidationArgs:
             dest="using_staging_artifact_only"
         )
         parser.add_argument(
-            "-np",
             "--skip-core-plugins",
-            action="store_true",
-            default=False,
-            help="Skips native plugin installations if enabled"
+            nargs='*',
+            default=None,
+            help="Skip native plugin installations. No args = skip all, with args = skip only listed plugins (e.g. --skip-core-plugins plugin-a plugin-b)"
         )
 
         args = parser.parse_args()

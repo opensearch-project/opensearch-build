@@ -20,6 +20,13 @@ def main() -> int:
     console.configure(level=args.logging_level)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
+    if args.skip_core_plugins is None:
+        logging.info("Native plugin validation: installing all plugins")
+    elif args.skip_core_plugins:
+        logging.info(f"Native plugin validation: skipping specific plugins: {args.skip_core_plugins}")
+    else:
+        logging.info("Native plugin validation: skipping all plugins")
+
     with TemporaryDirectory() as work_dir:
         if args.distribution == "docker":
             docker_source = args.docker_source
