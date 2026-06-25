@@ -11,6 +11,7 @@ import logging
 import os
 import shutil
 import subprocess
+from typing import List
 
 import pandas as pd
 
@@ -21,7 +22,7 @@ from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
 
 class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
 
-    DATA_WORKLOADS = ["http_logs", "big5", "nyc_taxis", "clickbench", "textbench"]
+    DATA_WORKLOADS: List[str] = []
 
     def __init__(self, endpoint: str, security: bool, args: BenchmarkArgs, password: str):
         super().__init__(args, endpoint, security, password)
@@ -81,9 +82,9 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
                 self.command += f" --telemetry-params '{self.args.telemetry_params}'"
 
         if self.security and self.args.sigv4:
-            self.command += f' --client-options="timeout:120,amazon_aws_log_in:session,region:{self.args.region},service:{self.args.service}" --results-file=final_result.md'
+            self.command += f' --client-options="retry_on_timeout:False,timeout:120,amazon_aws_log_in:session,region:{self.args.region},service:{self.args.service}" --results-file=final_result.md'
         elif self.security:
-            self.command += (f' --client-options="timeout:120,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\','
+            self.command += (f' --client-options="retry_on_timeout:False,timeout:120,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\','
                              f'basic_auth_password:\'{self.password}\'" --results-file=final_result.md')
         else:
             self.command += ' --client-options="timeout:120" --results-file=final_result.md'

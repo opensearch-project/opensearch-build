@@ -1,0 +1,462 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+// @job-name: benchmark-test
+// @description: Runs benchmark tests for OpenSearch distribution using OpenSearch Benchmark.
+
+lib = library(identifier: 'jenkins@12.0.0', retriever: modernSCM([
+
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+def secret_aws_account = [
+    [envVar: 'PERF_TEST_ACCOUNT_ID', secretRef: 'op://opensearch-release-secrets/aws-accounts/perf-test-account-id']
+]
+
+pipeline {
+    agent none
+    options {
+        timeout(time: 24, unit: 'HOURS')
+        buildDiscarder(logRotator(daysToKeepStr: '30'))
+    }
+    environment {
+        AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'
+        BUNDLE_MANIFEST = 'bundle-manifest.yml'
+        JOB_NAME = 'benchmark-test-datafusion'
+    }
+    triggers {
+        parameterizedCron(
+        '''
+        #H */6 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.8.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.8.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=true;DATA_NODE_COUNT=1;DATA_INSTANCE_TYPE=c6a.4xlarge;HEAP_SIZE_IN_GB=8;USER_TAGS=run-type:datafusion-c6a.4x,arch:x64,instance-type:c6a.4xlarge,major-version:3x,cluster-config:x64-c6a.4xlarge-datafusion;ADDITIONAL_CONFIG=datafusion.memory_pool_limit_bytes:17179869184 datafusion.reduce.input_mode:streaming analytics.coordinator.buffer_limit:0;WORKLOAD_PARAMS={"number_of_shards":8,"number_of_replicas":0,"bulk_indexing_clients":4,"test_iterations":10,"warmup_iterations":5,"index_name":"parquet_clickbench","parquet_enabled_index":true,"target_throughput":0,"bulk_size":5000,"analytics_oversampling":true};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=false;TELEMETRY_PARAMS={"node-stats-sample-interval":10};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300;JVM_SYS_PROPS=opensearch.pluggable.dataformat.merge.enabled=true
+        H */6 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.8.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.8.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=true;DATA_NODE_COUNT=1;DATA_INSTANCE_TYPE=r7i.2xlarge;HEAP_SIZE_IN_GB=16;USER_TAGS=run-type:datafusion-1-shard,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-1-shard-datafusion;ADDITIONAL_CONFIG=datafusion.memory_pool_limit_bytes:30064771072 datafusion.reduce.input_mode:streaming analytics.coordinator.buffer_limit:0 opensearch.experimental.feature.pluggable.dataformat.enabled:true opensearch.experimental.feature.transport.stream.enabled:true node.native_memory.limit:40802189312b;WORKLOAD_PARAMS={"number_of_shards":1,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":10,"warmup_iterations":5,"index_name":"parquet_clickbench","parquet_enabled_index":true,"target_throughput":0,"bulk_size":5000,"analytics_oversampling":true};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=false;TELEMETRY_PARAMS={"node-stats-sample-interval":10};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300;JVM_SYS_PROPS=opensearch.pluggable.dataformat.merge.enabled=true
+        H */6 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.8.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.8.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=true;DATA_NODE_COUNT=1;DATA_INSTANCE_TYPE=r7i.2xlarge;HEAP_SIZE_IN_GB=16;USER_TAGS=run-type:datafusion-8-shard,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-datafusion;ADDITIONAL_CONFIG=datafusion.memory_pool_limit_bytes:30064771072 datafusion.reduce.input_mode:streaming analytics.coordinator.buffer_limit:0 opensearch.experimental.feature.pluggable.dataformat.enabled:true opensearch.experimental.feature.transport.stream.enabled:true node.native_memory.limit:40802189312b;WORKLOAD_PARAMS={"number_of_shards":8,"number_of_replicas":0,"bulk_indexing_clients":4,"test_iterations":10,"warmup_iterations":5,"index_name":"parquet_clickbench","parquet_enabled_index":true,"target_throughput":0,"bulk_size":5000,"analytics_oversampling":true};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=false;TELEMETRY_PARAMS={"node-stats-sample-interval":10};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300;JVM_SYS_PROPS=opensearch.pluggable.dataformat.merge.enabled=true
+
+        #Big 5
+        H */6 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.8.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.8.0;TEST_WORKLOAD=big5;SINGLE_NODE_CLUSTER=true;DATA_NODE_COUNT=1;DATA_INSTANCE_TYPE=r7i.2xlarge;HEAP_SIZE_IN_GB=16;USER_TAGS=run-type:datafusion-8-shard,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-datafusion;ADDITIONAL_CONFIG=datafusion.memory_pool_limit_bytes:30064771072 datafusion.reduce.input_mode:streaming analytics.coordinator.buffer_limit:0 opensearch.experimental.feature.pluggable.dataformat.enabled:true opensearch.experimental.feature.transport.stream.enabled:true node.native_memory.limit:40802189312b;WORKLOAD_PARAMS={"number_of_shards":8,"number_of_replicas":0,"bulk_indexing_clients":4,"test_iterations":20,"warmup_iterations":10,"index_name":"parquet_big5","parquet_enabled_index":true,"target_throughput":0,"distribution_version":"3.8.0","bulk_size":5000,"analytics_oversampling":true,"legacy_syntax":"true"};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=false;TELEMETRY_PARAMS={"node-stats-sample-interval":10};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300;JVM_SYS_PROPS=opensearch.pluggable.dataformat.merge.enabled=true
+
+        ## Single node Baseline for DF
+        #H */6 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.6.0/latest/linux/x64/tar/dist/opensearch/opensearch-3.6.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.6.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=true;DATA_NODE_COUNT=1;DATA_INSTANCE_TYPE=c6a.4xlarge;USER_TAGS=run-type:ppl-baseline-c6a.4x,arch:x64,instance-type:c6a.4xlarge,major-version:3x,cluster-config:x64-c6a.4xlarge-baseline-ppl;WORKLOAD_PARAMS={"number_of_shards":8,"number_of_replicas":0,"bulk_indexing_clients":4,"test_iterations":10,"warmup_iterations":5,"bulk_size":5000};CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":5};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300
+        H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.6.0/latest/linux/x64/tar/dist/opensearch/opensearch-3.6.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.6.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=true;DATA_NODE_COUNT=1;DATA_INSTANCE_TYPE=r7i.2xlarge;USER_TAGS=run-type:ppl-baseline-r7i.2x,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-baseline-ppl;WORKLOAD_PARAMS={"number_of_shards":8,"number_of_replicas":0,"bulk_indexing_clients":4,"test_iterations":10,"warmup_iterations":5,"bulk_size":5000,"legacy_syntax":"false"};CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":5};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300
+
+        #Big5
+        H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.6.0/latest/linux/x64/tar/dist/opensearch/opensearch-3.6.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.6.0;TEST_WORKLOAD=big5;SINGLE_NODE_CLUSTER=true;DATA_NODE_COUNT=1;DATA_INSTANCE_TYPE=r7i.2xlarge;USER_TAGS=run-type:ppl-baseline-r7i.2x,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-baseline-ppl;WORKLOAD_PARAMS={"number_of_shards":8,"number_of_replicas":0,"bulk_indexing_clients":4,"test_iterations":20,"warmup_iterations":10,"target_throughput":0,"index_name":"parquet_big5","distribution_version":"3.8.0","bulk_size":5000,"legacy_syntax":"false"};CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":5};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=100
+
+        # Multi node runs
+        H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.6.0/latest/linux/x64/tar/dist/opensearch/opensearch-3.6.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.6.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r7i.2xlarge;USER_TAGS=run-type:ppl-baseline-multinode-350,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-3-shards-baseline-ppl-350;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":10,"warmup_iterations":5,"bulk_size":5000};CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":5};DATA_NODE_STORAGE=100
+        #H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/x64/tar/dist/opensearch/opensearch-3.1.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.1.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r7i.2xlarge;USER_TAGS=run-type:ppl-baseline-multinode-no-css,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-3-shards-baseline-ppl-no-css;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":10,"warmup_iterations":5,"bulk_size":5000,"css_mode":"none"};CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":5};DATA_NODE_STORAGE=100
+        #H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.1.0/latest/linux/x64/tar/dist/opensearch/opensearch-3.1.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.1.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r7i.2xlarge;USER_TAGS=run-type:ppl-baseline-multinode-8-slice,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-3-shards-baseline-ppl-8-slice;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":10,"warmup_iterations":5,"bulk_size":5000};CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":5};DATA_NODE_STORAGE=100;ADDITIONAL_CONFIG=search.concurrent.max_slice_count:8
+
+        H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.8.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.8.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r7i.2xlarge;HEAP_SIZE_IN_GB=16;USER_TAGS=run-type:datafusion-multinode,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-3-shards-datafusion;ADDITIONAL_CONFIG=datafusion.memory_pool_limit_bytes:30064771072 datafusion.reduce.input_mode:streaming arrow.flight.publish_host:0.0.0.0 arrow.flight.bind_host:0.0.0.0 analytics.coordinator.buffer_limit:0 opensearch.experimental.feature.pluggable.dataformat.enabled:true opensearch.experimental.feature.transport.stream.enabled:true node.native_memory.limit:40802189312b;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":10,"warmup_iterations":5,"index_name":"parquet_clickbench","parquet_enabled_index":true,"target_throughput":0,"bulk_size":5000,"analytics_oversampling":true};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=false;TELEMETRY_PARAMS={"node-stats-sample-interval":10};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300;JVM_SYS_PROPS=opensearch.pluggable.dataformat.merge.enabled=true
+        H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.8.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.8.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r7i.2xlarge;HEAP_SIZE_IN_GB=16;USER_TAGS=run-type:datafusion-multinode-no-css,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-3-shards-datafusion-no-css;ADDITIONAL_CONFIG=datafusion.memory_pool_limit_bytes:30064771072 datafusion.reduce.input_mode:streaming arrow.flight.publish_host:0.0.0.0 arrow.flight.bind_host:0.0.0.0 analytics.coordinator.buffer_limit:0 opensearch.experimental.feature.pluggable.dataformat.enabled:true opensearch.experimental.feature.transport.stream.enabled:true node.native_memory.limit:40802189312b;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":10,"warmup_iterations":5,"index_name":"parquet_clickbench","parquet_enabled_index":true,"target_throughput":0,"bulk_size":5000,"analytics_oversampling":true,"css_mode":"none"};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=false;TELEMETRY_PARAMS={"node-stats-sample-interval":10};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300;JVM_SYS_PROPS=opensearch.pluggable.dataformat.merge.enabled=true
+        H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.8.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.8.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r7i.2xlarge;HEAP_SIZE_IN_GB=16;USER_TAGS=run-type:datafusion-multinode-8-slice,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-3-shards-datafusion-8-slice;ADDITIONAL_CONFIG=datafusion.memory_pool_limit_bytes:30064771072 datafusion.reduce.input_mode:streaming arrow.flight.publish_host:0.0.0.0 arrow.flight.bind_host:0.0.0.0 analytics.coordinator.buffer_limit:0 opensearch.experimental.feature.pluggable.dataformat.enabled:true opensearch.experimental.feature.transport.stream.enabled:true node.native_memory.limit:40802189312b search.concurrent.max_slice_count:8;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":10,"warmup_iterations":5,"index_name":"parquet_clickbench","parquet_enabled_index":true,"target_throughput":0,"bulk_size":5000,"analytics_oversampling":true};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=false;TELEMETRY_PARAMS={"node-stats-sample-interval":10};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300;JVM_SYS_PROPS=opensearch.pluggable.dataformat.merge.enabled=true
+        H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.8.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.8.0;TEST_WORKLOAD=clickbench;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r7i.2xlarge;HEAP_SIZE_IN_GB=16;USER_TAGS=run-type:datafusion-multinode-2-slice,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-3-shards-datafusion-2-slice;ADDITIONAL_CONFIG=datafusion.memory_pool_limit_bytes:30064771072 datafusion.reduce.input_mode:streaming arrow.flight.publish_host:0.0.0.0 arrow.flight.bind_host:0.0.0.0 analytics.coordinator.buffer_limit:0 opensearch.experimental.feature.pluggable.dataformat.enabled:true opensearch.experimental.feature.transport.stream.enabled:true node.native_memory.limit:40802189312b search.concurrent.max_slice_count:2;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":10,"warmup_iterations":5,"index_name":"parquet_clickbench","parquet_enabled_index":true,"target_throughput":0,"bulk_size":5000,"analytics_oversampling":true};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=false;TELEMETRY_PARAMS={"node-stats-sample-interval":10};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=300;JVM_SYS_PROPS=opensearch.pluggable.dataformat.merge.enabled=true
+
+        #Big5
+        H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.6.0/latest/linux/x64/tar/dist/opensearch/opensearch-3.6.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.6.0;TEST_WORKLOAD=big5;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r7i.2xlarge;USER_TAGS=run-type:ppl-baseline-multinode,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-3-shards-baseline-ppl;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":20,"warmup_iterations":10,"target_throughput":0,"index_name":"parquet_big5","distribution_version":"3.8.0","bulk_size":5000,"legacy_syntax":"false"};CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":5};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=100
+        H */8 * * * %DISTRIBUTION_URL=https://ci.opensearch.org/ci/dbc/feature-build-opensearch/feature-datafusion/latest/linux/x64/tar/dist/opensearch/opensearch-3.8.0-linux-x64.tar.gz;DISTRIBUTION_VERSION=3.8.0;TEST_WORKLOAD=big5;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;DATA_INSTANCE_TYPE=r7i.2xlarge;HEAP_SIZE_IN_GB=16;USER_TAGS=run-type:datafusion-multinode,arch:x64,instance-type:r7i.2xlarge,major-version:3x,cluster-config:x64-r7i.2xlarge-3-shards-datafusion;ADDITIONAL_CONFIG=datafusion.memory_pool_limit_bytes:30064771072 datafusion.reduce.input_mode:streaming arrow.flight.publish_host:0.0.0.0 arrow.flight.bind_host:0.0.0.0 analytics.coordinator.buffer_limit:0 opensearch.experimental.feature.pluggable.dataformat.enabled:true opensearch.experimental.feature.transport.stream.enabled:true node.native_memory.limit:40802189312b;WORKLOAD_PARAMS={"number_of_shards":3,"number_of_replicas":0,"bulk_indexing_clients":8,"test_iterations":20,"warmup_iterations":10,"index_name":"parquet_big5","parquet_enabled_index":true,"target_throughput":0,"distribution_version":"3.8.0","bulk_size":5000,"analytics_oversampling":true,"legacy_syntax":"false"};CAPTURE_NODE_STAT=true;MIN_DISTRIBUTION=false;TELEMETRY_PARAMS={"node-stats-sample-interval":10};TEST_PROCEDURE=datafusion-ppl;DATA_NODE_STORAGE=100;JVM_SYS_PROPS=opensearch.pluggable.dataformat.merge.enabled=true
+        '''
+        )
+    }
+    parameters {
+        string(
+            name: 'BUNDLE_MANIFEST_URL',
+            description: '<Conditionally-Required> The distribution manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.3.0/6039/linux/x64/tar/dist/opensearch/manifest.yml',
+            trim: true
+        )
+        string(
+            name: 'DISTRIBUTION_URL',
+            description: '<Conditionally-Required> Publicly available download url of the OpenSearch artifact tarball. Currently only supports x64 arch.',
+            trim: true
+        )
+        string(
+            name: 'DISTRIBUTION_VERSION',
+            description: '<Conditionally-Required> The distribution version of of the OpenSearch artifact, only to be provided in combination with DISTRIBUTION_URL param.',
+            trim: true
+        )
+        string(
+            name: 'PLUGIN_URL',
+            description: '<Optional> Download URL of a plugin to be installed on the OS cluster',
+            trim: true
+        )
+        string(
+            defaultValue: 'nyc_taxis',
+            name: 'TEST_WORKLOAD',
+            description: '<Optional> The workload name from OpenSearch Benchmark Workloads.',
+            trim: true
+        )
+        booleanParam(
+            defaultValue: false,
+            name: 'SECURITY_DISABLED',
+            description: '<Optional> Force the security of the cluster to be disabled'
+        )
+        booleanParam(
+            name: 'SINGLE_NODE_CLUSTER',
+            description: '<Optional> Benchmark test on a single node cluster',
+            defaultValue: true
+        )
+        booleanParam(
+            name: 'MIN_DISTRIBUTION',
+            description: '<Optional> Use OpenSearch min distribution',
+            defaultValue: false
+        )
+        booleanParam(
+            name: 'ENABLE_REMOTE_STORE',
+            description: '<Optional> Enable remote-store feature in OpenSearch cluster',
+            defaultValue: false
+        )
+        string(
+            name: 'MANAGER_NODE_COUNT',
+            description: '<Optional> Number of cluster manager nodes, empty value defaults to 3.',
+            trim: true
+        )
+        string(
+            name: 'DATA_NODE_COUNT',
+            description: '<Optional> Number of cluster data nodes, empty value defaults to 2.',
+            trim: true
+        )
+        string(
+            name: 'CLIENT_NODE_COUNT',
+            description: '<Optional> Number of cluster client nodes, empty value default to 0.',
+            trim: true
+        )
+        string(
+            name: 'INGEST_NODE_COUNT',
+            description: '<Optional> Number of cluster INGEST nodes, empty value defaults to 0.',
+            trim: true
+        )
+        string(
+            name: 'ML_NODE_COUNT',
+            description: '<Optional> Number of cluster ml nodes, empty value defaults to 0.',
+            trim: true
+        )
+        string(
+            name: 'DATA_INSTANCE_TYPE',
+            description: '<Optional> EC2 instance type for data node, empty defaults to r5.xlarge.',
+            trim: true
+        )
+        string(
+            name: 'DATA_NODE_STORAGE',
+            description: '<Optional> Data node ebs block storage size, empty value defaults to 100Gb',
+            trim: true
+        )
+        booleanParam(
+            name: 'ENABLE_INSTANCE_BASED_STORAGE',
+            description: '<Optional> Use instance based SSD storage for supported instance types',
+            defaultValue: false
+        )
+        string(
+            name: 'ML_NODE_STORAGE',
+            description: '<Optional> ML node ebs block storage size, empty value defaults to 100Gb',
+            trim: true
+        )
+        string(
+            name: 'JVM_SYS_PROPS',
+            description: '<Optional> A comma-separated list of key=value pairs that will be added to jvm.options as JVM system properties.',
+            trim: true
+        )
+        string(
+            name: 'ADDITIONAL_CONFIG',
+            description: '<Optional> Additional opensearch.yml config parameters passed as JSON. e.g., `opensearch.experimental.feature.segment_replication_experimental.enabled:true cluster.indices.replication.strategy:SEGMENT`',
+            trim: true
+        )
+        string(
+            name: 'HEAP_SIZE_IN_GB',
+            description: '<Optional> Explicit heap size (in GB) applied to data, seed-data, and single-node clusters. If omitted, JVM heap defaults to ~50% of system memory (capped at 32 GB)',
+            trim: true
+        )
+        string(
+            name: 'USER_TAGS',
+            description: '<Optional> Attach arbitrary text to the meta-data of each benchmark metric record, without any spaces. e.g., `run-type:adhoc,segrep:enabled,arch:x64`. ',
+            trim: true
+        )
+        string(
+            name: 'WORKLOAD_PARAMS',
+            description: '<Optional> With this parameter you can inject variables into workloads. Use json type. e.g., `{"number_of_replicas":"1","number_of_shards":"5"}`',
+            trim: true
+        )
+        string(
+            name: 'TEST_PROCEDURE',
+            description: '<Optional> Defines a test procedure to use. e.g., `append-no-conflicts,significant-text`',
+            trim: true
+        )
+        string(
+            name: 'EXCLUDE_TASKS',
+            description: '<Optional> Defines a comma-separated list of test procedure tasks not to run. Default runs all. e.g., `type:search,delete-index`',
+            trim: true
+        )
+        string(
+            name: 'INCLUDE_TASKS',
+            description: '<Optional> Defines a comma-separated list of test procedure tasks to run. Default runs all. e.g., `type:search,delete-index`',
+            trim: true
+        )
+        booleanParam(
+            name: 'CAPTURE_NODE_STAT',
+            description: '<Optional> Enable opensearch-benchmark node-stats telemetry to capture system level metrics.',
+            defaultValue: false
+        )
+        booleanParam(
+            name: 'CAPTURE_SEGMENT_REPLICATION_STAT',
+            description: '<Optional> Enable opensearch-benchmark segment-replication-stats telemetry to capture metrics such as replication lag.',
+            defaultValue: false
+        )
+        string(
+            name: 'TELEMETRY_PARAMS',
+            description: '<Optional> Allows to set parameters for telemetry devices. Use json type. e.g.,{"node-stats-include-indices":"true","node-stats-include-indices-metrics":"segments"}',
+            trim: true
+        )
+        booleanParam(
+             name: 'PRESERVE_CLUSTER',
+             description: '<Optional> Whether or not to destroy the OpenSearch cluster after benchmark run has finished',
+             defaultValue: false
+        )
+    }
+
+    stages {
+        stage('validate-and-set-parameters') {
+            agent { label AGENT_LABEL }
+            steps {
+                script {
+                    if (BUNDLE_MANIFEST_URL == '' && DISTRIBUTION_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Benchmark Tests failed to start. Provide either BUNDLE_MANIFEST_URL or DISTRIBUTION_URL with DISTRIBUTION_VERSION")
+                    }
+                    if (BUNDLE_MANIFEST_URL != '') {
+                        def bundleManifestObj = downloadBuildManifest (
+                        url: BUNDLE_MANIFEST_URL,
+                        path: BUNDLE_MANIFEST
+                        )
+                        String buildId = bundleManifestObj.getArtifactBuildId()
+                        env.BUILD_ID = buildId
+                        env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
+                        env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+                        echo "HAS_SECURITY: ${env.HAS_SECURITY}"
+                        lib.jenkins.Messages.new(this).add(JOB_NAME, "Benchmark tests for #${BUILD_ID}")
+                        currentBuild.description = "Running benchmark test for build number: ${BUILD_ID} Manifest: ${BUNDLE_MANIFEST_URL}"
+                    }
+                    else {
+                        BUNDLE_MANIFEST = ''
+                        env.HAS_SECURITY = "false"
+                        env.ARCHITECTURE = "x64"
+                        echo "HAS_SECURITY: ${env.HAS_SECURITY}"
+                        lib.jenkins.Messages.new(this).add(JOB_NAME, "Benchmark tests for ${DISTRIBUTION_URL}")
+                        currentBuild.description = "Running benchmark test for distribution-url: ${DISTRIBUTION_URL} distribution-version: ${DISTRIBUTION_VERSION}"
+                    }
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+        stage('benchmark-test') {
+            parallel {
+                stage('test-with-security') {
+                agent { label AGENT_LABEL }
+                    when {
+                        expression { return HAS_SECURITY.toBoolean() }
+                    }
+                    steps {
+                        script {
+                            if (BUNDLE_MANIFEST_URL != '') {
+                                def bundleManifestObj = downloadBuildManifest (
+                                url: BUNDLE_MANIFEST_URL,
+                                path: BUNDLE_MANIFEST
+                                )
+                                echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                                echo "BUILD_ID: ${BUILD_ID}"
+                                echo "Architecture: ${ARCHITECTURE}"
+                            }
+                            else {
+                                echo "DISTRIBUTION_URL: ${DISTRIBUTION_URL}"
+                                echo "DISTRIBUTION_VERSION: ${DISTRIBUTION_VERSION}"
+                            }
+
+                            runBenchmarkTestScript(
+                                command: 'execute-test',
+                                bundleManifest: BUNDLE_MANIFEST,
+                                distributionUrl: DISTRIBUTION_URL,
+                                distributionVersion: DISTRIBUTION_VERSION,
+                                pluginUrl: PLUGIN_URL,
+                                workload: TEST_WORKLOAD,
+                                insecure: "false",
+                                singleNode: SINGLE_NODE_CLUSTER,
+                                minDistribution: MIN_DISTRIBUTION,
+                                heapSizeInGb: HEAP_SIZE_IN_GB,
+                                enableRemoteStore: ENABLE_REMOTE_STORE,
+                                suffix: "${BUILD_NUMBER}-secure",
+                                managerNodeCount: MANAGER_NODE_COUNT,
+                                dataNodeCount: DATA_NODE_COUNT,
+                                clientNodeCount: CLIENT_NODE_COUNT,
+                                ingestNodeCount: INGEST_NODE_COUNT,
+                                mlNodeCount: ML_NODE_COUNT,
+                                dataInstanceType: DATA_INSTANCE_TYPE,
+                                userTag: USER_TAGS.isEmpty() ? "security-enabled:true,jenkins-build-id:${BUILD_NUMBER}" : "${USER_TAGS},security-enabled:true,jenkins-build-id:${BUILD_NUMBER}",
+                                workloadParams: WORKLOAD_PARAMS,
+                                testProcedure: TEST_PROCEDURE,
+                                excludeTasks: EXCLUDE_TASKS,
+                                includeTasks: INCLUDE_TASKS,
+                                additionalConfig: ADDITIONAL_CONFIG,
+                                dataStorageSize: DATA_NODE_STORAGE,
+                                mlStorageSize: ML_NODE_STORAGE,
+                                enableInstanceStorage: ENABLE_INSTANCE_BASED_STORAGE,
+                                jvmSysProps: JVM_SYS_PROPS,
+                                captureNodeStat: CAPTURE_NODE_STAT,
+                                captureSegmentReplicationStat: CAPTURE_SEGMENT_REPLICATION_STAT,
+                                telemetryParams: TELEMETRY_PARAMS,
+                                preserveCluster: PRESERVE_CLUSTER
+                            )
+                            lib.jenkins.Messages.new(this).add(JOB_NAME,
+                                lib.jenkins.Messages.new(this).get([JOB_NAME]) +
+                                    "\nBenchmark tests with security for ${BUILD_ID} completed")
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('test-without-security') {
+                agent { label AGENT_LABEL }
+                    steps {
+                        script {
+                            if (BUNDLE_MANIFEST_URL != '') {
+                                def bundleManifestObj = downloadBuildManifest (
+                                url: BUNDLE_MANIFEST_URL,
+                                path: BUNDLE_MANIFEST
+                                )
+                                echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                                echo "BUILD_ID: ${BUILD_ID}"
+                                echo "Architecture: ${ARCHITECTURE}"
+                            }
+                            else {
+                                echo "DISTRIBUTION_URL: ${DISTRIBUTION_URL}"
+                                echo "DISTRIBUTION_VERSION: ${DISTRIBUTION_VERSION}"
+                            }
+
+                            runBenchmarkTestScript(
+                                command: 'execute-test',
+                                bundleManifest: BUNDLE_MANIFEST,
+                                distributionUrl: DISTRIBUTION_URL,
+                                distributionVersion: DISTRIBUTION_VERSION,
+                                pluginUrl: PLUGIN_URL,
+                                workload: TEST_WORKLOAD,
+                                insecure: "true",
+                                singleNode: SINGLE_NODE_CLUSTER,
+                                minDistribution: MIN_DISTRIBUTION,
+                                heapSizeInGb: HEAP_SIZE_IN_GB,
+                                enableRemoteStore: ENABLE_REMOTE_STORE,
+                                suffix: "${BUILD_NUMBER}",
+                                managerNodeCount: MANAGER_NODE_COUNT,
+                                dataNodeCount: DATA_NODE_COUNT,
+                                clientNodeCount: CLIENT_NODE_COUNT,
+                                ingestNodeCount: INGEST_NODE_COUNT,
+                                mlNodeCount: ML_NODE_COUNT,
+                                dataInstanceType: DATA_INSTANCE_TYPE,
+                                userTag: USER_TAGS.isEmpty() ? "security-enabled:false,jenkins-build-id:${BUILD_NUMBER}" : "${USER_TAGS},security-enabled:false,jenkins-build-id:${BUILD_NUMBER}",
+                                workloadParams: WORKLOAD_PARAMS,
+                                testProcedure: TEST_PROCEDURE,
+                                excludeTasks: EXCLUDE_TASKS,
+                                includeTasks: INCLUDE_TASKS,
+                                additionalConfig: ADDITIONAL_CONFIG,
+                                dataStorageSize: DATA_NODE_STORAGE,
+                                mlStorageSize: ML_NODE_STORAGE,
+                                enableInstanceStorage: ENABLE_INSTANCE_BASED_STORAGE,
+                                jvmSysProps: JVM_SYS_PROPS,
+                                captureNodeStat: CAPTURE_NODE_STAT,
+                                captureSegmentReplicationStat: CAPTURE_SEGMENT_REPLICATION_STAT,
+                                telemetryParams: TELEMETRY_PARAMS,
+                                preserveCluster: PRESERVE_CLUSTER
+                            )
+                            lib.jenkins.Messages.new(this).add(JOB_NAME,
+                                lib.jenkins.Messages.new(this).get([JOB_NAME]) +
+                                "\nBenchmark tests without security for ${BUILD_ID} completed")
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+    post {
+        success {
+            node(AGENT_LABEL) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Benchmark Tests Successful',
+                        extra: stashed,
+                        credentialsId: 'jenkins-integ-test-webhook',
+                    )
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node(AGENT_LABEL) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Benchmark Tests Failed',
+                        extra: stashed,
+                        credentialsId: 'jenkins-integ-test-webhook',
+                    )
+                    postCleanup()
+                }
+            }
+        }
+        aborted {
+            node(AGENT_LABEL) {
+                script {
+                    def stackNames = null
+                    if (BUNDLE_MANIFEST_URL != '') {
+                        stackNames = [
+                             "opensearch-infra-stack-${BUILD_NUMBER}-${BUILD_ID}-${ARCHITECTURE}",
+                             "opensearch-infra-stack-${BUILD_NUMBER}-secure-${BUILD_ID}-${ARCHITECTURE}"
+                        ]
+                    } else {
+                        stackNames = [
+                             "opensearch-infra-stack-${BUILD_NUMBER}"
+                        ]
+                    }
+                    withSecrets(secrets: secret_aws_account){
+                        withAWS(role: 'cfn-set-up', roleAccount: "${PERF_TEST_ACCOUNT_ID}", duration: 900, roleSessionName: 'jenkins-session', region: 'us-east-1') {
+                            try {
+                                for (String stackName : stackNames) {
+                                    def stack = null
+                                    try {
+                                        stack = cfnDescribe(stack: stackName)
+                                    } catch (Exception) {
+                                        echo "Stack '${stackName}' does not exist, nothing to remove"
+                                    }
+                                    if (stack != null) {
+                                        echo "Deleting stack '${stackName}'"
+                                        cfnDelete(stack: stackName, pollInterval:1000)
+                                    }
+                                }
+                            } catch (Exception e) {
+                                error "Exception occurred while deleting the CloudFormation stack: ${e.toString()}"
+                            }
+                        }
+                    }
+                }
+                postCleanup()
+            }
+        }
+    }
+}
