@@ -35,11 +35,13 @@ jobs:
       - name: Check if build repo release issue exists
         id: check_if_build_repo_issue_exists
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
         with:
           github-token: ${{ secrets.OPENSEARCH_CI_BOT_TOKEN }}
           script: |
             const result = await github.rest.search.issuesAndPullRequests({
-              q: 'repo:opensearch-project/opensearch-build "[RELEASE] Release version ${{ inputs.version }}" in:title is:issue is:open'
+              q: `repo:opensearch-project/opensearch-build "[RELEASE] Release version ${process.env.RELEASE_VERSION}" in:title is:issue is:open`
             });
             core.setOutput('issues', JSON.stringify(result.data.items));
       - name: Build repo issue number
