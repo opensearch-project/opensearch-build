@@ -79,7 +79,7 @@ sharedLibrary {
         dependency('io.jenkins.plugins', 'pipeline-groovy-lib', '752.vdddedf804e72')
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '806.vb_b_688f609ee9')
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '527.vd61b_1d3c5078') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
-        dependency('org.jenkins-ci.plugins', 'script-security', '1373.vb_b_4a_a_c26fa_00')
+        dependency('org.jenkins-ci.plugins', 'script-security', '1402.v94c9ce464861')
         dependency('org.jenkins-ci.plugins', 'credentials', '1415.v831096eb_5534')
         dependency('org.jenkins-ci.plugins', 'git-client', '6.2.0')
         dependency('org.apache.sshd', 'sshd-core', '2.15.0')
