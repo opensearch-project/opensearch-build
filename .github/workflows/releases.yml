@@ -6,6 +6,10 @@ on:
   schedule:
     - cron: 0 0 * * *
 
+permissions:
+  issues: write
+  contents: read
+
 jobs:
   list-manifest-versions:
     if: github.repository == 'opensearch-project/opensearch-build'
