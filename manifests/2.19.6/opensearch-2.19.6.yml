@@ -153,7 +153,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 8804372094051924a2686594f8929414f3ec15c4
+    ref: f5d387218b265d1f3d0f106a9ebc8f45ac5f11dc
     platforms:
       - linux
       - windows
@@ -191,7 +191,7 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: ee04398ac34b3c099b90471e923775a207cc5610
+    ref: 376b4f2725f6eaa0912bc5e284a5c1007f5538f0
     platforms:
       - linux
   - name: custom-codecs
