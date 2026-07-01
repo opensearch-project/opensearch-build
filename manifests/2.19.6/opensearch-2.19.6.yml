@@ -91,7 +91,7 @@ components:
       - opensearch-remote-metadata-sdk
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: a680d0af96b6484952c4b31923fbfce4a2818578
+    ref: 9139c656214e92e3f90ac4ec426386612d3f7dab
     platforms:
       - linux
       - windows
@@ -153,7 +153,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: f5d387218b265d1f3d0f106a9ebc8f45ac5f11dc
+    ref: 3f7a7d50c6e5a6108432b34a6f6f43eb1d945ab2
     platforms:
       - linux
       - windows
@@ -202,7 +202,7 @@ components:
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: feec07fb5ba1bcf589cfe7df79786c263d2d98d5
+    ref: 72beb8b48a25c03878a8fea5abe49d1f4aa7b222
     platforms:
       - linux
       - windows
