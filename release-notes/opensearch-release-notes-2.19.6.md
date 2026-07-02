@@ -52,7 +52,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Restore uuid package and revert crypto.randomUUID changes to fix webpack compatibility issues in non-secure HTTP contexts ([#775](https://github.com/opensearch-project/dashboards-reporting/pull/775))
 
 
-### OpenSearch OpenSearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Fix float comparison flakiness with ULP precision and hybrid comparison, cache size integration test fix, rescore-only feature SLTR logging fix, and LoggingSearchExtBuilder.toXContent missing field name fix ([#355](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/355))
@@ -100,151 +100,36 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## INFRASTRUCTURE
 
 
-### OpenSearch Alerting
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#2184](https://github.com/opensearch-project/alerting/pull/2184))
-
-
-### OpenSearch Asynchronous Search
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#844](https://github.com/opensearch-project/asynchronous-search/pull/844))
-
-
-### OpenSearch Common Utils
-
-
-* Add CI mirror repository to avoid Maven Central throttling during builds ([#976](https://github.com/opensearch-project/common-utils/pull/976))
-
-
-### OpenSearch Cross Cluster Replication
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#1712](https://github.com/opensearch-project/cross-cluster-replication/pull/1712))
-
-
-### OpenSearch Flow Framework
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#1429](https://github.com/opensearch-project/flow-framework/pull/1429))
-
-
-### OpenSearch Geospatial
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#873](https://github.com/opensearch-project/geospatial/pull/873))
-
-
-### OpenSearch Index Management
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#1680](https://github.com/opensearch-project/index-management/pull/1680))
-
-
-### OpenSearch Job Scheduler
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#943](https://github.com/opensearch-project/job-scheduler/pull/943))
-
-
 ### OpenSearch ML Commons
 
 
-* Add CI mirror to plugin and dependency repositories to avoid Maven Central throttling ([#4877](https://github.com/opensearch-project/ml-commons/pull/4877))
 * Fix snapshot publishing by pinning GitHub Actions to commit SHAs and removing unreachable Spotless p2 mirror ([#4865](https://github.com/opensearch-project/ml-commons/pull/4865))
 
 
-### OpenSearch ML Commons Dashboards
-
-
-* Pin GitHub Actions to commit SHAs and update workflow references to use official opensearch-project actions ([#498](https://github.com/opensearch-project/ml-commons-dashboards/pull/498))
-
-
-### OpenSearch Neural Search
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#1883](https://github.com/opensearch-project/neural-search/pull/1883))
-
-
-### OpenSearch Notifications
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#1241](https://github.com/opensearch-project/notifications/pull/1241))
-
-
-### OpenSearch Observability
-
-
-* Add CI mirror to plugin and dependency repositories to avoid Maven Central throttling ([#2007](https://github.com/opensearch-project/observability/pull/2007))
-
-
-### OpenSearch OpenSearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Fix Windows CI build failure caused by Spotless P2 mirror timeout by removing withP2Mirrors() configuration ([#303](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/303))
-* Pin GitHub Actions to commit SHAs and add ci.opensearch.org maven2 mirror to avoid Maven Central throttling ([#355](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/355))
-
-
-### OpenSearch OpenSearch Remote Metadata Sdk
-
-
-* Add CI mirror to plugin and dependency repositories to avoid Maven Central throttling during builds ([#419](https://github.com/opensearch-project/opensearch-remote-metadata-sdk/pull/419))
-
-
-### OpenSearch OpenSearch System Templates
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#147](https://github.com/opensearch-project/opensearch-system-templates/pull/147))
 
 
 ### OpenSearch Query Insights
 
 
-* Add CI mirror to plugin and dependency repositories to avoid Maven Central throttling ([#629](https://github.com/opensearch-project/query-insights/pull/629))
 * Fix 2.19 CI matrix, security integration tests, and Eclipse formatter configuration ([#565](https://github.com/opensearch-project/query-insights/pull/565))
 * Disable validatePluginZipPom to fix preexisting JDK 11 build failure on 2.19 ([#631](https://github.com/opensearch-project/query-insights/pull/631))
-* Pin GitHub Actions to commit SHAs for improved supply-chain security ([#626](https://github.com/opensearch-project/query-insights/pull/626))
 
 
 ### OpenSearch Query Insights Dashboards
 
 
 * Address CVEs in transitive dependencies (lodash, serialize-javascript, minimatch, picomatch, brace-expansion, yaml) ([#541](https://github.com/opensearch-project/query-insights-dashboards/pull/541))
-* Pin GitHub Actions to commit SHAs to prevent supply chain attacks ([#543](https://github.com/opensearch-project/query-insights-dashboards/pull/543))
 * Onboard new backport-pr reusable GitHub workflow ([#547](https://github.com/opensearch-project/query-insights-dashboards/pull/547))
 
 
 ### OpenSearch Reporting
 
 
-* Add CI mirror to plugin and dependency repositories to avoid Maven Central throttling ([#1199](https://github.com/opensearch-project/reporting/pull/1199))
 * Fix maven snapshot publication on 2.19 branch ([#1161](https://github.com/opensearch-project/reporting/pull/1161))
-
-
-### OpenSearch Security Analytics
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#1741](https://github.com/opensearch-project/security-analytics/pull/1741))
-
-
-### OpenSearch Skills
-
-
-* Add CI mirror to plugin and dependency repositories to avoid Maven Central throttling ([#760](https://github.com/opensearch-project/skills/pull/760))
-
-
-### OpenSearch k-NN
-
-
-* Add CI mirror to avoid Maven Central throttling during builds ([#3392](https://github.com/opensearch-project/k-NN/pull/3392))
-
-
-### SQL
-
-
-* Add CI mirror to plugin and dependency repositories to avoid Maven Central throttling ([#5591](https://github.com/opensearch-project/sql/pull/5591))
-* Pin GitHub Actions to commit SHAs to prevent supply chain attacks ([#5573](https://github.com/opensearch-project/sql/pull/5573))
 
 
 
@@ -270,8 +155,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * Bump opensearch\_version in bwc-test to 2.19.6-SNAPSHOT to resolve log4j-core CVEs ([#350](https://github.com/opensearch-project/custom-codecs/pull/350))
-* Add release notes for 2.19.6 ([#348](https://github.com/opensearch-project/custom-codecs/pull/348))
-* Add release notes for 2.19.6 ([#354](https://github.com/opensearch-project/custom-codecs/pull/354))
 
 
 ### OpenSearch Dashboards Observability
@@ -311,18 +194,11 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Bump assertj-core from 3.16.1 to 3.27.7 to remediate CVE-2026-24400 (XXE vulnerability) ([#2008](https://github.com/opensearch-project/observability/pull/2008))
 
 
-### OpenSearch OpenSearch Learning To Rank Base
+### OpenSearch Learning To Rank Base
 
 
 * Fix CVE-2026-34478 by upgrading log4j dependencies to 2.25.4 ([#330](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/330))
-* Add release notes for 2.19.6 ([#370](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/370))
 * Upgrade RankyMcRankFace 0.1.1 to 0.3.0 to fix XXE/DTD vulnerability and add issues:write permission to untriaged-label workflow ([#355](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/355))
-
-
-### OpenSearch Query Insights
-
-
-* Add release notes for 2.19.6 ([#625](https://github.com/opensearch-project/query-insights/pull/625))
 
 
 ### OpenSearch Security
