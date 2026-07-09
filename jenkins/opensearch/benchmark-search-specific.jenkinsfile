@@ -174,14 +174,14 @@ pipeline {
                         telemetryParams: TELEMETRY_PARAMS,
                         assumeRoleAccount: ASSUME_ROLE_ACCOUNT
                     )
-                    stash includes: 'test_execution*.csv', name: "benchmark"
+                    //stash includes: 'test_execution*.csv', name: "benchmark"
 
                 }
             }
             post {
                 always {
-                    unstash "benchmark"
-                    archiveArtifacts artifacts: 'test_execution*.csv'
+                    //unstash "benchmark"
+                    //archiveArtifacts artifacts: 'test_execution*.csv'
                     postCleanup()
                 }
             }
