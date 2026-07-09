@@ -33,7 +33,7 @@ RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqli
 RUN dnf groupinstall -y "Development Tools" && dnf clean all && rm -rf /var/cache/dnf/*
 
 # Installing dotnet
-ARG DOT_NET_LIST="8.0"
+ARG DOT_NET_LIST="10.0"
 RUN for dotnet_version in $DOT_NET_LIST; do dnf install -y dotnet-sdk-$dotnet_version; done
 
 # Tools setup
