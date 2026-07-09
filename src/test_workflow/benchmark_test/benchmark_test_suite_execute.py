@@ -29,8 +29,8 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
         logging.info(log_info.replace(self.password, len(self.password) * "*") if self.password else log_info)
         try:
             subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)
-            if self.args.cluster_endpoint or self.args.distribution_url:
-                self.convert()
+            #if self.args.cluster_endpoint or self.args.distribution_url:
+            #    self.convert()
         finally:
             self.cleanup()
 
