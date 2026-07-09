@@ -36,7 +36,7 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
 
     def form_command(self) -> str:
         # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
-        self.command = f'docker run --network host --name docker-container-{self.args.stack_suffix}'
+        self.command = f'docker run --name docker-container-{self.args.stack_suffix}'
 
         if self.security and self.args.sigv4:
             self.command += ' -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN'
