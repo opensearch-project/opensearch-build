@@ -32,9 +32,16 @@ RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqli
 # Add Yarn dependencies
 RUN dnf groupinstall -y "Development Tools" && dnf clean all && rm -rf /var/cache/dnf/*
 
-# Installing dotnet
+# Installing dotnet (almalinux8 10.0 == 10.0.109 < 10.0.300)
 ARG DOT_NET_LIST="10.0"
 RUN for dotnet_version in $DOT_NET_LIST; do dnf install -y dotnet-sdk-$dotnet_version; done
+# Specifically to upgrade version from 10.0.109 to 10.0.300, keep above to install all the dependencies
+RUN curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && chmod +x dotnet-install.sh && \
+    ./dotnet-install.sh --version 10.0.300 --install-dir /usr/share/dotnet
+
+# ENV DOTNET
+ENV DOTNET_ROOT=/usr/share/dotnet
+ENV PATH=$DOTNET_ROOT:$PATH
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh config/op-setup.sh /tmp/
