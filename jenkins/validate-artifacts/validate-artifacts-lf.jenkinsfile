@@ -10,6 +10,11 @@
 // @job-name: distribution-validation
 // @description: Validates OpenSearch and OpenSearch Dashboards distribution artifacts.
 
+lib = library(identifier: 'jenkins@12.1.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
 def docker_images = [
     "tar": "opensearchorg/opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1",
     "rpm": "opensearchorg/opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
@@ -36,36 +41,6 @@ def agent_nodes = [
     "linux_x64": "Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host",
     "linux_arm64": "Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host",
 ]
-
-def runValidation(Map args) {
-    if (!fileExists("$WORKSPACE/validation.sh")) {
-        println("Validation.sh script not found in the workspace: ${WORKSPACE}, exit 1")
-        System.exit(1)
-    }
-
-    def validation_cmd = [
-        './validation.sh',
-        args.version ? "--version ${args.version}" : "",
-        args.file_path ? "--file-path ${args.file_path}" : "",
-        args.distribution ? "--distribution ${args.distribution}" : "",
-        args.platform ? "--platform ${args.platform}" : "",
-        args.arch ? "--arch ${args.arch}" : "",
-        args.projects ? "--projects ${args.projects}" : "",
-        args.docker_source ? "--docker-source ${args.docker_source}" : "",
-        args.os_build_number ? "--os-build-number ${args.os_build_number}" : "",
-        args.osd_build_number ? "--osd-build-number ${args.osd_build_number}" : "",
-        args.artifact_type ? "--artifact-type ${args.artifact_type}" : "",
-        args.allow_http ? '--allow-http' : "",
-        args.docker_args ? "--${args.docker_args}" : "",
-        args.skip_core_plugins != null && args.skip_core_plugins != 'None' ? "--skip-core-plugins ${args.skip_core_plugins.replaceAll(',', ' ')}".trim() : "",
-    ].join(' ').trim()
-
-    if (isUnix()) {
-        sh(validation_cmd)
-    } else {
-        bat("bash -c \"${validation_cmd}\"")
-    }
-}
 
 pipeline {
     options {
@@ -204,7 +179,7 @@ pipeline {
             }
             post {
                 always {
-                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                    postCleanup()
                 }
             }
         }
@@ -222,12 +197,14 @@ pipeline {
 
                     def validateDistributions = [:]
 
+                    // Create parallel stages for all combinations of distribution and architecture
                     for (distribution in distributionList) {
                         for (architecture in architectureList) {
                             def local_architecture = architecture.trim()
                             def local_distribution = distribution.trim()
                             def local_platform = mapDistributionToPlatform.getOrDefault(local_distribution, "linux")
 
+                            // Skip zip-arm64 combination
                             if (local_distribution == 'zip' && local_architecture == 'arm64') {
                                 echo "Skipping the stage for zip distribution and arm64 architecture"
                                 continue
@@ -241,7 +218,7 @@ pipeline {
                                                 stage("${local_distribution}-${local_architecture}") {
                                                     unstash "validate-artifacts-$BUILD_NUMBER"
                                                     retry(2) {
-                                                        runValidation(
+                                                        validateArtifacts(
                                                             version: "$VERSION",
                                                             distribution: "${local_distribution}",
                                                             arch: "${local_architecture}",
@@ -259,7 +236,7 @@ pipeline {
                                                 throw e
                                             } finally {
                                                 echo "Completed validation for ${local_distribution}-${local_architecture}"
-                                                cleanWs disableDeferredWipeout: true, deleteDirs: true
+                                                postCleanup()
                                             }
                                         }
                                     } else {
@@ -273,7 +250,7 @@ pipeline {
 
                                                             retry(2) {
                                                                 if (VERSION) {
-                                                                    runValidation(
+                                                                    validateArtifacts(
                                                                         version: "$VERSION",
                                                                         distribution: "${local_distribution}",
                                                                         arch: "${local_architecture}",
@@ -286,7 +263,7 @@ pipeline {
                                                                         skip_core_plugins: params.SKIP_CORE_PLUGINS
                                                                     )
                                                                 } else {
-                                                                    runValidation(
+                                                                    validateArtifacts(
                                                                         file_path: "$FILEPATH",
                                                                         allow_http: params.ALLOW_HTTP
                                                                     )
@@ -298,7 +275,7 @@ pipeline {
                                                         throw e
                                                     } finally {
                                                         echo "Completed validation for ${local_distribution}-${local_architecture}"
-                                                        cleanWs disableDeferredWipeout: true, deleteDirs: true
+                                                        postCleanup()
                                                     }
                                                 }
                                             }
@@ -313,7 +290,7 @@ pipeline {
             }
             post {
                 always {
-                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                    postCleanup()
                 }
             }
         }
