@@ -55,8 +55,8 @@ class TestValidateArtifacts extends BuildPipelineTest {
 
     @Test
     public void testValidateArtifactsPipeline() {
-        super.testPipeline("jenkins/validate-artifacts/validate-artifacts.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/validate-artifacts/validate-artifacts.jenkinsfile")
+        super.testPipeline("jenkins/validate-artifacts/validate-artifacts-lf.jenkinsfile",
+                "tests/jenkins/jenkinsjob-regression-files/validate-artifacts/validate-artifacts-lf.jenkinsfile")
         assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('./validation.sh --version 2.3.0  --distribution docker  --arch x64 --projects opensearch opensearch-dashboards --docker-source dockerhub ecr --os-build-number 6039 --osd-build-number 4104   --using-staging-artifact-only --skip-core-plugins arrow-base arrow-flight-rpc'))
         assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('./validation.sh --version 2.3.0  --distribution tar --platform linux --arch x64 --projects opensearch opensearch-dashboards  --os-build-number 6039 --osd-build-number 4104 --artifact-type production   --skip-core-plugins arrow-base arrow-flight-rpc'))
         assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('./validation.sh --version 2.3.0  --distribution yum --platform linux --arch x64 --projects opensearch opensearch-dashboards  --os-build-number 6039 --osd-build-number 4104 --artifact-type production   --skip-core-plugins arrow-base arrow-flight-rpc'))
@@ -70,7 +70,7 @@ class TestValidateArtifacts extends BuildPipelineTest {
         binding.setVariable('VERSION', "")
         binding.setVariable('OPENSEARCH_ARTIFACT_URL', "https://ci.opensearch/distribution-build-opensearch/1.3.12/8230/linux/x64/tar/opensearch-1.3.12-linux-x64.tar.gz")
         binding.setVariable('OPENSEARCH_DASHBOARDS_ARTIFACT_URL', "https://ci.opensearch/distribution-build-opensearch-dashboards/1.3.12/8230/linux/x64/tar/opensearch-dashboards-1.3.12-linux-x64.tar.gz")
-        runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
+        runScript('jenkins/validate-artifacts/validate-artifacts-lf.jenkinsfile')
         assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('./validation.sh  --file-path opensearch=https://ci.opensearch/distribution-build-opensearch/1.3.12/8230/linux/x64/tar/opensearch-1.3.12-linux-x64.tar.gz opensearch-dashboards=https://ci.opensearch/distribution-build-opensearch-dashboards/1.3.12/8230/linux/x64/tar/opensearch-dashboards-1.3.12-linux-x64.tar.gz'))
     }
 
@@ -78,7 +78,7 @@ class TestValidateArtifacts extends BuildPipelineTest {
     public void testInvalidDistributionInFilePath() {
         binding.setVariable('VERSION', "")
         binding.setVariable('OPENSEARCH_ARTIFACT_URL', "https://ci.opensearch/distribution-build-opensearch/1.3.12/8230/linux/x64/xyz/opensearch-1.3.12-linux-x64.xyz.gz")
-        runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
+        runScript('jenkins/validate-artifacts/validate-artifacts-lf.jenkinsfile')
         assertThat(getCommandExecutions('error', ''), hasItem('The provided distribution type is not supported'))
     }
 
@@ -87,7 +87,7 @@ class TestValidateArtifacts extends BuildPipelineTest {
         binding.setVariable('VERSION', "")
         binding.setVariable('OPENSEARCH_ARTIFACT_URL', "")
         binding.setVariable('OPENSEARCH_DASHBOARDS_ARTIFACT_URL', "")
-        runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
+        runScript('jenkins/validate-artifacts/validate-artifacts-lf.jenkinsfile')
         assertThat(getCommandExecutions('error', ''), hasItem('Both VERSION and OPENSEARCH_ARTIFACT_URL cannot be empty. Please provide either value'))
     }
 
@@ -95,13 +95,13 @@ class TestValidateArtifacts extends BuildPipelineTest {
     public void testWhenOSArtifactIsNotProvided() {
         binding.setVariable('OPENSEARCH_ARTIFACT_URL', "")
         binding.setVariable('OPENSEARCH_DASHBOARDS_ARTIFACT_URL', "https://ci.opensearch/distribution-build-opensearch-dashboards/1.3.12/8230/linux/x64/tar/opensearch-dashboards-1.3.12-linux-x64.tar.gz")
-        runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
+        runScript('jenkins/validate-artifacts/validate-artifacts-lf.jenkinsfile')
         assertThat(getCommandExecutions('error', ''), hasItem('Provide OPENSEARCH_ARTIFACT_URL to validate'))
     }
 
     @Test
     public void testZipArm64IsValidated() {
-        runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
+        runScript('jenkins/validate-artifacts/validate-artifacts-lf.jenkinsfile')
         assertThat(getCommandExecutions('echo', ''), hasItem('Skipping the stage for zip distribution and arm64 architecture'))
     }
 
