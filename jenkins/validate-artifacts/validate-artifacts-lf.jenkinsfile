@@ -1,0 +1,298 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+// @job-name: distribution-validation
+// @description: Validates OpenSearch and OpenSearch Dashboards distribution artifacts.
+
+lib = library(identifier: 'jenkins@12.1.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+def docker_images = [
+    "tar": "opensearchorg/opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1",
+    "rpm": "opensearchorg/opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
+    "yum": "opensearchorg/opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
+    "zip": "opensearchorg/opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1",
+    "deb": "opensearchorg/opensearchstaging/ci-runner:ci-runner-ubuntu2404-systemd-base-integtest-v1"
+]
+
+def docker_args = [
+    "tar": "-u 1000",
+    "rpm": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host",
+    "yum": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host",
+    "zip": "-u ContainerAdministrator",
+    "deb": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host"
+]
+
+def agent_nodes_docker = [
+    "x64": "Jenkins-Agent-AL2023-X64-C54xlarge-Single-Host",
+    "arm64": "Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Single-Host",
+]
+
+def agent_nodes = [
+    "windows_x64": "Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host",
+    "linux_x64": "Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host",
+    "linux_arm64": "Jenkins-Agent-AL2023-Arm64-M6g4xlarge-Docker-Host",
+]
+
+pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+    agent none
+    parameters {
+        string(
+            name: 'OPENSEARCH_ARTIFACT_URL',
+            description: '<Conditionally-Required> Enter OpenSearch artifact URL',
+            trim: true
+        )
+        string(
+            name: 'OPENSEARCH_DASHBOARDS_ARTIFACT_URL',
+            description: '<Conditionally-Required> Enter OpenSearch-Dashboards artifact URL',
+            trim: true
+        )
+        string(
+            name: 'VERSION',
+            description: '<Conditionally-Required> Enter the OpenSearch and OpenSearch Dashboards version to validate only when the URLs are not provided',
+            defaultValue: "",
+            trim: true
+        )
+        string(
+            name: 'DISTRIBUTION',
+            description: '<Optional> Enter the distribution type among tar, rpm, yum, docker separated by space. Defaults to "tar rpm yum deb zip docker"',
+            trim: true,
+            defaultValue: "tar rpm yum deb zip docker"
+
+        )
+        string(
+            name: 'ARCHITECTURE',
+            description: '<Optional> Enter the architecture type among x64 and arm64 separated by space. Defaults to "x64 arm64"',
+            trim: true,
+            defaultValue: "x64 arm64"
+        )
+        string(
+            name: 'PLATFORM',
+            description: '<Optional> Enter the type type among linux and windows separated by space. Defaults to "linux windows"',
+            trim: true,
+            defaultValue: "linux windows"
+        )
+        string(
+            name: 'OS_BUILD_NUMBER',
+            description: '<Optional> Enter the build number for OpenSearch - This parameter is applicable only for Docker Validation and staging artifacts referred by build numbers',
+            trim: true,
+        )
+        string(
+            name: 'OSD_BUILD_NUMBER',
+            description: '<Optional> Enter the build number for OpenSearch Dashboards - This parameter is applicable only for Docker Validation and staging artifacts referred by build numbers',
+            trim: true,
+        )
+        choice(
+            name: 'OPTIONAL_ARGS',
+            description: '<Optional> Optional args for docker validation. Currently supports validate-digest-only or using-staging-artifact-only. Defaults to using-staging-artifact-only.',
+            choices: ['using-staging-artifact-only', 'validate-digest-only'],
+        )
+        choice(
+            name: 'DOCKER_SOURCE',
+            description: '<Optional> Enter the docker-source to pull the docker image, either DockerHub or ECR or Both. Defaults to dockerhub.',
+            choices: ["dockerhub", "ecr", "Both"]
+        )
+        choice(
+            name: 'PROJECTS',
+            description: '<Optional> Enter the project to validate. Either OpenSearch or Both (validates both OpenSearch and OpenSearch-Dashboards). Defaults to opensearch.',
+            choices: ['opensearch', 'Both']
+        )
+        choice(
+            name: 'ARTIFACT_TYPE',
+            description: '<Optional> Determine the artifact type among staging or production. Defaults to production.',
+            choices: ['production', 'staging'],
+        )
+        string(
+            name: 'SKIP_CORE_PLUGINS',
+            description: '<Optional> Skip native plugin validation. "None" = install all, "" (empty) = skip all, or comma-separated plugin names to skip (e.g. "arrow-base,arrow-flight-rpc").',
+            defaultValue: 'arrow-base,arrow-flight-rpc'
+        )
+        booleanParam(
+            name: 'ALLOW_HTTP',
+            description: '<Optional> Allow validation even when the security plugin is absent.',
+            defaultValue: false
+        )
+    }
+
+    stages {
+        stage('verify-parameters') {
+            agent { label agent_nodes["linux_x64"] }
+            steps {
+                script {
+                    def url_paths = [:]
+
+                    OPENSEARCH_ARTIFACT_URL ? url_paths["opensearch"] = OPENSEARCH_ARTIFACT_URL : null
+                    OPENSEARCH_DASHBOARDS_ARTIFACT_URL ? url_paths['opensearch-dashboards'] = OPENSEARCH_DASHBOARDS_ARTIFACT_URL : null
+
+                    if (PROJECTS == 'Both') {
+                        PROJECTS = "opensearch opensearch-dashboards"
+                    }
+
+                    if (DOCKER_SOURCE == 'Both') {
+                        DOCKER_SOURCE = "dockerhub ecr"
+                    }
+
+                    if (OPENSEARCH_DASHBOARDS_ARTIFACT_URL && OPENSEARCH_ARTIFACT_URL == "") {
+                        currentBuild.result = 'ABORTED'
+                        error("Provide OPENSEARCH_ARTIFACT_URL to validate")
+                    }
+
+                    if(OPENSEARCH_ARTIFACT_URL) {
+                        ARCHITECTURE = url_paths.values().find { it.contains("x64") } ? "x64" : "arm64"
+                        def distKeyWords = [
+                            "tar.gz": "tar",
+                            "zip": "zip",
+                            "rpm": "rpm",
+                            "repo": "yum",
+                            "deb": "deb"
+                        ]
+                        DISTRIBUTION = distKeyWords.find { item ->
+                            url_paths.values().any { value ->
+                                value.contains(item.key)
+                            }
+                        }?.value
+                        if (DISTRIBUTION == null) {
+                            error("The provided distribution type is not supported")
+                        }
+                        env.FILEPATH = "opensearch=${OPENSEARCH_ARTIFACT_URL?.trim()}"
+                        if (OPENSEARCH_DASHBOARDS_ARTIFACT_URL) {
+                            FILEPATH = env.FILEPATH + " opensearch-dashboards=${OPENSEARCH_DASHBOARDS_ARTIFACT_URL?.trim()}"
+                        }
+                    }
+
+                    if(VERSION == '' && OPENSEARCH_ARTIFACT_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Both VERSION and OPENSEARCH_ARTIFACT_URL cannot be empty. Please provide either value")
+                    }
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+        stage('Validate') {
+            agent { label agent_nodes["linux_x64"] }
+            steps {
+                script {
+                    def distributionList = DISTRIBUTION ? DISTRIBUTION.trim().split(" ") as List : ""
+                    def architectureList = ARCHITECTURE ? ARCHITECTURE.trim().split(" ") as List : ""
+                    def mapDistributionToPlatform = [
+                        "zip": "windows"
+                    ]
+
+                    stash includes: "**", name: "validate-artifacts-$BUILD_NUMBER"
+
+                    def validateDistributions = [:]
+
+                    // Create parallel stages for all combinations of distribution and architecture
+                    for (distribution in distributionList) {
+                        for (architecture in architectureList) {
+                            def local_architecture = architecture.trim()
+                            def local_distribution = distribution.trim()
+                            def local_platform = mapDistributionToPlatform.getOrDefault(local_distribution, "linux")
+
+                            // Skip zip-arm64 combination
+                            if (local_distribution == 'zip' && local_architecture == 'arm64') {
+                                echo "Skipping the stage for zip distribution and arm64 architecture"
+                                continue
+                            }
+
+                            validateDistributions["${local_distribution}-${local_architecture}"] = {
+                                timeout(time: 1, unit: 'HOURS') {
+                                    if ("${local_distribution}" == "docker") {
+                                        node(agent_nodes_docker["$local_architecture"]) {
+                                            try {
+                                                stage("${local_distribution}-${local_architecture}") {
+                                                    unstash "validate-artifacts-$BUILD_NUMBER"
+                                                    retry(2) {
+                                                        validateArtifacts(
+                                                            version: "$VERSION",
+                                                            distribution: "${local_distribution}",
+                                                            arch: "${local_architecture}",
+                                                            os_build_number: "$OS_BUILD_NUMBER",
+                                                            osd_build_number: "$OSD_BUILD_NUMBER",
+                                                            projects: "$PROJECTS",
+                                                            docker_args: "$OPTIONAL_ARGS",
+                                                            docker_source: "$DOCKER_SOURCE",
+                                                            skip_core_plugins: params.SKIP_CORE_PLUGINS
+                                                        )
+                                                    }
+                                                }
+                                            } catch (e) {
+                                                echo "Error occurred while validating ${local_distribution}-${local_architecture}"
+                                                throw e
+                                            } finally {
+                                                echo "Completed validation for ${local_distribution}-${local_architecture}"
+                                                postCleanup()
+                                            }
+                                        }
+                                    } else {
+                                        node(agent_nodes["${local_platform}_${local_architecture}"]) {
+                                            docker.withRegistry('https://public.ecr.aws/') {
+                                                docker.image(docker_images["$local_distribution"]).pull()
+                                                docker.image(docker_images["$local_distribution"]).inside(docker_args["$local_distribution"]) {
+                                                    try {
+                                                        stage("${local_distribution}-${local_architecture}") {
+                                                            unstash "validate-artifacts-$BUILD_NUMBER"
+
+                                                            retry(2) {
+                                                                if (VERSION) {
+                                                                    validateArtifacts(
+                                                                        version: "$VERSION",
+                                                                        distribution: "${local_distribution}",
+                                                                        arch: "${local_architecture}",
+                                                                        platform: "${local_platform}",
+                                                                        os_build_number: "$OS_BUILD_NUMBER",
+                                                                        osd_build_number: "$OSD_BUILD_NUMBER",
+                                                                        projects: "$PROJECTS",
+                                                                        artifact_type: "$ARTIFACT_TYPE",
+                                                                        allow_http: params.ALLOW_HTTP,
+                                                                        skip_core_plugins: params.SKIP_CORE_PLUGINS
+                                                                    )
+                                                                } else {
+                                                                    validateArtifacts(
+                                                                        file_path: "$FILEPATH",
+                                                                        allow_http: params.ALLOW_HTTP
+                                                                    )
+                                                                }
+                                                            }
+                                                        }
+                                                    } catch (e) {
+                                                        echo "Error occurred while validating ${local_distribution}-${local_architecture}"
+                                                        throw e
+                                                    } finally {
+                                                        echo "Completed validation for ${local_distribution}-${local_architecture}"
+                                                        postCleanup()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    parallel validateDistributions
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+    }
+}
