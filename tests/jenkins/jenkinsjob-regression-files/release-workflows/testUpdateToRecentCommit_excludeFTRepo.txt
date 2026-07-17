@@ -1,38 +1,38 @@
-   release-manifest-commit-lock.run()
-      release-manifest-commit-lock.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      release-manifest-commit-lock.library({identifier=jenkins@12.0.0, retriever=null})
-      release-manifest-commit-lock.pipeline(groovy.lang.Closure)
-         release-manifest-commit-lock.timeout({time=2, unit=HOURS})
-         release-manifest-commit-lock.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
-         release-manifest-commit-lock.stage(Parameters Check, groovy.lang.Closure)
-            release-manifest-commit-lock.script(groovy.lang.Closure)
-         release-manifest-commit-lock.echo(Skipping stage MATCH_BUILD_MANIFEST)
-         release-manifest-commit-lock.stage(UPDATE_TO_RECENT_COMMITS, groovy.lang.Closure)
-            release-manifest-commit-lock.script(groovy.lang.Closure)
-               release-manifest-commit-lock.readYaml({file=manifests/2.0.0/opensearch-2.0.0.yml})
-               release-manifest-commit-lock.writeYaml({file=manifests/2.0.0/opensearch-2.0.0.yml, data={ci={image={name=opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028}}, build={name=OpenSearch Dashboards, version=3.0.0}, components=[{name=OpenSearch-Dashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/OpenSearch-Dashboards.git}, {name=functionalTestDashboards, repository=https://github.com/opensearch-project/opensearch-dashboards-functional-test.git, ref=3.0}, {name=observabilityDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-observability.git}, {name=indexManagementDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/index-management-dashboards-plugin}, {name=ganttChartDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-visualizations.git}, {name=reportsDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-reports.git}, {name=queryWorkbenchDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/sql.git}, {name=anomalyDetectionDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/anomaly-detection-dashboards-plugin}], schema-version=1.0}, overwrite=true})
-               release-manifest-commit-lock.sh(
+   release-manifest-commit-lock-lf.run()
+      release-manifest-commit-lock-lf.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      release-manifest-commit-lock-lf.library({identifier=jenkins@12.0.0, retriever=null})
+      release-manifest-commit-lock-lf.pipeline(groovy.lang.Closure)
+         release-manifest-commit-lock-lf.timeout({time=2, unit=HOURS})
+         release-manifest-commit-lock-lf.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchorg/opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+         release-manifest-commit-lock-lf.stage(Parameters Check, groovy.lang.Closure)
+            release-manifest-commit-lock-lf.script(groovy.lang.Closure)
+         release-manifest-commit-lock-lf.echo(Skipping stage MATCH_BUILD_MANIFEST)
+         release-manifest-commit-lock-lf.stage(UPDATE_TO_RECENT_COMMITS, groovy.lang.Closure)
+            release-manifest-commit-lock-lf.script(groovy.lang.Closure)
+               release-manifest-commit-lock-lf.readYaml({file=manifests/2.0.0/opensearch-2.0.0.yml})
+               release-manifest-commit-lock-lf.writeYaml({file=manifests/2.0.0/opensearch-2.0.0.yml, data={ci={image={name=opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028}}, build={name=OpenSearch Dashboards, version=3.0.0}, components=[{name=OpenSearch-Dashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/OpenSearch-Dashboards.git}, {name=functionalTestDashboards, repository=https://github.com/opensearch-project/opensearch-dashboards-functional-test.git, ref=3.0}, {name=observabilityDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-observability.git}, {name=indexManagementDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/index-management-dashboards-plugin}, {name=ganttChartDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-visualizations.git}, {name=reportsDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-reports.git}, {name=queryWorkbenchDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/sql.git}, {name=anomalyDetectionDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/anomaly-detection-dashboards-plugin}], schema-version=1.0}, overwrite=true})
+               release-manifest-commit-lock-lf.sh(
                                 yq eval -i '.' manifests/2.0.0/opensearch-2.0.0.yml
                                 sed -i '1s/^/---\n/' manifests/2.0.0/opensearch-2.0.0.yml
                         )
-               release-manifest-commit-lock.readYaml({file=manifests/2.0.0/opensearch-dashboards-2.0.0.yml})
-               release-manifest-commit-lock.writeYaml({file=manifests/2.0.0/opensearch-dashboards-2.0.0.yml, data={ci={image={name=opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028}}, build={name=OpenSearch Dashboards, version=3.0.0}, components=[{name=OpenSearch-Dashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/OpenSearch-Dashboards.git}, {name=functionalTestDashboards, repository=https://github.com/opensearch-project/opensearch-dashboards-functional-test.git, ref=3.0}, {name=observabilityDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-observability.git}, {name=indexManagementDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/index-management-dashboards-plugin}, {name=ganttChartDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-visualizations.git}, {name=reportsDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-reports.git}, {name=queryWorkbenchDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/sql.git}, {name=anomalyDetectionDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/anomaly-detection-dashboards-plugin}], schema-version=1.0}, overwrite=true})
-               release-manifest-commit-lock.sh(
+               release-manifest-commit-lock-lf.readYaml({file=manifests/2.0.0/opensearch-dashboards-2.0.0.yml})
+               release-manifest-commit-lock-lf.writeYaml({file=manifests/2.0.0/opensearch-dashboards-2.0.0.yml, data={ci={image={name=opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028}}, build={name=OpenSearch Dashboards, version=3.0.0}, components=[{name=OpenSearch-Dashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/OpenSearch-Dashboards.git}, {name=functionalTestDashboards, repository=https://github.com/opensearch-project/opensearch-dashboards-functional-test.git, ref=3.0}, {name=observabilityDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-observability.git}, {name=indexManagementDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/index-management-dashboards-plugin}, {name=ganttChartDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-visualizations.git}, {name=reportsDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-reports.git}, {name=queryWorkbenchDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/sql.git}, {name=anomalyDetectionDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/anomaly-detection-dashboards-plugin}], schema-version=1.0}, overwrite=true})
+               release-manifest-commit-lock-lf.sh(
                                 yq eval -i '.' manifests/2.0.0/opensearch-dashboards-2.0.0.yml
                                 sed -i '1s/^/---\n/' manifests/2.0.0/opensearch-dashboards-2.0.0.yml
                         )
-         release-manifest-commit-lock.echo(Skipping stage UPDATE_TO_TAGS)
-         release-manifest-commit-lock.echo(Skipping stage UPDATE_TO_RELEASE_BRANCH)
-         release-manifest-commit-lock.stage(Create Pull Request, groovy.lang.Closure)
-            release-manifest-commit-lock.script(groovy.lang.Closure)
-               release-manifest-commit-lock.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-token}]}, groovy.lang.Closure)
-                  release-manifest-commit-lock.sh(
+         release-manifest-commit-lock-lf.echo(Skipping stage UPDATE_TO_TAGS)
+         release-manifest-commit-lock-lf.echo(Skipping stage UPDATE_TO_RELEASE_BRANCH)
+         release-manifest-commit-lock-lf.stage(Create Pull Request, groovy.lang.Closure)
+            release-manifest-commit-lock-lf.script(groovy.lang.Closure)
+               release-manifest-commit-lock-lf.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-token}]}, groovy.lang.Closure)
+                  release-manifest-commit-lock-lf.sh(
                                 gh repo fork "opensearch-project/opensearch-build" --clone=false
                                 git remote add fork "https://opensearch-ci-bot:GITHUB_TOKEN@github.com/opensearch-ci-bot/opensearch-build"
                                 git checkout -b manifest-lock
                             )
-                  release-manifest-commit-lock.sh({returnStdout=true, script=git status --porcelain})
-                  release-manifest-commit-lock.sh(
+                  release-manifest-commit-lock-lf.sh({returnStdout=true, script=git status --porcelain})
+                  release-manifest-commit-lock-lf.sh(
                                     git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
                                     git -c user.email="opensearch-infra@amazon.com" -c user.name="opensearch-ci-bot" commit -sm "Manifest Commit Lock for Release 2.0.0"
                                     git push fork manifest-lock --force
@@ -43,6 +43,6 @@
                                         gh pr create --repo "opensearch-project/opensearch-build" --title '[2.0.0] Manifest Commit Lock with action UPDATE_TO_RECENT_COMMITS' --body 'Manifest Commit Lock for Release 2.0.0 ' -H "opensearch-ci-bot:manifest-lock" -B main
                                     fi
                                 )
-         release-manifest-commit-lock.script(groovy.lang.Closure)
-            release-manifest-commit-lock.postCleanup()
+         release-manifest-commit-lock-lf.script(groovy.lang.Closure)
+            release-manifest-commit-lock-lf.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
