@@ -217,15 +217,3 @@ components:
         - without-security
     smoke-test:
       test-spec: search-relevance.yml
-  - name: opensearch-jvector
-    integ-test:
-      test-configs:
-        - with-security
-        - without-security
-      additional-cluster-configs:
-        node.attr.knn_cb_tier: integ
-        path.repo:
-          - /tmp
-          - logs
-    smoke-test:
-      test-spec: opensearch-jvector.yml
