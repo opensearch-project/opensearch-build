@@ -170,20 +170,6 @@ components:
       additional-cluster-configs:
         script.context.field.max_compilations_rate: 1000/1m
         plugins.query.datasources.encryption.masterkey: 4fc8fee6a3fd7d6ca01772e5
-        # The PPL `rest` command is disabled by default (empty allow-list) and the setting is
-        # node-scoped, so it must be set at cluster startup. Opt into the same endpoints the sql
-        # repo's own integ-test clusters enable so the rest integration tests exercise the enabled
-        # path instead of failing with "the rest command is disabled on this cluster".
-        plugins.ppl.rest.allowed_endpoints:
-          - /_cluster/health
-          - /_cluster/state
-          - /_cluster/settings
-          - /_cat/indices
-          - /_cat/nodes
-          - /_cat/cluster_manager
-          - /_cat/plugins
-          - /_cat/shards
-          - /_resolve/index
     bwc-test:
       test-configs:
         - with-security
