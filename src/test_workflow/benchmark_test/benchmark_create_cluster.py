@@ -11,7 +11,12 @@ import logging
 import os
 import subprocess
 from contextlib import contextmanager
-from typing import Any, Generator, Union
+from typing import Any, Dict, Generator, Union
+
+import boto3
+import requests
+from requests.auth import HTTPBasicAuth
+from retry.api import retry_call  # type: ignore
 
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
@@ -28,6 +33,9 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
     params: str
     is_endpoint_public: bool
     cluster_endpoint: str
+    cluster_role: str
+    stack_suffix: str
+    seed_node_ip: str
 
     """
     Represents a performance test cluster. This class deploys the opensearch bundle with CDK. Supports both single
@@ -39,12 +47,19 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             args: BenchmarkArgs,
             bundle_manifest: Union[BundleManifest, BuildManifest],
             config: dict,
-            current_workspace: str
+            current_workspace: str,
+            cluster_role: str = None
     ) -> None:
         super().__init__(args)
         self.manifest = bundle_manifest
         self.current_workspace = current_workspace
-        self.output_file = "output.json"
+        # Role of the cluster in a cross-cluster-replication run, either 'leader' or 'follower'.
+        # It is appended to the stack suffix/name to differentiate the two cluster stacks.
+        self.cluster_role = cluster_role
+        self.output_file = f"output-{cluster_role}.json" if cluster_role else "output.json"
+        # Append the cluster role (leader/follower) to the stack suffix so that the two CCR
+        # cluster stacks get unique, differentiable names. Does not mutate the shared args.
+        self.stack_suffix = f"{self.args.stack_suffix}-{cluster_role}" if cluster_role else self.args.stack_suffix
         role = config["Constants"]["Role"]
         params_dict = self.setup_cdk_params(config)
         params_list = []
@@ -66,7 +81,10 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
         self.params = "".join(params_list) + role_params
         self.password = None if self.args.insecure else get_password(self.args.distribution_version)
         self.is_endpoint_public = False
-        self.stack_name = f"opensearch-infra-stack-{self.args.stack_suffix}"
+        # Private IP of the seed node (single-node ip for a single node cluster), resolved once
+        # the cluster is up. Required to apply cross-cluster-replication settings on the follower.
+        self.seed_node_ip = None
+        self.stack_name = f"opensearch-infra-stack-{self.stack_suffix}"
         if self.manifest:
             self.stack_name += f"-{self.manifest.build.id}-{self.manifest.build.architecture}"
 
@@ -87,6 +105,77 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             raise RuntimeError("Unable to fetch the cluster endpoint from cdk output")
         self.cluster_endpoint = load_balancer_url
         self.cluster_endpoint_with_port = "".join([load_balancer_url, ":", str(self.port)])
+        if self.args.ccr_enabled:
+            self.seed_node_ip = self.fetch_seed_node_ip(cdk_output)
+
+    def fetch_seed_node_ip(self, cdk_output: dict) -> str:
+        """
+        Resolve the private IP of the seed node, which is needed to apply cross-cluster-replication
+        settings. For a single-node cluster the IP is exposed directly in the cdk output ('privateip').
+        For a multi-node cluster the seed node sits behind an autoscaling group, so it is looked up via
+        the unique 'Name' tag (<stack_name>/seedNodeLt) that opensearch-cluster-cdk applies per stack.
+        """
+        if self.args.single_node:
+            private_ip = cdk_output[self.stack_name].get('privateip', None)
+            if private_ip is None:
+                raise RuntimeError("Unable to fetch the single-node private ip from cdk output")
+            return str(private_ip)
+
+        return self.fetch_seed_node_ip_by_tag(f"{self.stack_name}/seedNodeLt")
+
+    def fetch_seed_node_ip_by_tag(self, seed_node_tag: str) -> str:
+        region = self.args.region if getattr(self.args, "region", None) else "us-east-1"
+        ec2_client = boto3.client("ec2", region_name=region)
+        response = ec2_client.describe_instances(
+            Filters=[
+                {"Name": "tag:Name", "Values": [seed_node_tag]},
+                {"Name": "instance-state-name", "Values": ["running"]},
+            ]
+        )
+        for reservation in response.get("Reservations", []):
+            for instance in reservation.get("Instances", []):
+                private_ip = instance.get("PrivateIpAddress")
+                if private_ip:
+                    return str(private_ip)
+        raise RuntimeError(f"Unable to find a running seed node with tag Name={seed_node_tag}")
+
+    def apply_leader_settings(self) -> None:
+        """
+        Placeholder to apply arrow streaming settings on the leader cluster.
+        TODO: Fill in the exact arrow streaming settings once finalized.
+        """
+        logging.info(f"Applying leader (arrow streaming) settings on cluster {self.stack_name}")
+
+    def apply_follower_settings(self, leader_seed_node_ip: str) -> None:
+        """
+        Apply cross-cluster-replication settings on the follower cluster, using the leader's seed
+        node ip to establish the remote leader connection.
+        TODO: Add the arrow streaming settings here once finalized.
+        """
+        if not leader_seed_node_ip:
+            raise RuntimeError("Unable to apply follower CCR settings, leader seed node ip is missing")
+
+        logging.info(f"Applying follower (CCR) settings on cluster {self.stack_name} "
+                     f"pointing to leader seed node {'*' * len(leader_seed_node_ip)}")
+
+        settings = {
+            "persistent": {
+                "cluster.remote.leader.seeds": [f"{leader_seed_node_ip}:9300"]
+            }
+        }
+
+        protocol = "http://" if self.args.insecure else "https://"
+        url = "".join([protocol, self.endpoint, "/_cluster/settings"])
+        request_args: Dict[str, Any] = {"url": url, "json": settings}
+        if not self.args.insecure:
+            request_args["auth"] = HTTPBasicAuth(self.args.username, self.password)
+            request_args["verify"] = False
+
+        def _put_settings() -> None:
+            response = requests.put(**request_args)
+            response.raise_for_status()
+
+        retry_call(_put_settings, tries=3, delay=15, backoff=2)
 
     def terminate(self) -> None:
         command = f"cdk destroy {self.stack_name} {self.params} --force"
@@ -96,12 +185,12 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
 
     def setup_cdk_params(self, config: dict) -> dict:
         suffix = ''
-        if self.args.stack_suffix and self.manifest:
-            suffix = self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture
+        if self.stack_suffix and self.manifest:
+            suffix = self.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture
         elif self.manifest:
             suffix = self.manifest.build.id + '-' + self.manifest.build.architecture
-        elif self.args.stack_suffix:
-            suffix = self.args.stack_suffix
+        elif self.stack_suffix:
+            suffix = self.stack_suffix
 
         if self.manifest:
             self.args.distribution_version = self.manifest.build.version

@@ -77,6 +77,40 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
         self.assertEqual(mock_git.call_count, 1)
         self.assertEqual(mock_temp_directory.call_count, 1)
 
+    @patch("argparse._sys.argv", ["run_benchmark_test.py",
+                                  "execute-test",
+                                  "--distribution-url",
+                                  "https://artifacts.opensearch.org/2.10.0/opensearch.tar.gz",
+                                  "--distribution-version",
+                                  "2.3.0",
+                                  "--config", os.path.join(os.path.dirname(__file__), "data", "test-config.yml"),
+                                  "--workload", "test",
+                                  "--suffix", "test",
+                                  "--ccr-enabled"])
+    @patch("os.chdir")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.TemporaryDirectory")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.GitRepository")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.retry_call")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkCreateCluster.create")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuiteRunners.from_args")
+    def test_run_ccr_enabled(self, mock_suite: Mock, mock_cluster: Mock, mock_retry_call: Mock, mock_git: Mock,
+                             mock_temp_directory: Mock, *mocks: Any) -> None:
+        mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        leader_cluster = MagicMock(seed_node_ip="10.0.0.5")
+        follower_cluster = MagicMock()
+        mock_cluster.return_value.__enter__.side_effect = [leader_cluster, follower_cluster]
+
+        benchmark_args = BenchmarkArgs()
+        runner = BenchmarkTestRunners.from_args(benchmark_args)
+        runner.run()
+
+        # A leader and a follower cluster should be created.
+        self.assertEqual(mock_cluster.call_count, 2)
+        leader_cluster.apply_leader_settings.assert_called_once()
+        follower_cluster.apply_follower_settings.assert_called_once_with("10.0.0.5")
+        self.assertEqual(mock_suite.call_count, 1)
+        mock_retry_call.assert_called_once_with(mock_suite.return_value.execute, tries=3, delay=60, backoff=2)
+
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestCluster.start")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuiteRunners.from_args")
     @patch('test_workflow.benchmark_test.benchmark_test_runner_opensearch.retry_call')

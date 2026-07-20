@@ -51,6 +51,23 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
                 current_workspace = os.path.join(work_dir.name, "opensearch-cluster-cdk")
                 with GitRepository(self.get_cluster_repo_url(), self.get_git_ref(), current_workspace):
                     with WorkingDirectory(current_workspace):
-                        with BenchmarkCreateCluster.create(self.args, self.test_manifest, config, current_workspace) as test_cluster:
-                            benchmark_test_suite = BenchmarkTestSuiteRunners.from_args(self.args, test_cluster.endpoint_with_port, self.security, test_cluster.fetch_password())
-                            retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
+                        if self.args.ccr_enabled:
+                            self.run_ccr_tests(config, current_workspace)
+                        else:
+                            with BenchmarkCreateCluster.create(self.args, self.test_manifest, config, current_workspace) as test_cluster:
+                                benchmark_test_suite = BenchmarkTestSuiteRunners.from_args(self.args, test_cluster.endpoint_with_port, self.security, test_cluster.fetch_password())
+                                retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
+
+    def run_ccr_tests(self, config: dict, current_workspace: str) -> None:
+        """
+        Cross-cluster-replication flow: bring up the leader cluster first, then the follower cluster.
+        Once both are up, apply arrow streaming settings on the leader and arrow streaming + CCR
+        settings on the follower (pointing at the leader's seed node), then run the benchmark suite.
+        """
+        with BenchmarkCreateCluster.create(self.args, self.test_manifest, config, current_workspace, "leader") as leader_cluster:
+            leader_cluster.apply_leader_settings()
+            with BenchmarkCreateCluster.create(self.args, self.test_manifest, config, current_workspace, "follower") as follower_cluster:
+                follower_cluster.apply_follower_settings(leader_cluster.seed_node_ip)
+                benchmark_test_suite = BenchmarkTestSuiteRunners.from_args(
+                    self.args, follower_cluster.endpoint_with_port, self.security, follower_cluster.fetch_password())
+                retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)

@@ -26,6 +26,7 @@ class TestBenchmarkCreateClusterMin(unittest.TestCase):
         self.args.insecure = True
         self.args.single_node = False
         self.args.min_distribution = True
+        self.args.ccr_enabled = False
         self.manifest = BuildManifest.from_path(self.MIN_MANIFEST)
         self.stack_name = "stack"
         self.security = True
