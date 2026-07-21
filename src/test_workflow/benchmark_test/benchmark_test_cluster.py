@@ -68,7 +68,7 @@ class BenchmarkTestCluster:
     def fetch_password(self) -> str:
         return self.password
 
-    def wait_for_processing(self, tries: int = 3, delay: int = 15, backoff: int = 2) -> None:
+    def wait_for_processing(self, tries: int = 10, delay: int = 30, backoff: int = 1) -> None:
         logging.info("Waiting for domain ******* to be up")
         protocol = "http://" if self.args.insecure else "https://"
         url = "".join([protocol, self.endpoint, "/_cluster/health"])
