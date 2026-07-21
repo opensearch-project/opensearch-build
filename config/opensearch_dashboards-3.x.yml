@@ -232,12 +232,11 @@
 # investigation.agenticFeaturesEnabled: false
 
 # 3.8 New Dashboards Variable Feature
-# Enable the Dashboard Variables feature (disabled by default). When off, the `variablesJSON`
-# field is never added to the dashboard mapping or written on save.
-# Turning it on triggers a one-time saved object index migration.
-# Warning: before turning it back off, remove `variablesJSON` from all dashboard documents,
-# otherwise the index migration fails with strict_dynamic_mapping_exception on every startup.
-# dashboard.variables.enabled: false
+# Enable the Dashboard Variables feature. The code default is `false`, but this distribution
+# enables it below for backward compatibility with 3.7. 3.7 shipped without this flag and
+# always wrote the variablesJSON field, so existing dashboards rely on it.
+# Keeping it enabled here preserves that behavior across the 3.7 -> 3.8 upgrade.
+dashboard.variables.enabled: true
 
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
@@ -250,8 +249,3 @@ opensearch_security.multitenancy.tenants.preferred: [Private, Global]
 opensearch_security.readonly_mode.roles: [kibana_read_only]
 # Use this setting if you are running opensearch-dashboards without https
 opensearch_security.cookie.secure: false
-
-# Enable the Dashboard Variables feature by default in distributions.
-# 3.7 shipped without this flag and always wrote the variablesJSON field, so existing dashboards
-# rely on it. Keeping it enabled here preserves that behavior across the 3.7 -> 3.8 upgrade.
-dashboard.variables.enabled: true
