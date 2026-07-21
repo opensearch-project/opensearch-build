@@ -29,6 +29,7 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
             self.args.single_node = True
             self.args.min_distribution = False
             self.args.enable_instance_storage = False
+            self.args.ccr_enabled = False
         self.manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST) if use_manifest else None
         self.stack_name = "stack"
         self.security = True
@@ -104,6 +105,71 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
         self.assertTrue("singleNodeCluster=false" in self.benchmark_create_cluster.params)
         self.assertTrue("enableRemoteStore=true" in self.benchmark_create_cluster.params)
         self.assertTrue("pluginUrl=https://example.com/plugin.zip" in self.benchmark_create_cluster.params)
+
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.BenchmarkCreateCluster.wait_for_processing")
+    def test_create_ccr_leader_stack_suffix_and_seed_ip_single_node(self, mock_wait_for_processing: Optional[Mock]) -> None:
+        self.args.ccr_enabled = True
+        self.args.single_node = True
+        TestBenchmarkCreateCluster.setUp(self, self.args)
+        cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
+                                         current_workspace="current_workspace", cluster_role="leader")
+        self.assertEqual(cluster.cluster_role, "leader")
+        self.assertEqual(cluster.output_file, "output-leader.json")
+        self.assertTrue("test-suffix-leader" in cluster.stack_name)
+        self.assertTrue("suffix=test-suffix-leader" in cluster.params)
+        mock_file = MagicMock(side_effect=[{cluster.stack_name: {"loadbalancerurl": "www.example.com", "privateip": "10.0.0.5"}}])
+        with patch("subprocess.check_call"):
+            with patch("builtins.open", MagicMock()):
+                with patch("json.load", mock_file):
+                    cluster.start()
+        self.assertEqual(cluster.seed_node_ip, "10.0.0.5")
+
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.boto3")
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.BenchmarkCreateCluster.wait_for_processing")
+    def test_create_ccr_follower_seed_ip_multi_node(self, mock_wait_for_processing: Optional[Mock], mock_boto3: Mock) -> None:
+        self.args.ccr_enabled = True
+        self.args.single_node = False
+        self.args.region = "us-west-2"
+        TestBenchmarkCreateCluster.setUp(self, self.args)
+        mock_boto3.client.return_value.describe_instances.return_value = {
+            "Reservations": [{"Instances": [{"PrivateIpAddress": "10.0.1.9"}]}]
+        }
+        cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
+                                         current_workspace="current_workspace", cluster_role="follower")
+        self.assertTrue("test-suffix-follower" in cluster.stack_name)
+        mock_file = MagicMock(side_effect=[{cluster.stack_name: {"loadbalancerurl": "www.example.com"}}])
+        with patch("subprocess.check_call"):
+            with patch("builtins.open", MagicMock()):
+                with patch("json.load", mock_file):
+                    cluster.start()
+        self.assertEqual(cluster.seed_node_ip, "10.0.1.9")
+        mock_boto3.client.return_value.describe_instances.assert_called_once()
+
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.requests.put")
+    def test_apply_follower_settings(self, mock_put: Mock) -> None:
+        self.args.ccr_enabled = True
+        self.args.insecure = False
+        self.args.username = "admin"
+        TestBenchmarkCreateCluster.setUp(self, self.args)
+        cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
+                                         current_workspace="current_workspace", cluster_role="follower")
+        cluster.cluster_endpoint = "follower.example.com"
+        cluster.apply_follower_settings("10.0.0.5")
+
+        mock_put.assert_called_once()
+        _, kwargs = mock_put.call_args
+        self.assertEqual(kwargs["url"], "https://follower.example.com/_cluster/settings")
+        self.assertEqual(kwargs["json"]["persistent"]["cluster.remote.leader.seeds"], ["10.0.0.5:9300"])
+        self.assertEqual(kwargs["verify"], False)
+        mock_put.return_value.raise_for_status.assert_called_once()
+
+    def test_apply_follower_settings_missing_seed_ip(self) -> None:
+        self.args.ccr_enabled = True
+        TestBenchmarkCreateCluster.setUp(self, self.args)
+        cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
+                                         current_workspace="current_workspace", cluster_role="follower")
+        with self.assertRaises(RuntimeError):
+            cluster.apply_follower_settings("")
 
     @patch("test_workflow.benchmark_test.benchmark_create_cluster.BenchmarkCreateCluster.wait_for_processing")
     def test_create_multi_node_without_manifest(self, mock_wait_for_processing: Optional[Mock]) -> None:
