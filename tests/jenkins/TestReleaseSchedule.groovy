@@ -32,7 +32,7 @@ class TestReleaseSchedule extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('13.4.0')
+                .defaultVersion('13.5.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
