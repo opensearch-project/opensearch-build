@@ -1,0 +1,87 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+// @job-name: publish-to-maven
+// @description: Publishes OpenSearch artifacts to Maven Central repository.
+
+lib = library(identifier: 'jenkins@13.4.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+def secret_artifacts = [
+    [envVar: 'ARTIFACT_BUCKET_NAME', secretRef: 'op://opensearch-release-secrets/aws-resource-arns/jenkins-artifact-bucket-name-lf']
+]
+
+pipeline {
+    agent {
+        docker {
+            label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host'
+            image 'opensearchorg/opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3'
+            args '-e JAVA_HOME=/opt/java/openjdk-11'
+            registryUrl 'https://public.ecr.aws/'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(
+            name: 'BUILD_ID',
+            description: '<Required> Build ID of the OpenSearch distribution artifacts to be staged and released',
+            trim: true
+        )
+        string(
+            name: 'VERSION',
+            description: '<Required> Version of the OpenSearch distribution artifacts to be staged and released',
+            trim: true
+        )
+    }
+    environment {
+        ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/tar/builds"
+        REPO_URL = "https://aws.oss.sonatype.org/"
+        STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
+        BUILD_ID = "${BUILD_ID}"
+    }
+    stages {
+        stage('sign-stage-and-release') {
+            steps {
+                script {
+                    echo "Downloading from S3."
+                    withSecrets(secrets: secret_artifacts) {
+                        downloadFromS3(
+                            localPath: "$WORKSPACE/artifacts",
+                            bucketName: "${ARTIFACT_BUCKET_NAME}",
+                            downloadPath: "${ARTIFACT_PATH}/",
+                            roleAccountNumberCred: 'jenkins-aws-account-public-lf',
+                            assumedRoleName: 'opensearch-bundle', // TODO: LF Signing Support
+                            force: true
+                        )
+                    }
+                    echo "Signing, Staging and Publishing Maven artifacts."
+                    String majorVersion = "${VERSION}".tokenize('.')[0]
+                    echo "Major version is ${majorVersion}"
+                    String email = majorVersion.toInteger() > 2 ? "release@opensearch.org" : "opensearch@amazon.com"
+                    echo "Signing email is ${email}"
+                    publishToMaven(
+                        signingArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
+                        mavenArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/maven",
+                        autoPublish: true,
+                        email: "${email}"
+                    )
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}

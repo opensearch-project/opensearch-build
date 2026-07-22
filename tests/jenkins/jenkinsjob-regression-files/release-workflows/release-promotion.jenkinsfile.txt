@@ -1,6 +1,6 @@
    release-promotion.run()
       release-promotion.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      release-promotion.library({identifier=jenkins@12.0.0, retriever=null})
+      release-promotion.library({identifier=jenkins@13.4.0, retriever=null})
       release-promotion.pipeline(groovy.lang.Closure)
          release-promotion.beforeAgent(true)
          release-promotion.beforeAgent(true)

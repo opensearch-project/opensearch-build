@@ -21,7 +21,7 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('12.0.0')
+                .defaultVersion('13.4.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
