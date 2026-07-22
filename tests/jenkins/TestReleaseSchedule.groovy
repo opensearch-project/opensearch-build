@@ -22,8 +22,8 @@ class TestReleaseSchedule extends BuildPipelineTest {
     static final String SAMPLE_HTML = '''
 <table class="desktop-release-schedule-table">
 <tr><th>Release Number</th><th>First RC Generated</th><th>Latest Possible Release Date</th><th>Release Manager</th><th>Tracking Issue</th></tr>
-<tr><td>3.5.0</td><td>January 27th, 2026</td><td>February 10th, 2026</td><td><a href="https://github.com/foo">Foo</a></td><td><a href="https://github.com/opensearch-project/opensearch-build/issues/5897">5897</a></td></tr>
-<tr><td>3.8.0</td><td><s>July 14th, 2026</s> July 21st, 2026</td><td>August 4th, 2026</td><td><a href="https://github.com/foo">Foo</a></td><td><a href="https://github.com/opensearch-project/opensearch-build/issues/6278">6278</a></td></tr>
+<tr><td>3.5.0</td><td>January 27th, 2026</td><td>February 10th, 2026</td><td><a href="https://github.com/rishabh6788">Rishabh Singh</a></td><td><a href="https://github.com/opensearch-project/opensearch-build/issues/5897">5897</a></td></tr>
+<tr><td>3.8.0</td><td><s>July 14th, 2026</s> July 21st, 2026</td><td>August 4th, 2026</td><td><a href="https://github.com/rishabh6788">Rishabh Singh</a></td><td><a href="https://github.com/opensearch-project/opensearch-build/issues/6278">6278</a></td></tr>
 </table>
 '''
 
@@ -32,11 +32,11 @@ class TestReleaseSchedule extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('add-release-indices')
+                .defaultVersion('13.4.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
-                .retriever(gitSource('https://github.com/gaiksaya/opensearch-build-libraries.git'))
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
             )
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
