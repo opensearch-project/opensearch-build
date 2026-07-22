@@ -54,7 +54,7 @@ class BenchmarkTestSuiteExecute(BenchmarkTestSuite):
                 f":/opensearch-benchmark/{self.args.workload}"
             )
 
-        self.command += f" opensearchproject/opensearch-benchmark:1.18.0 execute-test --workload={self.args.workload} " \
+        self.command += f" opensearchproject/opensearch-benchmark:1.19.0 execute-test --workload={self.args.workload} " \
                         f"--pipeline=benchmark-only --target-hosts={self.endpoint}"
 
         if self.args.workload_params:
