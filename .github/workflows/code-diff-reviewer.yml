@@ -34,7 +34,7 @@ jobs:
           elif [ "${{ github.event_name }}" = "pull_request_target" ]; then
             PR_AUTHOR="${{ github.event.pull_request.user.login }}"
             if [ "$PR_AUTHOR" != "dependabot[bot]" ] && \
-               [ "$PR_AUTHOR" != "opensearch-ci-bot[bot]" ] && \
+               [ "$PR_AUTHOR" != "opensearch-ci-bot" ] && \
                [ "$PR_AUTHOR" != "mend-for-github-com[bot]" ]; then
               echo "PR author '$PR_AUTHOR' is not a bot, proceeding..."
 

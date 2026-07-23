@@ -22,7 +22,7 @@ class TestPublishToMaven extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('12.0.0')
+                .defaultVersion('13.4.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -55,12 +55,12 @@ class TestPublishToMaven extends BuildPipelineTest {
 
     @Test
     public void testMavenReleasePipeline() {
-        super.testPipeline('jenkins/release-workflows/publish-to-maven.jenkinsfile', 'tests/jenkins/jenkinsjob-regression-files/opensearch-maven-release/publish-to-maven.jenkinsfile')
+        super.testPipeline('jenkins/release-workflows/publish-to-maven-lf.jenkinsfile', 'tests/jenkins/jenkinsjob-regression-files/opensearch-maven-release/publish-to-maven-lf.jenkinsfile')
     }
 
     @Test
     public void verifyPublishing(){
-        runScript("jenkins/release-workflows/publish-to-maven.jenkinsfile")
+        runScript("jenkins/release-workflows/publish-to-maven-lf.jenkinsfile")
         def shellCommands = getCommandExecutions("sh" , "maven")
         assertThat(shellCommands, hasItem("/tmp/workspace/publish/stage-maven-release.sh /tmp/workspace/artifacts/distribution-build-opensearch/2.1.0/1234/linux/x64/tar/builds/opensearch/maven true"))
     }
