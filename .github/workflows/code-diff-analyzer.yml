@@ -312,6 +312,17 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: '## PR Code Analyzer'
 
+      - name: Determine hard fail severity name
+        if: ${{ always() && github.event_name == 'pull_request_target' && inputs.update_pr_comment_with_analyzer_report && env.diff_analyzer != '0' && env.diff_analyzer != '9' }}
+        run: |
+          case "${{ inputs.hard_fail_level }}" in
+            1) echo "hard_fail_name=Low" >> $GITHUB_ENV ;;
+            2) echo "hard_fail_name=Medium" >> $GITHUB_ENV ;;
+            3) echo "hard_fail_name=High" >> $GITHUB_ENV ;;
+            4) echo "hard_fail_name=Critical" >> $GITHUB_ENV ;;
+            *) echo "hard_fail_name=High" >> $GITHUB_ENV ;;
+          esac
+
       - name: Create Comment Failure Git Diff Analyzer
         if: ${{ always() && github.event_name == 'pull_request_target' && inputs.update_pr_comment_with_analyzer_report && env.diff_analyzer != '0' && env.diff_analyzer != '9' }}
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
@@ -324,6 +335,8 @@ jobs:
             ## PR Code Analyzer :exclamation:
 
             **AI-powered '*Code-Diff-Analyzer*' found issues on commit ${{ env.HEAD_SHA }}.**
+
+            :no_entry: **Hard block**: Issues at **${{ env.hard_fail_name }}** severity or above will block this PR from merging.
 
             ${{ env.diff_report }}
 
