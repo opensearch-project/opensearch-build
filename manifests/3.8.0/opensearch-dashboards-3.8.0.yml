@@ -18,7 +18,7 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 91ed2740158a2c0357bd4d57d36f2a4c54527d91
+    ref: aa72a9818a045ad4e290a5eb9be59e025b90634d
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '3.8'
@@ -60,7 +60,7 @@ components:
     ref: 54c6c266883de43c80a0aba8702fb74d686fbe33
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
-    ref: 510792ef0d20400ab9108a35abb5db4cc7203854
+    ref: 7490daf31f0d4d6032118c83c168f758eb097463
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
     ref: 16ad45d99cd6d1d8944673a7975fa1c46c166f20
