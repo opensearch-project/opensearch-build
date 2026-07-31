@@ -39,7 +39,7 @@ components:
     ref: 10552141f1243e216b6f35fd088da24a57510ae0
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
-    ref: 55a556f3fd9e18aebf7121a31e0e427f9664fc8b
+    ref: 740bb13bb33bb054f1f0f6636c9b2d86dbaeb63e
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
     ref: 6dcf9e3db5d46a91830c89f368293c1289ac7725
@@ -60,7 +60,7 @@ components:
     ref: 54c6c266883de43c80a0aba8702fb74d686fbe33
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
-    ref: 7490daf31f0d4d6032118c83c168f758eb097463
+    ref: a4858940acf450a835c3725b04e9b2951502444a
   - name: flowFrameworkDashboards
     repository: https://github.com/opensearch-project/dashboards-flow-framework.git
     ref: 16ad45d99cd6d1d8944673a7975fa1c46c166f20
@@ -69,4 +69,4 @@ components:
     ref: b651baf930576a10d61e6434c74e5465088eb312
   - name: investigationDashboards
     repository: https://github.com/opensearch-project/dashboards-investigation.git
-    ref: f20619e7d64c0b024188aadc3b6e6a54554b0b58
+    ref: ce2301ebb71fe34c64aecd052d2dd056cb50f7b6
