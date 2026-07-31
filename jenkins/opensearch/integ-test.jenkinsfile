@@ -27,7 +27,7 @@ def secret_artifacts = [
 
 pipeline {
     options {
-        timeout(time: 7, unit: 'HOURS')
+        timeout(time: 12, unit: 'HOURS')
         buildDiscarder(logRotator(daysToKeepStr: '60'))
     }
     agent none
