@@ -164,7 +164,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "replace")
-        self.assertEqual(manifest.ci.image["linux"]["tar"].name, "opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1")
+        self.assertEqual(manifest.ci.image["linux"]["tar"].name, "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1")
         self.assertEqual(manifest.ci.image["linux"]["tar"].args, "-e JAVA_HOME=/opt/java/openjdk-24")
 
     def test_plugins_depend_on(self) -> None:
@@ -279,7 +279,7 @@ class TestInputManifest(unittest.TestCase):
                 "image": {
                     "linux": {
                         "tar": {
-                            "name": "opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1",
+                            "name": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1",
                             "args": "-e JAVA_HOME=/opt/java/openjdk-21"
                         }
                     }
