@@ -50,6 +50,14 @@ class ServiceOpenSearch(Service):
         self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "opensearch-security")
 
         if not self.security_enabled and os.path.isdir(self.security_plugin_dir):
+            # Disable the security plugin, and remove any configured audit sink so audit logging
+            # stays fully off. In disabled mode the plugin still initializes standalone audit
+            # whenever plugins.security.audit.type is set (the distribution's demo config sets it
+            # to internal_opensearch), which asynchronously writes to security-auditlog-* indices;
+            # those writes can linger past a test and break teardown task-wait checks. Stripping
+            # audit.type leaves it unset, so the plugin uses a NullAuditLog and registers no audit
+            # filter/interceptor at all.
+            self.__remove_plugin_specific_config("plugins.security.audit.type")
             self.__add_plugin_specific_config({"plugins.security.disabled": "true"})
 
         if self.additional_config:
@@ -72,6 +80,14 @@ class ServiceOpenSearch(Service):
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
         with open(self.opensearch_yml_path, "a") as yamlfile:
             yamlfile.write(yaml.dump(additional_config))
+
+    def __remove_plugin_specific_config(self, key: str) -> None:
+        if not os.path.isfile(self.opensearch_yml_path):
+            return
+        with open(self.opensearch_yml_path, "r") as yamlfile:
+            lines = yamlfile.readlines()
+        with open(self.opensearch_yml_path, "w") as yamlfile:
+            yamlfile.writelines(line for line in lines if not line.lstrip().startswith(key))
 
     def port(self) -> int:
         return self.cluster_port
