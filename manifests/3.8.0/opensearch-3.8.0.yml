@@ -63,7 +63,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 5e861ece9b0b6ece7404c0890e6785718e55226a
+    ref: bb2009d04edb2ab2c44cef021c4f9ab058913c85
     platforms:
       - linux
       - windows
@@ -172,7 +172,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 21ef0deb57b0d8a1a8972ecd1293e76571c6d428
+    ref: 872511e1dd46896f10fef4c2dccf915d6cffe9b3
     platforms:
       - linux
       - windows
@@ -194,7 +194,7 @@ components:
       - job-scheduler
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: ae532d5271d205b24ebd03916766f27459fc1eef
+    ref: 89395fa7e48a497b2ad1f966b9412da8ad990501
     platforms:
       - linux
       - windows
