@@ -15,7 +15,6 @@ lib = library(identifier: 'jenkins@12.0.0', retriever: modernSCM([
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
-
 pipeline {
     agent {
         docker {
@@ -24,6 +23,9 @@ pipeline {
             registryUrl 'https://public.ecr.aws/'
             alwaysPull true
         }
+    }
+    environment {
+        GRADLE_OPTS = '-Drepos.mavenLocal=true'
     }
     options {
         timeout(time: 1, unit: 'HOURS')
