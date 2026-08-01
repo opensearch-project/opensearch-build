@@ -39,19 +39,19 @@ components:
       - common-utils
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: 74a0378e03948a0f646748cf3a016e8acc084860
+    ref: 059a4254593b1736f4fc88e8cddc0e1fc69ce50d
     platforms:
       - linux
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 63d36555a38427aeea3a13eb48d566a6edebe5ac
+    ref: 273ee9abc2eb77a7b82099999b6caf9b17974bc6
     platforms:
       - linux
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 7891aeae2fc3e502ffe0f98c93822b645e939458
+    ref: 50354a794d73e8c9af9e2f06e82131d4b4419282
     platforms:
       - linux
       - windows
@@ -145,7 +145,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: fe20ba69e3bb201183d2462bce37bf520cc3aa92
+    ref: 400d1cfeb883a575987a51220d20a7dc9dc1d99c
     platforms:
       - linux
       - windows
@@ -172,7 +172,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 10fe7b7f68805e138ef1bf336b8f7e68ff8fa5f4
+    ref: aa8e911f5423a388c1e8fd9cacd8e56561b53fa9
     platforms:
       - linux
       - windows
@@ -184,7 +184,7 @@ components:
       - sql
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 2061a2168a4a4c0acbf236100825c4f84d12c31a
+    ref: 9957176cf7f2c5ae67ff280ab6e6034c017e5dd7
     platforms:
       - linux
       - windows
@@ -208,7 +208,7 @@ components:
       - linux
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: 2b114f50b708eda2615156318854936277da2a8c
+    ref: 1b68374694edfe929a60ebe867a983fc5046122f
     platforms:
       - linux
       - windows
@@ -255,7 +255,7 @@ components:
       - windows
   - name: search-relevance
     repository: https://github.com/opensearch-project/search-relevance.git
-    ref: 7115b27015186453467b52209aea3b672a1a3b40
+    ref: 1f7402c43c42dea388626d995521b37092db4412
     platforms:
       - linux
       - windows
