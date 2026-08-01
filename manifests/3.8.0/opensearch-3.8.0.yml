@@ -63,7 +63,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: e157d018e7196a864d2904664e6fd8aaef8d53ea
+    ref: 2d78545e5f940120db44816f12f21089d0dc26aa
     platforms:
       - linux
       - windows
@@ -235,7 +235,7 @@ components:
       - k-NN
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: a5bf00f1bbde5cb41f28041b3548ae2c0e0593a4
+    ref: 874d0ee15a9c5de854a515331f7c94e1db97eb3c
     platforms:
       - linux
       - windows
