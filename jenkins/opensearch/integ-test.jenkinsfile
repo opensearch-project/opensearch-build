@@ -32,6 +32,7 @@ pipeline {
     }
     agent none
     environment {
+        GRADLE_OPTS = '-Drepos.mavenLocal=true'
         BUILD_MANIFEST = 'build-manifest.yml'
         BUILD_JOB_NAME = 'distribution-build-opensearch'
     }
