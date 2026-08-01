@@ -10,7 +10,7 @@ import os
 import re
 import shutil
 from collections import defaultdict
-from typing import List
+from typing import List, cast
 
 import markdownify
 import mistune
@@ -181,17 +181,21 @@ def main() -> int:
         # Markdown renderer
         markdown = mistune.create_markdown()
 
+        def render(text: str) -> str:
+            # The default "html" renderer always returns a string, the list return type only applies to the "ast" renderer.
+            return cast(str, markdown(text))
+
         RELEASE_NOTE_MD_PATH = os.path.join(os.path.dirname(__file__), RELEASE_NOTE_MD)
         os.makedirs(os.path.dirname(RELEASE_NOTE_MD_PATH), exist_ok=True)
 
         # Filter content for each category
         with open(RELEASE_NOTE_MD_PATH, "w") as outfile:
-            outfile.write(markdown(f"# OpenSearch and OpenSearch Dashboards {BUILD_VERSION} Release Notes\n\n"))
+            outfile.write(render(f"# OpenSearch and OpenSearch Dashboards {BUILD_VERSION} Release Notes\n\n"))
 
             for category in RELEASENOTES_CATEGORIES.split(","):
                 # Discard category content if no data is available
                 temp_content = []
-                temp_content.append(markdown(f"\n## {category}\n\n"))
+                temp_content.append(render(f"\n## {category}\n\n"))
 
                 for plugin, categories in plugin_data.items():
                     if category.lower() in [cat.lower() for cat in categories.keys()]:
@@ -199,8 +203,8 @@ def main() -> int:
                             if cat.lower() == category.lower():
                                 for content in content_list:
                                     if content.strip():
-                                        temp_content.append(markdown(f"\n### {plugin}\n\n"))
-                                        temp_content.append(markdown(content))
+                                        temp_content.append(render(f"\n### {plugin}\n\n"))
+                                        temp_content.append(render(content))
 
                 if len(temp_content) > 1:
                     outfile.write("\n".join(temp_content))
@@ -217,9 +221,9 @@ def main() -> int:
                         temp_content.append(f"\n### {plugin}\n\n")
                         temp_content.extend(content_list)
             if temp_content:
-                outfile.write(markdown("## NON-COMPLIANT"))
+                outfile.write(render("## NON-COMPLIANT"))
                 for item in temp_content:
-                    outfile.write(markdown(item))
+                    outfile.write(render(item))
 
         with open(RELEASE_NOTE_MD_PATH, 'r') as f:
             html_content = f.read()
