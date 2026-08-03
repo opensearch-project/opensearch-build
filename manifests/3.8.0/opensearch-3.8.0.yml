@@ -51,7 +51,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 50354a794d73e8c9af9e2f06e82131d4b4419282
+    ref: 53854713aeda279e9fc80e7a9cd8f58823ad75af
     platforms:
       - linux
       - windows
@@ -81,7 +81,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 69ad00fb6beb4cdb962ef96aa095d5635557136a
+    ref: 284418ea65eaa236cc9ef60e7ac59bfd32a7b505
     platforms:
       - linux
       - windows
@@ -110,7 +110,7 @@ components:
       - job-scheduler
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 5b9868f3b1cb4a5933e5c2be45ef4fdc7bd4f6c7
+    ref: e6f8fa966fcd5f6ba43f60b180df91e3f9e03771
     working_directory: notifications
     platforms:
       - linux
@@ -119,7 +119,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 5b9868f3b1cb4a5933e5c2be45ef4fdc7bd4f6c7
+    ref: e6f8fa966fcd5f6ba43f60b180df91e3f9e03771
     working_directory: notifications
     platforms:
       - linux
@@ -172,7 +172,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: aa8e911f5423a388c1e8fd9cacd8e56561b53fa9
+    ref: 7ee0c8ecccf8ac6f3689a9d8f70a167f01c97758
     platforms:
       - linux
       - windows
@@ -235,7 +235,7 @@ components:
       - k-NN
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: 874d0ee15a9c5de854a515331f7c94e1db97eb3c
+    ref: 0bbb49b991448451705f9205839440a32fe16b9c
     platforms:
       - linux
       - windows
