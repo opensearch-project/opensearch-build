@@ -10,7 +10,7 @@
 // @job-name: docker-promotion
 // @description: Promotes OpenSearch Docker images from staging to production Docker and ECR repositories.
 
-lib = library(identifier: 'jenkins@12.0.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@13.6.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -46,7 +46,7 @@ pipeline {
         booleanParam(
             name: 'ECR_PROMOTE',
             defaultValue: true,
-            description: '<Optional> Promote SOURCE_IMAGES to `gallery.ecr.aws/opensearchproject` production ECR repository.'
+            description: '<Optional> Promote SOURCE_IMAGES to `gallery.ecr.aws/opensearchorg/opensearchproject` production ECR repository.'
         )
         booleanParam(
             name: 'TAG_LATEST',

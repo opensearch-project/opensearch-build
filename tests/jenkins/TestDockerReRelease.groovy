@@ -25,7 +25,7 @@ class TestDockerReRelease extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('12.0.0')
+                .defaultVersion('13.6.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -60,13 +60,13 @@ class TestDockerReRelease extends BuildPipelineTest {
 
     @Test
     void testReRelease() {
-        super.testPipeline('jenkins/docker/docker-re-release.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/docker/docker-re-release.jenkinsfile')
+        super.testPipeline('jenkins/docker/docker-re-release-lf.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/docker/docker-re-release-lf.jenkinsfile')
     }
 
     @Test
     void checkForTriggeredJobs(){
-        runScript('jenkins/docker/docker-re-release.jenkinsfile')
+        runScript('jenkins/docker/docker-re-release-lf.jenkinsfile')
         assertThat(getCommandExecutions('build', ''), hasItem('{job=docker-build, propagate=true, wait=true, parameters=[null, null, null]}'))
         assertThat(getCommandExecutions('build', ''), hasItem('{job=docker-scan, propagate=true, wait=true, parameters=[null]}'))
         assertThat(getCommandExecutions('build', ''), hasItem('{job=docker-promotion, propagate=true, wait=true, parameters=[null, null, null]}'))
