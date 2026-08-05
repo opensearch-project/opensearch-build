@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9db15450c509e881df95592e9f359eaf2457ce8243d51399ea13ff3c0cd51f6f"
+            "sha256": "ef9f7582442c29c44c216924ad25eb177ae94d02d88ca7f0f4fae93761f46c72"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -490,11 +490,11 @@
         },
         "markdownify": {
             "hashes": [
-                "sha256:1fb08c618b30e0ee7a31a39b998f44a18fb28ab254f55f4af06b6d35a2179e27",
-                "sha256:a3805abd8166dbb7b27783c5599d91f54f10d79894b2621404d85b333c7ce561"
+                "sha256:4c46a6c0c12c6005ddcd49b45a5a890398b002ef51380cd319db62df5e09bc2a",
+                "sha256:a62a7a216947ed0b8dafb95b99b2ef4a0edd1e18d5653c656f68f03db2bfb2f1"
             ],
             "index": "pypi",
-            "version": "==0.12.1"
+            "version": "==0.14.1"
         },
         "markupsafe": {
             "hashes": [
@@ -1284,7 +1284,7 @@
                 "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
                 "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
             "version": "==1.17.0"
         },
         "sortedcontainers": {
@@ -1297,11 +1297,11 @@
         },
         "soupsieve": {
             "hashes": [
-                "sha256:6e60cc5c1ffaf1cebcc12e8188320b72071e922c2e897f737cadce79ad5d30c4",
-                "sha256:ad282f9b6926286d2ead4750552c8a6142bc4c783fd66b0293547c8fe6ae126a"
+                "sha256:3267f1eeea4251fb42728b6dfb746edc9acaffc4a45b27e19450b676586e8349",
+                "sha256:ed64f2ba4eebeab06cc4962affce381647455978ffc1e36bb79a545b91f45a95"
             ],
-            "markers": "python_version >= '3.8'",
-            "version": "==2.7"
+            "markers": "python_version >= '3.9'",
+            "version": "==2.8.3"
         },
         "tabledata": {
             "hashes": [
