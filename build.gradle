@@ -76,7 +76,7 @@ sharedLibrary {
     pluginDependencies {
         // see https://mvnrepository.com/artifact/org.jenkins-ci.plugins/<name>?repo=jenkins-releases for latest
         workflowCpsGlobalLibraryPluginVersion = '609.vd95673f149b_b'
-        dependency('io.jenkins.plugins', 'pipeline-groovy-lib', '752.vdddedf804e72')
+        dependency('io.jenkins.plugins', 'pipeline-groovy-lib', '798.v5cc688825312')
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '806.vb_b_688f609ee9')
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '527.vd61b_1d3c5078') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
         dependency('org.jenkins-ci.plugins', 'script-security', '1373.vb_b_4a_a_c26fa_00')
