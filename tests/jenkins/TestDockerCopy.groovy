@@ -29,7 +29,7 @@ class TestDockerCopy extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('13.2.0')
+                .defaultVersion('lf-jenkins')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')

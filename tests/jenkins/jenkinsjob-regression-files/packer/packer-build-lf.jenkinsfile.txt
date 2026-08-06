@@ -1,6 +1,6 @@
    packer-build-lf.run()
       packer-build-lf.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      packer-build-lf.library({identifier=jenkins@12.0.0, retriever=null})
+      packer-build-lf.library({identifier=jenkins@lf-jenkins, retriever=null})
       packer-build-lf.pipeline(groovy.lang.Closure)
          packer-build-lf.timeout({time=4, unit=HOURS})
          packer-build-lf.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2404-X64-M52xlarge-Docker-Builder, image:opensearchorg/opensearchstaging/ci-runner:ubuntu2404-x64-docker-buildx0.9.1-qemu8.2-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
