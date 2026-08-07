@@ -16,7 +16,7 @@ This is a script to deploy a single node OpenSearch + OpenSearch-Dashboards clus
 * If you are using LINUX host to run dockerd, provision container based on the dockerfile, and execute integTest:
   * You must run these commands on the LINUX host for OpenSearch process to run:
     ```
-    sudo sysctl -w vm.max_map_count=262144
+    sudo sysctl -w vm.max_map_count=1048576
     ulimit -n 65535
     ```
 
