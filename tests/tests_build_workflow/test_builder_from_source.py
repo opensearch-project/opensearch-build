@@ -87,7 +87,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("sample_component", mock_git_repo.return_value)
+        build_recorder.record_component.assert_called_with("sample_component", mock_git_repo.return_value, None)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_distribution(self, mock_git_repo: Mock) -> None:
@@ -109,7 +109,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("OpenSearch", mock_git_repo.return_value)
+        build_recorder.record_component.assert_called_with("OpenSearch", mock_git_repo.return_value, None)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_distribution_support(self, mock_git_repo: Mock) -> None:
@@ -130,7 +130,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("sample_component", mock_git_repo.return_value)
+        build_recorder.record_component.assert_called_with("sample_component", mock_git_repo.return_value, None)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_snapshot(self, mock_git_repo: Mock) -> None:
@@ -152,7 +152,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("sample_component", self.builder.git_repo)
+        build_recorder.record_component.assert_called_with("sample_component", self.builder.git_repo, None)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_snapshot_qualifier(self, mock_git_repo: Mock) -> None:
@@ -176,7 +176,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("sample_component", self.builder.git_repo)
+        build_recorder.record_component.assert_called_with("sample_component", self.builder.git_repo, None)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_snapshot_qualifier_component_not_found(self, mock_git_repo: Mock) -> None:
@@ -200,7 +200,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("not_found_component", mock_git_repo.return_value)
+        build_recorder.record_component.assert_called_with("not_found_component", mock_git_repo.return_value, None)
 
     def mock_os_walk(self, artifact_path: str) -> List[Any]:
         if artifact_path.endswith(os.path.join("dir", "builds", "core-plugins")):

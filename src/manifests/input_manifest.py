@@ -48,6 +48,8 @@ components:
       - windows
       - darwin
       - linux
+    optional: optional boolean (default false); when true the component is checked out, built
+      and may be tested, but it is NOT installed into the assembled distribution (not bundled)
   - ...
 """
 import copy
@@ -116,7 +118,8 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
                             "working_directory": {"type": "string"},
                             "checks": {"type": "list", "schema": {"anyof": [{"type": "string"}, {"type": "dict"}]}},
                             "platforms": {"type": "list", "schema": {"type": "string", "allowed": ["linux", "windows", "darwin"]}},
-                            "depends_on": {"type": "list", "schema": {"type": "string"}}
+                            "depends_on": {"type": "list", "schema": {"type": "string"}},
+                            "optional": {"type": "boolean"}
                         },
                     },
                     {
@@ -261,6 +264,8 @@ class InputComponent(Component):
         self.platforms = data.get("platforms", None)
         self.checks = list(map(lambda entry: Check(entry), data.get("checks", [])))
         self.depends_on = data.get("depends_on", None)
+        # When true, the component is built and may be tested but not bundled into the distribution.
+        self.optional = data.get("optional", None)
 
     @classmethod
     def _from(self, data: dict) -> 'InputComponent':
@@ -310,6 +315,7 @@ class InputComponentFromSource(InputComponent):
             "checks": list(map(lambda check: check.__to_dict__(), self.checks)),
             "platforms": self.platforms,
             "depends_on": self.depends_on,
+            "optional": self.optional,
         }
 
 
