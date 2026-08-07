@@ -26,6 +26,12 @@ from test_workflow.integ_test.utils import get_password
 
 
 class BenchmarkCreateCluster(BenchmarkTestCluster):
+    # Aliases used to wire up the cross-cluster-replication relationship on the follower. The remote
+    # alias doubles as the 'cluster.remote.<alias>.seeds' key that points at the leader's seed node.
+    REMOTE_ALIAS = "leader"
+    LOCAL_ALIAS = "local-cluster"
+    REPLICATION_RELATIONSHIP = "my-relationship"
+
     manifest: Union[BundleManifest, BuildManifest]
     work_dir: str
     current_workspace: str
@@ -149,7 +155,8 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
     def apply_follower_settings(self, leader_seed_node_ip: str) -> None:
         """
         Apply cross-cluster-replication settings on the follower cluster, using the leader's seed
-        node ip to establish the remote leader connection.
+        node ip to establish the remote leader connection, then register the follower as the
+        SECONDARY end of a remote replication relationship with that leader.
         TODO: Add the arrow streaming settings here once finalized.
         """
         if not leader_seed_node_ip:
@@ -158,24 +165,38 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
         logging.info(f"Applying follower (CCR) settings on cluster {self.stack_name} "
                      f"pointing to leader seed node {'*' * len(leader_seed_node_ip)}")
 
-        settings = {
-            "persistent": {
-                "cluster.remote.leader.seeds": [f"{leader_seed_node_ip}:9300"]
+        self.put(
+            "/_cluster/settings",
+            {
+                "persistent": {
+                    f"cluster.remote.{self.REMOTE_ALIAS}.seeds": [f"{leader_seed_node_ip}:9300"]
+                }
             }
-        }
+        )
 
+        # The remote connection above has to exist before the relationship can reference it by alias.
+        self.put(
+            f"/_remote_replication/cluster/{self.REPLICATION_RELATIONSHIP}",
+            {
+                "role": "SECONDARY",
+                "local_alias": self.LOCAL_ALIAS,
+                "remote_alias": self.REMOTE_ALIAS
+            }
+        )
+
+    def put(self, path: str, payload: dict) -> None:
         protocol = "http://" if self.args.insecure else "https://"
-        url = "".join([protocol, self.endpoint, "/_cluster/settings"])
-        request_args: Dict[str, Any] = {"url": url, "json": settings}
+        url = "".join([protocol, self.endpoint, path])
+        request_args: Dict[str, Any] = {"url": url, "json": payload}
         if not self.args.insecure:
             request_args["auth"] = HTTPBasicAuth(self.args.username, self.password)
             request_args["verify"] = False
 
-        def _put_settings() -> None:
+        def _put() -> None:
             response = requests.put(**request_args)
             response.raise_for_status()
 
-        retry_call(_put_settings, tries=3, delay=15, backoff=2)
+        retry_call(_put, tries=3, delay=15, backoff=2)
 
     def terminate(self) -> None:
         command = f"cdk destroy {self.stack_name} {self.params} --force"

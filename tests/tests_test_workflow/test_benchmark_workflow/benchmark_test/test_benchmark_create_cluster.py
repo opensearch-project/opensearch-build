@@ -156,12 +156,34 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
         cluster.cluster_endpoint = "follower.example.com"
         cluster.apply_follower_settings("10.0.0.5")
 
-        mock_put.assert_called_once()
-        _, kwargs = mock_put.call_args
-        self.assertEqual(kwargs["url"], "https://follower.example.com/_cluster/settings")
-        self.assertEqual(kwargs["json"]["persistent"]["cluster.remote.leader.seeds"], ["10.0.0.5:9300"])
-        self.assertEqual(kwargs["verify"], False)
-        mock_put.return_value.raise_for_status.assert_called_once()
+        # The remote connection settings are applied first, then the replication relationship.
+        self.assertEqual(mock_put.call_count, 2)
+        settings_kwargs = mock_put.call_args_list[0].kwargs
+        self.assertEqual(settings_kwargs["url"], "https://follower.example.com/_cluster/settings")
+        self.assertEqual(settings_kwargs["json"]["persistent"]["cluster.remote.leader.seeds"], ["10.0.0.5:9300"])
+        self.assertEqual(settings_kwargs["verify"], False)
+
+        relationship_kwargs = mock_put.call_args_list[1].kwargs
+        self.assertEqual(relationship_kwargs["url"], "https://follower.example.com/_remote_replication/cluster/my-relationship")
+        self.assertEqual(relationship_kwargs["json"], {"role": "SECONDARY", "local_alias": "local-cluster", "remote_alias": "leader"})
+        self.assertEqual(relationship_kwargs["verify"], False)
+        self.assertEqual(mock_put.return_value.raise_for_status.call_count, 2)
+
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.requests.put")
+    def test_apply_follower_settings_insecure(self, mock_put: Mock) -> None:
+        self.args.ccr_enabled = True
+        self.args.insecure = True
+        TestBenchmarkCreateCluster.setUp(self, self.args)
+        cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
+                                         current_workspace="current_workspace", cluster_role="follower")
+        cluster.cluster_endpoint = "follower.example.com"
+        cluster.apply_follower_settings("10.0.0.5")
+
+        self.assertEqual(mock_put.call_count, 2)
+        for kwargs in [call.kwargs for call in mock_put.call_args_list]:
+            self.assertTrue(kwargs["url"].startswith("http://"))
+            self.assertNotIn("auth", kwargs)
+            self.assertNotIn("verify", kwargs)
 
     def test_apply_follower_settings_missing_seed_ip(self) -> None:
         self.args.ccr_enabled = True
