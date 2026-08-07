@@ -9,6 +9,8 @@
 import logging
 import os
 import sys
+import platform
+import yaml
 
 from assemble_workflow.assemble_args import AssembleArgs
 from assemble_workflow.bundle_locations import BundleLocations
@@ -18,11 +20,54 @@ from manifests.build_manifest import BuildManifest
 from paths.assemble_output_dir import AssembleOutputDir
 from system import console
 
+def generate_manifest_file(args: AssembleArgs):
+    component = args.component or "opensearch"
+    platform_name = args.platform or platform.system().lower()
+    arch = args.arch or platform.machine().lower()
+    version = args.version or "0.0.1"
+    dist = args.dist or "tar"
+
+    url = f"https://artifacts.opensearch.org/releases/bundle/{component}/{version}/{component}-{version}-{platform_name}-{arch}.{dist}"
+
+    manifest_content = {
+        "build": {
+            "name": component,
+            "version": version,
+            "platform": platform_name,
+            "architecture": arch,
+            "distribution": dist
+        },
+        "components": [
+            {
+                "name": component,
+                "version": version,
+                "url": url
+            }
+        ]
+    }
+
+    with open(args.generate_manifest, "w") as f:
+        yaml.dump(manifest_content, f)
+        print(f"Generated manifest file: {args.generate_manifest}")
+
 
 def main() -> int:
     args = AssembleArgs()
 
+    if args.generate_manifest:
+        generate_manifest_file(args)
+        return 0
+
     console.configure(level=args.logging_level)
+
+    if args.dry_run:
+        print("Dry-run enabled. Skipping actual download or extraction.")
+        if args.manifest:
+            print(f"Manifest file: {args.manifest.name}")
+        else:
+            print("No manifest file provided.")
+        return 0
+
 
     build_manifest = BuildManifest.from_file(args.manifest)
     build = build_manifest.build
