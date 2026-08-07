@@ -1,6 +1,6 @@
    release-notes-check-lf.run()
       release-notes-check-lf.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      release-notes-check-lf.library({identifier=jenkins@12.0.0, retriever=null})
+      release-notes-check-lf.library({identifier=jenkins@lf-jenkins, retriever=null})
       release-notes-check-lf.pipeline(groovy.lang.Closure)
          release-notes-check-lf.timeout({time=2, unit=HOURS})
          release-notes-check-lf.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchorg/opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])

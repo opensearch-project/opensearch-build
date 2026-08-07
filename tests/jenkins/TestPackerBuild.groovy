@@ -27,7 +27,7 @@ class TestPackerBuild extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('12.0.0')
+                .defaultVersion('lf-jenkins')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')

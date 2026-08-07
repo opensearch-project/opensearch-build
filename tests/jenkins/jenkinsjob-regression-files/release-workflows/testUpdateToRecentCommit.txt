@@ -1,6 +1,6 @@
    release-manifest-commit-lock-lf.run()
       release-manifest-commit-lock-lf.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      release-manifest-commit-lock-lf.library({identifier=jenkins@12.0.0, retriever=null})
+      release-manifest-commit-lock-lf.library({identifier=jenkins@lf-jenkins, retriever=null})
       release-manifest-commit-lock-lf.pipeline(groovy.lang.Closure)
          release-manifest-commit-lock-lf.timeout({time=2, unit=HOURS})
          release-manifest-commit-lock-lf.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchorg/opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])

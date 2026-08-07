@@ -22,7 +22,7 @@ class TestPublishToMaven extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('13.4.0')
+                .defaultVersion('lf-jenkins')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
