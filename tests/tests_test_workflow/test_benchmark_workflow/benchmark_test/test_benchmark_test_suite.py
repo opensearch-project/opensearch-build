@@ -130,7 +130,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--workload=nyc_taxis '
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
-                         '--user-tag="key1:value1,key2:value2" --telemetry node-stats, --telemetry-params \'{"example_key":"example_value"}\' '
+                         '--user-tag="key1:value1,key2:value2" --telemetry node-stats --telemetry-params \'{"example_key":"example_value"}\' '
                          '--client-options="timeout:120" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
@@ -151,7 +151,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--workload=nyc_taxis '
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
-                         '--user-tag="key1:value1,key2:value2" --telemetry node-stats,test, '
+                         '--user-tag="key1:value1,key2:value2" --telemetry node-stats,test '
                          '--client-options="timeout:120" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
