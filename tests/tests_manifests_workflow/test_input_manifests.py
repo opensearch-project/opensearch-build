@@ -79,7 +79,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.2",
                 "build": {"name": "OpenSearch", "version": "0.2.3"},
-                "ci": {"image": {"linux": {"tar": {"name": "opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1",
+                "ci": {"image": {"linux": {"tar": {"name": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1",
                        "args": "-e JAVA_HOME=/opt/java/openjdk-24"}}}},
                 "components": [{"name": "OpenSearch",
                                 "repository": "https://github.com/opensearch-project/OpenSearch.git",
@@ -93,7 +93,7 @@ class TestInputManifests(unittest.TestCase):
                 "schema-version": "1.1",
                 "name": "OpenSearch",
                 "ci": {"image": {"linux": {"tar": {
-                    "name": "opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1",
+                    "name": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1",
                     "args": "-e JAVA_HOME=/opt/java/openjdk-24 -u 1000 --cpus 4 -m 16g"}}}},
                 "components": [{
                     "name": "index-management",
