@@ -139,6 +139,9 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
         Ask the cluster for the ip of its seed node. opensearch-cluster-cdk names that node 'seed'
         (see nodeConfig 'seed-manager'/'seed-data'), which identifies it unambiguously - matching on
         the cluster_manager role would not, since every dedicated manager node also carries it.
+
+        The seed node has always joined by this point: every asg is deployed with
+        Signals.waitForAll(), so cdk deploy does not return until all nodes signal success.
         """
         nodes = self.get("/_cat/nodes?format=json&h=ip,name")
         for node in nodes:

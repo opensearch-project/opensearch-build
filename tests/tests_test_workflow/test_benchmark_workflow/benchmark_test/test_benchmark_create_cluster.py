@@ -141,6 +141,8 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
         cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
                                          current_workspace="current_workspace", cluster_role="follower")
         self.assertTrue("test-suffix-follower" in cluster.stack_name)
+        get_calls_when_waiting = []
+        mock_wait_for_processing.side_effect = lambda: get_calls_when_waiting.append(mock_get.call_count)
         mock_file = MagicMock(side_effect=[{cluster.stack_name: {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call"):
             with patch("builtins.open", MagicMock()):
@@ -148,6 +150,10 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
                     cluster.start()
         self.assertEqual(cluster.seed_node_ip, "10.0.1.9")
         self.assertEqual(mock_get.call_args.kwargs["url"], "http://www.example.com/_cat/nodes?format=json&h=ip,name")
+        # The cluster has to be up before it can be asked for its seed node, so no _cat/nodes call
+        # may have happened by the time wait_for_processing runs.
+        mock_wait_for_processing.assert_called_once()
+        self.assertEqual(get_calls_when_waiting, [0])
 
     @patch("test_workflow.benchmark_test.benchmark_create_cluster.requests.get")
     def test_fetch_seed_node_ip_from_cluster_no_seed_node(self, mock_get: Mock) -> None:
