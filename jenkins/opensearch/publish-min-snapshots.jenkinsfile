@@ -33,7 +33,6 @@ pipeline {
             H */4 * * * %INPUT_MANIFEST=3.9.0/opensearch-3.9.0.yml
             H */4 * * * %INPUT_MANIFEST=3.8.1/opensearch-3.8.1.yml
             H */4 * * * %INPUT_MANIFEST=3.8.0/opensearch-3.8.0.yml
-            H */4 * * * %INPUT_MANIFEST=3.7.1/opensearch-3.7.1.yml
             H */4 * * * %INPUT_MANIFEST=2.19.6/opensearch-2.19.6.yml
         '''
     }
