@@ -28,7 +28,7 @@ Additional arguments:
 | -v, --verbose          | Show more verbose output.                                               |
 
 ### Integration Tests
-In order to run the tests in your local, you can avoid installing the packages with right version by using a docker image. Each test manifest consist of the docker image to run tests on. Check the [test manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/2.19.0/opensearch-2.19.0.yml#L8) or [jenkins file](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/opensearch/integ-test.jenkinsfile#L15-L20) to retrieve the docker images.
+In order to run the tests in your local, you can avoid installing the packages with right version by using a docker image. Each test manifest consist of the docker image to run tests on. Check the [test manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/3.9.0/opensearch-3.9.0-test.yml#L4-L23) to retrieve the docker images.
 
 ```
   docker run -u root -it opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3 /bin/bash

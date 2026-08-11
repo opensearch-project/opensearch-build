@@ -68,6 +68,12 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
             leader_cluster.apply_leader_settings()
             with BenchmarkCreateCluster.create(self.args, self.test_manifest, config, current_workspace, "follower") as follower_cluster:
                 follower_cluster.apply_follower_settings(leader_cluster.seed_node_ip)
+                # OpenSearch Benchmark addresses the leader cluster as 'default' and the follower
+                # cluster as 'follower' in a multi-cluster (cross-cluster-replication) run.
+                endpoints = {
+                    "default": [{"host": leader_cluster.endpoint, "port": leader_cluster.port}],
+                    "follower": [{"host": follower_cluster.endpoint, "port": follower_cluster.port}],
+                }
                 benchmark_test_suite = BenchmarkTestSuiteRunners.from_args(
-                    self.args, follower_cluster.endpoint_with_port, self.security, follower_cluster.fetch_password())
+                    self.args, endpoints, self.security, follower_cluster.fetch_password())
                 retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)

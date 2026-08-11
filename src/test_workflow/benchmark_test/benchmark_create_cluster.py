@@ -13,7 +13,6 @@ import subprocess
 from contextlib import contextmanager
 from typing import Any, Dict, Generator, Union
 
-import boto3
 import requests
 from requests.auth import HTTPBasicAuth
 from retry.api import retry_call  # type: ignore
@@ -26,6 +25,14 @@ from test_workflow.integ_test.utils import get_password
 
 
 class BenchmarkCreateCluster(BenchmarkTestCluster):
+    # Aliases used to wire up the cross-cluster-replication relationship on the follower. The remote
+    # alias doubles as the 'cluster.remote.<alias>.seeds' key that points at the leader's seed node.
+    REMOTE_ALIAS = "leader"
+    LOCAL_ALIAS = "local-cluster"
+    REPLICATION_RELATIONSHIP = "my-relationship"
+    # 'node.name' that opensearch-cluster-cdk assigns to the seed node of a multi-node cluster.
+    SEED_NODE_NAME = "seed"
+
     manifest: Union[BundleManifest, BuildManifest]
     work_dir: str
     current_workspace: str
@@ -98,6 +105,10 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             self.create_endpoint(load_output)
         self.wait_for_processing()
         logging.info("Wait for processing executed")
+        # Resolved after the cluster is up, since for a multi-node cluster the seed node address is
+        # read from the cluster itself rather than from the cdk output.
+        if self.args.ccr_enabled:
+            self.seed_node_ip = self.fetch_seed_node_ip(load_output)
 
     def create_endpoint(self, cdk_output: dict) -> None:
         load_balancer_url = cdk_output[self.stack_name].get('loadbalancerurl', None)
@@ -105,15 +116,15 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             raise RuntimeError("Unable to fetch the cluster endpoint from cdk output")
         self.cluster_endpoint = load_balancer_url
         self.cluster_endpoint_with_port = "".join([load_balancer_url, ":", str(self.port)])
-        if self.args.ccr_enabled:
-            self.seed_node_ip = self.fetch_seed_node_ip(cdk_output)
 
     def fetch_seed_node_ip(self, cdk_output: dict) -> str:
         """
         Resolve the private IP of the seed node, which is needed to apply cross-cluster-replication
         settings. For a single-node cluster the IP is exposed directly in the cdk output ('privateip').
-        For a multi-node cluster the seed node sits behind an autoscaling group, so it is looked up via
-        the unique 'Name' tag (<stack_name>/seedNodeLt) that opensearch-cluster-cdk applies per stack.
+        For a multi-node cluster the nodes sit behind autoscaling groups and are not published by cdk,
+        so the address is read from the cluster itself over its load balancer. Asking the cluster
+        avoids needing EC2 permissions in the cluster's AWS account, which the host running this
+        workflow does not have (cdk reaches that account via cdk-assume-role-credential-plugin).
         """
         if self.args.single_node:
             private_ip = cdk_output[self.stack_name].get('privateip', None)
@@ -121,23 +132,22 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
                 raise RuntimeError("Unable to fetch the single-node private ip from cdk output")
             return str(private_ip)
 
-        return self.fetch_seed_node_ip_by_tag(f"{self.stack_name}/seedNodeLt")
+        return self.fetch_seed_node_ip_from_cluster()
 
-    def fetch_seed_node_ip_by_tag(self, seed_node_tag: str) -> str:
-        region = self.args.region if getattr(self.args, "region", None) else "us-east-1"
-        ec2_client = boto3.client("ec2", region_name=region)
-        response = ec2_client.describe_instances(
-            Filters=[
-                {"Name": "tag:Name", "Values": [seed_node_tag]},
-                {"Name": "instance-state-name", "Values": ["running"]},
-            ]
-        )
-        for reservation in response.get("Reservations", []):
-            for instance in reservation.get("Instances", []):
-                private_ip = instance.get("PrivateIpAddress")
-                if private_ip:
-                    return str(private_ip)
-        raise RuntimeError(f"Unable to find a running seed node with tag Name={seed_node_tag}")
+    def fetch_seed_node_ip_from_cluster(self) -> str:
+        """
+        Ask the cluster for the ip of its seed node. opensearch-cluster-cdk names that node 'seed'
+        (see nodeConfig 'seed-manager'/'seed-data'), which identifies it unambiguously - matching on
+        the cluster_manager role would not, since every dedicated manager node also carries it.
+
+        The seed node has always joined by this point: every asg is deployed with
+        Signals.waitForAll(), so cdk deploy does not return until all nodes signal success.
+        """
+        nodes = self.get("/_cat/nodes?format=json&h=ip,name")
+        for node in nodes:
+            if node.get("name") == self.SEED_NODE_NAME and node.get("ip"):
+                return str(node["ip"])
+        raise RuntimeError(f"Unable to find a node named '{self.SEED_NODE_NAME}' in cluster {self.stack_name}")
 
     def apply_leader_settings(self) -> None:
         """
@@ -149,7 +159,8 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
     def apply_follower_settings(self, leader_seed_node_ip: str) -> None:
         """
         Apply cross-cluster-replication settings on the follower cluster, using the leader's seed
-        node ip to establish the remote leader connection.
+        node ip to establish the remote leader connection, then register the follower as the
+        SECONDARY end of a remote replication relationship with that leader.
         TODO: Add the arrow streaming settings here once finalized.
         """
         if not leader_seed_node_ip:
@@ -158,24 +169,52 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
         logging.info(f"Applying follower (CCR) settings on cluster {self.stack_name} "
                      f"pointing to leader seed node {'*' * len(leader_seed_node_ip)}")
 
-        settings = {
-            "persistent": {
-                "cluster.remote.leader.seeds": [f"{leader_seed_node_ip}:9300"]
+        self.put(
+            "/_cluster/settings",
+            {
+                "persistent": {
+                    f"cluster.remote.{self.REMOTE_ALIAS}.seeds": [f"{leader_seed_node_ip}:9300"]
+                }
             }
-        }
+        )
 
+        # The remote connection above has to exist before the relationship can reference it by alias.
+        self.put(
+            f"/_remote_replication/cluster/{self.REPLICATION_RELATIONSHIP}",
+            {
+                "role": "SECONDARY",
+                "local_alias": self.LOCAL_ALIAS,
+                "remote_alias": self.REMOTE_ALIAS
+            }
+        )
+
+    def request_args(self, path: str) -> Dict[str, Any]:
         protocol = "http://" if self.args.insecure else "https://"
-        url = "".join([protocol, self.endpoint, "/_cluster/settings"])
-        request_args: Dict[str, Any] = {"url": url, "json": settings}
+        request_args: Dict[str, Any] = {"url": "".join([protocol, self.endpoint, path])}
         if not self.args.insecure:
             request_args["auth"] = HTTPBasicAuth(self.args.username, self.password)
             request_args["verify"] = False
+        return request_args
 
-        def _put_settings() -> None:
+    def put(self, path: str, payload: dict) -> None:
+        request_args = self.request_args(path)
+        request_args["json"] = payload
+
+        def _put() -> None:
             response = requests.put(**request_args)
             response.raise_for_status()
 
-        retry_call(_put_settings, tries=3, delay=15, backoff=2)
+        retry_call(_put, tries=3, delay=15, backoff=2)
+
+    def get(self, path: str) -> Any:
+        request_args = self.request_args(path)
+
+        def _get() -> Any:
+            response = requests.get(**request_args)
+            response.raise_for_status()
+            return response.json()
+
+        return retry_call(_get, tries=3, delay=15, backoff=2)
 
     def terminate(self) -> None:
         command = f"cdk destroy {self.stack_name} {self.params} --force"
