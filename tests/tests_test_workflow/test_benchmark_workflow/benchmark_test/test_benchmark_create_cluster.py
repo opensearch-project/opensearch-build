@@ -124,26 +124,48 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
                     cluster.start()
         self.assertEqual(cluster.seed_node_ip, "10.0.0.5")
 
-    @patch("test_workflow.benchmark_test.benchmark_create_cluster.boto3")
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.requests.get")
     @patch("test_workflow.benchmark_test.benchmark_create_cluster.BenchmarkCreateCluster.wait_for_processing")
-    def test_create_ccr_follower_seed_ip_multi_node(self, mock_wait_for_processing: Optional[Mock], mock_boto3: Mock) -> None:
+    def test_create_ccr_follower_seed_ip_multi_node(self, mock_wait_for_processing: Optional[Mock], mock_get: Mock) -> None:
         self.args.ccr_enabled = True
         self.args.single_node = False
-        self.args.region = "us-west-2"
+        self.args.insecure = True
         TestBenchmarkCreateCluster.setUp(self, self.args)
-        mock_boto3.client.return_value.describe_instances.return_value = {
-            "Reservations": [{"Instances": [{"PrivateIpAddress": "10.0.1.9"}]}]
-        }
+        # Other cluster_manager nodes are listed first, so matching on role alone would pick the
+        # wrong one. Only the node named 'seed' is the seed node.
+        mock_get.return_value.json.return_value = [
+            {"ip": "10.0.2.4", "name": "ip-10-0-2-4.us-east-1.compute.internal"},
+            {"ip": "10.0.3.7", "name": "ip-10-0-3-7.us-east-1.compute.internal"},
+            {"ip": "10.0.1.9", "name": "seed"},
+        ]
         cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
                                          current_workspace="current_workspace", cluster_role="follower")
         self.assertTrue("test-suffix-follower" in cluster.stack_name)
+        get_calls_when_waiting = []
+        mock_wait_for_processing.side_effect = lambda: get_calls_when_waiting.append(mock_get.call_count)
         mock_file = MagicMock(side_effect=[{cluster.stack_name: {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call"):
             with patch("builtins.open", MagicMock()):
                 with patch("json.load", mock_file):
                     cluster.start()
         self.assertEqual(cluster.seed_node_ip, "10.0.1.9")
-        mock_boto3.client.return_value.describe_instances.assert_called_once()
+        self.assertEqual(mock_get.call_args.kwargs["url"], "http://www.example.com/_cat/nodes?format=json&h=ip,name")
+        # The cluster has to be up before it can be asked for its seed node, so no _cat/nodes call
+        # may have happened by the time wait_for_processing runs.
+        mock_wait_for_processing.assert_called_once()
+        self.assertEqual(get_calls_when_waiting, [0])
+
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.requests.get")
+    def test_fetch_seed_node_ip_from_cluster_no_seed_node(self, mock_get: Mock) -> None:
+        self.args.ccr_enabled = True
+        self.args.single_node = False
+        TestBenchmarkCreateCluster.setUp(self, self.args)
+        mock_get.return_value.json.return_value = [{"ip": "10.0.2.4", "name": "ip-10-0-2-4.us-east-1.compute.internal"}]
+        cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
+                                         current_workspace="current_workspace", cluster_role="leader")
+        cluster.cluster_endpoint = "leader.example.com"
+        with self.assertRaises(RuntimeError):
+            cluster.fetch_seed_node_ip_from_cluster()
 
     @patch("test_workflow.benchmark_test.benchmark_create_cluster.requests.put")
     def test_apply_follower_settings(self, mock_put: Mock) -> None:
@@ -156,12 +178,34 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
         cluster.cluster_endpoint = "follower.example.com"
         cluster.apply_follower_settings("10.0.0.5")
 
-        mock_put.assert_called_once()
-        _, kwargs = mock_put.call_args
-        self.assertEqual(kwargs["url"], "https://follower.example.com/_cluster/settings")
-        self.assertEqual(kwargs["json"]["persistent"]["cluster.remote.leader.seeds"], ["10.0.0.5:9300"])
-        self.assertEqual(kwargs["verify"], False)
-        mock_put.return_value.raise_for_status.assert_called_once()
+        # The remote connection settings are applied first, then the replication relationship.
+        self.assertEqual(mock_put.call_count, 2)
+        settings_kwargs = mock_put.call_args_list[0].kwargs
+        self.assertEqual(settings_kwargs["url"], "https://follower.example.com/_cluster/settings")
+        self.assertEqual(settings_kwargs["json"]["persistent"]["cluster.remote.leader.seeds"], ["10.0.0.5:9300"])
+        self.assertEqual(settings_kwargs["verify"], False)
+
+        relationship_kwargs = mock_put.call_args_list[1].kwargs
+        self.assertEqual(relationship_kwargs["url"], "https://follower.example.com/_remote_replication/cluster/my-relationship")
+        self.assertEqual(relationship_kwargs["json"], {"role": "SECONDARY", "local_alias": "local-cluster", "remote_alias": "leader"})
+        self.assertEqual(relationship_kwargs["verify"], False)
+        self.assertEqual(mock_put.return_value.raise_for_status.call_count, 2)
+
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.requests.put")
+    def test_apply_follower_settings_insecure(self, mock_put: Mock) -> None:
+        self.args.ccr_enabled = True
+        self.args.insecure = True
+        TestBenchmarkCreateCluster.setUp(self, self.args)
+        cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
+                                         current_workspace="current_workspace", cluster_role="follower")
+        cluster.cluster_endpoint = "follower.example.com"
+        cluster.apply_follower_settings("10.0.0.5")
+
+        self.assertEqual(mock_put.call_count, 2)
+        for kwargs in [call.kwargs for call in mock_put.call_args_list]:
+            self.assertTrue(kwargs["url"].startswith("http://"))
+            self.assertNotIn("auth", kwargs)
+            self.assertNotIn("verify", kwargs)
 
     def test_apply_follower_settings_missing_seed_ip(self) -> None:
         self.args.ccr_enabled = True

@@ -147,6 +147,8 @@ class BenchmarkArgs:
                                          help="Enable opensearch-benchmark to capture node stat metrics such as cpu, mem, jvm etc as well.")
         execute_test_parser.add_argument("--capture-segment-replication-stat", dest="telemetry", action="append_const", const="segment-replication-stats",
                                          help="Enable opensearch-benchmark to segment_replication stat metrics such as replication lag.")
+        execute_test_parser.add_argument("--capture-ccr-stat", dest="telemetry", action="append_const", const="ccr-stats-v2",
+                                         help="Enable the ccr-stats telemetry device")
         execute_test_parser.add_argument("--telemetry-params", dest="telemetry_params",
                                          help="Allows to set parameters for telemetry devices. Accepts json input.")
         execute_test_parser.add_argument("-v", "--verbose", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level",
