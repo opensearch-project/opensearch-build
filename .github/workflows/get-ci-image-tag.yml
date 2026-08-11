@@ -10,6 +10,11 @@ on:
       platform:
         required: false
         type: string
+        default: 'almalinux8'
+      type:
+        required: false
+        type: string
+        default: 'build'
       build_ref:
         required: false
         type: string
@@ -17,10 +22,6 @@ on:
       version:
         required: false
         type: string
-      type:
-        required: false
-        type: string
-        default: 'build'
     outputs:
       ci-image-version-linux:
         description: The ci image version for linux build
@@ -56,13 +57,6 @@ jobs:
           PRODUCT=${{ inputs.product }}
           PLATFORM=${{ inputs.platform }}
           TYPE=${{ inputs.type }}
-          if [[ -z "$PLATFORM" ]]; then
-              if [[ "$PRODUCT" = "opensearch" ]]; then
-                  PLATFORM="al2" # Temp measure before al2 deprecation on opensearch for k-NN
-              else
-                  PLATFORM="almalinux8"
-              fi
-          fi
 
           if [[ "$PLATFORM" = "al2" ]]; then
               CI_IMAGE_CMD="cp -a /node_al2/* /node && /node/bin/node -v && cp -a /node_al2/* /node24 && /node24/bin/node -v && ls -l /usr/share/dotnet && rm -rf /usr/share/dotnet/*"

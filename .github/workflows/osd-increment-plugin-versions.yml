@@ -46,8 +46,8 @@ jobs:
         branch:
           - 'main'
           - '2.19'
-          - '3.7'
           - '3.8'
+          - '3.9'
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
