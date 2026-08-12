@@ -182,12 +182,12 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
         self.assertEqual(mock_put.call_count, 2)
         settings_kwargs = mock_put.call_args_list[0].kwargs
         self.assertEqual(settings_kwargs["url"], "https://follower.example.com/_cluster/settings")
-        self.assertEqual(settings_kwargs["json"]["persistent"]["cluster.remote.leader.seeds"], ["10.0.0.5:9300"])
+        self.assertEqual(settings_kwargs["json"]["persistent"]["cluster.remote.cluster-1.seeds"], ["10.0.0.5:9300"])
         self.assertEqual(settings_kwargs["verify"], False)
 
         relationship_kwargs = mock_put.call_args_list[1].kwargs
         self.assertEqual(relationship_kwargs["url"], "https://follower.example.com/_remote_replication/cluster/my-relationship")
-        self.assertEqual(relationship_kwargs["json"], {"role": "SECONDARY", "local_alias": "local-cluster", "remote_alias": "leader"})
+        self.assertEqual(relationship_kwargs["json"], {"role": "SECONDARY", "local_alias": "cluster-2", "remote_alias": "cluster-1"})
         self.assertEqual(relationship_kwargs["verify"], False)
         self.assertEqual(mock_put.return_value.raise_for_status.call_count, 2)
 
@@ -214,6 +214,32 @@ class TestBenchmarkCreateCluster(unittest.TestCase):
                                          current_workspace="current_workspace", cluster_role="follower")
         with self.assertRaises(RuntimeError):
             cluster.apply_follower_settings("")
+
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.requests.put")
+    def test_apply_leader_reverse_settings(self, mock_put: Mock) -> None:
+        self.args.ccr_enabled = True
+        self.args.insecure = False
+        self.args.username = "admin"
+        TestBenchmarkCreateCluster.setUp(self, self.args)
+        cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
+                                         current_workspace="current_workspace", cluster_role="leader")
+        cluster.cluster_endpoint = "leader.example.com"
+        cluster.apply_leader_reverse_settings("10.0.1.9")
+
+        # Only the reverse remote connection is applied on the leader, pointing at the follower seed node.
+        self.assertEqual(mock_put.call_count, 1)
+        settings_kwargs = mock_put.call_args_list[0].kwargs
+        self.assertEqual(settings_kwargs["url"], "https://leader.example.com/_cluster/settings")
+        self.assertEqual(settings_kwargs["json"]["persistent"]["cluster.remote.cluster-2.seeds"], ["10.0.1.9:9300"])
+        self.assertEqual(settings_kwargs["verify"], False)
+
+    def test_apply_leader_reverse_settings_missing_seed_ip(self) -> None:
+        self.args.ccr_enabled = True
+        TestBenchmarkCreateCluster.setUp(self, self.args)
+        cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args,
+                                         current_workspace="current_workspace", cluster_role="leader")
+        with self.assertRaises(RuntimeError):
+            cluster.apply_leader_reverse_settings("")
 
     @patch("test_workflow.benchmark_test.benchmark_create_cluster.BenchmarkCreateCluster.wait_for_processing")
     def test_create_multi_node_without_manifest(self, mock_wait_for_processing: Optional[Mock]) -> None:

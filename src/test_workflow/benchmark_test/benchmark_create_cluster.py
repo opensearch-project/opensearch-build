@@ -25,10 +25,11 @@ from test_workflow.integ_test.utils import get_password
 
 
 class BenchmarkCreateCluster(BenchmarkTestCluster):
-    # Aliases used to wire up the cross-cluster-replication relationship on the follower. The remote
-    # alias doubles as the 'cluster.remote.<alias>.seeds' key that points at the leader's seed node.
-    REMOTE_ALIAS = "leader"
-    LOCAL_ALIAS = "local-cluster"
+    # Cross-cluster-replication aliases, shared by both clusters. The primary (leader) is 'cluster-1'
+    # and the secondary (follower) is 'cluster-2'. Each alias doubles as the 'cluster.remote.<alias>.seeds'
+    # key pointing at that cluster's seed node, so the two clusters must agree on them.
+    PRIMARY_ALIAS = "cluster-1"
+    SECONDARY_ALIAS = "cluster-2"
     REPLICATION_RELATIONSHIP = "my-relationship"
     # 'node.name' that opensearch-cluster-cdk assigns to the seed node of a multi-node cluster.
     SEED_NODE_NAME = "seed"
@@ -158,9 +159,9 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
 
     def apply_follower_settings(self, leader_seed_node_ip: str) -> None:
         """
-        Apply cross-cluster-replication settings on the follower cluster, using the leader's seed
-        node ip to establish the remote leader connection, then register the follower as the
-        SECONDARY end of a remote replication relationship with that leader.
+        Apply cross-cluster-replication settings on the follower (secondary) cluster: connect to the
+        leader's seed node under the primary alias, then register this cluster as the SECONDARY end
+        of a remote replication relationship with that leader.
         TODO: Add the arrow streaming settings here once finalized.
         """
         if not leader_seed_node_ip:
@@ -169,22 +170,40 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
         logging.info(f"Applying follower (CCR) settings on cluster {self.stack_name} "
                      f"pointing to leader seed node {'*' * len(leader_seed_node_ip)}")
 
-        self.put(
-            "/_cluster/settings",
-            {
-                "persistent": {
-                    f"cluster.remote.{self.REMOTE_ALIAS}.seeds": [f"{leader_seed_node_ip}:9300"]
-                }
-            }
-        )
+        self.connect_remote_cluster(self.PRIMARY_ALIAS, leader_seed_node_ip)
 
         # The remote connection above has to exist before the relationship can reference it by alias.
         self.put(
             f"/_remote_replication/cluster/{self.REPLICATION_RELATIONSHIP}",
             {
                 "role": "SECONDARY",
-                "local_alias": self.LOCAL_ALIAS,
-                "remote_alias": self.REMOTE_ALIAS
+                "local_alias": self.SECONDARY_ALIAS,
+                "remote_alias": self.PRIMARY_ALIAS
+            }
+        )
+
+    def apply_leader_reverse_settings(self, follower_seed_node_ip: str) -> None:
+        """
+        Point the leader (primary) cluster back at the follower's seed node under the secondary alias.
+        Both clusters knowing each other's seed node is what makes a later switchover possible; this is
+        applied after the follower is up so its seed node ip is known.
+        """
+        if not follower_seed_node_ip:
+            raise RuntimeError("Unable to apply leader reverse CCR settings, follower seed node ip is missing")
+
+        logging.info(f"Applying leader reverse (CCR) settings on cluster {self.stack_name} "
+                     f"pointing to follower seed node {'*' * len(follower_seed_node_ip)}")
+
+        self.connect_remote_cluster(self.SECONDARY_ALIAS, follower_seed_node_ip)
+
+    def connect_remote_cluster(self, alias: str, seed_node_ip: str) -> None:
+        """Register a remote cluster connection under 'alias', seeded from seed_node_ip's transport port."""
+        self.put(
+            "/_cluster/settings",
+            {
+                "persistent": {
+                    f"cluster.remote.{alias}.seeds": [f"{seed_node_ip}:9300"]
+                }
             }
         )
 

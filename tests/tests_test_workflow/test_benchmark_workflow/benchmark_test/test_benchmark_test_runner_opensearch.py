@@ -97,7 +97,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
                              mock_temp_directory: Mock, *mocks: Any) -> None:
         mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
         leader_cluster = MagicMock(seed_node_ip="10.0.0.5")
-        follower_cluster = MagicMock()
+        follower_cluster = MagicMock(seed_node_ip="10.0.1.9")
         mock_cluster.return_value.__enter__.side_effect = [leader_cluster, follower_cluster]
 
         benchmark_args = BenchmarkArgs()
@@ -108,6 +108,8 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
         self.assertEqual(mock_cluster.call_count, 2)
         leader_cluster.apply_leader_settings.assert_called_once()
         follower_cluster.apply_follower_settings.assert_called_once_with("10.0.0.5")
+        # The leader is then pointed back at the follower's seed node for a bidirectional connection.
+        leader_cluster.apply_leader_reverse_settings.assert_called_once_with("10.0.1.9")
         self.assertEqual(mock_suite.call_count, 1)
         mock_retry_call.assert_called_once_with(mock_suite.return_value.execute, tries=3, delay=60, backoff=2)
 
