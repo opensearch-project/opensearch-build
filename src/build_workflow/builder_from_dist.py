@@ -39,7 +39,7 @@ class BuilderFromDist(Builder):
         component_manifest = self.build_manifest.components[self.component.name]
         logging.info(f"Downloading {component_manifest.name} {component_manifest.version} ({component_manifest.commit_id}) ...")
         logging.info(f"Distribution was built from {component_manifest.repository}#{component_manifest.ref}")
-        build_recorder.record_component(self.component.name, BuilderFromDist.ManifestGitRepository(component_manifest))
+        build_recorder.record_component(self.component.name, BuilderFromDist.ManifestGitRepository(component_manifest), self.component.optional)
         for artifact_type in component_manifest.artifacts:
             artifact_path = os.path.join(self.output_path, artifact_type)
             logging.info(f"Downloading into {artifact_path} ...")
