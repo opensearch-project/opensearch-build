@@ -68,6 +68,9 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
             leader_cluster.apply_leader_settings()
             with BenchmarkCreateCluster.create(self.args, self.test_manifest, config, current_workspace, "follower") as follower_cluster:
                 follower_cluster.apply_follower_settings(leader_cluster.seed_node_ip)
+                # Point the leader back at the follower's seed node so both clusters know each other,
+                # which a later replication switchover requires. Done here since the follower is now up.
+                leader_cluster.apply_leader_reverse_settings(follower_cluster.seed_node_ip)
                 # OpenSearch Benchmark addresses the leader cluster as 'default' and the follower
                 # cluster as 'follower' in a multi-cluster (cross-cluster-replication) run.
                 endpoints = {
