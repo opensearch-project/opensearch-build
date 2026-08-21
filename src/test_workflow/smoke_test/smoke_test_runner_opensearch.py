@@ -33,7 +33,7 @@ class SmokeTestRunnerOpenSearch(SmokeTestRunner):
         logging.info("Entering Smoke test for OpenSearch Bundle.")
 
         # Below URL is for the pre-release latest. In the future may consider use formal released spec when available.
-        self.spec_url = "https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml"
+        self.spec_url = "https://api-spec.opensearch.org/opensearch-openapi.yaml"
         self.spec_local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_tests_spec", "opensearch-openapi-local.yaml")
         self.spec_download_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "smoke_tests_spec", "opensearch-openapi.yaml")
         self.spec_path = self.download_spec(self.spec_url, self.spec_local_path, self.spec_download_path)

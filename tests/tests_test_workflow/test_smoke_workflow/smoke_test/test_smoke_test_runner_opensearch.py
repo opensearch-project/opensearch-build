@@ -110,7 +110,7 @@ class TestSmokeTestRunnerOpenSearch(unittest.TestCase):
         runner = SmokeTestRunnerOpenSearch(MagicMock(), MagicMock())
 
         mock_get.assert_called_once_with(
-            "https://github.com/opensearch-project/opensearch-api-specification/releases/download/main-latest/opensearch-openapi.yaml",
+            "https://api-spec.opensearch.org/opensearch-openapi.yaml",
             timeout=10
         )
 
