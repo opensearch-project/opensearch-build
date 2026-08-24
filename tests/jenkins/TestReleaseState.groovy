@@ -26,7 +26,7 @@ class TestReleaseState extends BuildPipelineTest {
         // release-state.jenkinsfile) because indexReleaseState is not yet released upstream.
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('13.8.0')
+                .defaultVersion('13.8.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
