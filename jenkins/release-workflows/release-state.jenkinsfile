@@ -8,11 +8,11 @@
  */
 
 // @job-name: release-state
-// @description: Scheduled job that computes per-criterion release readiness for every active release
+// @description: Job that computes per-criterion release readiness for every active release
 // and indexes it into the opensearch_release_state metrics index. Runs every 6 hours so OSCAR always
-// reads a current view; this job only records state (Jenkins is the hands, OSCAR is the brain).
+// reads a current view; this job only records state per criterion which includes both entrance and exit criteria.
 
-lib = library(identifier: 'jenkins@13.8.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@13.8.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -40,15 +40,59 @@ pipeline {
             defaultValue: '',
             trim: true
         )
+        activeChoice(
+            name: 'CRITERIA',
+            choiceType: 'PT_CHECKBOX',
+            description: 'Restrict indexing to the checked criteria. Leave all unchecked to index every criterion.',
+            filterable: false,
+            randomName: 'choice-parameter-release-state-criteria',
+            script: groovyScript(
+                fallbackScript: [classpath: [], oldScript: '', sandbox: true, script: 'return ["Unknown criteria"]'],
+                script: [classpath: [], oldScript: '', sandbox: true, script: '''return [
+                    "release_owners_assigned",
+                    "documentation_draft_prs_up",
+                    "code_coverage_not_decreased",
+                    "release_notes_ready",
+                    "release_ticket_and_forum_post",
+                    "documentation_reviewed_signed_off",
+                    "all_integration_tests_passing",
+                    "no_unpatched_vulnerabilities",
+                    "sanity_testing_done",
+                    "roadmap_up_to_date",
+                    "security_reviews_complete",
+                    "performance_tests_posted",
+                    "release_blog_ready"
+                ]'''])
+        )
     }
     stages {
         stage('Index Release State') {
             steps {
                 script {
+                    def indexArgs = [:]
                     if (params.VERSION?.trim()) {
-                        indexReleaseState(version: params.VERSION.trim())
-                    } else {
-                        indexReleaseState()
+                        indexArgs.version = params.VERSION.trim()
+                    }
+                    if (params.CRITERIA?.trim()) {
+                        indexArgs.criteria = params.CRITERIA.trim()
+                    }
+                    def indexedReleases = indexReleaseState(indexArgs)
+                    writeJSON file: 'indexed-releases.json', json: indexedReleases
+                    stash includes: 'indexed-releases.json', name: "indexed-releases-${env.BUILD_NUMBER}"
+                }
+            }
+        }
+        stage('Update Release Issues') {
+            steps {
+                script {
+                    unstash "indexed-releases-${env.BUILD_NUMBER}"
+                    def indexedReleases = readJSON file: 'indexed-releases.json'
+                    for (release in indexedReleases) {
+                        if (release.releaseIssue) {
+                            updateReleaseIssue(version: release.version, releaseIssue: release.releaseIssue, action: 'update_criteria')
+                        } else {
+                            echo("No release issue for version ${release.version}; skipping issue update.")
+                        }
                     }
                 }
             }
