@@ -129,7 +129,7 @@ jobs:
           pr_reviewer.require_security_review: true
           pr_reviewer.enable_review_labels_security: false  # avoid too many labels at the moment
           pr_reviewer.enable_review_labels_effort: false
-          pr_reviewer.extra_instructions: ${{ env.STREAM_COMPAT_PROMPT }}
+          pr_reviewer.extra_instructions: ${{ env.STREAM_COMPAT_PROMPT || '' }}
           pr_code_suggestions.max_history_len: 5  # max number of history of previous suggestions in same persistent comment
           pr_code_suggestions.max_number_of_calls: 5  # max number of chunks to cut PR, make X number of calls per commit on PR, each config.max_model_tokens number of tokens
           pr_code_suggestions.num_code_suggestions_per_chunk: 4  # max number of suggestions per chunk
@@ -140,7 +140,7 @@ jobs:
           pr_code_suggestions.wiki_page_accepted_suggestions: false
           pr_code_suggestions.allow_thumbs_up_down: true
           pr_code_suggestions.publish_output_no_suggestions: false  # avoid comment even if there is no suggestions
-          pr_code_suggestions.extra_instructions: ${{ env.STREAM_COMPAT_PROMPT }}
+          pr_code_suggestions.extra_instructions: ${{ env.STREAM_COMPAT_PROMPT || '' }}
           config.max_model_tokens: 70000
           config.model: 'bedrock/us.anthropic.claude-opus-4-7'
           config.fallback_models: '["bedrock/us.anthropic.claude-sonnet-4-6"]'
