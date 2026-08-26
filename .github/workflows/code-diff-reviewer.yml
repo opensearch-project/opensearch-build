@@ -14,6 +14,10 @@ on:
         required: false
         type: string
         default: 'skip-diff-reviewer'
+      enable_stream_compat_review:
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   Code-Diff-Reviewer:
@@ -68,12 +72,49 @@ jobs:
         with:
           role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE }}
           aws-region: us-east-1
+      # Self-gating prompt: no findings unless the diff touches the OpenSearch binary stream framework, so it no-ops on non-JVM repos.
+      - name: Set stream compatibility review prompt
+        if: ${{ env.skip_diff_reviewer != 'true' && inputs.enable_stream_compat_review }}
+        run: |
+          {
+            echo 'STREAM_COMPAT_PROMPT<<PROMPT_EOF'
+            cat <<'PROMPT_TEXT'
+          Apply the following focused review lens IN ADDITION to your normal review. It targets one class of defect: OpenSearch binary wire-format compatibility. Report matching findings alongside your other review comments; it does not change your output format.
+
+          SCOPE (check first): This applies ONLY to JVM (Java/Kotlin) code using the OpenSearch binary stream framework — org.opensearch.core.common.io.stream (StreamInput, StreamOutput, Writeable, NamedWriteable, NamedWriteableRegistry). Imports are usually outside the diff, so judge scope on shape alone: writeTo(StreamOutput), a single-arg StreamInput constructor, readFrom, out.write*/in.read* calls, getWriteableName, or registry entries. Similarly named unrelated classes (java.io.DataInput, Lucene's DataOutput) are out of scope. If nothing in the diff matches these shapes — including all non-JVM repos such as OpenSearch Dashboards (TypeScript/JavaScript), Python, Go, Rust — raise nothing for this lens. Judge only the changed code, never the PR title or description.
+
+          Why it matters: in a mixed-version (rolling-upgrade) cluster, nodes on different versions exchange these payloads. The format is not self-describing, so any layout change that is not version-guarded fails at runtime. A node must write the byte format older peers expect and read the format any older peer may send.
+
+          Two invariants:
+          - Reads in the StreamInput constructor must mirror writes in writeTo, in the same order, for every version pair that can be on the wire together. OpenSearch's convention is to place matching read/write methods adjacently for exactly this visual check.
+          - A change to the format must be version-guarded consistently on BOTH sides using the same constant V (the first unreleased version containing the change), via out.getVersion() on write and in.getVersion() on read. A purely additive field uses an onOrAfter(V) check on each side. A removed field or a changed encoding needs an if/else that still writes AND reads the OLD format for peers before(V) and the NEW format for peers onOrAfter(V) — dropping the old-format branch breaks communication with older peers.
+
+          Flag:
+          - Field added, removed, or reordered with no version guard.
+          - A version-guarded encoding/removal change that deletes the old-format branch, so peers before(V) can no longer be written to or read from.
+          - Encoding changed for an existing field: writeInt<->writeVInt, writeLong<->writeVLong, writeString<->writeOptionalString, or any switch between a writeX and its writeOptionalX form (the optional form adds a leading boolean, so this changes the byte layout even for the "same" field). Also different writeMap/writeCollection element writers, or writeGenericValue type changes.
+          - Guard on only one side, the two sides using different version constants, or a write-side check that does not have the matching read-side check (and vice versa). Accept either onOrAfter or before phrasing as a valid guard.
+          - A guard naming an already-released/historical version, or Version.CURRENT, for a field added in this change — as broken as no guard.
+          - Ordinal-serialized enums gaining, losing, or reordering constants.
+          - writeException / readException ordinal changes, or a custom exception's serialization order.
+          - getWriteableName value changed, or a registry registration renamed or removed.
+
+          For each finding, name the class and field, state whether a guard exists and its exact constant, and give the concrete failure direction (new writer -> old reader, or old writer -> new reader).
+
+          Do not flag: a type introduced in this same diff that no older version can send or receive AND is not embedded in any pre-existing serializable payload (verify both); correctly and symmetrically guarded changes; toXContent/JSON-only changes; test-only code.
+
+          Severity: high for an unguarded, asymmetric, dropped-old-branch, or wrong-constant layout change to a pre-existing type (assume high unless you can show older peers cannot reach it); medium when guards look correct but no test round-trips at an older stream version; low for no-op refactors of serialization code.
+
+          Judge byte layout only for this lens; leave unrelated correctness, style, and language concerns to your normal review. Under-reporting costs more than over-reporting — when unsure whether a type reaches older nodes, flag it and state what you could not determine. If nothing in the diff matches the shapes above, raise nothing for this lens.
+          PROMPT_TEXT
+            echo 'PROMPT_EOF'
+          } >> "$GITHUB_ENV"
       - name: PR Agent Review
         if: ${{ env.skip_diff_reviewer != 'true' }}
         # Temporary fix due to pr-agent not lock to the specific docker image in github tag
         # Causing PRs like this to break bedrock integration:
         # https://github.com/qodo-ai/pr-agent/pull/2278
-        uses: peterzhuamazon/pr-agent@a7242590efd34e0c424cc5cffc6cc0fc9a338cb9 # v0.36.1
+        uses: peterzhuamazon/pr-agent@24997ac91484c97a58be6ac1f54d46f4a836290b # v0.43.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           github_action_config.auto_review: true
@@ -88,6 +129,7 @@ jobs:
           pr_reviewer.require_security_review: true
           pr_reviewer.enable_review_labels_security: false  # avoid too many labels at the moment
           pr_reviewer.enable_review_labels_effort: false
+          pr_reviewer.extra_instructions: ${{ env.STREAM_COMPAT_PROMPT || '' }}
           pr_code_suggestions.max_history_len: 5  # max number of history of previous suggestions in same persistent comment
           pr_code_suggestions.max_number_of_calls: 5  # max number of chunks to cut PR, make X number of calls per commit on PR, each config.max_model_tokens number of tokens
           pr_code_suggestions.num_code_suggestions_per_chunk: 4  # max number of suggestions per chunk
@@ -98,6 +140,9 @@ jobs:
           pr_code_suggestions.wiki_page_accepted_suggestions: false
           pr_code_suggestions.allow_thumbs_up_down: true
           pr_code_suggestions.publish_output_no_suggestions: false  # avoid comment even if there is no suggestions
-          config.max_model_tokens: 50000
+          pr_code_suggestions.extra_instructions: ${{ env.STREAM_COMPAT_PROMPT || '' }}
+          config.max_model_tokens: 70000
           config.model: 'bedrock/us.anthropic.claude-opus-4-7'
           config.fallback_models: '["bedrock/us.anthropic.claude-sonnet-4-6"]'
+          config.repo_context_files: '[]'  # opt out of AGENTS.md/CLAUDE.md auto-injection to keep prompt control
+          litellm.cache_control_injection_points: '[{"location": "message", "role": "system"}]'  # Anthropic prompt caching on the system prompt
