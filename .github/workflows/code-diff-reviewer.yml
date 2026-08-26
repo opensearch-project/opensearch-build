@@ -79,35 +79,33 @@ jobs:
           {
             echo 'STREAM_COMPAT_PROMPT<<PROMPT_EOF'
             cat <<'PROMPT_TEXT'
-          StreamInput / StreamOutput Review Prompt
+          Apply the following focused review lens IN ADDITION to your normal review. It targets one class of defect: OpenSearch binary wire-format compatibility. Report matching findings alongside your other review comments; it does not change your output format.
 
-          BEFORE ANYTHING ELSE — SCOPE CHECK: This review dimension applies ONLY to JVM (Java/Kotlin) source that uses the OpenSearch binary stream framework (org.opensearch.core.common.io.stream: StreamInput, StreamOutput, Writeable, NamedWriteable, NamedWriteableRegistry). If the diff contains no such code, you MUST return zero findings for this dimension and MUST NOT mention wire format, serialization, streams, or this topic at all. Repositories that are not JVM-based — including OpenSearch Dashboards and any TypeScript, JavaScript, Python, Go, or Rust code — are out of scope by construction; produce nothing. Do not infer scope from the PR title or description; judge only the changed code's shape.
+          SCOPE (check first): This applies ONLY to JVM (Java/Kotlin) code using the OpenSearch binary stream framework — org.opensearch.core.common.io.stream (StreamInput, StreamOutput, Writeable, NamedWriteable, NamedWriteableRegistry). Imports are usually outside the diff, so judge scope on shape alone: writeTo(StreamOutput), a single-arg StreamInput constructor, readFrom, out.write*/in.read* calls, getWriteableName, or registry entries. Similarly named unrelated classes (java.io.DataInput, Lucene's DataOutput) are out of scope. If nothing in the diff matches these shapes — including all non-JVM repos such as OpenSearch Dashboards (TypeScript/JavaScript), Python, Go, Rust — raise nothing for this lens. Judge only the changed code, never the PR title or description.
 
-          Analyze the git diff for WIRE FORMAT COMPATIBILITY BREAKS in code touching the OpenSearch binary stream framework — org.opensearch.core.common.io.stream (StreamInput, StreamOutput, Writeable, NamedWriteable, NamedWriteableRegistry). Imports are usually outside the diff, so treat a hunk as in scope on shape alone: a writeTo(StreamOutput), a single-argument StreamInput constructor, readFrom, out.write*/in.read* calls, getWriteableName, or registry entries. Unrelated stream classes with similar names (java.io.DataInput, Lucene's DataOutput) are out of scope.
+          Why it matters: in a mixed-version (rolling-upgrade) cluster, nodes on different versions exchange these payloads. The format is not self-describing, so any layout change that is not version-guarded fails at runtime. A node must write the byte format older peers expect and read the format any older peer may send.
 
-          Assume mixed-version clusters: during a rolling upgrade, two nodes on different versions exchange these payloads. The new node must continue to send the byte format the old node expects and the new node must be able to read the format sent by any old node it may connect to. Any changes to that format that are not correctly guarded will fail at runtime. The format is not self-describing.
-
-          Invariant: reads in the StreamInput constructor must mirror writes in writeTo for every version pair that can be on the wire together, not just for two new-version nodes.
-
-          Invariant: changes to an existing structure must be guarded by an 'onOrAfter' check (out.getVersion().onOrAfter(...) on the write side, in.getVersion().onOrAfter(...) on the read side) using the first version that will contain the change (i.e. the next unreleased version).
+          Two invariants:
+          - Reads in the StreamInput constructor must mirror writes in writeTo, in the same order, for every version pair that can be on the wire together. OpenSearch's convention is to place matching read/write methods adjacently for exactly this visual check.
+          - A change to the format must be version-guarded consistently on BOTH sides using the same constant V (the first unreleased version containing the change), via out.getVersion() on write and in.getVersion() on read. A purely additive field uses an onOrAfter(V) check on each side. A removed field or a changed encoding needs an if/else that still writes AND reads the OLD format for peers before(V) and the NEW format for peers onOrAfter(V) — dropping the old-format branch breaks communication with older peers.
 
           Flag:
           - Field added, removed, or reordered with no version guard.
-          - Encoding changed for an existing field (writeInt<->writeVInt, writeString<->writeOptionalString, different writeMap key/value writers).
-          - Guard on the write side but not the read side, or the two sides using different constants.
-          - A guard naming an already-released or historical version for a field added in this change — as broken as no guard. Same for any guard against Version.CURRENT.
+          - A version-guarded encoding/removal change that deletes the old-format branch, so peers before(V) can no longer be written to or read from.
+          - Encoding changed for an existing field: writeInt<->writeVInt, writeLong<->writeVLong, writeString<->writeOptionalString, or any switch between a writeX and its writeOptionalX form (the optional form adds a leading boolean, so this changes the byte layout even for the "same" field). Also different writeMap/writeCollection element writers, or writeGenericValue type changes.
+          - Guard on only one side, the two sides using different version constants, or a write-side check that does not have the matching read-side check (and vice versa). Accept either onOrAfter or before phrasing as a valid guard.
+          - A guard naming an already-released/historical version, or Version.CURRENT, for a field added in this change — as broken as no guard.
           - Ordinal-serialized enums gaining, losing, or reordering constants.
-          - getWriteableName values changed, or a registry registration renamed or removed.
+          - writeException / readException ordinal changes, or a custom exception's serialization order.
+          - getWriteableName value changed, or a registry registration renamed or removed.
 
-          Each finding must name the class and field, state whether a guard exists and its exact constant, and give the concrete failure direction (new writer -> old reader, or old writer -> new reader).
+          For each finding, name the class and field, state whether a guard exists and its exact constant, and give the concrete failure direction (new writer -> old reader, or old writer -> new reader).
 
-          Do not flag: a type introduced in this same diff that no older version can send or receive AND that is not embedded in any pre-existing serializable payload (verify both; don't trust the PR description); correctly and symmetrically guarded additions; toXContent-only changes (report separately if at all); test-only code.
+          Do not flag: a type introduced in this same diff that no older version can send or receive AND is not embedded in any pre-existing serializable payload (verify both); correctly and symmetrically guarded changes; toXContent/JSON-only changes; test-only code.
 
-          Severity: high for an unguarded, asymmetric, or wrong-constant layout change to a pre-existing type — assume high unless you can establish older peers cannot reach it. Medium when guards look right but no test round-trips at an older stream version. Low for no-op refactors of serialization code.
+          Severity: high for an unguarded, asymmetric, dropped-old-branch, or wrong-constant layout change to a pre-existing type (assume high unless you can show older peers cannot reach it); medium when guards look correct but no test round-trips at an older stream version; low for no-op refactors of serialization code.
 
-          Judge byte layout only; leave unrelated correctness to other reviewers. Under-reporting costs more than over-reporting: a false positive costs one review comment, a missed break costs a failed upgrade found months later. When unsure whether a type reaches older nodes, flag it and say what you couldn't determine.
-
-          If, after inspecting the actual changed lines, nothing matches the binary-stream shapes described above, output no findings for this review dimension. Never raise language choice, style, general correctness, or framework concerns here — those belong to other reviewers.
+          Judge byte layout only for this lens; leave unrelated correctness, style, and language concerns to your normal review. Under-reporting costs more than over-reporting — when unsure whether a type reaches older nodes, flag it and state what you could not determine. If nothing in the diff matches the shapes above, raise nothing for this lens.
           PROMPT_TEXT
             echo 'PROMPT_EOF'
           } >> "$GITHUB_ENV"
