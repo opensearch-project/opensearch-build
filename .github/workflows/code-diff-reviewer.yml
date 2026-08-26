@@ -145,4 +145,4 @@ jobs:
           config.model: 'bedrock/us.anthropic.claude-opus-4-7'
           config.fallback_models: '["bedrock/us.anthropic.claude-sonnet-4-6"]'
           config.repo_context_files: '[]'  # opt out of AGENTS.md/CLAUDE.md auto-injection to keep prompt control
-          litellm.cache_control_injection_points: '[{"location": "message", "role": "system"}]'  # Anthropic prompt caching on the system prompt (Claude-gated)
+          litellm.cache_control_injection_points: '[{"location": "message", "role": "system"}]'  # Anthropic prompt caching on the system prompt
