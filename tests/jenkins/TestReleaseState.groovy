@@ -113,6 +113,23 @@ class TestReleaseState extends BuildPipelineTest {
     }
 
     @Test
+    void testIndexesAllCriteriaWhenAllSentinelIsSelected() {
+        // Timer and API builds cannot submit checkbox state, so Active Choices falls back to the first
+        // choice, 'all', which must not restrict the run to a single criterion.
+        addParam('CRITERIA', 'all')
+        runScript('jenkins/release-workflows/release-state.jenkinsfile')
+        assert getCommandExecutions('echo', 'Restricting to criteria').isEmpty()
+    }
+
+    @Test
+    void testDropsAllSentinelWhenCombinedWithNamedCriteria() {
+        addParam('CRITERIA', 'all,code_coverage_not_decreased')
+        runScript('jenkins/release-workflows/release-state.jenkinsfile')
+        assertThat(getCommandExecutions('echo', 'Restricting to criteria'),
+                hasItem(containsString('Restricting to criteria: code_coverage_not_decreased.')))
+    }
+
+    @Test
     void testUpdateReleaseIssuesStageIsPresent() {
         runScript('jenkins/release-workflows/release-state.jenkinsfile')
         assertThat(getCommandExecutions('echo', 'Update Release Issues'),

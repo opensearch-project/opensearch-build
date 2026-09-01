@@ -43,12 +43,13 @@ pipeline {
         activeChoice(
             name: 'CRITERIA',
             choiceType: 'PT_CHECKBOX',
-            description: 'Restrict indexing to the checked criteria. Leave all unchecked to index every criterion.',
+            description: 'Restrict indexing to the checked criteria. Check "all" to index every criterion.',
             filterable: false,
             randomName: 'choice-parameter-release-state-criteria',
             script: groovyScript(
                 fallbackScript: [classpath: [], oldScript: '', sandbox: true, script: 'return ["Unknown criteria"]'],
                 script: [classpath: [], oldScript: '', sandbox: true, script: '''return [
+                    "all",
                     "release_owners_assigned",
                     "documentation_draft_prs_up",
                     "code_coverage_not_decreased",
@@ -73,8 +74,9 @@ pipeline {
                     if (params.VERSION?.trim()) {
                         indexArgs.version = params.VERSION.trim()
                     }
-                    if (params.CRITERIA?.trim()) {
-                        indexArgs.criteria = params.CRITERIA.trim()
+                    List criteria = params.CRITERIA?.tokenize(',')*.trim()?.findAll { it && it != 'all' } ?: []
+                    if (criteria) {
+                        indexArgs.criteria = criteria.join(',')
                     }
                     def indexedReleases = indexReleaseState(indexArgs)
                     writeJSON file: 'indexed-releases.json', json: indexedReleases
