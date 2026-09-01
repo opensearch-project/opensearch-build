@@ -22,11 +22,9 @@ class TestReleaseState extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
-        // TODO: point back at the upstream library tag once it is cut; using the fork branch (matching
-        // release-state.jenkinsfile) because indexReleaseState is not yet released upstream.
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('13.8.1')
+                .defaultVersion('13.8.2')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -42,9 +40,17 @@ class TestReleaseState extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
         helper.registerAllowedMethod('writeFile', [Map])
+        helper.registerAllowedMethod('groovyScript', [Map])
+        helper.registerAllowedMethod('activeChoice', [Map.class], null)
+        helper.registerAllowedMethod('stash', [Map])
+        helper.registerAllowedMethod('unstash', [String])
+        helper.registerAllowedMethod('writeJSON', [Map])
+        helper.registerAllowedMethod('readJSON', [Map])
         binding.setVariable('METRICS_HOST_ACCOUNT', 'METRICS_HOST_ACCOUNT')
+        binding.setVariable('ADVISORIES_HOST_ACCOUNT', 'ADVISORIES_HOST_ACCOUNT')
         binding.setVariable('env', [
                 'METRICS_HOST_URL'     : 'sample.url',
+                'ADVISORIES_HOST_URL'  : 'advisories.url',
                 'AWS_ACCESS_KEY_ID'    : 'abc',
                 'AWS_SECRET_ACCESS_KEY': 'xyz',
                 'AWS_SESSION_TOKEN'    : 'sampleToken',
@@ -57,7 +63,7 @@ class TestReleaseState extends BuildPipelineTest {
         helper.registerAllowedMethod('sh', [Map.class], { Map args ->
             String script = args.script
             if (script.contains('opensearch_release_schedule')) {
-                return '{"hits":{"hits":[{"_source":{"version":"3.8.0","release_date":"2026-08-15","status":"active"}}]}}'
+                return '{"hits":{"hits":[{"_source":{"version":"3.8.0","release_date":"2026-08-15","release_issue":"https://github.com/opensearch-project/opensearch-build/issues/6062","status":"active"}}]}}'
             }
             if (script.contains('-XPOST') || script.contains('-XPUT')) {
                 return '201'
@@ -90,6 +96,27 @@ class TestReleaseState extends BuildPipelineTest {
         runScript('jenkins/release-workflows/release-state.jenkinsfile')
         assertThat(getCommandExecutions('echo', 'No active releases'),
                 hasItem(containsString('No active releases to index state for.')))
+    }
+
+    @Test
+    void testRestrictsToRequestedCriteria() {
+        addParam('CRITERIA', 'code_coverage_not_decreased')
+        runScript('jenkins/release-workflows/release-state.jenkinsfile')
+        assertThat(getCommandExecutions('echo', 'Restricting to criteria'),
+                hasItem(containsString('Restricting to criteria: code_coverage_not_decreased.')))
+    }
+
+    @Test
+    void testIndexesAllCriteriaWhenNoneRequested() {
+        runScript('jenkins/release-workflows/release-state.jenkinsfile')
+        assert getCommandExecutions('echo', 'Restricting to criteria').isEmpty()
+    }
+
+    @Test
+    void testUpdateReleaseIssuesStageIsPresent() {
+        runScript('jenkins/release-workflows/release-state.jenkinsfile')
+        assertThat(getCommandExecutions('echo', 'Update Release Issues'),
+                hasItem(containsString('Stage "Update Release Issues"')))
     }
 
     def getCommandExecutions(methodName, command) {
