@@ -22,13 +22,14 @@ class BuildRecorder:
         self.target = target
         self.name = target.name
 
-    def record_component(self, component_name: str, git_repo: GitRepository) -> None:
+    def record_component(self, component_name: str, git_repo: GitRepository, optional: bool = None) -> None:
         self.build_manifest.append_component(
             component_name,
             self.target.component_version,
             git_repo.url,
             git_repo.ref,
             git_repo.sha,
+            optional,
         )
 
     def record_artifact(self, component_name: str, artifact_type: str, artifact_path: str, artifact_file: str) -> None:
@@ -75,7 +76,7 @@ class BuildRecorder:
                 self.data["build"]["distribution"] = target.distribution if target.distribution else "tar"
                 self.data["schema-version"] = "1.2"
 
-        def append_component(self, name: str, version: str, repository_url: str, ref: str, commit_id: str) -> None:
+        def append_component(self, name: str, version: str, repository_url: str, ref: str, commit_id: str, optional: bool = None) -> None:
             component = {
                 "name": name,
                 "repository": repository_url,
@@ -83,6 +84,7 @@ class BuildRecorder:
                 "commit_id": commit_id,
                 "artifacts": {},
                 "version": version,
+                "optional": optional,
             }
             self.components_hash[name] = component
             logging.info(f"Appended {name} component in build manifest.")
