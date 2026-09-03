@@ -3,7 +3,7 @@ name: Increment OpenSearch Plugins Version
 
 on:
   schedule:
-    - cron: 0 0 * * *
+    - cron: 0 0,8,16 * * *
   workflow_dispatch:
     inputs:
       logLevel:
@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         entry:
-          # Adding the core repo OpenSearch for the label creation automation
+          # Adding the core repo OpenSearch to warm the Spotless Eclipse formatter cache
           - {repo: OpenSearch}
           - {repo: alerting}
           - {repo: anomaly-detection}
@@ -95,6 +95,10 @@ jobs:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
           persist-credentials: false
+
+      - name: Warm Spotless Eclipse formatter cache
+        continue-on-error: true
+        run: ./gradlew spotlessJavaCheck --no-daemon || true
 
       - name: Increment Version in ${{ matrix.entry.repo }}
         if: ${{ matrix.entry.repo != 'OpenSearch' }}
