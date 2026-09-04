@@ -31,7 +31,7 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Cameron Skinner          | [camerski](https://github.com/camerski)             | Amazon      |
 | Daniel (dB.) Doubrovkine | [dblock](https://github.com/dblock)                 | Independent |
 | Marc Handalian           | [mch2](https://github.com/mch2)                     | Amazon      |
-| Peter Nied               | [peternied](https://github.com/peternied)           | Amazon      |
+| Peter Nied               | [peternied](https://github.com/peternied)           | Airbnb      |
 | Jeff Lu                  | [jordarlu](https://github.com/jordarlu)             | Amazon      |
 | Barani Bikshandi         | [bbarani](https://github.com/bbarani)               | Amazon      |
 | Zelin Hao                | [zelinh](https://github.com/zelinh)                 | Amazon      |
