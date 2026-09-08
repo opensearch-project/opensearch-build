@@ -23,8 +23,8 @@ IF EXIST "%OPENSEARCH_HOME%\plugins\opensearch-security" (
 )
 
 :: k-NN Plugin Setups
-ECHO "Set KNN Dylib Path for Windows systems"
-SET "PATH=%PATH%;%OPENSEARCH_HOME%/plugins/opensearch-knn/lib"
+ECHO "Set KNN / Neural Search lib Path for Windows systems"
+SET "PATH=%PATH%;%OPENSEARCH_HOME%/plugins/opensearch-knn/lib;%OPENSEARCH_HOME%/plugins/opensearch-neural-search/lib"
 
 :: Start OpenSearch
 ECHO Start OpenSearch

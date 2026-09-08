@@ -23,8 +23,8 @@ IF EXIST "%OPENSEARCH_HOME%\plugins\opensearch-security" (
 )
 
 :: k-NN Plugin and Rust Lib Setups
-ECHO "Set KNN / Rust Dylib Path for Windows systems"
-SET "PATH=%PATH%;%OPENSEARCH_HOME%/plugins/opensearch-knn/lib;%OPENSEARCH_HOME%/lib/rust"
+ECHO "Set KNN / Neural Search / Rust Dylib Path for Windows systems"
+SET "PATH=%PATH%;%OPENSEARCH_HOME%/plugins/opensearch-knn/lib;%OPENSEARCH_HOME%/plugins/opensearch-neural-search/lib;%OPENSEARCH_HOME%/lib/rust"
 
 :: Start OpenSearch
 ECHO Start OpenSearch
