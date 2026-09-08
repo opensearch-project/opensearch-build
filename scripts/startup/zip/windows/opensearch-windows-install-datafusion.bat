@@ -22,7 +22,7 @@ IF EXIST "%OPENSEARCH_HOME%\plugins\opensearch-security" (
     CALL "%OPENSEARCH_HOME%\plugins\opensearch-security\tools\install_demo_configuration.bat" -y -i -s || exit /b 1
 )
 
-:: k-NN Plugin and Rust Lib Setups
+:: k-NN and Neural Search Plugin and Rust Lib Setups
 ECHO "Set KNN / Neural Search / Rust Dylib Path for Windows systems"
 SET "PATH=%PATH%;%OPENSEARCH_HOME%/plugins/opensearch-knn/lib;%OPENSEARCH_HOME%/plugins/opensearch-neural-search/lib;%OPENSEARCH_HOME%/lib/rust"
 

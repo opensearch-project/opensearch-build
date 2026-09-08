@@ -22,7 +22,7 @@ IF EXIST "%OPENSEARCH_HOME%\plugins\opensearch-security" (
     CALL "%OPENSEARCH_HOME%\plugins\opensearch-security\tools\install_demo_configuration.bat" -y -i -s || exit /b 1
 )
 
-:: k-NN Plugin Setups
+:: k-NN and Neural Search Plugin Setups
 ECHO "Set KNN / Neural Search lib Path for Windows systems"
 SET "PATH=%PATH%;%OPENSEARCH_HOME%/plugins/opensearch-knn/lib;%OPENSEARCH_HOME%/plugins/opensearch-neural-search/lib"
 
