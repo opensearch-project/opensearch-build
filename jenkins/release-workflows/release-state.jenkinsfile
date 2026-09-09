@@ -74,7 +74,14 @@ pipeline {
                     if (params.VERSION?.trim()) {
                         indexArgs.version = params.VERSION.trim()
                     }
-                    List criteria = params.CRITERIA?.tokenize(',')*.trim()?.findAll { it && it != 'all' } ?: []
+                    List selected = params.CRITERIA ? params.CRITERIA.tokenize(',') : []
+                    List criteria = []
+                    for (entry in selected) {
+                        String name = entry.trim()
+                        if (name && name != 'all') {
+                            criteria.add(name)
+                        }
+                    }
                     if (criteria) {
                         indexArgs.criteria = criteria.join(',')
                     }
