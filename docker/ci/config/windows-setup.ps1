@@ -239,6 +239,21 @@ aws --version
 pip cache remove * 
 Remove-Item 'get-pip.py' -Force
 
+# Install MSVC 2022 for Neural Sparse Cpp on Neural Search Plugin
+Invoke-WebRequest "https://aka.ms/vs/17/release/vs_BuildTools.exe" -OutFile ".\vs_BuildTools.exe"
+$p = Start-Process ".\vs_BuildTools.exe" -Wait -NoNewWindow -PassThru -ArgumentList @(
+  "--quiet","--norestart",
+  "--add","Microsoft.VisualStudio.Workload.VCTools",
+  "--add","Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+  "--add","Microsoft.VisualStudio.Component.Windows11SDK.22621",
+  "--includeRecommended"
+)
+Write-Host "VS Build Tools installer exit code: $($p.ExitCode)"
+if ($p.ExitCode -ne 0 -and $p.ExitCode -ne 3010) {
+  throw "VS Build Tools install failed with exit code $($p.ExitCode)"
+}
+Remove-Item ".\vs_BuildTools.exe" -Force
+
 # Refresh env vars
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
