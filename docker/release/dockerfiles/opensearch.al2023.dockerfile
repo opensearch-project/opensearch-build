@@ -82,8 +82,8 @@ RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh 
 ENV JAVA_HOME=$OPENSEARCH_HOME/jdk
 ENV PATH=$PATH:$JAVA_HOME/bin:$OPENSEARCH_HOME/bin
 
-# Add k-NN lib directory to library loading path variable
-ENV LD_LIBRARY_PATH="$OPENSEARCH_HOME/plugins/opensearch-knn/lib"
+# Add k-NN / Neural Sparse native lib directory to library loading path variable
+ENV LD_LIBRARY_PATH="$OPENSEARCH_HOME/plugins/opensearch-knn/lib:$OPENSEARCH_HOME/plugins/opensearch-neural-search/lib"
 
 # Change user
 USER $UID
