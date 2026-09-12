@@ -1,0 +1,15 @@
+name: Find triggering pull request
+description: Finds the pull request associated with a workflow_run event.
+
+inputs:
+  token:
+    description: GitHub token used to read the workflow run.
+    required: true
+
+outputs:
+  pr-number:
+    description: Pull request number, or an empty string when no pull request is associated with the run.
+
+runs:
+  using: node24
+  main: dist/index.js
