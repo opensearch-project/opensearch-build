@@ -1,3 +1,4 @@
+---
 name: Find triggering pull request
 description: Finds the pull request associated with a workflow_run event.
 

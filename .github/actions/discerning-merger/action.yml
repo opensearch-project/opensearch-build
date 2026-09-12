@@ -1,3 +1,4 @@
+---
 name: Discerning merger
 description: Merges a pull request only when its author, changed files, and checks satisfy the configured policy.
 
