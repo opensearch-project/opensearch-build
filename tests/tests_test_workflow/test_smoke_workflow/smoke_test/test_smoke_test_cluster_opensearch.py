@@ -206,3 +206,37 @@ class TestSmokeTestClusterOpenSearch(unittest.TestCase):
             "mock_stderr_data",
             os.path.join(test_recorder.location, "local-cluster-logs")
         )
+
+    @patch("test_workflow.smoke_test.smoke_test_cluster_opensearch.Distributions.get_distribution")
+    @patch("test_workflow.smoke_test.smoke_test_cluster_opensearch.BundleManifest.from_urlpath")
+    @patch("test_workflow.smoke_test.smoke_test_cluster_opensearch.BuildManifest.from_urlpath")
+    @patch("test_workflow.smoke_test.smoke_test_cluster_opensearch.TestManifest.from_path")
+    def test_init_with_remote_path_does_not_corrupt_url(self, mock_test_manifest: Mock, mock_build_manifest: Mock,
+                                                        mock_bundle_manifest: Mock, mock_distribution: Mock) -> None:
+        # On Windows, os.path.join uses "\\" as the separator. Joining a remote --paths URL with
+        # os.path.join (as __init__ used to do directly) produces an invalid URL like
+        # "https://host/.../tar\builds\opensearch\manifest.yml", which validators.url() rejects,
+        # causing the real (unmocked) Manifest.from_urlpath() to raise "Invalid manifest: ...".
+        # This regression test asserts the URL handed to from_urlpath is never corrupted this way.
+        mock_test_manifest.return_value = self.TEST_MANIFEST
+        mock_build_manifest.return_value = self.BUILD_MANIFEST
+        mock_bundle_manifest.return_value = self.BUNDLE_MANIFEST
+
+        args = MagicMock()
+        args.paths.get.return_value = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.17.0/10292/linux/x64/tar"
+        test_recorder = MagicMock()
+
+        SmokeTestClusterOpenSearch(args, "/mock/work_dir", test_recorder)
+
+        build_manifest_url = mock_build_manifest.call_args[0][0]
+        bundle_manifest_url = mock_bundle_manifest.call_args[0][0]
+        self.assertNotIn("\\", build_manifest_url)
+        self.assertNotIn("\\", bundle_manifest_url)
+        self.assertEqual(
+            build_manifest_url,
+            "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.17.0/10292/linux/x64/tar/builds/opensearch/manifest.yml"
+        )
+        self.assertEqual(
+            bundle_manifest_url,
+            "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.17.0/10292/linux/x64/tar/dist/opensearch/manifest.yml"
+        )
