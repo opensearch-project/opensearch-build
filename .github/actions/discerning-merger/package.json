@@ -1,0 +1,19 @@
+{
+  "name": "discerning-merger",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "ncc build index.js -o dist --license licenses.txt && node ../normalize-dist.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@actions/core": "^3.0.1",
+    "@actions/github": "^9.1.1",
+    "minimatch": "^10.0.3"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.4"
+  }
+}
