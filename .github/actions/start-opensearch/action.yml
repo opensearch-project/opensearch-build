@@ -34,7 +34,7 @@ inputs:
     default: '21'
 
   resource-sharing-enabled:
-    description: 'Enable experimental resource sharing in the Security plugin'
+    description: 'Enable resource sharing in the Security plugin'
     required: false
     default: 'false'
 
@@ -178,18 +178,18 @@ runs:
         echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: bash
 
-    - name: Enable experimental resource sharing (Linux)
+    - name: Enable resource sharing (Linux)
       if: ${{ runner.os == 'Linux' && inputs.security-enabled == 'true' && inputs.resource-sharing-enabled == 'true' }}
       run: |
-        echo "plugins.security.experimental.resource_sharing.enabled: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
-        echo "plugins.security.experimental.resource_sharing.protected_types: [sample-resource]" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+        echo "plugins.security.resource_sharing.enabled: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+        echo "plugins.security.resource_sharing.protected_types: [sample-resource]" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: bash
 
-    - name: Enable experimental resource sharing (Windows)
+    - name: Enable resource sharing (Windows)
       if: ${{ runner.os == 'Windows' && inputs.security-enabled == 'true' && inputs.resource-sharing-enabled == 'true' }}
       run: |
-        echo "plugins.security.experimental.resource_sharing.enabled: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
-        echo "plugins.security.experimental.resource_sharing.protected_types: [sample-resource]" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+        echo "plugins.security.resource_sharing.enabled: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+        echo "plugins.security.resource_sharing.protected_types: [sample-resource]" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: pwsh
 
     - name: Use more space
