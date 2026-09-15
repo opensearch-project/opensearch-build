@@ -12,13 +12,17 @@ This module fetches commits from a GitHub repository and returns a list of JSON 
 with Message, Labels, PullRequestSubject, and PullRequestBody fields.
 
 Commit selection supports two modes:
-  - Ref-based (preferred): uses the GitHub Compare API (base_ref...head_ref) to select
-    exactly the commits new to the head ref by ancestry.
+  - Ref-based (preferred): uses local git with patch-id comparison
+    (git log --cherry-pick --right-only --no-merges base...head) to select the commits new to
+    the head ref, correctly excluding cherry-picked backports that carry a different SHA.
   - Date-based (legacy): uses the list-commits API with a since date.
 """
 
 import logging
+import os
 import re
+import subprocess
+import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Optional
@@ -94,32 +98,109 @@ class GitHubCommitsProcessor:
 
         return all_data
 
-    def _make_paginated_compare_request(self, url: str) -> Optional[List[Dict]]:
+    def _git(self, args: List[str], cwd: str) -> str:
+        """Run a git command in cwd and return stripped stdout. Raises on non-zero exit."""
+        result = subprocess.run(
+            ["git"] + args,
+            cwd=cwd,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        return result.stdout.strip()
+
+    def get_commits_from_local_git(self, owner: str, repo: str, base_ref: str, head_ref: str) -> List[Dict]:
         """
-        Fetch commits from the GitHub Compare API with pagination support.
+        Select commits new to head_ref relative to base_ref using local git with patch-id
+        equivalence (git log --cherry-pick --right-only --no-merges base...head), then enrich
+        them with PR labels/subjects/bodies.
 
-        Unlike the list-commits endpoint, the compare endpoint returns an object with a
-        "commits" array (plus "total_commits" and other metadata). This helper walks the
-        pages and accumulates the commits.
+        Unlike the GitHub Compare API (SHA-based), this correctly excludes cherry-picked
+        backports: a commit backported to the release branch has a different SHA but the same
+        patch-id, so --cherry-pick drops it. See
+        https://github.com/opensearch-project/opensearch-build/issues/6056
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+            base_ref: Baseline ref already reachable/shipping (e.g. release branch tip '3.8')
+            head_ref: Head ref for the new release (e.g. 'main' or '3.x')
+
+        Returns:
+            List of dictionaries with 'Message', 'Labels', 'PullRequestSubject', and
+            'PullRequestBody' fields.
         """
-        all_commits: List[Dict] = []
-        page = 1
+        clone_url = f"https://github.com/{owner}/{repo}.git"
 
-        while True:
-            data = self._make_request(url, {"page": page, "per_page": 100})
-            if not data:
-                break
+        with tempfile.TemporaryDirectory(prefix="release-notes-") as tmp:
+            work = os.path.join(tmp, repo)
+            logger.info(f"Cloning {clone_url} to compute {base_ref}...{head_ref} with patch-id equivalence...")
 
-            commits = data.get("commits", [])
-            all_commits.extend(commits)
+            # A blobless clone keeps history (needed for patch-id / merge-base) while avoiding
+            # the cost of downloading file contents.
+            self._git(["clone", "--filter=blob:none", "--no-checkout", "--quiet", clone_url, work], cwd=tmp)
 
-            # Less than per_page means we've reached the last page
-            if len(commits) < 100:
-                break
+            # Ensure both refs are present locally (branch, tag, or SHA).
+            for ref in {base_ref, head_ref}:
+                try:
+                    self._git(["fetch", "--quiet", "origin", ref], cwd=work)
+                except subprocess.CalledProcessError:
+                    # SHA or already-present ref; fetch by ref may fail harmlessly.
+                    logger.info(f"Could not fetch ref '{ref}' explicitly; relying on cloned refs.")
 
-            page += 1
+            base = self._rev(work, base_ref)
+            head = self._rev(work, head_ref)
+            if base is None or head is None:
+                logger.warning(
+                    f"Could not resolve base '{base_ref}' or head '{head_ref}' in {owner}/{repo}; "
+                    f"no commits selected."
+                )
+                return []
 
-        return all_commits
+            output = self._git(
+                ["log", "--no-merges", "--cherry-pick", "--right-only",
+                 "--pretty=format:%H%x1f%B%x1e", f"{base}...{head}"],
+                cwd=work,
+            )
+
+        raw_commits = self._parse_git_log(output)
+        if not raw_commits:
+            logger.info(f"No commits found in {head_ref} that are not already in {base_ref} (patch-id aware).")
+            return []
+
+        logger.info(f"Found {len(raw_commits)} commits new to {head_ref}. Fetching PR labels...")
+        return self._enrich_commits(owner, repo, raw_commits)
+
+    def _rev(self, work: str, ref: str) -> Optional[str]:
+        """Resolve a ref to a commit SHA, trying local, origin/<ref>, and FETCH_HEAD forms."""
+        for candidate in (ref, f"origin/{ref}", "FETCH_HEAD"):
+            try:
+                return self._git(["rev-parse", "--verify", "--quiet", f"{candidate}^{{commit}}"], cwd=work)
+            except subprocess.CalledProcessError:
+                continue
+        return None
+
+    @staticmethod
+    def _parse_git_log(output: str) -> List[Dict]:
+        """
+        Parse `git log --pretty=format:%H%x1f%B%x1e` output into commit dicts shaped like the
+        GitHub API commits (so they can flow through the existing enrichment path).
+
+        Records are separated by the RS (0x1e) byte; within a record the SHA and full body are
+        separated by the US (0x1f) byte.
+        """
+        commits: List[Dict] = []
+        for record in output.split("\x1e"):
+            record = record.strip("\n")
+            if not record:
+                continue
+            sha, _, message = record.partition("\x1f")
+            sha = sha.strip()
+            if not sha:
+                continue
+            commits.append({"sha": sha, "commit": {"message": message.strip()}})
+        return commits
 
     def _extract_pr_number_from_commit(self, commit: Dict) -> Optional[int]:
         """
@@ -252,43 +333,6 @@ class GitHubCommitsProcessor:
 
         return self._enrich_commits(owner, repo, commits)
 
-    def get_commits_from_compare(self, owner: str, repo: str, base_ref: str, head_ref: str) -> List[Dict]:
-        """
-        Get commits that are in head_ref but not in base_ref using the GitHub Compare API,
-        along with their associated PR labels and subjects.
-
-        This is ancestry-based selection (base...head). It returns exactly the commits new to
-        head_ref relative to base_ref, which avoids the date-based pitfalls described in
-        https://github.com/opensearch-project/opensearch-build/issues/6056:
-          - commits merged before a baseline date but not backported are not missed
-          - commits already shipped in a previous release are not duplicated
-
-        Args:
-            owner: Repository owner
-            repo: Repository name
-            base_ref: Baseline ref (previous release tag or branch)
-            head_ref: Head ref (current release branch/tag)
-
-        Returns:
-            List of dictionaries with 'Message', 'Labels', 'PullRequestSubject', and
-            'PullRequestBody' fields
-        """
-        # The GitHub Compare API resolves bare tag/branch names and does not accept a
-        # "tags/" refspec prefix, so strip it if the manifest/user provided one.
-        base = base_ref.removeprefix("tags/")
-        head = head_ref.removeprefix("tags/")
-        url = f"{self.base_url}/repos/{owner}/{repo}/compare/{base}...{head}"
-
-        logger.info(f"Fetching commits in {head} not in {base} via compare API...")
-        commits = self._make_paginated_compare_request(url)
-
-        if not commits:
-            return []
-
-        logger.info(f"Found {len(commits)} commits. Fetching PR labels...")
-
-        return self._enrich_commits(owner, repo, commits)
-
     def _enrich_commits(self, owner: str, repo: str, commits: List[Dict]) -> List[Dict]:
         """
         Enrich raw GitHub commit objects with PR labels, subjects, and bodies.
@@ -388,23 +432,25 @@ class GitHubCommitsProcessor:
 
     def _resolve_base_ref(self, base_ref: str) -> str:
         """
-        Resolve the component-specific base ref for the compare API.
+        Resolve the baseline ref used for patch-id comparison.
 
-        OpenSearch and OpenSearch-Dashboards core tag releases as X.Y.Z (e.g. 3.8.0), while
-        plugins tag releases as X.Y.Z.0 (e.g. 3.8.0.0). When base_ref is a plain 3-part
-        version, append '.0' for plugin components so the tag actually exists in that repo.
+        The most robust baseline for "what already shipped / is shipping in the previous line"
+        is the release BRANCH tip (e.g. '3.8'), because the branch keeps receiving backports
+        after the tag is cut. Comparing against the branch (rather than the frozen X.Y.Z /
+        X.Y.Z.0 tag) maximizes detection of cherry-picked backports.
 
-        Any other form (a branch such as '2.x', an already 4-part version such as '3.8.0.0',
-        a commit SHA, or a 'tags/...' ref) is returned unchanged.
+        When base_ref is a version (X.Y.Z or X.Y.Z.0), it is reduced to the 'major.minor'
+        branch name. Any other form (an explicit branch such as '2.x', a commit SHA, or a
+        'tags/...' ref) is used unchanged (with a leading 'tags/' stripped).
         """
-        core_components = {"OpenSearch", "OpenSearch-Dashboards"}
-        component_name = self.component.name  # type: ignore[attr-defined]
+        base_ref = base_ref.removeprefix("tags/")
 
-        # Only rewrite bare 3-part semantic versions for plugins; leave everything else as-is.
-        if component_name not in core_components and re.fullmatch(r"\d+\.\d+\.\d+", base_ref):
-            resolved = f"{base_ref}.0"
-            logger.info(f"Resolved plugin base ref for {component_name}: {base_ref} -> {resolved}")
-            return resolved
+        # X.Y.Z or X.Y.Z.0 -> major.minor release branch (e.g. 3.8.0 / 3.8.0.0 -> 3.8)
+        version_match = re.fullmatch(r"(\d+)\.(\d+)(?:\.\d+){1,2}", base_ref)
+        if version_match:
+            branch = f"{version_match.group(1)}.{version_match.group(2)}"
+            logger.info(f"Resolved base version '{base_ref}' to release branch '{branch}' for patch-id comparison")
+            return branch
 
         return base_ref
 
@@ -414,19 +460,15 @@ class GitHubCommitsProcessor:
         parts = url.split('/')
         owner = parts[-2]
         repo = parts[-1]
-        head_ref = self.component.ref  # type: ignore[attr-defined]
+        head_ref = self.component.ref.removeprefix("tags/")  # type: ignore[attr-defined]
 
-        # Prefer ref-based (ancestry) selection via the compare API when a base ref is provided.
-        # This avoids the date-based pitfalls described in
+        # Prefer ref-based selection via local git with patch-id equivalence when a base ref is
+        # provided. This detects cherry-picked backports (different SHA, same change) that the
+        # date-based and Compare-API approaches miss.
         # https://github.com/opensearch-project/opensearch-build/issues/6056
         if self.base_ref:
             base_ref = self._resolve_base_ref(self.base_ref)
-            commits = self.get_commits_from_compare(owner, repo, base_ref, head_ref)
-
-            if not commits:
-                logger.info(f"No commits found in {head_ref} that are not already in {base_ref}.")
-                return []
-            return commits
+            return self.get_commits_from_local_git(owner, repo, base_ref, head_ref)
 
         # Legacy date-based selection (kept for backward compatibility).
         iso_since_date = self.after_date
