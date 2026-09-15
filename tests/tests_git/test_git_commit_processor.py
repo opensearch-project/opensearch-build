@@ -235,6 +235,167 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
 
         self.assertEqual(result, [])
 
+    @patch('git.git_commit_processor.GitHubCommitsProcessor.get_commits_from_compare')
+    def test_get_commit_details_prefers_compare_when_base_ref_set(self, mock_get_compare: MagicMock) -> None:
+        """When base_ref is provided, get_commit_details should use the compare API.
+
+        self.component is a plugin ('test-component'), so a 3-part base ref is resolved to X.Y.Z.0.
+        """
+        processor = GitHubCommitsProcessor(self.after_date, self.component, self.token, base_ref="3.4.0")
+        mock_commits = [
+            {"Message": "New feature", "Labels": ["enhancement"], "PullRequestSubject": "New feature (#1)", "PullRequestBody": ""}
+        ]
+        mock_get_compare.return_value = mock_commits
+
+        result = processor.get_commit_details()
+
+        self.assertEqual(result, mock_commits)
+        mock_get_compare.assert_called_once_with(
+            "opensearch-project",
+            "test-component",
+            "3.4.0.0",
+            "main"
+        )
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor.get_commits_from_compare')
+    def test_get_commit_details_compare_no_commits(self, mock_get_compare: MagicMock) -> None:
+        """Compare-based selection returning no commits yields an empty list."""
+        processor = GitHubCommitsProcessor(self.after_date, self.component, self.token, base_ref="3.4.0")
+        mock_get_compare.return_value = []
+
+        result = processor.get_commit_details()
+
+        self.assertEqual(result, [])
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._enrich_commits')
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._make_paginated_compare_request')
+    def test_get_commits_from_compare_builds_url_and_enriches(self, mock_compare_request: MagicMock, mock_enrich: MagicMock) -> None:
+        """get_commits_from_compare should call the compare endpoint and enrich the results."""
+        raw_commits = [{"sha": "abc", "commit": {"message": "Fix bug (#1)"}}]
+        mock_compare_request.return_value = raw_commits
+        enriched = [{"Message": "Fix bug (#1)", "Labels": ["bug"], "PullRequestSubject": "Fix bug (#1)", "PullRequestBody": ""}]
+        mock_enrich.return_value = enriched
+
+        result = self.processor.get_commits_from_compare("owner", "repo", "2.1.0", "2.x")
+
+        self.assertEqual(result, enriched)
+        called_url = mock_compare_request.call_args[0][0]
+        self.assertEqual(called_url, "https://api.github.com/repos/owner/repo/compare/2.1.0...2.x")
+        mock_enrich.assert_called_once_with("owner", "repo", raw_commits)
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._make_paginated_compare_request')
+    def test_get_commits_from_compare_strips_tags_prefix(self, mock_compare_request: MagicMock) -> None:
+        """A leading 'tags/' on base/head refs must be stripped for the compare API."""
+        mock_compare_request.return_value = []
+
+        self.processor.get_commits_from_compare("owner", "repo", "tags/3.4.0", "tags/3.5.0")
+
+        called_url = mock_compare_request.call_args[0][0]
+        self.assertEqual(called_url, "https://api.github.com/repos/owner/repo/compare/3.4.0...3.5.0")
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._make_paginated_compare_request')
+    def test_get_commits_from_compare_empty(self, mock_compare_request: MagicMock) -> None:
+        """No commits from compare returns an empty list."""
+        mock_compare_request.return_value = []
+
+        result = self.processor.get_commits_from_compare("owner", "repo", "2.1.0", "2.x")
+
+        self.assertEqual(result, [])
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._make_request')
+    def test_make_paginated_compare_request_accumulates_pages(self, mock_make_request: MagicMock) -> None:
+        """The compare paginator should walk pages and accumulate the 'commits' arrays."""
+        page1 = {"commits": [{"sha": f"c{i}"} for i in range(100)]}
+        page2 = {"commits": [{"sha": "last"}]}
+        mock_make_request.side_effect = [page1, page2]
+
+        result = self.processor._make_paginated_compare_request("https://api.github.com/repos/o/r/compare/a...b")
+
+        self.assertEqual(len(result), 101)
+        self.assertEqual(result[-1]["sha"], "last")
+        self.assertEqual(mock_make_request.call_count, 2)
+
+    def test_init_with_base_ref(self) -> None:
+        """base_ref is stored on the processor."""
+        processor = GitHubCommitsProcessor(self.after_date, self.component, self.token, base_ref="3.4.0")
+        self.assertEqual(processor.base_ref, "3.4.0")
+
+    def test_init_default_base_ref_is_none(self) -> None:
+        """base_ref defaults to None (legacy date-based selection)."""
+        self.assertIsNone(self.processor.base_ref)
+
+    def test_resolve_base_ref_plugin_appends_zero(self) -> None:
+        """Plugin components with a 3-part version base ref get '.0' appended (X.Y.Z -> X.Y.Z.0)."""
+        plugin_component = InputComponentFromSource({
+            "name": "alerting",
+            "repository": "https://github.com/opensearch-project/alerting.git",
+            "ref": "main"
+        })
+        processor = GitHubCommitsProcessor(None, plugin_component, self.token, base_ref="3.8.0")
+        self.assertEqual(processor._resolve_base_ref("3.8.0"), "3.8.0.0")
+
+    def test_resolve_base_ref_core_unchanged(self) -> None:
+        """Core OpenSearch keeps a 3-part version base ref unchanged."""
+        core_component = InputComponentFromSource({
+            "name": "OpenSearch",
+            "repository": "https://github.com/opensearch-project/OpenSearch.git",
+            "ref": "main"
+        })
+        processor = GitHubCommitsProcessor(None, core_component, self.token, base_ref="3.8.0")
+        self.assertEqual(processor._resolve_base_ref("3.8.0"), "3.8.0")
+
+    def test_resolve_base_ref_dashboards_core_unchanged(self) -> None:
+        """OpenSearch-Dashboards core keeps a 3-part version base ref unchanged."""
+        core_component = InputComponentFromSource({
+            "name": "OpenSearch-Dashboards",
+            "repository": "https://github.com/opensearch-project/OpenSearch-Dashboards.git",
+            "ref": "main"
+        })
+        processor = GitHubCommitsProcessor(None, core_component, self.token, base_ref="3.8.0")
+        self.assertEqual(processor._resolve_base_ref("3.8.0"), "3.8.0")
+
+    def test_resolve_base_ref_plugin_four_part_unchanged(self) -> None:
+        """An already 4-part version is left unchanged for plugins."""
+        plugin_component = InputComponentFromSource({
+            "name": "alerting",
+            "repository": "https://github.com/opensearch-project/alerting.git",
+            "ref": "main"
+        })
+        processor = GitHubCommitsProcessor(None, plugin_component, self.token, base_ref="3.8.0.0")
+        self.assertEqual(processor._resolve_base_ref("3.8.0.0"), "3.8.0.0")
+
+    def test_resolve_base_ref_branch_unchanged(self) -> None:
+        """A non-version ref (branch) is left unchanged for plugins."""
+        plugin_component = InputComponentFromSource({
+            "name": "alerting",
+            "repository": "https://github.com/opensearch-project/alerting.git",
+            "ref": "main"
+        })
+        processor = GitHubCommitsProcessor(None, plugin_component, self.token, base_ref="2.x")
+        self.assertEqual(processor._resolve_base_ref("2.x"), "2.x")
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor.get_commits_from_compare')
+    def test_get_commit_details_resolves_plugin_base_ref(self, mock_get_compare: MagicMock) -> None:
+        """get_commit_details should pass the resolved (X.Y.Z.0) base ref for plugins to compare."""
+        plugin_component = InputComponentFromSource({
+            "name": "alerting",
+            "repository": "https://github.com/opensearch-project/alerting.git",
+            "ref": "main"
+        })
+        processor = GitHubCommitsProcessor(None, plugin_component, self.token, base_ref="3.8.0")
+        mock_get_compare.return_value = [
+            {"Message": "x", "Labels": [], "PullRequestSubject": "x (#1)", "PullRequestBody": ""}
+        ]
+
+        processor.get_commit_details()
+
+        mock_get_compare.assert_called_once_with(
+            "opensearch-project",
+            "alerting",
+            "3.8.0.0",
+            "main"
+        )
+
     @patch('git.git_commit_processor.GitHubCommitsProcessor._make_paginated_request')
     def test_get_commits_with_labels_empty_response(self, mock_paginated_request: MagicMock) -> None:
         """Test get_commits_with_labels with empty response."""

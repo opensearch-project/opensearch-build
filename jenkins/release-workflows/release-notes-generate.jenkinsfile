@@ -30,7 +30,12 @@ pipeline {
         )
         string(
             name: 'GIT_LOG_DATE',
-            description: '<Required> in format yyyy-mm-dd, example 2022-07-26.',
+            description: '<Optional> Legacy date-based commit selection, in format yyyy-mm-dd, example 2022-07-26. Prefer BASE_REF instead. Provide either BASE_REF or GIT_LOG_DATE.',
+            trim: true
+        )
+        string(
+            name: 'BASE_REF',
+            description: '<Optional> Baseline git ref for ref-based commit selection (previous release tag such as 3.4.0, or a branch such as 2.x). When set, commits new to the release are selected via the GitHub Compare API (BASE_REF...component ref), avoiding missed or duplicated commits. Provide either BASE_REF or GIT_LOG_DATE.',
             trim: true
         )
         string(
@@ -40,9 +45,9 @@ pipeline {
         )
         string(
             name: 'MODEL_ID',
-            description: '<Optional> AWS Bedrock model id to use, defaults to Anthropic Claude 3.7v2',
+            description: '<Optional> AWS Bedrock model id to use, defaults to Anthropic Claude Opus 4.6',
             trim: true,
-            defaultValue: 'us.anthropic.claude-3-7-sonnet-20250219-v1:0'
+            defaultValue: 'us.anthropic.claude-opus-4-6-v1'
         )
         string(
             name: 'MAX_TOKENS',
@@ -66,9 +71,9 @@ pipeline {
             agent { label 'Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host' }
             steps {
                 script {
-                    if (INPUT_MANIFEST.isEmpty() || GIT_LOG_DATE.isEmpty()) {
+                    if (INPUT_MANIFEST.isEmpty() || (GIT_LOG_DATE.isEmpty() && BASE_REF.isEmpty())) {
                         currentBuild.result = 'ABORTED'
-                        error('INPUT_MANIFEST or GIT_LOG_DATE parameters cannot be empty!')
+                        error('INPUT_MANIFEST cannot be empty, and one of BASE_REF or GIT_LOG_DATE must be provided!')
                     }
                 }
             }
@@ -117,11 +122,12 @@ pipeline {
                                                         withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                                                             def refParam = params.REF ? "--ref ${REF}" : ""
                                                             def skipChangelogFlag = params.SKIP_CHANELOG ? "--skip-changelog" : ""
+                                                            def commitSelectionArg = params.BASE_REF ? "--base-ref ${BASE_REF}" : "--date ${GIT_LOG_DATE}"
                                                             def ref = params.REF ?: componentObj.ref
                                                             sh """
                                                                 #!/bin/bash
                                                                 set +e
-                                                                ./release_notes.sh generate manifests/${INPUT_MANIFEST} --component ${currentComponent} --date ${GIT_LOG_DATE} --max-tokens ${MAX_TOKENS} --model-id ${MODEL_ID} ${refParam} ${skipChangelogFlag}
+                                                                ./release_notes.sh generate manifests/${INPUT_MANIFEST} --component ${currentComponent} ${commitSelectionArg} --max-tokens ${MAX_TOKENS} --model-id ${MODEL_ID} ${refParam} ${skipChangelogFlag}
 
                                                                 if [ \$? -ne 0 ]; then
                                                                     echo "Release notes generation failed for component ${currentComponent}"
@@ -169,7 +175,7 @@ pipeline {
                                                                             fi
                                                                         fi
                                                                     else
-                                                                        echo "File $WORKSPACE/release-notes/${filename} does not exist as there are no commits since ${GIT_LOG_DATE}."
+                                                                        echo "File $WORKSPACE/release-notes/${filename} does not exist as there are no new commits for the selected baseline (${commitSelectionArg})."
                                                                         exit 1
                                                                     fi
                                                                 fi

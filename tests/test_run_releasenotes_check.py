@@ -69,6 +69,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
         mock_args.action = "generate"
         mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml"]
         mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.base_ref = None
         mock_args.components = None
         mock_args_class.return_value = mock_args
 
@@ -86,7 +87,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
 
         # Verify the interactions
         mock_from_file.assert_called_once_with("manifests/3.2.0/opensearch-3.2.0.yml")
-        mock_release_notes_class.assert_called_once_with([mock_manifest], datetime.date(2025, 6, 24), "generate")
+        mock_release_notes_class.assert_called_once_with([mock_manifest], datetime.date(2025, 6, 24), "generate", None)
         mock_release_notes.generate.assert_called_once()
 
     @patch('run_releasenotes_check.ReleaseNotes')
@@ -99,6 +100,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
         mock_args.action = "generate"
         mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml"]
         mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.base_ref = None
         mock_args.components = ["component1", "component2"]
         mock_args_class.return_value = mock_args
 
@@ -119,7 +121,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
 
         # Verify the interactions
         mock_from_file.assert_called_once_with("manifests/3.2.0/opensearch-3.2.0.yml")
-        mock_release_notes_class.assert_called_once_with([mock_manifest], datetime.date(2025, 6, 24), "generate")
+        mock_release_notes_class.assert_called_once_with([mock_manifest], datetime.date(2025, 6, 24), "generate", None)
         mock_manifest.components.select.assert_called_once_with(focus=["component1", "component2"], platform='linux')
         self.assertEqual(mock_release_notes.generate.call_count, 2)
 
@@ -132,6 +134,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
         mock_args.action = "generate"
         mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml", "manifests/3.2.0/opensearch-dashboards-3.2.0.yml"]
         mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.base_ref = None
         mock_args.components = None
         mock_args_class.return_value = mock_args
 
@@ -156,7 +159,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
 
         # Verify the interactions
         self.assertEqual(mock_from_file.call_count, 2)
-        mock_release_notes_class.assert_called_once_with([mock_manifest1, mock_manifest2], datetime.date(2025, 6, 24), "generate")
+        mock_release_notes_class.assert_called_once_with([mock_manifest1, mock_manifest2], datetime.date(2025, 6, 24), "generate", None)
         self.assertEqual(mock_release_notes.generate.call_count, 2)
 
     @patch('run_releasenotes_check.ReleaseNotes')
@@ -168,6 +171,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
         mock_args.action = "generate"
         mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml"]
         mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.base_ref = None
         mock_args.components = None
         mock_args.ref = "custom-ref-12345"
         mock_args_class.return_value = mock_args
@@ -202,6 +206,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
         mock_args.action = "generate"
         mock_args.manifest = ["manifests/3.2.0/opensearch-3.2.0.yml"]
         mock_args.date = datetime.date(2025, 6, 24)
+        mock_args.base_ref = None
         mock_args.components = None
         mock_args.ref = None
         mock_args_class.return_value = mock_args

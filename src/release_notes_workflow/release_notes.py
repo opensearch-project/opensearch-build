@@ -24,9 +24,10 @@ from system.temporary_directory import TemporaryDirectory
 
 class ReleaseNotes:
 
-    def __init__(self, input_manifests: List[InputManifest], date: str, action_type: str) -> None:
+    def __init__(self, input_manifests: List[InputManifest], date: str, action_type: str, base_ref: str = None) -> None:
         self.manifests = input_manifests  # type: ignore[assignment]
         self.date = date
+        self.base_ref = base_ref
         self.action_type = action_type
         self.token = os.getenv('GITHUB_TOKEN')
         self.filter_commits = ['flaky-test', 'testing', 'skip-changelog']
@@ -130,9 +131,11 @@ class ReleaseNotes:
                     component.working_directory
             ) as repo:
                 release_notes = ReleaseNotesComponents.from_component(component, build_version, build_qualifier, repo.dir)
-                baseline_date = self.date
                 changelog_path = os.path.join(repo.dir, 'CHANGELOG.md')
-                logging.info(f"Using baseline date: {self.date}")
+                if self.base_ref:
+                    logging.info(f"Using baseline ref: {self.base_ref} (compare {self.base_ref}...{component.ref})")
+                else:
+                    logging.info(f"Using baseline date: {self.date}")
 
                 # Initialize AI generator
                 ai_generator = AIReleaseNotesGenerator(
@@ -154,8 +157,12 @@ class ReleaseNotes:
                     )
                     release_notes_raw = ai_generator.generate_release_notes(prompt)
                 else:
-                    logging.info(f"Either --skip-changelog enabled or No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {self.date}")
-                    github_commits = GitHubCommitsProcessor(baseline_date, component, self.token)
+                    if self.base_ref:
+                        logging.info(f"Either --skip-changelog enabled or no CHANGELOG.md found for {component.name}, "
+                                     f"will use GitHub Compare API for commits in {component.ref} not in {self.base_ref}")
+                    else:
+                        logging.info(f"Either --skip-changelog enabled or No CHANGELOG.md found for {component.name}, will use GitHub API to get commits since {self.date}")
+                    github_commits = GitHubCommitsProcessor(self.date, component, self.token, self.base_ref)
                     commits = github_commits.get_commit_details()
 
                     if len(commits) > 0:
@@ -185,7 +192,8 @@ class ReleaseNotes:
                         )
                         release_notes_raw = ai_generator.generate_release_notes(prompt)
                     else:
-                        logging.warning(f"No commits found for {component.name} since {baseline_date}")
+                        logging.warning(f"No commits found for {component.name} "
+                                        + (f"in {component.ref} not in {self.base_ref}" if self.base_ref else f"since {self.date}"))
 
         if release_notes_raw:
             release_notes_content, borderline_calls = self._extract_borderline_calls(release_notes_raw)

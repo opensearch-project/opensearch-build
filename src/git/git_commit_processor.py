@@ -6,10 +6,15 @@
 # compatible open source license.
 
 """
-GitHub Commits Since Date with PR Labels
+GitHub Commits Fetcher with PR Labels
 
-This script fetches commits from a GitHub repository since a specified date,
-and returns a list of JSON entries with Message and Labels fields.
+This module fetches commits from a GitHub repository and returns a list of JSON entries
+with Message, Labels, PullRequestSubject, and PullRequestBody fields.
+
+Commit selection supports two modes:
+  - Ref-based (preferred): uses the GitHub Compare API (base_ref...head_ref) to select
+    exactly the commits new to the head ref by ancestry.
+  - Date-based (legacy): uses the list-commits API with a since date.
 """
 
 import logging
@@ -26,12 +31,20 @@ logger = logging.getLogger(__name__)
 
 
 class GitHubCommitsProcessor:
-    def __init__(self, after_date: str, component: InputComponent, token: Optional[str] = None):
+    def __init__(self, after_date: Optional[str], component: InputComponent, token: Optional[str] = None, base_ref: Optional[str] = None):
         """
         Initialize the GitHub Commits Fetcher
 
         Args:
+            after_date: ISO 8601 date string for date-based commit selection (legacy).
+                Only used when base_ref is not provided.
+            component: The input manifest component. component.ref is used as the head ref.
             token: GitHub personal access token (optional but recommended)
+            base_ref: Baseline git ref (previous release tag or branch, e.g. "2.19.0" or
+                "tags/3.4.0"). When provided, commits are selected via the GitHub Compare API
+                (base_ref...component.ref) instead of a since-date. This is ancestry-based and
+                avoids missing pre-date commits or duplicating already-shipped/backported commits.
+                See https://github.com/opensearch-project/opensearch-build/issues/6056
         """
         self.base_url = "https://api.github.com"
         self.headers = {
@@ -46,6 +59,7 @@ class GitHubCommitsProcessor:
         self.pr_cache: Dict = {}
         self.after_date = after_date
         self.component = component
+        self.base_ref = base_ref
 
     def _make_request(self, url: str, params: Dict = None) -> Optional[Dict]:
         """Make a GET request to GitHub API"""
@@ -79,6 +93,33 @@ class GitHubCommitsProcessor:
             page += 1
 
         return all_data
+
+    def _make_paginated_compare_request(self, url: str) -> Optional[List[Dict]]:
+        """
+        Fetch commits from the GitHub Compare API with pagination support.
+
+        Unlike the list-commits endpoint, the compare endpoint returns an object with a
+        "commits" array (plus "total_commits" and other metadata). This helper walks the
+        pages and accumulates the commits.
+        """
+        all_commits: List[Dict] = []
+        page = 1
+
+        while True:
+            data = self._make_request(url, {"page": page, "per_page": 100})
+            if not data:
+                break
+
+            commits = data.get("commits", [])
+            all_commits.extend(commits)
+
+            # Less than per_page means we've reached the last page
+            if len(commits) < 100:
+                break
+
+            page += 1
+
+        return all_commits
 
     def _extract_pr_number_from_commit(self, commit: Dict) -> Optional[int]:
         """
@@ -209,6 +250,58 @@ class GitHubCommitsProcessor:
 
         logger.info(f"Found {len(commits)} commits. Fetching PR labels...")
 
+        return self._enrich_commits(owner, repo, commits)
+
+    def get_commits_from_compare(self, owner: str, repo: str, base_ref: str, head_ref: str) -> List[Dict]:
+        """
+        Get commits that are in head_ref but not in base_ref using the GitHub Compare API,
+        along with their associated PR labels and subjects.
+
+        This is ancestry-based selection (base...head). It returns exactly the commits new to
+        head_ref relative to base_ref, which avoids the date-based pitfalls described in
+        https://github.com/opensearch-project/opensearch-build/issues/6056:
+          - commits merged before a baseline date but not backported are not missed
+          - commits already shipped in a previous release are not duplicated
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+            base_ref: Baseline ref (previous release tag or branch)
+            head_ref: Head ref (current release branch/tag)
+
+        Returns:
+            List of dictionaries with 'Message', 'Labels', 'PullRequestSubject', and
+            'PullRequestBody' fields
+        """
+        # The GitHub Compare API resolves bare tag/branch names and does not accept a
+        # "tags/" refspec prefix, so strip it if the manifest/user provided one.
+        base = base_ref.removeprefix("tags/")
+        head = head_ref.removeprefix("tags/")
+        url = f"{self.base_url}/repos/{owner}/{repo}/compare/{base}...{head}"
+
+        logger.info(f"Fetching commits in {head} not in {base} via compare API...")
+        commits = self._make_paginated_compare_request(url)
+
+        if not commits:
+            return []
+
+        logger.info(f"Found {len(commits)} commits. Fetching PR labels...")
+
+        return self._enrich_commits(owner, repo, commits)
+
+    def _enrich_commits(self, owner: str, repo: str, commits: List[Dict]) -> List[Dict]:
+        """
+        Enrich raw GitHub commit objects with PR labels, subjects, and bodies.
+
+        Args:
+            owner: Repository owner
+            repo: Repository name
+            commits: Raw commit objects from the GitHub commits/compare API
+
+        Returns:
+            List of dictionaries with 'Message', 'Labels', 'PullRequestSubject', and
+            'PullRequestBody' fields, sorted by message.
+        """
         # Process commits to get message and labels
         result = []
 
@@ -293,18 +386,54 @@ class GitHubCommitsProcessor:
 
         return grouped
 
-    def get_commit_details(self) -> List[Dict]:
-        iso_since_date = self.after_date
+    def _resolve_base_ref(self, base_ref: str) -> str:
+        """
+        Resolve the component-specific base ref for the compare API.
 
-        iso_until_date = None
+        OpenSearch and OpenSearch-Dashboards core tag releases as X.Y.Z (e.g. 3.8.0), while
+        plugins tag releases as X.Y.Z.0 (e.g. 3.8.0.0). When base_ref is a plain 3-part
+        version, append '.0' for plugin components so the tag actually exists in that repo.
+
+        Any other form (a branch such as '2.x', an already 4-part version such as '3.8.0.0',
+        a commit SHA, or a 'tags/...' ref) is returned unchanged.
+        """
+        core_components = {"OpenSearch", "OpenSearch-Dashboards"}
+        component_name = self.component.name  # type: ignore[attr-defined]
+
+        # Only rewrite bare 3-part semantic versions for plugins; leave everything else as-is.
+        if component_name not in core_components and re.fullmatch(r"\d+\.\d+\.\d+", base_ref):
+            resolved = f"{base_ref}.0"
+            logger.info(f"Resolved plugin base ref for {component_name}: {base_ref} -> {resolved}")
+            return resolved
+
+        return base_ref
+
+    def get_commit_details(self) -> List[Dict]:
         url = self.component.repository.rstrip('/').removesuffix('.git')  # type: ignore[attr-defined]
         # Split by '/' and get the last two parts
         parts = url.split('/')
         owner = parts[-2]
         repo = parts[-1]
+        head_ref = self.component.ref  # type: ignore[attr-defined]
+
+        # Prefer ref-based (ancestry) selection via the compare API when a base ref is provided.
+        # This avoids the date-based pitfalls described in
+        # https://github.com/opensearch-project/opensearch-build/issues/6056
+        if self.base_ref:
+            base_ref = self._resolve_base_ref(self.base_ref)
+            commits = self.get_commits_from_compare(owner, repo, base_ref, head_ref)
+
+            if not commits:
+                logger.info(f"No commits found in {head_ref} that are not already in {base_ref}.")
+                return []
+            return commits
+
+        # Legacy date-based selection (kept for backward compatibility).
+        iso_since_date = self.after_date
+        iso_until_date = None
 
         # Get all commits with labels
-        commits = self.get_commits_with_labels(owner, repo, iso_since_date, iso_until_date, self.component.ref)  # type: ignore[attr-defined]
+        commits = self.get_commits_with_labels(owner, repo, iso_since_date, iso_until_date, head_ref)
 
         if not commits:
             logger.info("No commits found since the specified date.")
