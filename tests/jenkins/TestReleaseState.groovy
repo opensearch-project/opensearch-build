@@ -46,6 +46,7 @@ class TestReleaseState extends BuildPipelineTest {
         helper.registerAllowedMethod('unstash', [String])
         helper.registerAllowedMethod('writeJSON', [Map])
         helper.registerAllowedMethod('readJSON', [Map])
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
         binding.setVariable('METRICS_HOST_ACCOUNT', 'METRICS_HOST_ACCOUNT')
         binding.setVariable('ADVISORIES_HOST_ACCOUNT', 'ADVISORIES_HOST_ACCOUNT')
         binding.setVariable('env', [

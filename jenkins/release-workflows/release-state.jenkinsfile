@@ -31,7 +31,10 @@ pipeline {
         }
     }
     triggers {
-        cron('H */6 * * *')
+        parameterizedCron '''
+            H * * * * %VERSION=3.9.0;CRITERIA=all
+            H 1 * * * %CRITERIA=all
+        '''
     }
     parameters {
         string(
