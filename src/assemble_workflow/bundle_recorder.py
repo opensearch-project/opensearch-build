@@ -63,6 +63,7 @@ class BundleRecorder:
             component.ref,
             component.commit_id,
             self.__get_component_location(rel_path),
+            component.optional,
         )
 
     def get_manifest(self) -> BundleManifest:
@@ -88,13 +89,14 @@ class BundleRecorder:
             # When we convert to a BundleManifest this will get converted back into a list
             self.data["components"] = []
 
-        def append_component(self, name: str, repository_url: str, ref: str, commit_id: str, location: str = None) -> None:
+        def append_component(self, name: str, repository_url: str, ref: str, commit_id: str, location: str = None, optional: bool = None) -> None:
             component = Manifest.compact({
                 "name": name,
                 "repository": repository_url,
                 "ref": ref,
                 "commit_id": commit_id,
                 "location": location,
+                "optional": optional,
             })
             self.data["components"].append(component)
 
