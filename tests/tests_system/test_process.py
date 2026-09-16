@@ -94,6 +94,26 @@ class TestProcess(unittest.TestCase):
         with self.assertLogs(level='INFO'):
             process_handler.log_output()
 
+    def test_stdout_stderr_data_preserve_position(self) -> None:
+        """Reading stdout_data/stderr_data must not disturb the file position (subprocess keeps writing)."""
+        process_handler = Process()
+        process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
+
+        # Simulate the writer being at some position.
+        process_handler.stdout.seek(0, 2)  # end
+        process_handler.stderr.seek(0, 2)
+        stdout_pos_before = process_handler.stdout.tell()
+        stderr_pos_before = process_handler.stderr.tell()
+
+        # Access the properties (log_output reads both).
+        _ = process_handler.stdout_data
+        _ = process_handler.stderr_data
+
+        self.assertEqual(process_handler.stdout.tell(), stdout_pos_before)
+        self.assertEqual(process_handler.stderr.tell(), stderr_pos_before)
+
+        process_handler.terminate()
+
     @patch('os.unlink')
     @patch('psutil.Process')
     @patch('subprocess.Popen')

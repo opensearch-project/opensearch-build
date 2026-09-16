@@ -44,9 +44,10 @@ class Process:
             raise ProcessNotStartedError()
 
         # The underlying process (e.g. a cluster launcher) may have already exited on its own
-        # (crash, failed startup, wrapper script returned). In that case psutil cannot find the
-        # PID; treat that as a no-op kill rather than an error, so we do not mask the real failure
-        # and still capture the process output below.
+        # (crash, failed startup, wrapper script returned). Handle child cleanup and the main
+        # kill in independent try/except blocks so that:
+        #   - orphaned children are still terminated even if enumerating the parent fails, and
+        #   - the main process kill is not skipped just because a child disappeared mid-iteration.
         try:
             parent = psutil.Process(self.process.pid)
             logging.debug("Checking for child processes")
@@ -55,7 +56,14 @@ class Process:
                 logging.debug(f"Found child process with pid {child.pid}")
                 if child.pid != self.process.pid:
                     logging.debug(f"Sending SIGKILL to {child.pid} ")
-                    child.kill() if self.require_sudo is False else subprocess.check_call(f"sudo kill -9 {child.pid}", shell=True)
+                    try:
+                        child.kill() if self.require_sudo is False else subprocess.check_call(f"sudo kill -9 {child.pid}", shell=True)
+                    except (psutil.NoSuchProcess, ProcessLookupError):
+                        logging.debug(f"Child process {child.pid} already exited.")
+        except (psutil.NoSuchProcess, ProcessLookupError):
+            logging.info(f"Parent PID {self.process.pid} already exited; skipping child enumeration.")
+
+        try:
             logging.info(f"Sending SIGKILL to PID {self.process.pid}")
             self.process.kill() if self.require_sudo is False else subprocess.check_call(f"sudo kill -9 {self.process.pid}", shell=True)
         except (psutil.NoSuchProcess, ProcessLookupError):
@@ -133,15 +141,21 @@ class Process:
     @property
     def stdout_data(self) -> Any:
         if self.stdout:
+            pos = self.stdout.tell()
             self.stdout.seek(0)
-            return self.stdout.read()
+            data = self.stdout.read()
+            self.stdout.seek(pos)
+            return data
         return self.__stdout_data__
 
     @property
     def stderr_data(self) -> Any:
         if self.stderr:
+            pos = self.stderr.tell()
             self.stderr.seek(0)
-            return self.stderr.read()
+            data = self.stderr.read()
+            self.stderr.seek(pos)
+            return data
         return self.__stderr_data__
 
 

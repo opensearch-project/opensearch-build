@@ -303,6 +303,44 @@ class TestValidation(unittest.TestCase):
             validate_tar.log_cluster_output()
             validate_tar.os_process.log_output.assert_called_once()
 
+    def test_log_cluster_log_files_tails_opensearch_log(self) -> None:
+        """log_cluster_log_files should find and tail logs/opensearch.log under the temp dir."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            logs_dir = os.path.join(tmp, "opensearch-3.9.0", "logs")
+            os.makedirs(logs_dir)
+            log_path = os.path.join(logs_dir, "opensearch.log")
+            with open(log_path, "w") as f:
+                for i in range(200):
+                    f.write(f"line {i}\n")
+                f.write("BootstrapCheckException: max virtual memory areas too low\n")
+
+            with patch('validation_workflow.validation.ValidationArgs') as mock_args, \
+                    patch('system.temporary_directory.TemporaryDirectory') as mock_tmp:
+                mock_tmp.return_value.path = tmp
+                mock_args.return_value.projects = ["opensearch"]
+                validate_tar = ValidateTar(mock_args.return_value, mock_tmp.return_value)
+
+                with self.assertLogs(level='INFO') as log:
+                    validate_tar.log_cluster_log_files(tail_lines=50)
+
+                joined = "\n".join(log.output)
+                self.assertIn("opensearch.log", joined)
+                self.assertIn("BootstrapCheckException", joined)
+
+    def test_log_cluster_log_files_none_found(self) -> None:
+        """log_cluster_log_files logs a 'no files' message when nothing matches; never raises."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch('validation_workflow.validation.ValidationArgs') as mock_args, \
+                    patch('system.temporary_directory.TemporaryDirectory') as mock_tmp:
+                mock_tmp.return_value.path = tmp
+                mock_args.return_value.projects = ["opensearch"]
+                validate_tar = ValidateTar(mock_args.return_value, mock_tmp.return_value)
+                with self.assertLogs(level='INFO') as log:
+                    validate_tar.log_cluster_log_files()
+                self.assertIn("No cluster log files found", "\n".join(log.output))
+
     @patch("time.sleep")
     @patch('validation_workflow.validation.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
