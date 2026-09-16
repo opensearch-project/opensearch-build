@@ -63,6 +63,38 @@ class TestProcess(unittest.TestCase):
         self.assertEqual(str(ctx.exception), "Process has not started")
 
     @patch('os.unlink')
+    @patch('psutil.process_iter', return_value=[])
+    @patch('psutil.Process', side_effect=__import__('psutil').NoSuchProcess(pid=12345))
+    def test_terminate_already_exited_process(self, mock_psutil_process: MagicMock, mock_proc_iter: MagicMock, mock_unlink: MagicMock) -> None:
+        """terminate() must not raise when the process already exited; it should still capture output."""
+        process_handler = Process()
+        process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
+
+        # Should not raise even though psutil cannot find the PID.
+        return_code = process_handler.terminate()
+
+        # Output was still captured and temp files cleaned up.
+        self.assertIsNotNone(process_handler.stdout_data)
+        self.assertIsNotNone(process_handler.stderr_data)
+        self.assertFalse(process_handler.started)
+        self.assertIsNone(process_handler.pid)
+        self.assertEqual(return_code, process_handler.return_code)
+
+    def test_log_output(self) -> None:
+        """log_output() should emit captured stdout/stderr without raising."""
+        process_handler = Process()
+        process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
+
+        with self.assertLogs(level='INFO'):
+            process_handler.log_output()
+
+        process_handler.terminate()
+
+        # After termination the captured data is still loggable.
+        with self.assertLogs(level='INFO'):
+            process_handler.log_output()
+
+    @patch('os.unlink')
     @patch('psutil.Process')
     @patch('subprocess.Popen')
     @patch('psutil.process_iter')

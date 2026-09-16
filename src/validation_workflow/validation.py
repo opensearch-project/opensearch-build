@@ -153,7 +153,24 @@ class Validation(ABC):
                 return True
             retry_count += 1
         logging.error(f"Maximum number of retries ({max_retry}) reached. Cluster is not ready for API test.")
+        self.log_cluster_output()
         return False
+
+    def log_cluster_output(self) -> None:
+        """Emit the captured stdout/stderr of the OpenSearch (and OpenSearch-Dashboards) processes.
+
+        Surfaces the actual startup failure (bootstrap check, port in use, bad JVM opts, etc.)
+        instead of only the generic 'connection refused' retries. Best-effort: never raises.
+        """
+        for attr, name in (("os_process", "OpenSearch"), ("osd_process", "OpenSearch-Dashboards")):
+            process = getattr(self, attr, None)
+            if process is None:
+                continue
+            try:
+                logging.info(f"===== {name} process output =====")
+                process.log_output()
+            except Exception as e:
+                logging.warning(f"Unable to read {name} process output: {e}")
 
     def check_http_request(self) -> bool:
         self.succesful_checks = 0
