@@ -75,8 +75,17 @@ AI_RELEASE_NOTES_PROMPT_COMMIT = """I need you to generate OpenSearch component 
     methods non-static"
    - Do not lose any commit information, even if it doesn't match any category
 
-3. **Content filtering:**
+3. **Content filtering (exclusions override categorization; when excluded, omit entirely):**
    - Do not add the pull request that has title starting with "[AUTO] Increment version to".
+   - Do not add pull requests that only add, update, or backport release notes, regardless of
+     title wording or whether automated or manual (e.g. "[AUTO] Add release notes for 3.8.0",
+     "Add release notes for 3.8.0", "Backport release notes ..."). These describe a previous
+     release, not a change in this one.
+   - Do not add pull requests that only change GitHub workflow/automation config under
+     `.github/` (workflows, actions, issue/PR templates, CODEOWNERS).
+   - Do not add pull requests that only change build configuration such as `build.gradle` /
+     `build.gradle.kts` (dependency version bumps, Gradle plugin changes, build scripts) with
+     no user-facing behavior.
 
 4. **Entry Format:**
    - Use the PullRequestSubject and PR Description as input, but rewrite each entry as a concise, clear one-line
@@ -132,11 +141,20 @@ Repository: {repository_url}
 
 **Filtering (apply first):**
 - Exclude PRs titled "[AUTO] Increment version to...".
+- Exclude PRs that only add, update, or backport release notes, regardless of title wording
+  or whether they are automated or manual (e.g. "[AUTO] Add release notes for 3.8.0",
+  "Add release notes for 3.8.0", "Backport release notes ..."). These describe a previous
+  release, not a change in this one.
+- Exclude PRs that only change GitHub workflow/automation config under `.github/` (workflows,
+  actions, issue/PR templates, CODEOWNERS).
+- Exclude PRs that only change build configuration such as `build.gradle` / `build.gradle.kts`
+  (dependency version bumps, Gradle plugin changes, build scripts) with no user-facing behavior.
 - Exclude PRs with the `skip-changelog` label.
 - Exclude commit/revert pairs.
 - Exclude non-user-facing changes: test-only changes, CI/build changes, GitHub Actions bumps,
-  release machinery (changelogs, READMEs), internal refactoring with no behavior/API/config
-  change, maintainer list changes, and incremental PRs for a feature already covered by another entry.
+  release machinery (changelogs, READMEs, release-notes files), internal refactoring with no
+  behavior/API/config change, maintainer list changes, and incremental PRs for a feature
+  already covered by another entry.
 - Exclusion rules override label-based categorization.
 - When uncertain, include — a human reviewer can remove it later.
 

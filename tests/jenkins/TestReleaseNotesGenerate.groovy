@@ -42,6 +42,7 @@ class TestReleaseNotesGenerate extends BuildPipelineTest {
         binding.setVariable('BUILD_NUMBER', '12345')
         binding.setVariable('REF', 'main')
         binding.setVariable('GIT_LOG_DATE', '2025-06-24')
+        binding.setVariable('BASE_REF', '')
         binding.setVariable('WORKSPACE', '/tmp/workspace')
         helper.registerAllowedMethod("withSecrets", [Map, Closure], { args, closure ->
             closure.delegate = delegate
@@ -160,5 +161,37 @@ class TestReleaseNotesGenerate extends BuildPipelineTest {
             callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --date 2025-06-24 --max-tokens 10000 --model-id test-model-id --ref main --skip-changelog')
         }).isTrue()
     }
-    
+
+    @Test
+    public void releaseNotesGenerateWithBaseRef() {
+        // When BASE_REF is provided, commit selection must use --base-ref (compare API) instead of --date
+        binding.setVariable('BASE_REF', '2.1.0')
+        addParam('BASE_REF', '2.1.0')
+        addParam('COMPONENTS', 'OpenSearch sql')
+        addParam('REF', 'main')
+        runScript("jenkins/release-workflows/release-notes-generate.jenkinsfile")
+
+        def callStack = helper.getCallStack()
+        assertCallStack().contains('Release notes for OpenSearch=groovy.lang.Closure, Release notes for sql=groovy.lang.Closure')
+
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component sql --base-ref 2.1.0 --max-tokens 10000 --model-id test-model-id --ref main')
+        }).isTrue()
+
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('./release_notes.sh generate manifests/tests/jenkins/data/opensearch-2.2.0.yml --component OpenSearch --base-ref 2.1.0 --max-tokens 10000 --model-id test-model-id --ref main')
+        }).isTrue()
+
+        // Ensure the legacy --date flag is NOT used when BASE_REF is set
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('--date 2025-06-24')
+        }).isFalse()
+    }
+
 }

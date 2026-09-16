@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
 import unittest
 from unittest.mock import MagicMock, Mock, patch
 
@@ -234,6 +235,136 @@ class TestGitHubCommitsProcessor(unittest.TestCase):
         result = self.processor.get_commit_details()
 
         self.assertEqual(result, [])
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor.get_commits_from_local_git')
+    def test_get_commit_details_prefers_local_git_when_base_ref_set(self, mock_local_git: MagicMock) -> None:
+        """When base_ref is provided, get_commit_details should use local-git patch-id selection.
+
+        A version base ref (X.Y.Z) resolves to the 'major.minor' release branch.
+        """
+        processor = GitHubCommitsProcessor(self.after_date, self.component, self.token, base_ref="3.4.0")
+        mock_commits = [
+            {"Message": "New feature", "Labels": ["enhancement"], "PullRequestSubject": "New feature (#1)", "PullRequestBody": ""}
+        ]
+        mock_local_git.return_value = mock_commits
+
+        result = processor.get_commit_details()
+
+        self.assertEqual(result, mock_commits)
+        mock_local_git.assert_called_once_with(
+            "opensearch-project",
+            "test-component",
+            "3.4",
+            "main"
+        )
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor.get_commits_from_local_git')
+    def test_get_commit_details_local_git_no_commits(self, mock_local_git: MagicMock) -> None:
+        """Local-git selection returning no commits yields an empty list."""
+        processor = GitHubCommitsProcessor(self.after_date, self.component, self.token, base_ref="3.4.0")
+        mock_local_git.return_value = []
+
+        result = processor.get_commit_details()
+
+        self.assertEqual(result, [])
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor.get_commits_from_local_git')
+    def test_get_commit_details_strips_tags_prefix_on_head(self, mock_local_git: MagicMock) -> None:
+        """A 'tags/' prefix on the component head ref is stripped before selection."""
+        component = InputComponentFromSource({
+            "name": "OpenSearch",
+            "repository": "https://github.com/opensearch-project/OpenSearch.git",
+            "ref": "tags/3.9.0"
+        })
+        processor = GitHubCommitsProcessor(None, component, self.token, base_ref="3.8.0")
+        mock_local_git.return_value = []
+
+        processor.get_commit_details()
+
+        mock_local_git.assert_called_once_with("opensearch-project", "OpenSearch", "3.8", "3.9.0")
+
+    def test_parse_git_log_parses_records(self) -> None:
+        """_parse_git_log should split RS-separated records into {sha, commit:{message}} dicts."""
+        output = (
+            "abc123\x1fFix bug (#1)\n\nbody line\x1e"
+            "def456\x1fAdd feature (#2)\x1e"
+        )
+        commits = GitHubCommitsProcessor._parse_git_log(output)
+
+        self.assertEqual(len(commits), 2)
+        self.assertEqual(commits[0]["sha"], "abc123")
+        self.assertIn("Fix bug (#1)", commits[0]["commit"]["message"])
+        self.assertEqual(commits[1]["sha"], "def456")
+        self.assertEqual(commits[1]["commit"]["message"], "Add feature (#2)")
+
+    def test_parse_git_log_empty(self) -> None:
+        """_parse_git_log returns an empty list for empty output."""
+        self.assertEqual(GitHubCommitsProcessor._parse_git_log(""), [])
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._enrich_commits')
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._rev')
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._git')
+    @patch('tempfile.TemporaryDirectory')
+    def test_get_commits_from_local_git_runs_cherry_pick(self, mock_tmp: MagicMock, mock_git: MagicMock,
+                                                         mock_rev: MagicMock, mock_enrich: MagicMock) -> None:
+        """get_commits_from_local_git clones, runs the cherry-pick-aware log, and enriches results."""
+        mock_tmp.return_value.__enter__.return_value = os.path.join("tmp", "rn")
+        # clone, fetch base, fetch head, then the log call returns the RS/US formatted output
+        log_output = "sha1\x1fFix codecoverage upload action (#2229)\x1esha2\x1fApply input validation (#2225)\x1e"
+        mock_git.side_effect = ["", "", "", log_output]
+        mock_rev.side_effect = ["basesha", "headsha"]
+        enriched = [{"Message": "x", "Labels": [], "PullRequestSubject": "x (#2229)", "PullRequestBody": ""}]
+        mock_enrich.return_value = enriched
+
+        result = self.processor.get_commits_from_local_git("opensearch-project", "alerting", "3.8", "main")
+
+        self.assertEqual(result, enriched)
+        # The final git call must be the cherry-pick-aware log with the resolved SHAs.
+        log_call = mock_git.call_args_list[-1][0][0]
+        self.assertIn("log", log_call)
+        self.assertIn("--cherry-pick", log_call)
+        self.assertIn("--right-only", log_call)
+        self.assertIn("--no-merges", log_call)
+        self.assertIn("basesha...headsha", log_call)
+        mock_enrich.assert_called_once()
+
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._rev')
+    @patch('git.git_commit_processor.GitHubCommitsProcessor._git')
+    @patch('tempfile.TemporaryDirectory')
+    def test_get_commits_from_local_git_unresolved_ref(self, mock_tmp: MagicMock, mock_git: MagicMock, mock_rev: MagicMock) -> None:
+        """If a ref cannot be resolved, selection returns an empty list."""
+        mock_tmp.return_value.__enter__.return_value = os.path.join("tmp", "rn")
+        mock_git.return_value = ""
+        mock_rev.side_effect = [None, "headsha"]  # base unresolved
+
+        result = self.processor.get_commits_from_local_git("opensearch-project", "alerting", "9.9", "main")
+
+        self.assertEqual(result, [])
+
+    def test_init_with_base_ref(self) -> None:
+        """base_ref is stored on the processor."""
+        processor = GitHubCommitsProcessor(self.after_date, self.component, self.token, base_ref="3.4.0")
+        self.assertEqual(processor.base_ref, "3.4.0")
+
+    def test_init_default_base_ref_is_none(self) -> None:
+        """base_ref defaults to None (legacy date-based selection)."""
+        self.assertIsNone(self.processor.base_ref)
+
+    def test_resolve_base_ref_version_to_branch(self) -> None:
+        """A 3-part version base ref resolves to the major.minor release branch."""
+        self.assertEqual(self.processor._resolve_base_ref("3.8.0"), "3.8")
+
+    def test_resolve_base_ref_four_part_version_to_branch(self) -> None:
+        """A 4-part plugin version base ref also resolves to the major.minor release branch."""
+        self.assertEqual(self.processor._resolve_base_ref("3.8.0.0"), "3.8")
+
+    def test_resolve_base_ref_strips_tags_prefix(self) -> None:
+        """A 'tags/' prefix is stripped, then the version resolves to the branch."""
+        self.assertEqual(self.processor._resolve_base_ref("tags/3.8.0.0"), "3.8")
+
+    def test_resolve_base_ref_branch_unchanged(self) -> None:
+        """A non-version ref (branch) is used unchanged."""
+        self.assertEqual(self.processor._resolve_base_ref("2.x"), "2.x")
 
     @patch('git.git_commit_processor.GitHubCommitsProcessor._make_paginated_request')
     def test_get_commits_with_labels_empty_response(self, mock_paginated_request: MagicMock) -> None:

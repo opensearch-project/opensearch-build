@@ -177,7 +177,7 @@ class TestReleaseNotes(unittest.TestCase):
         # Verify
         mock_ai_generator_class.assert_called_once_with(args=self.mock_args)
         mock_isfile.assert_called_once_with(os.path.join("tmp", "test", "test-component", "CHANGELOG.md"))
-        mock_github_commits_class.assert_called_once_with("2022-07-26", self.component, None)
+        mock_github_commits_class.assert_called_once_with("2022-07-26", self.component, None, None)
 
         # Verify AI generator was called with commits prompt
         mock_ai_generator.generate_release_notes.assert_called_once()
@@ -188,6 +188,51 @@ class TestReleaseNotes(unittest.TestCase):
         self.assertIn("Implement feature X", call_args)
         # Verify flaky-test commit was filtered out
         self.assertNotIn("Fix flaky test", call_args)
+
+    @patch('release_notes_workflow.release_notes.TemporaryDirectory')
+    @patch('release_notes_workflow.release_notes.GitRepository')
+    @patch('release_notes_workflow.release_notes.ReleaseNotesComponents')
+    @patch('release_notes_workflow.release_notes.AIReleaseNotesGenerator')
+    @patch('release_notes_workflow.release_notes.GitHubCommitsProcessor')
+    @patch('os.path.isfile')
+    @patch('builtins.open', new_callable=mock_open)
+    @patch('os.getcwd')
+    def test_generate_with_base_ref_uses_compare(self, mock_getcwd: MagicMock, mock_file_open: MagicMock, mock_isfile: MagicMock,
+                                                 mock_github_commits_class: MagicMock, mock_ai_generator_class: MagicMock,
+                                                 mock_release_notes_components: MagicMock, mock_git_repo: MagicMock, mock_temp_dir: MagicMock) -> None:
+        """Test that when base_ref is set, it is threaded to GitHubCommitsProcessor for compare-based selection."""
+        mock_getcwd.return_value = os.path.join("test", "dir")
+        mock_temp_dir_instance = Mock()
+        mock_temp_dir_instance.name = os.path.join("tmp", "test")
+        mock_temp_dir.return_value.__enter__.return_value = mock_temp_dir_instance
+
+        mock_repo = Mock()
+        mock_repo.dir = os.path.join("tmp", "test", "test-component")
+        mock_git_repo.return_value.__enter__.return_value = mock_repo
+
+        mock_release_notes = Mock()
+        mock_release_notes.filename = ".release-notes-2.0.0.md"
+        mock_release_notes_components.from_component.return_value = mock_release_notes
+
+        mock_ai_generator = Mock()
+        mock_ai_generator.generate_release_notes.return_value = "Generated release notes from compare"
+        mock_ai_generator_class.return_value = mock_ai_generator
+
+        # No changelog -> commit-based path
+        mock_isfile.return_value = False
+
+        mock_commits_processor = Mock()
+        mock_commits_processor.get_commit_details.return_value = [
+            {"Message": "Add feature", "Labels": ["enhancement"], "PullRequestSubject": "Add feature X", "PullRequestBody": ""}
+        ]
+        mock_github_commits_class.return_value = mock_commits_processor
+
+        # ReleaseNotes constructed with a base_ref (date is None)
+        release_notes = ReleaseNotes([self.manifest_file], None, "generate", "3.4.0")
+        release_notes.generate(self.mock_args, self.component, self.build_version, self.build_qualifier, 'opensearch')
+
+        # base_ref must be passed as the 4th positional arg (date, component, token, base_ref)
+        mock_github_commits_class.assert_called_once_with(None, self.component, None, "3.4.0")
 
     @patch('release_notes_workflow.release_notes.TemporaryDirectory')
     @patch('release_notes_workflow.release_notes.GitRepository')
@@ -298,7 +343,7 @@ class TestReleaseNotes(unittest.TestCase):
         self.release_notes.generate(self.mock_args, self.component, self.build_version, self.build_qualifier, 'opensearch')
 
         # Verify that GitHub commits were used despite CHANGELOG.md existing
-        mock_github_commits_class.assert_called_once_with("2022-07-26", self.component, None)
+        mock_github_commits_class.assert_called_once_with("2022-07-26", self.component, None, None)
         mock_ai_generator.generate_release_notes.assert_called_once()
         call_args = mock_ai_generator.generate_release_notes.call_args[0][0]
         self.assertIn("Test PR", call_args)

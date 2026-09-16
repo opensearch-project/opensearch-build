@@ -15,6 +15,7 @@ class ReleaseNotesCheckArgs:
     action: str
     manifest: List[IO]
     date: str
+    base_ref: str
     output: str
     model_id: str
     max_tokens: int
@@ -38,7 +39,18 @@ class ReleaseNotesCheckArgs:
             "--date",
             type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d").date(),
             dest="date",
-            help="Date to retrieve the commit (in format yyyy-mm-dd, example 2022-07-26)."
+            help="Date to retrieve the commit (in format yyyy-mm-dd, example 2022-07-26). "
+                 "Used for 'check'/'compile', and as a legacy fallback for 'generate' when --base-ref is not provided."
+        )
+        parser.add_argument(
+            "--base-ref",
+            type=str,
+            dest="base_ref",
+            help="Baseline git ref for 'generate' (previous release tag such as '3.4.0', or a branch such as '2.x'). "
+                 "A leading 'tags/' is optional and stripped automatically. "
+                 "When provided, commits new to the release are selected via the GitHub Compare API "
+                 "(base-ref...component ref) instead of a since-date, avoiding missed or duplicated commits. "
+                 "See https://github.com/opensearch-project/opensearch-build/issues/6056"
         )
         parser.add_argument(
             "--output",
@@ -54,7 +66,7 @@ class ReleaseNotesCheckArgs:
         )
         parser.add_argument("--model-id",
                             type=str,
-                            default="us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+                            default="us.anthropic.claude-opus-4-6-v1",
                             help="AWS Bedrock model ID to use for AI generation.")
         parser.add_argument("--max-tokens",
                             type=int,
@@ -72,6 +84,7 @@ class ReleaseNotesCheckArgs:
         self.action = args.action
         self.manifest = args.manifest
         self.date = args.date
+        self.base_ref = args.base_ref
         self.output = args.output
         self.model_id = args.model_id
         self.max_tokens = args.max_tokens
@@ -81,5 +94,8 @@ class ReleaseNotesCheckArgs:
         # AI options
         self.components = args.components
 
-        if (self.action == "check" or self.action == 'generate') and self.date is None:
+        if self.action == "check" and self.date is None:
             parser.error("check option requires --date argument")
+
+        if self.action == "generate" and self.date is None and self.base_ref is None:
+            parser.error("generate option requires either --base-ref (preferred) or --date argument")

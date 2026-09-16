@@ -121,3 +121,30 @@ class TestReleaseNotesCheckArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "generate", OPENSEARCH_MANIFEST, "--date", '2022-07-26', "--skip-changelog"])
     def test_skip_changelog_flag(self) -> None:
         self.assertTrue(ReleaseNotesCheckArgs().skip_changelog)
+
+    @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "generate", OPENSEARCH_MANIFEST, "--base-ref", '3.4.0'])
+    def test_generate_with_base_ref(self) -> None:
+        args = ReleaseNotesCheckArgs()
+        self.assertEqual(args.base_ref, '3.4.0')
+        self.assertIsNone(args.date)
+
+    @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "generate", OPENSEARCH_MANIFEST, "--base-ref", 'tags/3.4.0'])
+    def test_generate_with_base_ref_tags_prefix(self) -> None:
+        # The arg is stored verbatim; the processor strips the tags/ prefix when building the compare URL.
+        self.assertEqual(ReleaseNotesCheckArgs().base_ref, 'tags/3.4.0')
+
+    @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "generate", OPENSEARCH_MANIFEST])
+    def test_generate_without_date_or_base_ref(self) -> None:
+        with self.assertRaises(SystemExit) as cm:
+            ReleaseNotesCheckArgs()
+        _, err = self.capfd.readouterr()
+        self.assertTrue("generate option requires either --base-ref (preferred) or --date argument" in err)
+        self.assertEqual(cm.exception.code, 2)
+
+    @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "check", OPENSEARCH_MANIFEST, "--base-ref", '3.4.0'])
+    def test_check_with_base_ref_still_requires_date(self) -> None:
+        with self.assertRaises(SystemExit) as cm:
+            ReleaseNotesCheckArgs()
+        _, err = self.capfd.readouterr()
+        self.assertTrue("check option requires --date argument" in err)
+        self.assertEqual(cm.exception.code, 2)
