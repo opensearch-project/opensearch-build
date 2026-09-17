@@ -267,6 +267,81 @@ class TestValidation(unittest.TestCase):
         self.assertFalse(result)
 
     @patch("time.sleep")
+    @patch('validation_workflow.validation.Validation.check_http_request', return_value=False)
+    @patch('validation_workflow.validation.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_check_cluster_readiness_logs_cluster_output_on_failure(self, mock_temporary_directory: Mock, mock_validation_args: Mock,
+                                                                    mock_check_http: Mock, mock_sleep: Mock) -> None:
+        mock_validation_args.return_value.version = '1.0.0.1000'
+        mock_validation_args.return_value.allow_http = False
+        mock_validation_args.return_value.projects = ["opensearch"]
+        mock_temporary_directory.return_value.path = os.path.join("tmp", "trytytyuit")
+
+        validate_tar = ValidateTar(mock_validation_args.return_value, mock_temporary_directory.return_value)
+        # Replace the processes with mocks so we can assert their output is logged.
+        validate_tar.os_process = Mock()
+        validate_tar.osd_process = Mock()
+
+        result = validate_tar.check_cluster_readiness()
+
+        self.assertFalse(result)
+        # OpenSearch process output must be emitted; OSD not in projects but log_cluster_output iterates both attributes.
+        validate_tar.os_process.log_output.assert_called_once()
+        validate_tar.osd_process.log_output.assert_called_once()
+
+    def test_log_cluster_output_best_effort(self) -> None:
+        """log_cluster_output should not raise even if a process.log_output fails."""
+        with patch('validation_workflow.validation.ValidationArgs') as mock_args, \
+                patch('system.temporary_directory.TemporaryDirectory') as mock_tmp:
+            mock_tmp.return_value.path = os.path.join("tmp", "x")
+            mock_args.return_value.projects = ["opensearch"]
+            validate_tar = ValidateTar(mock_args.return_value, mock_tmp.return_value)
+            validate_tar.os_process = Mock()
+            validate_tar.os_process.log_output.side_effect = Exception("boom")
+            validate_tar.osd_process = Mock()
+            # Should swallow the exception.
+            validate_tar.log_cluster_output()
+            validate_tar.os_process.log_output.assert_called_once()
+
+    def test_log_cluster_log_files_tails_opensearch_log(self) -> None:
+        """log_cluster_log_files should find and tail logs/opensearch.log under the temp dir."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            logs_dir = os.path.join(tmp, "opensearch-3.9.0", "logs")
+            os.makedirs(logs_dir)
+            log_path = os.path.join(logs_dir, "opensearch.log")
+            with open(log_path, "w") as f:
+                for i in range(200):
+                    f.write(f"line {i}\n")
+                f.write("BootstrapCheckException: max virtual memory areas too low\n")
+
+            with patch('validation_workflow.validation.ValidationArgs') as mock_args, \
+                    patch('system.temporary_directory.TemporaryDirectory') as mock_tmp:
+                mock_tmp.return_value.path = tmp
+                mock_args.return_value.projects = ["opensearch"]
+                validate_tar = ValidateTar(mock_args.return_value, mock_tmp.return_value)
+
+                with self.assertLogs(level='INFO') as log:
+                    validate_tar.log_cluster_log_files(tail_lines=50)
+
+                joined = "\n".join(log.output)
+                self.assertIn("opensearch.log", joined)
+                self.assertIn("BootstrapCheckException", joined)
+
+    def test_log_cluster_log_files_none_found(self) -> None:
+        """log_cluster_log_files logs a 'no files' message when nothing matches; never raises."""
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch('validation_workflow.validation.ValidationArgs') as mock_args, \
+                    patch('system.temporary_directory.TemporaryDirectory') as mock_tmp:
+                mock_tmp.return_value.path = tmp
+                mock_args.return_value.projects = ["opensearch"]
+                validate_tar = ValidateTar(mock_args.return_value, mock_tmp.return_value)
+                with self.assertLogs(level='INFO') as log:
+                    validate_tar.log_cluster_log_files()
+                self.assertIn("No cluster log files found", "\n".join(log.output))
+
+    @patch("time.sleep")
     @patch('validation_workflow.validation.ValidationArgs')
     @patch('system.temporary_directory.TemporaryDirectory')
     @patch.object(ApiTest, "api_get")

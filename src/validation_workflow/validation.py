@@ -6,6 +6,7 @@
 # compatible open source license.
 
 
+import glob
 import logging
 import os
 import re
@@ -153,7 +154,63 @@ class Validation(ABC):
                 return True
             retry_count += 1
         logging.error(f"Maximum number of retries ({max_retry}) reached. Cluster is not ready for API test.")
+        self.log_cluster_output()
         return False
+
+    def log_cluster_output(self) -> None:
+        """Emit the captured stdout/stderr of the OpenSearch (and OpenSearch-Dashboards) processes,
+        plus the tail of the on-disk cluster log files.
+
+        Surfaces the actual startup failure (bootstrap check, port in use, bad JVM opts, etc.)
+        instead of only the generic 'connection refused' retries. Best-effort: never raises.
+        """
+        for attr, name in (("os_process", "OpenSearch"), ("osd_process", "OpenSearch-Dashboards")):
+            process = getattr(self, attr, None)
+            if process is None:
+                continue
+            try:
+                logging.info(f"===== {name} process output =====")
+                process.log_output()
+            except Exception as e:
+                logging.warning(f"Unable to read {name} process output: {e}")
+
+        # Once log4j2 initializes, OpenSearch writes the real failure to logs/opensearch.log (and
+        # OpenSearch-Dashboards to its own log), not to the launcher's stdout/stderr. Tail those.
+        self.log_cluster_log_files()
+
+    def log_cluster_log_files(self, tail_lines: int = 100) -> None:
+        """Tail on-disk cluster log files (e.g. logs/opensearch.log) found under the temp dir.
+
+        Best-effort: never raises. Searches recursively so it works regardless of the per-distribution
+        install directory layout (opensearch-<version>, opensearch, etc.).
+        """
+        try:
+            tmp_path = str(self.tmp_dir.path)
+        except Exception:
+            return
+
+        patterns = [
+            os.path.join(tmp_path, "**", "logs", "opensearch.log"),
+            os.path.join(tmp_path, "**", "logs", "*_server.json"),
+            os.path.join(tmp_path, "**", "logs", "opensearch_dashboards.log"),
+        ]
+        seen = set()
+        for pattern in patterns:
+            for log_file in glob.glob(pattern, recursive=True):
+                if log_file in seen or not os.path.isfile(log_file):
+                    continue
+                seen.add(log_file)
+                try:
+                    with open(log_file, "r", encoding="utf-8", errors="replace") as f:
+                        lines = f.readlines()
+                    tail = "".join(lines[-tail_lines:]).strip()
+                    logging.info(f"===== Tail of {log_file} (last {tail_lines} lines) =====")
+                    logging.info(tail if tail else "(log file is empty)")
+                except Exception as e:
+                    logging.warning(f"Unable to read cluster log file {log_file}: {e}")
+
+        if not seen:
+            logging.info(f"No cluster log files found under {tmp_path} (cluster may have failed before writing logs).")
 
     def check_http_request(self) -> bool:
         self.succesful_checks = 0
