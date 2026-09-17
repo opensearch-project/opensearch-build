@@ -19,6 +19,7 @@ out.txt
 
 /builds/
 /dist/
+node_modules/
 /test-results/
 
 /deb/

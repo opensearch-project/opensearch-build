@@ -13,6 +13,12 @@ on:
       - python-tests
     types: completed
 
+permissions:
+  actions: read
+  checks: read
+  contents: write
+  pull-requests: write
+
 jobs:
   automatic-merge-manifests:
     if: github.repository == 'opensearch-project/opensearch-build'
@@ -21,17 +27,17 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - id: find-triggering-pr
-        uses: peternied/find-triggering-pr@ebe6a5ff5d5edfdf31b1f8aca20f89167c57bbef # v1
+        uses: ./.github/actions/find-triggering-pr
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
 
-      - uses: peternied/discerning-merger@07eafb14c195a2c23b291f6b008a686589cfb545 # v3
-        if: steps.find-triggering-pr.outputs.pr-number != null
+      - uses: ./.github/actions/discerning-merger
+        if: steps.find-triggering-pr.outputs.pr-number != ''
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           pull-request-number: ${{ steps.find-triggering-pr.outputs.pr-number }}
           allowed-authors: |
-            dependabot
+            dependabot[bot]
             opensearch-trigger-bot
             opensearch-ci-bot
             peterzhuamazon
@@ -53,14 +59,14 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - id: find-triggering-pr
-        uses: peternied/find-triggering-pr@ebe6a5ff5d5edfdf31b1f8aca20f89167c57bbef # v1
+        uses: ./.github/actions/find-triggering-pr
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
 
-      - uses: peternied/discerning-merger@07eafb14c195a2c23b291f6b008a686589cfb545 # v3
-        if: steps.find-triggering-pr.outputs.pr-number != null
+      - uses: ./.github/actions/discerning-merger
+        if: steps.find-triggering-pr.outputs.pr-number != ''
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           pull-request-number: ${{ steps.find-triggering-pr.outputs.pr-number }}
           allowed-authors: |
             opensearch-ci-bot

@@ -1,0 +1,33 @@
+---
+name: Discerning merger
+description: Merges a pull request only when its author, changed files, and checks satisfy the configured policy.
+
+inputs:
+  token:
+    description: GitHub token used to inspect and merge the pull request.
+    required: true
+  pull-request-number:
+    description: Pull request number to inspect.
+    required: true
+  allowed-authors:
+    description: Newline-separated list of GitHub logins allowed by this policy.
+    required: true
+  allowed-files:
+    description: Newline-separated glob patterns. Every changed file must match at least one pattern.
+    required: true
+  merge-type:
+    description: Merge method. One of merge, squash, or rebase.
+    required: false
+    default: squash
+
+outputs:
+  merged:
+    description: Whether this invocation merged the pull request.
+  reason:
+    description: Machine-readable reason describing the result.
+  merge-commit-sha:
+    description: SHA produced by a successful merge, or an empty string.
+
+runs:
+  using: node24
+  main: dist/index.js
