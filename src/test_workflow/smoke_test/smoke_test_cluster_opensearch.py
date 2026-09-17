@@ -7,6 +7,7 @@
 
 import logging
 import os
+import posixpath
 import shutil
 import time
 
@@ -39,13 +40,22 @@ class SmokeTestClusterOpenSearch():
         self.test_manifest = TestManifest.from_path(args.test_manifest_path)
         self.product = self.test_manifest.name.lower().replace(" ", "-")
         self.path = args.paths.get(self.product)
-        self.build_manifest = BuildManifest.from_urlpath(os.path.join(self.path, "builds", f"{self.product}", "manifest.yml"))
-        self.bundle_manifest = BundleManifest.from_urlpath(os.path.join(self.path, "dist", f"{self.product}", "manifest.yml"))
+        self.build_manifest = BuildManifest.from_urlpath(self.__join_path(self.path, "builds", f"{self.product}", "manifest.yml"))
+        self.bundle_manifest = BundleManifest.from_urlpath(self.__join_path(self.path, "dist", f"{self.product}", "manifest.yml"))
         self.version = self.bundle_manifest.build.version
         self.platform = self.bundle_manifest.build.platform
         self.arch = self.bundle_manifest.build.architecture
         self.dist = self.bundle_manifest.build.distribution
         self.distribution = Distributions.get_distribution(self.product, self.dist, self.version, work_dir)
+
+    @staticmethod
+    def __join_path(base: str, *parts: str) -> str:
+        # A remote base must stay "/"-separated: on Windows os.path.join would emit
+        # backslashes, validators.url() would reject the result, and
+        # Manifest.from_urlpath() would raise "Invalid manifest".
+        if base.startswith("https://") or base.startswith("http://"):
+            return posixpath.join(base, *parts)
+        return os.path.join(base, *parts)
 
     def cluster_version(self) -> str:
         return self.version
