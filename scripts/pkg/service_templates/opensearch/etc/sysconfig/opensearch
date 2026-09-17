@@ -1,3 +1,9 @@
+########################################################
+# This file has been live replaced in scripts/components/OpenSearch/install.sh with
+# https://github.com/opensearch-project/OpenSearch/blob/main/distribution/packages/src/common/env/opensearch
+# It is served as a backup at the moment
+########################################################
+
 ################################
 # OpenSearch
 ################################
