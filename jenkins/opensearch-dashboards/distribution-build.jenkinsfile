@@ -982,6 +982,20 @@ pipeline {
                 }
             }
         }
+        stage('distribution-validation') {
+            when {
+                beforeAgent true
+                expression {
+                    params.RC_NUMBER.toInteger() > 0 && currentBuild.currentResult == 'SUCCESS'
+                }
+            }
+            agent { label AGENT_LINUX_X64 }
+            steps {
+                script {
+                    triggerDistributionValidationWorkflow(env.revision)
+                }
+            }
+        }
     }
     post {
         always {
@@ -1012,7 +1026,6 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 script {
                     if (params.RC_NUMBER.toInteger() > 0) {
-                        triggerDistributionValidationWorkflow(env.revision)
                         triggerNightlyPlayground()
                     }
                     postCleanup()
