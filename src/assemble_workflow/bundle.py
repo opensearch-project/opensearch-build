@@ -73,6 +73,10 @@ class Bundle(ABC):
         for c in self.components.values():
             if self.min_bundle == c:
                 pass
+            elif c.optional:
+                # Optional components are built and tested but not bundled into the distribution.
+                logging.info(f"Skipping bundling of optional plugin {c.name}")
+                self.bundle_recorder.record_component(c, os.path.join(self.min_dist.archive_path, "plugins"))
             elif "plugins" in c.artifacts:
                 logging.info(f"Installing {c.name}")
                 self.install_plugin(c)
