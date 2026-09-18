@@ -24,7 +24,7 @@ class TestReleaseState extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('13.8.2')
+                .defaultVersion('13.8.4')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
