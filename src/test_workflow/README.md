@@ -251,6 +251,63 @@ Runs a comparison between two test executions, given the test execution ID for e
 The comparison workflow executes `opensearch-benchmark` to run a comparison between two tests, the 'baseline' and 'contender'. The results of the comparison are then displayed in the terminal, and can be written onto a file on the users system.
 For more information on other parameters, please visit [here](https://opensearch.org/docs/latest/benchmark/reference/commands/compare/)
 
+#### Run the test locally
+1. Comment out the tailing characters `+ role_params` in [this line](https://github.com/opensearch-project/opensearch-build/blob/2.9.0/src/test_workflow/benchmark_test/benchmark_test_cluster.py#L70) to remove the parameters used for CI workflow.
+    
+    Add back `+ " --require-approval never"` into this line to bypass the prompt "Do you wish to deploy these changes (y/n)" when deploying CDK application.
+
+2. Prepare `config.yml` file.
+    The file contains some parameters for the CDK application of OpenSearch cluster.
+    - Please see below sample, and create a file called `config.yml` with all the fields in the sample. 
+    - Do not change the value of the following fields: "Repository", "Role" and "isInternal".
+    - Modify the "VpcId" to make it correspond with the VPC created in the specific region of the AWS account.
+    - About "serverAccessType", see the [document for opensearch-cluster-cdk](https://github.com/opensearch-project/opensearch-cluster-cdk?tab=readme-ov-file#restricting-server-access) for reference.
+
+    A sample content for `config.yml` file:
+```
+Description: Configuration file to store constants required to run performance test
+Constants:
+  Repository: https://github.com/opensearch-project/opensearch-cluster-cdk
+  VpcId: <VPC ID>
+  AccountId: <AWS account ID>
+  serverAccessType: ipv4 / ipv6 / prefixList / securityGroupId
+  restrictServerAccessTo: 
+  Region: <AWS Region>
+  Role: cfn-set-up
+  isInternal: false
+```
+
+3. Prepare build manifest file.
+    The official opensearch bundle build manifest file is going to be used.
+    - Download the build manifest file directly from the following URL: 
+        - for bundle distribution: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/x64/tar/dist/opensearch/manifest.yml 
+        - for minimal distribution: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/x64/tar/builds/opensearch/manifest.yml 
+    - Change the version number or the build number in the URL as per demand.
+    - See the document [here](https://github.com/opensearch-project/opensearch-build/tree/2.9.0?tab=readme-ov-file#build-numbers) to learn more about the file URL and build number.
+
+4. Prepare `benchmark.ini` file.
+
+    This step aims to declare the OpenSearch cluster that used for storing the benchmark result and the metrics data.
+    Because the additional statistic data, such as JVM and CPU data collected from node stats API, can only be stored in OpenSearch cluster as index instead of text file, using OpenSearch cluster as the data store is necessary.
+    - Create a file `benchmark.ini`, and copy the content from the [default file](https://github.com/opensearch-project/opensearch-benchmark/blob/1.1.0/osbenchmark/resources/benchmark.ini). 
+    - Remove the value after `=` for the fields `root.dir`, `src.root.dir` ,and `local.dataset.cache`
+    - See [opensearch-benchmark docs](https://opensearch.org/docs/2.9/benchmark/configuring-benchmark/#examples) to configure `[results_publishing]` section.
+
+5. Go to the root directory of local cloned `opensearch-build` repository, and run the command to start the benchmark test.
+   - See the [source code](https://github.com/opensearch-project/opensearch-build/blob/main/src/test_workflow/benchmark_test/benchmark_args.py) for all supported parameters in the script.
+     For the meaning of parameters used for OpenSearch cluster, please refer the [docs](https://github.com/opensearch-project/opensearch-cluster-cdk?tab=readme-ov-file#required-context-parameters) in `opensearch-cluster-cdk` repository.
+   - Recommend to run the command in a `tmux` session to keep the process running in the background.
+   
+   Sample command:
+```
+./test.sh benchmark-test --bundle-manifest ~/manifest-2.10.0.yml --config ~/config.yml \
+--suffix 2100-cluster-multinode --without-security  \
+--additional-config "opensearch.experimental.feature.segment_replication_experimental.enabled:true cluster.indices.replication.strategy:SEGMENT" \
+--workload http_logs --workload-params '{"index_settings":{"number_of_shards":1,"number_of_replicas":1}}' \
+--benchmark-config ~/benchmark.ini --data-node-count 2 --data-node-storage 100 \
+--user-tag="segrep:enabled,remote-store:enabled" --capture-node-stat --use-50-percent-heap --min-distribution
+```
+
 ## Testing in CI/CD
 
 The CI/CD infrastructure is divided into two main workflows - `build` and `test`. The `build` workflow automates the process to generate all OpenSearch and OpenSearch Dashboards artifacts, and provide them as distributions to the `test` workflow, which runs exhaustive testing on the artifacts based on the artifact type. The next section talks in detail about the test workflow.
