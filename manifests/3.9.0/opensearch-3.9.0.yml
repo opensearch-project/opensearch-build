@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 5ffbc781cb465ac61c90ad2d5f585db211bbf1eb
+    ref: 4ee42a94e87f66fbf1e62a9871b1b87f91e02472
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 70f1d37a577d5cc462efc54ca8c929e8c4b052c1
@@ -51,19 +51,19 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: fc523808bdbb4de80fbe9aba6162037c2dbd6524
+    ref: 3193d192d048a60fc8e63b3d172a7eb3dc9148a0
     platforms:
       - linux
       - windows
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: c8d2cac4bfe051d668dfdec15279131a5fb473df
+    ref: afd025c8962e2a04c6a1fc53830159de625e2350
     platforms:
       - linux
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: cc3bbe48454d4d9a2a1e81cb17371f73c2be4fc7
+    ref: e654c346d04f3599491f6e307384e651b28c6135
     platforms:
       - linux
       - windows
@@ -89,7 +89,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 7a12c862335dbac75a962851d7e4cf47f8db4746
+    ref: fa87ea21cad30a00024df1244b806418c84fc5cc
     platforms:
       - linux
       - windows
@@ -136,7 +136,7 @@ components:
       - common-utils
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: b187d9c753ba392d74b84ddbfec6ef208e472800
+    ref: ba146f76b5edd04042506791d533bfbbc735baff
     platforms:
       - linux
       - windows
@@ -163,7 +163,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: f2a9819f3210aa2b4ded5e9fd1a7696986e18231
+    ref: 94afdabbb13e63e7b32aa1211afcc3260ad1f8b8
     platforms:
       - linux
       - windows
@@ -172,7 +172,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: e74f3b69ed0a4023dcdb79b02faa547c0d9c2e28
+    ref: cd944c76f1f7a4aae31cbf0ab6811e3156a7f520
     platforms:
       - linux
       - windows
@@ -184,7 +184,7 @@ components:
       - sql
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 380af38b0205a9e66de3bb3564d2d5d47cd1017f
+    ref: a62abb70fee42f82e00e54b13e0287551ad2912f
     platforms:
       - linux
       - windows
@@ -221,7 +221,7 @@ components:
       - job-scheduler
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: 9b83c983ab928305a476cfbb69cbe3bae31b5368
+    ref: 081b805b86944a4c4651508decc6fb660ae2e1cd
     platforms:
       - linux
       - windows
@@ -235,7 +235,7 @@ components:
       - k-NN
   - name: query-insights
     repository: https://github.com/opensearch-project/query-insights.git
-    ref: d5bae22f9ec336158c3e7e265b6b6b03e0cef308
+    ref: d56463cc2511f42d9acacb9bef5ff88607d51592
     platforms:
       - linux
       - windows
