@@ -12,7 +12,7 @@
 // and indexes it into the opensearch_release_state metrics index. Runs every 6 hours so OSCAR always
 // reads a current view; this job only records state per criterion which includes both entrance and exit criteria.
 
-lib = library(identifier: 'jenkins@13.8.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@13.9.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -39,14 +39,14 @@ pipeline {
     parameters {
         string(
             name: 'VERSION',
-            description: 'Restrict indexing to a single release version, e.g. 3.8.0. Leave empty to index all active releases.',
+            description: '<Conditionally-Required> Restrict indexing to a single release version, e.g. 3.8.0. Leave empty to index all active releases. Required when DECISION is set, since a decision applies to one release.',
             defaultValue: '',
             trim: true
         )
         activeChoice(
             name: 'CRITERIA',
             choiceType: 'PT_CHECKBOX',
-            description: 'Restrict indexing to the checked criteria. Check "all" to index every criterion.',
+            description: '<Optional> Restrict indexing to the checked criteria. Check "all" to index every criterion.',
             filterable: false,
             randomName: 'choice-parameter-release-state-criteria',
             script: groovyScript(
@@ -67,6 +67,33 @@ pipeline {
                     "performance_tests_posted",
                     "release_blog_ready"
                 ]'''])
+        )
+        choice(
+            name: 'DECISION',
+            description: '<Optional> Record a release manager Go/No-Go decision for VERSION. Leave as none to only index state.',
+            choices: ['none', 'go', 'no-go', 'hold']
+        )
+        string(
+            name: 'DECIDED_BY_SLACK_USER',
+            description: '<Conditionally-Required> Do not fill this in by hand. Injected by OSCAR from the authenticated Slack identity of whoever asked for the decision. Every trigger of this job shares one Jenkins token, so this is the only identity that attributes a decision to a person; the decision stage fails without it when DECISION is set.',
+            defaultValue: '',
+            trim: true
+        )
+        string(
+            name: 'DECIDED_BY_DISPLAY_NAME',
+            description: '<Optional> Do not fill this in by hand. Injected by OSCAR from the authenticated Slack profile of whoever asked for the decision, so the release issue can name a person rather than an opaque id.',
+            defaultValue: '',
+            trim: true
+        )
+        choice(
+            name: 'OSCAR_RECOMMENDATION',
+            description: "<Optional> OSCAR's verdict at decision time, recorded so the decision can later be compared against the recommendation. Must be the verdict get_release_status returned in this conversation - leave as none rather than guessing one.",
+            choices: ['none', 'red', 'yellow', 'green']
+        )
+        text(
+            name: 'DECISION_NOTES',
+            description: '<Optional> Rationale for the decision, e.g. why a criterion was waived.',
+            defaultValue: ''
         )
     }
     stages {
@@ -106,6 +133,35 @@ pipeline {
                             echo("No release issue for version ${release.version}; skipping issue update.")
                         }
                     }
+                }
+            }
+        }
+        // A decision is recorded against one named version, so it runs only when the operator asked
+        // for one. It follows the indexing stages so the snapshot it captures is the state the
+        // decision was actually taken against, not whatever was last indexed six hours ago.
+        stage('Record Release Decision') {
+            when {
+                beforeAgent true
+                expression { params.DECISION?.trim() && params.DECISION.trim() != 'none' }
+            }
+            steps {
+                script {
+                    if (!params.VERSION?.trim()) {
+                        error('VERSION is required when recording a decision; a decision applies to one release.')
+                    }
+                    String decidedBy = params.DECIDED_BY_SLACK_USER?.trim()
+                    if (!decidedBy) {
+                        error('DECIDED_BY_SLACK_USER is empty. A decision is only recordable through OSCAR, which injects the authenticated Slack identity of whoever asked for it.')
+                    }
+                    String recommendation = params.OSCAR_RECOMMENDATION?.trim()
+                    recordReleaseDecision(
+                        version: params.VERSION.trim(),
+                        decision: params.DECISION.trim(),
+                        decidedBy: decidedBy,
+                        decidedByDisplayName: params.DECIDED_BY_DISPLAY_NAME?.trim() ?: null,
+                        oscarRecommendation: (recommendation && recommendation != 'none') ? recommendation : null,
+                        notes: params.DECISION_NOTES?.trim() ?: null
+                    )
                 }
             }
         }
