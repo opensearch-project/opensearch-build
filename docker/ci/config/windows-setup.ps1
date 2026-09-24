@@ -254,25 +254,6 @@ if ($p.ExitCode -ne 0 -and $p.ExitCode -ne 3010) {
 }
 Remove-Item ".\vs_BuildTools.exe" -Force
 
-# Post Installation
-try {
-    netsh advfirewall set allprofiles state off
-} catch {
-    echo $_
-}
-
-try {
-    Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction Stop
-} catch {
-    echo $_
-}
-
-try {
-    Uninstall-WindowsFeature -Name Windows-Defender -ErrorAction Stop | Out-Null
-} catch {
-    echo $_
-}
-
 # Refresh env vars
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
