@@ -12,7 +12,7 @@
 // and registers each upcoming release into the opensearch_release_schedule metrics index. Re-running
 // keeps the derived status (inactive/active) current as each release's RC date approaches.
 
-lib = library(identifier: 'jenkins@13.5.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@13.9.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -36,7 +36,7 @@ pipeline {
     parameters {
         string(
             name: 'RELEASES_URL',
-            description: 'URL of the OpenSearch releases schedule page to parse.',
+            description: '<Optional> URL of the OpenSearch releases schedule page to parse.',
             defaultValue: 'https://opensearch.org/releases.html',
             trim: true
         )
@@ -63,7 +63,8 @@ pipeline {
                             rcDate: schedule.rcDate,
                             releaseDate: schedule.releaseDate,
                             releaseIssue: schedule.releaseIssue,
-                            releaseManager: schedule.releaseManager
+                            releaseManager: schedule.releaseManager,
+                            releaseManagerGhHandle: schedule.releaseManagerGhHandle
                         )
                     }
                 }

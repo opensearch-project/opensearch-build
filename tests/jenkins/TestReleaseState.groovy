@@ -24,7 +24,7 @@ class TestReleaseState extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('13.8.4')
+                .defaultVersion('13.9.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -46,6 +46,7 @@ class TestReleaseState extends BuildPipelineTest {
         helper.registerAllowedMethod('unstash', [String])
         helper.registerAllowedMethod('writeJSON', [Map])
         helper.registerAllowedMethod('readJSON', [Map])
+        helper.registerAllowedMethod('beforeAgent', [Boolean.class], null)
         helper.registerAllowedMethod('parameterizedCron', [String], null)
         binding.setVariable('METRICS_HOST_ACCOUNT', 'METRICS_HOST_ACCOUNT')
         binding.setVariable('ADVISORIES_HOST_ACCOUNT', 'ADVISORIES_HOST_ACCOUNT')
