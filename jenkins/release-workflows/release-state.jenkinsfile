@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-// @job-name: release-state
+// @job-name: distribution-release-state
 // @description: Indexes per-criterion release readiness (entrance and exit criteria) for every active release into the opensearch_release_state metrics index, and records a release manager's Go/No-Go decision for one version when DECISION is set. A decision is indexed with a snapshot of the criteria it was taken against and commented on the release issue.
 
 lib = library(identifier: 'jenkins@13.9.0', retriever: modernSCM([
