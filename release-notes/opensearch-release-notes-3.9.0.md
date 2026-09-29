@@ -1,5 +1,54 @@
 # OpenSearch and OpenSearch Dashboards 3.9.0 Release Notes
 
+## Release Highlights
+
+OpenSearch 3.9 advances the platform across search, observability, and cluster resiliency, with an emphasis on vector search efficiency, a broader observability and application-monitoring experience, and new tools to protect clusters and scale workloads.
+
+### New and Updated Features
+
+#### Search Modernization
+
+* **Run neural sparse vector search on a faster, lighter native engine:** A new C++ engine (SEISMIC via JNI) replaces the JVM path, delivering 39% higher throughput and 3.3x faster index builds with an 8x smaller JVM heap in testing.
+* **Index vector data without defining a mapping first:** Opt-in dynamic mapping for knn_vector fields adds a knn_vector dynamic template and zero-configuration auto-inference, so vector data can be indexed without an explicit field mapping up front.
+* **Cut vector memory in half with native FP16 storage:** The new half_float vector data type stores k-NN vectors in 16-bit floating point, roughly halving memory and storage versus float across the Faiss and Lucene engines.
+* **Store full-range vectors with bfloat16 quantization:** A new bf16 encoder for Faiss scalar quantization covers the full 32-bit float range and uses AVX-512 BF16 instructions to accelerate scoring on Intel Sapphire Rapids and newer processors.
+* **Tune vector compression with 2-bit and 4-bit scalar quantization:** Scalar quantization adds 2-bit (x16) and 4-bit (x8) encodings alongside 1-bit (x32) on the Faiss and Lucene engines, letting you balance compression against recall.
+* **Reuse relevance judgments and recover from failures in Search Relevance Workbench:** LLM-as-a-Judge adds an existingJudgments parameter to reuse prior relevance ratings and a judgment retry endpoint for recovering from partial failures.
+* **Preserve XGBoost ranking behavior with the missing_as_zero flag:** An opt-in, model-level missing_as_zero flag lets Learning to Rank users route missing features as zero again, preserving pre-existing scoring without retraining.
+* **Assign custom IDs to machine learning resources:** Optional custom IDs are now supported for models, model groups, connectors, agents, and memory containers, making ML resources easier to reference and manage across environments.
+
+#### Observability and Analytics
+
+* **Triage alerts, anomalies, and forecasts from one unified view:** The unified alerts view graduates to general availability and now includes anomaly detection and forecasting, so operators can triage log alerts, metric alerts, and anomalies and manage detectors and forecasters in one place.
+
+#### The separately deployed **OpenSearch Observability Stack** (an OpenTelemetry- and Prometheus-based distribution for application monitoring, versioned independently of core OpenSearch) also advances this cycle:
+
+* **Investigate application performance faster with the OpenSearch Observability Stack:** Redesigned trace details, Prometheus-backed dashboard variables with a synchronized crosshair, a no-code PromQL alert-rule builder, a guided APM setup wizard, and PPL query profiling and linting streamline the path from telemetry to insight.
+
+#### Scalability and Resiliency
+
+* **Protect clusters with adaptive per-action concurrency limits:** A new module adjusts per-action concurrency ceilings from observed latency, with monitor-only and enforcement modes, burst capacity, and request partitioning, all configurable without restarts.
+* **Speed up time-range queries with coordinator-side index pruning:** The coordinator skips entire indexes that fall outside a query's time range before any shard-level work begins, cutting tail latency by more than 80% and can_match requests by nearly 98% in local benchmarks.
+* **Replay routed deletes for zero-downtime index reshaping:** Delete operations in the translog now carry document routing, so change-data-capture and schema-change tools can replay deletes correctly to an index with a different shard count when custom routing is used.
+* **Batch inference on the server for higher model throughput:** Model-level request batching in ML Commons splits large ingestion requests and combines small concurrent search requests to fit endpoint limits, improving throughput with no client-side changes.
+* **Clean up stored task results with the Delete Task API:** A new DELETE /\_tasks/{task_id} API removes stored completed task results with conflict and not-found handling, giving operators a supported way to manage task-result growth.
+* **Align gRPC API references with protobufs 1.7.0:** The gRPC API documentation is updated for opensearch-protobufs 1.7.0, adding a TermsLookup id_2/query oneof and refreshed protobuf reference links.
+
+#### Security and Infrastructure
+
+* **Manage resource access with generally available Resource Sharing framework:** The Resource Sharing and Access Control framework graduates to general availability, letting plugins share resources with specific users, roles, and backend roles, and adds an inline Share button.
+* **Grant least-privilege access with granular Security REST API permissions:** The Security REST API documentation clarifies the two authorization paths — broad role-based access and granular per-operation permissions — with a least-privilege example and corrected permission names.
+* **Authenticate ML connectors with mutual TLS:** ML Commons connectors can present a client certificate over mutual TLS, with PEM and PKCS12 support, encrypted inline storage, and online rotation without undeploying the model or restarting nodes.
+* **Refine access control across the Security plugin:** Further improvements include a configurable REST API string-length limit, a cross-cluster search setting to ignore source-propagated security roles, and trailing-wildcard prefix matching for workload management rules.
+* **Deprecating support for Amazon Linux 2:** OpenSearch has deprecated Amazon Linux 2 as a build image and supported operating system in 3.9.0, following its end of support on June 30, 2026.
+
+## Release Details
+[OpenSearch and OpenSearch Dashboards 3.9.0](https://opensearch.org/artifacts/by-version/#release-3-9-0) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.9.0.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.9.0.md).
+
 ## FEATURES
 
 ### OpenSearch Alerting
