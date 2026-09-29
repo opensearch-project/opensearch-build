@@ -21,7 +21,7 @@ OpenSearch 3.9 advances the platform across search, observability, and cluster r
 
 * **Triage alerts, anomalies, and forecasts from one unified view:** The unified alerts view graduates to general availability and now includes anomaly detection and forecasting, so operators can triage log alerts, metric alerts, and anomalies and manage detectors and forecasters in one place.
 
-#### The separately deployed **OpenSearch Observability Stack** (an OpenTelemetry- and Prometheus-based distribution for application monitoring, versioned independently of core OpenSearch) also advances this cycle:
+The separately deployed **OpenSearch Observability Stack** (an OpenTelemetry- and Prometheus-based distribution for application monitoring, versioned independently of core OpenSearch) also advances this cycle:
 
 * **Investigate application performance faster with the OpenSearch Observability Stack:** Redesigned trace details, Prometheus-backed dashboard variables with a synchronized crosshair, a no-code PromQL alert-rule builder, a guided APM setup wizard, and PPL query profiling and linting streamline the path from telemetry to insight.
 
