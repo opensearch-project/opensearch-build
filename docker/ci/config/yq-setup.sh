@@ -39,9 +39,6 @@ case $PLATFORM-$ARCH in
     openbsd-x86_64)
         YQ_TYPE="yq_openbsd_amd64"
         ;;
-    darwin-x86_64)
-        YQ_TYPE="yq_darwin_amd64"
-        ;;
     darwin-arm64)
         YQ_TYPE="yq_darwin_arm64"
         ;;

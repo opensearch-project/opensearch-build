@@ -39,7 +39,6 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
         binding.setVariable('INPUT_MANIFEST', '3.0.0/opensearch-3.0.0.yml')
         binding.setVariable('AGENT_LINUX_X64', 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_LINUX_ARM64', 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host')
-        binding.setVariable('AGENT_MACOS_X64', 'Jenkins-Agent-MacOS14-X64-Mac1-Multi-Host')
         binding.setVariable('AGENT_MACOS_ARM64', 'Jenkins-Agent-MacOS14-ARM64-Mac2-Multi-Host')
         binding.setVariable('AGENT_WINDOWS_X64', 'Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host')
         binding.setVariable('IMAGE_WINDOWS_ZIP', 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1')
@@ -81,8 +80,6 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
                     return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-linux-x64-build-manifest.yml' as File).text)
                 case 'linux-arm64-tar':
                     return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-linux-arm64-build-manifest.yml' as File).text)
-                case 'macos-x64-tar':
-                    return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-darwin-x64-build-manifest.yml' as File).text)
                 case 'macos-arm64-tar':
                     return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-darwin-arm64-build-manifest.yml' as File).text)
                 case 'windows-x64-zip':
@@ -100,14 +97,13 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
         assertThat(getCommands('sh', 'tar'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p linux -a x64 --snapshot'))
         assertThat(getCommands('sh', 'tar'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p linux -a arm64 --snapshot'))
         assertThat(getCommands('sh', 'windows'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d zip --component OpenSearch -p windows -a x64 --snapshot'))
-        assertThat(getCommands('sh', 'darwin'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p darwin -a x64 --snapshot'))
         assertThat(getCommands('sh', 'darwin'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p darwin -a arm64 --snapshot'))
         assertThat(getCommands('s3Upload', 'min-3.0.0-SNAPSHOT'), hasItems(
-            //linux-x64-tar
+            // linux-x64-tar
             '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz}',
             '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.sha512, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.sha512}',
             '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.build-manifest.yml, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.build-manifest.yml}',
-            //linux-arm64-tar
+            // linux-arm64-tar
             '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz}',
             '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.sha512, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.sha512}',
             '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.build-manifest.yml, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-arm64-latest.tar.gz.build-manifest.yml}',
@@ -115,10 +111,10 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
             '{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip}',
             '{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.sha512, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.sha512}',
             '{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.build-manifest.yml, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.build-manifest.yml}',
-            // macos-x64-upload
-            '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz}',
-            '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512}',
-            '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.build-manifest.yml, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.build-manifest.yml}'))
+            // macos-arm64-upload
+            '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz}',
+            '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.sha512, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.sha512}',
+            '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.build-manifest.yml, bucket=production-s3-bucket-name, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-arm64-latest.tar.gz.build-manifest.yml}'))
         assertThat(getCommands('s3Upload', 'plugins'), hasItems('{bucket=production-s3-bucket-name, path=snapshots/plugins/ingest-attachment-3.0.0-SNAPSHOT.zip/3.0.0-SNAPSHOT-SNAPSHOT/, workingDir=/tmp/workspace/tar/builds/opensearch/core-plugins/, includePathPattern=**/ingest-attachment-3.0.0-SNAPSHOT.zip*}'))
     }
 
