@@ -35,7 +35,7 @@ case $PLATFORM-$ARCH in
         echo "PPC64LE is not supported at the moment"
         exit 0
         ;;
-    darwin-x86_64|darwin-arm64)
+    darwin-arm64)
         brew install 1password-cli
         exit 0
         ;;

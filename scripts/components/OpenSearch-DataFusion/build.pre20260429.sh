@@ -93,7 +93,7 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 [ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
 
 case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
-    linux-tar-x64|darwin-tar-x64)
+    linux-tar-x64)
         PACKAGE="tar"
         EXT="tar.gz"
         TYPE="archives"

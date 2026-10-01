@@ -114,7 +114,7 @@ https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/op
 ```
 Macos:
 ```
-https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-darwin-x64-latest.tar.gz
+https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-darwin-arm64-latest.tar.gz
 ```
   
 Windows:
