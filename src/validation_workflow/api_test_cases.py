@@ -27,13 +27,13 @@ class ApiTestCases:
 
         # the test case parameters are formated as ['<request_url>',<success_status_code>,'<validate_string(optional)>']
         test_apis = [
-            [f'{protocol_prefix}://localhost:9200/', 200, ''],
+            [f'{protocol_prefix}://localhost:9200/', 200, '"number" : "' + version + '"'],
             [f'{protocol_prefix}://localhost:9200/_cat/plugins?v', 200, ''],
             [f'{protocol_prefix}://localhost:9200/_cat/health?v', 200, ['green', 'yellow']],
         ]
 
         if ("opensearch-dashboards" in projects):
-            test_apis.append(['http://localhost:5601/api/status', 200, ''])
+            test_apis.append(['http://localhost:5601/api/status', 200, '"number":"' + version + '"'])
 
         for test_api in test_apis:
             request_url = test_api.__getitem__(0)
