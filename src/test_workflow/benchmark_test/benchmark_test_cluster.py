@@ -58,7 +58,7 @@ class BenchmarkTestCluster:
                 self.secondary_cluster_endpoint_with_port = "".join([self.secondary_cluster_endpoint, ":", str(self.port)])
 
     def fetch_cluster_info(self, endpoint: str) -> Any:
-        command = f"curl http://{endpoint}" if self.args.insecure else f"curl https://{endpoint} -ku '{self.args.username}:{self.password}'"
+        command = f"curl -fsSL http://{endpoint}" if self.args.insecure else f"curl -fsSL https://{endpoint} -ku '{self.args.username}:{self.password}'"
         try:
             result = subprocess.run(command, shell=True, capture_output=True, timeout=30)
         except subprocess.TimeoutExpired:
