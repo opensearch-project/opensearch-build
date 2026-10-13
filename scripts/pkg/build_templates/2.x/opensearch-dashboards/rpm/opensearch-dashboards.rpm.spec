@@ -53,6 +53,7 @@ cd %{_topdir} && pwd
 mkdir -p %{buildroot}%{pid_dir}
 mkdir -p %{buildroot}%{product_dir}/assets
 mkdir -p %{buildroot}%{product_dir}/plugins
+mkdir -p %{buildroot}%{product_dir}/scripts/extract_zip_shim
 mkdir -p %{buildroot}%{log_dir}
 # Install directories/files
 # Service files stored in /usr/lib/systemd for pkg installation, /etc/systemd is meant for manual changes by sysadmin
@@ -150,6 +151,7 @@ exit 0
 %{product_dir}/bin
 %{product_dir}/node
 %{product_dir}/node_modules
+%{product_dir}/scripts/extract_zip_shim
 %{product_dir}/plugins
 %{product_dir}/src
 %attr(750, %{name}, %{name}) %{log_dir}
