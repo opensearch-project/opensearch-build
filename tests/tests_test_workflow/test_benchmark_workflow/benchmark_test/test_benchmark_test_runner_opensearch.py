@@ -127,6 +127,27 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
         self.assertEqual(mock_benchmark_test_cluster.call_count, 1)
         mock_retry_call.assert_called_once_with(mock_suite.return_value.execute, tries=3, delay=60, backoff=2)
 
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestCluster")
+    @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuiteRunners.from_args")
+    @patch('test_workflow.benchmark_test.benchmark_test_runner_opensearch.retry_call')
+    def test_run_with_secondary_endpoint(self, mock_retry_call: Mock, mock_suite: Mock, mock_benchmark_test_cluster: Mock) -> None:
+        args = MagicMock(cluster_endpoint="abc.com", secondary_endpoint="xyz.com")
+        target_hosts = {
+            "default": [{"host": "abc.com", "port": 443}],
+            "follower": [{"host": "xyz.com", "port": 443}],
+        }
+        mock_cluster = mock_benchmark_test_cluster.return_value
+        mock_cluster.target_hosts = target_hosts
+        mock_cluster.fetch_password.return_value = "admin"
+
+        instance = BenchmarkTestRunnerOpenSearch(args, None)
+        instance.run_tests()
+
+        mock_cluster.start.assert_called_once()
+        # The role -> hosts mapping is handed to the test suite as-is.
+        mock_suite.assert_called_once_with(args, target_hosts, instance.security, "admin")
+        mock_retry_call.assert_called_once_with(mock_suite.return_value.execute, tries=3, delay=60, backoff=2)
+
     @patch('test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing')
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuiteRunners.from_args")
     @patch('test_workflow.benchmark_test.benchmark_test_runner_opensearch.retry_call')

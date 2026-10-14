@@ -245,6 +245,32 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--target-hosts=abc.com:443 --client-options="retry_on_timeout:False,timeout:120,use_ssl:true,'
                          'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'" --results-file=final_result.md')
 
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.subprocess.check_call')
+    @patch('test_workflow.benchmark_test.benchmark_test_suite_execute.BenchmarkTestSuiteExecute.convert')
+    def test_execute_multi_cluster_endpoint(self, mock_convert: Mock, mock_check_call: Mock) -> None:
+        mock_check_call.return_value = 0
+        self.args.cluster_endpoint = "abc.com"
+        self.args.secondary_endpoint = "xyz.com"
+        self.args.insecure = False
+        endpoint = {
+            "default": [{"host": "abc.com", "port": 443}],
+            "follower": [{"host": "xyz.com", "port": 443}],
+        }
+        test_suite = BenchmarkTestSuiteExecute(endpoint, True, self.args, "admin")
+        test_suite.execute()
+        self.assertEqual(mock_check_call.call_count, 2)
+        # Every host of a multi-cluster run is masked out of the logged command.
+        self.assertEqual(test_suite.hosts_to_mask(), ["abc.com", "xyz.com"])
+        self.assertEqual(test_suite.command,
+                         f'docker run --user root --name docker-container-{test_suite.args.stack_suffix}'
+                         f' opensearchproject/opensearch-benchmark:1.21.0 execute-test '
+                         '--workload=nyc_taxis --pipeline=benchmark-only '
+                         '--target-hosts=\'{"default": [{"host": "abc.com", "port": 443}], "follower": [{"host": "xyz.com", "port": 443}]}\' '
+                         '--client-options=\'{"default": {"retry_on_timeout": false, "timeout": 120, "use_ssl": true, "verify_certs": false, '
+                         '"basic_auth_user": "admin", "basic_auth_password": "admin"}, '
+                         '"follower": {"retry_on_timeout": false, "timeout": 120, "use_ssl": true, "verify_certs": false, '
+                         '"basic_auth_user": "admin", "basic_auth_password": "admin"}}\' --results-file=final_result.md')
+
     @patch('pandas.json_normalize')
     @patch('pandas.read_csv')
     @patch('json.load')

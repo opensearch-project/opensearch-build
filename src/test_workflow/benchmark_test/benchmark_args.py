@@ -19,6 +19,7 @@ from test_workflow.json_args import JsonArgs
 class BenchmarkArgs:
     bundle_manifest: IO
     cluster_endpoint: str
+    secondary_endpoint: str
     distribution_url: str
     plugin_url: str
     distribution_version: str
@@ -83,6 +84,9 @@ class BenchmarkArgs:
                                          help="Link to installable opensearch plugin")
         execute_test_parser.add_argument("--cluster-endpoint", dest="cluster_endpoint",
                                          help="Load balancer url for benchmark testing")
+        execute_test_parser.add_argument("--secondary-endpoint", dest="secondary_endpoint",
+                                         help="Load balancer url of a second, already running cluster. When provided the benchmark runs in "
+                                              "multi-cluster mode, with --cluster-endpoint addressed as 'default' and this one as 'follower'.")
         execute_test_parser.add_argument("--distribution-version", dest="distribution_version",
                                          help="provide OpenSearch version if using distribution-url param.")
         execute_test_parser.add_argument("--username", dest="username",
@@ -187,6 +191,7 @@ class BenchmarkArgs:
             self.distribution_url = args.distribution_url if args.distribution_url else None
             self.plugin_url = args.plugin_url if args.plugin_url else None
             self.cluster_endpoint = args.cluster_endpoint if args.cluster_endpoint else None
+            self.secondary_endpoint = args.secondary_endpoint if args.secondary_endpoint else None
             self.distribution_version = args.distribution_version if args.distribution_version else None
             self.config = args.config
             self.keep = args.keep
@@ -228,6 +233,8 @@ class BenchmarkArgs:
                 raise Exception("Please provide either --bundle-manifest or --distribution-url  or --cluster_endpoint to run the performance test.")
             elif self.distribution_url and self.distribution_version is None:
                 raise Exception("--distribution-version is required parameter while using --distribution-url param.")
+            elif self.secondary_endpoint and self.cluster_endpoint is None:
+                raise Exception("--cluster-endpoint is required parameter while using --secondary-endpoint param.")
 
         elif args.command == "compare":
             if not args.baseline or not args.contender:

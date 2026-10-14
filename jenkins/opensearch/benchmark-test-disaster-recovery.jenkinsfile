@@ -1,0 +1,198 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+// @job-name: benchmark-test-endpoint
+// @description: Runs benchmark tests against an existing OpenSearch cluster endpoint.
+
+lib = library(identifier: 'jenkins@13.10.0', retriever: modernSCM([
+
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    agent none
+    options {
+        timeout(time: 10, unit: 'DAYS')
+        buildDiscarder(logRotator(daysToKeepStr: '30'))
+    }
+    environment {
+        AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'
+        JOB_NAME = 'benchmark-test'
+    }
+    parameters {
+            password(
+                name: 'CLUSTER_ENDPOINT',
+                description: '<Required> Provide an endpoint to a cluster for running benchmark tests against it.',
+            )
+            password(
+                name: 'SECONDARY_ENDPOINT',
+                description: '<Required> Provide an endpoint to a secondary cluster for running cross-cluster-replication tests against it.',
+            )
+            booleanParam(
+                name: 'SECURITY_ENABLED',
+                description: '<Optional> Mention if the cluster is secured or insecured.',
+                defaultValue: false,
+            )
+            booleanParam(
+                name: 'BASIC_AUTH',
+                description: '<Optional> Mention if the test will run using basic auth.',
+                defaultValue: false,
+            )
+            booleanParam(
+                name: 'SIGV4',
+                description: '<Optional> Mention if the test will run using AWS Signature Version 4 authentication.',
+                defaultValue: false,
+            )
+            string(
+                name: 'REGION',
+                description: '<Optional> AWS region for signing (e.g. us-east-1).',
+                defaultValue: 'us-east-1',
+                trim: true
+            )
+            choice(
+                name: 'SERVICE',
+                choices: ['','es', 'aoss'],
+                description: '<Optional> AWS service for SigV4. Defaults to empty (no service).'
+            )
+            string(
+                name: 'TEST_WORKLOAD',
+                description: '<Optional> The workload name from OpenSearch Benchmark Workloads.',
+                defaultValue: 'nyc_taxis',
+                trim: true
+            )
+            string(
+                name: 'USER_TAGS',
+                description: '<Optional> Attach arbitrary text to the meta-data of each benchmark metric record, without any spaces. e.g., `run-type:adhoc,segrep:enabled,arch:x64`. ',
+                trim: true
+            )
+            string(
+                name: 'WORKLOAD_PARAMS',
+                description: '<Optional> With this parameter you can inject variables into workloads. Use json type. e.g., `{"number_of_replicas":"1","number_of_shards":"5"}`',
+                trim: true
+            )
+            string(
+                name: 'TEST_PROCEDURE',
+                description: '<Optional> Defines a test procedure to use. e.g., `append-no-conflicts,significant-text`',
+                trim: true
+            )
+            string(
+                name: 'EXCLUDE_TASKS',
+                description: '<Optional> Defines a comma-separated list of test procedure tasks not to run. Default runs all. e.g., `type:search,delete-index`',
+                trim: true
+            )
+            string(
+                name: 'INCLUDE_TASKS',
+                description: '<Optional> Defines a comma-separated list of test procedure tasks to run. Default runs all. e.g., `type:search,delete-index`',
+                trim: true
+            )
+            booleanParam(
+                name: 'CAPTURE_NODE_STAT',
+                description: '<Optional> Enable opensearch-benchmark node-stats telemetry to capture system level metrics.',
+                defaultValue: false
+            )
+            booleanParam(
+                name: 'CAPTURE_SEGMENT_REPLICATION_STAT',
+                description: '<Optional> Enable opensearch-benchmark segment-replication-stats telemetry to capture metrics such as replication lag.',
+                defaultValue: false
+            )
+            string(
+                name: 'TELEMETRY_PARAMS',
+                description: '<Optional> Allows to set parameters for telemetry devices. Use json type. e.g.,{"node-stats-include-indices":"true","node-stats-include-indices-metrics":"segments"}',
+                trim: true
+            )
+    }
+    triggers{
+        parameterizedCron '''
+            H 4,8,12,16 * * * %CLUSTER_ENDPOINT=search-benchmark-dr-domain-iad-njduur4mchgjuqgrgribhrvgoa.us-east-1.es.amazonaws.com;SECONDARY_ENDPOINT=search-benchmark-dr-domain-dub-t2oc6cvd6xrn6m2adoqgpboa5e.eu-west-1.es.amazonaws.com;SECURITY_ENABLED=true;BASIC_AUTH=true;TEST_WORKLOAD=big5;USER_TAGS=run-type:standard-3-7-domain-replication;WORKLOAD_PARAMS={"number_of_shards":30,"number_of_replicas":1,"distribution_version":"3.7.0","bulk_size":5000,"bulk_indexing_clients":4};EXCLUDE_TASKS=type:search;CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":30}
+            H 4,8,12,16 * * * %CLUSTER_ENDPOINT=search-benchmark-dr-domain-or1-iad-jogatpfigvatu7tvijveswy2pe.us-east-1.es.amazonaws.com;SECONDARY_ENDPOINT=search-benchmark-dr-domain-or1-dub-qu6bc2z6gbkr6zipoeq2bdepcm.eu-west-1.es.amazonaws.com;SECURITY_ENABLED=true;BASIC_AUTH=true;TEST_WORKLOAD=big5;USER_TAGS=run-type:standard-3-7-or1-domain-replication;WORKLOAD_PARAMS={"number_of_shards":30,"number_of_replicas":1,"distribution_version":"3.7.0","bulk_size":5000,"bulk_indexing_clients":4};EXCLUDE_TASKS=type:search;CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":30}
+            H 0,6,10,20 * * * %CLUSTER_ENDPOINT=search-benchmark-dr-domain-iad-njduur4mchgjuqgrgribhrvgoa.us-east-1.es.amazonaws.com;SECONDARY_ENDPOINT=search-benchmark-dr-domain-dub-t2oc6cvd6xrn6m2adoqgpboa5e.eu-west-1.es.amazonaws.com;SECURITY_ENABLED=true;BASIC_AUTH=true;TEST_WORKLOAD=clickbench;USER_TAGS=run-type:standard-3-7-domain-replication;WORKLOAD_PARAMS={"number_of_shards":30,"number_of_replicas":1,"bulk_size":5000,"bulk_indexing_clients":4};EXCLUDE_TASKS=type:raw-request;CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":30}
+            H 0,6,10,20 * * * %CLUSTER_ENDPOINT=search-benchmark-dr-domain-or1-iad-jogatpfigvatu7tvijveswy2pe.us-east-1.es.amazonaws.com;SECONDARY_ENDPOINT=search-benchmark-dr-domain-or1-dub-qu6bc2z6gbkr6zipoeq2bdepcm.eu-west-1.es.amazonaws.com;SECURITY_ENABLED=true;BASIC_AUTH=true;TEST_WORKLOAD=clickbench;USER_TAGS=run-type:standard-3-7-or1-domain-replication;WORKLOAD_PARAMS={"number_of_shards":30,"number_of_replicas":1,"bulk_size":5000,"bulk_indexing_clients":4};EXCLUDE_TASKS=type:raw-request;CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":30}
+
+            H 4,8,12,16 * * * %CLUSTER_ENDPOINT=search-benchmark-ile-domain-1-l2pmiw77zxxuz32ryynuc5m57q.us-east-1.es-staging.amazonaws.com;SECONDARY_ENDPOINT=search-benchmark-ile-domain-2-64dxs6qvjvuev32efgcmplzfxe.us-east-1.es-staging.amazonaws.com;SECURITY_ENABLED=true;BASIC_AUTH=true;TEST_WORKLOAD=clickbench;USER_TAGS=run-type:standard-3-7-ile-domain-replication;WORKLOAD_PARAMS={"number_of_shards":30,"number_of_replicas":1,"bulk_size":5000,"bulk_indexing_clients":4};EXCLUDE_TASKS=type:raw-request;CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":30}
+
+            H 4,8,12,16 * * * %CLUSTER_ENDPOINT=search-benchmark-dr-vector-iad-2-okuozqtr5e6o5idoiuif6u7i6u.us-east-1.es.amazonaws.com;SECONDARY_ENDPOINT=search-benchmark-dr-vector-dub-2-xrqai2smi57cz4lt2ygps65h6a.eu-west-1.es.amazonaws.com;SECURITY_ENABLED=true;BASIC_AUTH=true;TEST_WORKLOAD=vectorsearch;USER_TAGS=run-type:standard-3-7-domain-replication;WORKLOAD_PARAMS={"target_index_name":"target_index","target_field_name":"target_field","target_index_body":"indices/faiss-index.json","target_index_primary_shards":6,"target_index_dimension":768,"target_index_space_type":"innerproduct","target_index_bulk_size":100,"target_index_bulk_index_data_set_format":"hdf5","target_index_bulk_index_data_set_corpus":"cohere-10m","target_index_bulk_indexing_clients":10,"target_index_max_num_segments":1,"hnsw_ef_search":256,"hnsw_ef_construction":256,"query_k":100,"query_body":{"docvalue_fields":["_id"],"stored_fields":"_none_"},"query_data_set_format":"hdf5","query_data_set_corpus":"cohere-10m","query_count":10000};INCLUDE_TASKS=delete-target-index,create-target-index,custom-vector-bulk;CAPTURE_NODE_STAT=true;TELEMETRY_PARAMS={"node-stats-sample-interval":30}
+        '''
+    }
+    stages {
+        stage('validate-and-set-parameters') {
+            agent { label AGENT_LABEL }
+            steps {
+                script {
+                    if (CLUSTER_ENDPOINT == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Benchmark Tests failed to start. Provide CLUSTER_ENDPOINT to run tests")
+                    }
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+        stage('benchmark-test-with-cluster') {
+            agent { label AGENT_LABEL }
+            steps {
+                script {
+                    echo "security-enabled: ${SECURITY_ENABLED}"
+
+                    if (params.BASIC_AUTH) {
+                        def secret_benchmark_auth = [
+                            [envVar: 'BASIC_AUTH_USER', secretRef: 'op://opensearch-release-secrets/benchmark-metrics/benchmark-basic-auth-user'],
+                            [envVar: 'BASIC_AUTH_PASSWORD', secretRef: 'op://opensearch-release-secrets/benchmark-metrics/benchmark-basic-auth-password']
+                        ]
+                        withSecrets(secrets: secret_benchmark_auth) {
+                            runDisasterRecoveryBenchmark("${BASIC_AUTH_USER}", "${BASIC_AUTH_PASSWORD}")
+                        }
+                    } else {
+                        runDisasterRecoveryBenchmark('', '')
+                    }
+                    stash includes: 'test_execution*.csv', name: "benchmark"
+
+                }
+            }
+            post {
+                always {
+                    unstash "benchmark"
+                    archiveArtifacts artifacts: 'test_execution*.csv'
+                    postCleanup()
+                }
+            }
+        }
+    }
+}
+
+/** Runs the benchmark against the cluster endpoint. Username and password are only populated for a
+ * basic auth run, they are passed empty otherwise so that runBenchmarkTestScript leaves the
+ * --username and --password arguments off the test.sh command altogether.
+ */
+void runDisasterRecoveryBenchmark(String username, String password) {
+    runBenchmarkTestScript(
+            command: 'execute-test',
+            endpoint: CLUSTER_ENDPOINT,
+            secondaryEndpoint: SECONDARY_ENDPOINT,
+            insecure: !(params.SECURITY_ENABLED),
+            username: username,
+            password: password,
+            sigv4: SIGV4,
+            region: REGION,
+            service: SERVICE,
+            workload: TEST_WORKLOAD,
+            userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
+            suffix: "${BUILD_NUMBER}",
+            workloadParams: WORKLOAD_PARAMS,
+            testProcedure: TEST_PROCEDURE,
+            excludeTasks: EXCLUDE_TASKS,
+            includeTasks: INCLUDE_TASKS,
+            captureNodeStat: CAPTURE_NODE_STAT,
+            captureSegmentReplicationStat: CAPTURE_SEGMENT_REPLICATION_STAT,
+            telemetryParams: TELEMETRY_PARAMS
+    )
+}

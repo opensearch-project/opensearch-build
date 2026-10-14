@@ -41,7 +41,7 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
         if self.args.cluster_endpoint:
             cluster = BenchmarkTestCluster(self.args)
             cluster.start()
-            benchmark_test_suite = BenchmarkTestSuiteRunners.from_args(self.args, cluster.endpoint_with_port, self.security, cluster.fetch_password())
+            benchmark_test_suite = BenchmarkTestSuiteRunners.from_args(self.args, cluster.target_hosts, self.security, cluster.fetch_password())
             retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
 
         else:

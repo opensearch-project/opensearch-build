@@ -90,6 +90,24 @@ class TestBenchmarkArgs(unittest.TestCase):
             BenchmarkArgs()
         self.assertEqual(str(context.exception), "Please provide either --bundle-manifest or --distribution-url  or --cluster_endpoint to run the performance test.")
 
+    @patch("argparse._sys.argv", [ARGS_PY, "execute-test", "--cluster-endpoint", "abc.com", "--secondary-endpoint", "xyz.com", "--workload", "test"])
+    def test_benchmark_with_cluster_endpoint_and_secondary_endpoint(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertEqual(test_args.cluster_endpoint, "abc.com")
+        self.assertEqual(test_args.secondary_endpoint, "xyz.com")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "execute-test", "--cluster-endpoint", "abc.com", "--workload", "test"])
+    def test_benchmark_with_cluster_endpoint_and_without_secondary_endpoint(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertIsNone(test_args.secondary_endpoint)
+
+    @patch("argparse._sys.argv", [ARGS_PY, "execute-test", "--bundle-manifest", TEST_DIST_MANIFEST_PATH, "--config", TEST_CONFIG_PATH, "--workload", "test",
+                                  "--secondary-endpoint", "xyz.com"])
+    def test_benchmark_with_secondary_endpoint_and_without_cluster_endpoint(self) -> None:
+        with self.assertRaises(Exception) as context:
+            BenchmarkArgs()
+        self.assertEqual(str(context.exception), "--cluster-endpoint is required parameter while using --secondary-endpoint param.")
+
     @patch("argparse._sys.argv", [ARGS_PY, "execute-test", "--bundle-manifest", TEST_DIST_MANIFEST_PATH, "--config", TEST_CONFIG_PATH, "--workload", "test",
                                   "--test-procedure", 'test-procedure,another-test-procedure', "--exclude-tasks", "index,type:search,tag:setup",
                                   "--include-tasks", "index,type:search,tag:setup"])
