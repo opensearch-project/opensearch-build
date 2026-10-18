@@ -93,7 +93,7 @@ class Validation(ABC):
             plugin_list = [i["name"] for i in response if i["name"] not in installed_plugins_list]
             plugin_list.remove("examples")
             plugin_list.remove("build.gradle")
-            if semver.compare(self.args.version, "3.5.0") < 0:
+            if semver.compare(self.args.version, "3.5.0") < 0 and "identity-shiro" in plugin_list:
                 plugin_list.remove("identity-shiro")  # Since the security plugin is enabled in the artifacts and identity-shiro is also an identity plugin, we cannot have both the plugins installed together. # noqa: E501
             return plugin_list
         except Exception:
