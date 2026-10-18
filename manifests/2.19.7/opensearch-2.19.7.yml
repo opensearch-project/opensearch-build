@@ -22,7 +22,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: a32f00b38082683319f3b7a769b373235801b4a2
+    ref: 6dd9a042d889837fad5d6e2afc5d3d3ce99edad6
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 4cea3e96ef4224110da7b0859af3691ef66ef18e
@@ -196,7 +196,7 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: fbc42609613aea83305f54688831c0553016a02b
+    ref: 9b912b9ef48641d8a761549ca0481447f57c2cc2
     platforms:
       - linux
       - windows
