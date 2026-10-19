@@ -182,14 +182,14 @@ runs:
       if: ${{ runner.os == 'Linux' && inputs.security-enabled == 'true' && inputs.resource-sharing-enabled == 'true' }}
       run: |
         echo "plugins.security.resource_sharing.enabled: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
-        echo "plugins.security.resource_sharing.protected_types: [sample-resource]" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+        echo "plugins.security.resource_sharing.protected_types: [sample-resource, sample-resource-group, workspace]" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: bash
 
     - name: Enable resource sharing (Windows)
       if: ${{ runner.os == 'Windows' && inputs.security-enabled == 'true' && inputs.resource-sharing-enabled == 'true' }}
       run: |
         echo "plugins.security.resource_sharing.enabled: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
-        echo "plugins.security.resource_sharing.protected_types: [sample-resource]" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+        echo "plugins.security.resource_sharing.protected_types: [sample-resource, sample-resource-group, workspace]" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: pwsh
 
     - name: Use more space
