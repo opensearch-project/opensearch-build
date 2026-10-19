@@ -91,7 +91,7 @@ if [ "$DISABLE_SECURITY_DASHBOARDS_PLUGIN" = "true" ]; then
     # Remove all security related parameters as well as changing HTTPS to HTTP
     # Temporary fix before security-dashboards plugin implement a parameter to disable the plugin entirely
     # https://github.com/opensearch-project/security-dashboards-plugin/issues/896
-    UPDATED_CONFIG=`cat %{config_dir}/opensearch_dashboards.yml | sed "/^opensearch_security/d" | sed "s/https/http/g"`
+    UPDATED_CONFIG=`cat %{config_dir}/opensearch_dashboards.yml | sed "/^opensearch_security/d" | sed -E "/^[[:space:]]*opensearch\.hosts:/ s|https://|http://|g"`
     echo "$UPDATED_CONFIG" > %{config_dir}/opensearch_dashboards.yml
 fi
 # Reload systemctl daemon
