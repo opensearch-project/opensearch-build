@@ -172,7 +172,7 @@ components:
       - notifications
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: '2.19'
+    ref: 87d02e0a135c92b6b3ad83b23463168ccd1d00a1
     platforms:
       - linux
       - windows
