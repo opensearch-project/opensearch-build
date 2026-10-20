@@ -1,54 +1,18 @@
 # OpenSearch and OpenSearch Dashboards 2.19.7 Release Notes
 
-## ENHANCEMENTS
+## Release Details
 
-### OpenSearch Anomaly Detection
+OpenSearch and OpenSearch Dashboards 2.19.7 includes the following enhancements, bug fixes, infrastructure and maintenance updates.
 
-* Guard eclipse() to spotless tasks and keep P2 mirror on pinned version ([#1774](https://github.com/opensearch-project/anomaly-detection/pull/1774))
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.19/release-notes/opensearch.release-notes-2.19.6.md).
 
-### OpenSearch Asynchronous Search
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.19/release-notes/opensearch-dashboards.release-notes-2.19.6.md).
 
-* Add Eclipse P2 mirror to avoid download.eclipse.org outages during CI builds ([#857](https://github.com/opensearch-project/asynchronous-search/pull/857))
-
-### OpenSearch Common Utils
-
-* Use Eclipse P2 mirror to avoid download.eclipse.org outages ([#1002](https://github.com/opensearch-project/common-utils/pull/1002))
-* Guard eclipse() to spotless tasks and keep P2 mirror on pinned version ([#1008](https://github.com/opensearch-project/common-utils/pull/1008))
-
-### OpenSearch Cross Cluster Replication
-
-* Bump `1password/load-secrets-action` to v5.0.1 ([#1741](https://github.com/opensearch-project/cross-cluster-replication/pull/1741))
-
-### OpenSearch ML Commons
-
-* Add Eclipse P2 mirror to avoid download.eclipse.org outages during CI ([#4980](https://github.com/opensearch-project/ml-commons/pull/4980))
-* Guard eclipse() formatter to spotless tasks and keep P2 mirror on pinned version ([#5005](https://github.com/opensearch-project/ml-commons/pull/5005))
-
-### OpenSearch Notifications
-
-* Bump 1password/load-secrets-action to v5.0.1 for improved supply chain security ([#1265](https://github.com/opensearch-project/notifications/pull/1265))
-
-### OpenSearch OpenSearch Learning To Rank Base
-
-* Add Eclipse P2 mirror to avoid download.eclipse.org outages ([#414](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/414))
-* Guard eclipse() to spotless tasks and keep P2 mirror on pinned version ([#417](https://github.com/opensearch-project/opensearch-learning-to-rank-base/pull/417))
-
-### OpenSearch OpenSearch System Templates
-
-* Use Eclipse P2 mirror to avoid download.eclipse.org outages ([#158](https://github.com/opensearch-project/opensearch-system-templates/pull/158))
-
-### OpenSearch Reporting
-
-* Bump 1password/load-secrets-action to v5.0.1 for improved supply chain security ([#1219](https://github.com/opensearch-project/reporting/pull/1219))
+## Enhancements
 
 ### OpenSearch Security
 
 * Scale legacy alias resolution with bounded indices-lookup access for improved performance on clusters with many aliases ([#6320](https://github.com/opensearch-project/security/pull/6320))
-
-### OpenSearch Skills
-
-* Use Eclipse P2 mirror to avoid download.eclipse.org outages ([#789](https://github.com/opensearch-project/skills/pull/789))
-* Guard eclipse() to spotless tasks and keep P2 mirror on pinned version ([#793](https://github.com/opensearch-project/skills/pull/793))
 
 ## BUG FIXES
 
