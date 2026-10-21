@@ -20,7 +20,7 @@ class BuildTarget:
     platform: str
     architecture: str
     distribution: str
-    snapshot: bool
+    snapshot: bool = False  # default to False
     output_dir: str
     skip_artifact_check: bool
 
@@ -33,7 +33,6 @@ class BuildTarget:
         architecture: str = None,
         distribution: str = None,
         name: str = None,
-        snapshot: bool = True,
         build_id: str = None,
         output_dir: str = "artifacts",
         skip_artifact_check: bool = False,
@@ -43,7 +42,6 @@ class BuildTarget:
         self.version = version
         self.qualifier = qualifier
         self.patches = patches
-        self.snapshot = snapshot
         self.architecture = architecture or current_architecture()
         self.distribution = distribution
         self.platform = platform or current_platform()
@@ -52,18 +50,17 @@ class BuildTarget:
 
     @property
     def opensearch_version(self) -> str:
-        return BuildTarget.__qualify_version(
+        return self.__qualify_version(
             self.version,
-            self.qualifier,
-            self.snapshot
+            self.qualifier
         )
 
     @property
     def compatible_min_versions(self) -> List[str]:
         return (
-            [BuildTarget.__qualify_version(self.version, self.qualifier, self.snapshot)]
+            [self.__qualify_version(self.version, self.qualifier)]
             + self.patches
-            + list(map(lambda version: BuildTarget.__qualify_version(version, self.qualifier, True), self.patches))
+            + list(map(lambda version: self.__qualify_version(version, self.qualifier), self.patches))
         )
 
     @property
@@ -71,16 +68,14 @@ class BuildTarget:
         # BUG: the 4th digit is dictated by the component, it's not .0, this will break for 1.1.0.1
         return BuildTarget.__qualify_version(
             self.version + ".0",
-            self.qualifier,
-            self.snapshot
+            self.qualifier
         )
 
     @property
     def compatible_component_versions(self) -> List[str]:
         return (
-            [BuildTarget.__qualify_version(self.version + ".0", self.qualifier, self.snapshot)]
-            + list(map(lambda version: BuildTarget.__qualify_version(version + ".0", self.qualifier, False), self.patches))
-            + list(map(lambda version: BuildTarget.__qualify_version(version + ".0", self.qualifier, True), self.patches))
+            [self.__qualify_version(self.version + ".0", self.qualifier)]
+            + list(map(lambda version: self.__qualify_version(version + ".0", self.qualifier), self.patches))
         )
 
     @property
@@ -90,10 +85,35 @@ class BuildTarget:
         return versions
 
     @classmethod
-    def __qualify_version(cls, unqualified_version: str, qualifier: str = None, snapshot: bool = False) -> str:
+    def __qualify_version(cls, unqualified_version: str, qualifier: str = None) -> str:
         version = unqualified_version
         if qualifier:
             version += f"-{qualifier}"
-        if snapshot:
-            version += "-SNAPSHOT"
         return version
+
+
+class BuildTargetSnapshot(BuildTarget):
+    snapshot: bool = True
+
+    @property
+    def opensearch_version(self) -> str:
+        return super().opensearch_version + "-SNAPSHOT"
+
+    @property
+    def compatible_min_versions(self) -> List[str]:
+        return (
+            [super().opensearch_version + "-SNAPSHOT"]
+            + self.patches
+            + list(map(lambda version: self.__qualify_version(version, self.qualifier) + "-SNAPSHOT", self.patches))
+        )
+
+    @property
+    def component_version(self) -> str:
+        return super().component_version + "-SNAPSHOT"
+
+    @property
+    def compatible_component_versions(self) -> List[str]:
+        return (
+            [super().component_version + "-SNAPSHOT"]
+            + list(map(lambda version: self.__qualify_version(version + ".0", self.qualifier) + "-SNAPSHOT", self.patches))
+        )
