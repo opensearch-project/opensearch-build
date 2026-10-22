@@ -62,6 +62,14 @@ RUN dnf update --releasever=latest -y && dnf install -y tar gzip shadow-utils wh
 # Install Reporting dependencies
 RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && dnf clean all
 
+# Remove trust for compromised eMudhra Intermediate CA
+# Fix taken from https://emudhra.we-have-a-problem.com/
+RUN trust extract --overwrite --format=pem-bundle \
+    --filter='pkcs11:object=Comodo%20AAA%20Services%20root;type=cert' /etc/pki/ca-trust/source/blocklist/Comodo_AAA_Services_root.pem && \
+    trust extract --overwrite --format=pem-bundle \
+    --filter='pkcs11:object=emSign%20ECC%20Root%20CA%20-%20G3;type=cert' /etc/pki/ca-trust/source/blocklist/emSign_ECC_Root_CA_-_G3.pem && \
+    update-ca-trust
+
 # Create an opensearch-dashboards user, group
 RUN groupadd -g $GID opensearch-dashboards && \
     adduser -u $UID -g $GID -d $OPENSEARCH_DASHBOARDS_HOME opensearch-dashboards

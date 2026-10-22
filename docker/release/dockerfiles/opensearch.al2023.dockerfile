@@ -66,6 +66,14 @@ ARG OPENSEARCH_HOME=/usr/share/opensearch
 # Install which to allow running of securityadmin.sh
 RUN dnf update --releasever=latest -y && dnf install -y tar gzip shadow-utils which && dnf clean all
 
+# Remove trust for compromised eMudhra Intermediate CA
+# Fix taken from https://emudhra.we-have-a-problem.com/
+RUN trust extract --overwrite --format=pem-bundle \
+    --filter='pkcs11:object=Comodo%20AAA%20Services%20root;type=cert' /etc/pki/ca-trust/source/blocklist/Comodo_AAA_Services_root.pem && \
+    trust extract --overwrite --format=pem-bundle \
+    --filter='pkcs11:object=emSign%20ECC%20Root%20CA%20-%20G3;type=cert' /etc/pki/ca-trust/source/blocklist/emSign_ECC_Root_CA_-_G3.pem && \
+    update-ca-trust
+
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
     adduser -u $UID -g $GID -d $OPENSEARCH_HOME opensearch
