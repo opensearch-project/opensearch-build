@@ -74,6 +74,6 @@ jobs:
           CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p $PLATFORM -u $PRODUCT -t $TYPE | head -1`
           echo $CI_IMAGE_VERSION
           echo "Pulling from GHCR to temporarily reduce ECR pull throttling"
-          CI_IMAGE_VERSION=`echo "$CI_IMAGE_VERSION" | sed 's#^public.ecr.aws/opensearchorg/opensearchstaging/ci-runner#ghcr.io/opensearch-project/opensearchstaging/ci-runner#'`
+          CI_IMAGE_VERSION=`echo "$CI_IMAGE_VERSION" | sed 's/^public\.ecr\.aws\/opensearchorg\/opensearchstaging\/ci-runner/ghcr.io\/opensearch-project\/opensearchstaging\/ci-runner/'`
           echo $CI_IMAGE_VERSION
           echo "ci-image-version-linux=$CI_IMAGE_VERSION" >> $GITHUB_OUTPUT

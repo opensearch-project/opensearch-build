@@ -19,7 +19,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  SOURCE_IMAGE: opensearchstaging/ci-runner
+  SOURCE_IMAGE: docker.io/opensearchstaging/ci-runner
   DEST_IMAGE: ghcr.io/opensearch-project/opensearchstaging/ci-runner
 
 jobs:
@@ -39,7 +39,13 @@ jobs:
           crane-release: v0.15.2
 
       - name: Copy image to GHCR
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
         run: |
+          if ! echo "$IMAGE_TAG" | grep -Eq '^[A-Za-z0-9_][A-Za-z0-9._-]{0,127}$'; then
+            echo "Invalid image_tag: '$IMAGE_TAG'"
+            exit 1
+          fi
           crane copy \
-            "${{ env.SOURCE_IMAGE }}:${{ inputs.image_tag }}" \
-            "${{ env.DEST_IMAGE }}:${{ inputs.image_tag }}"
+            "${SOURCE_IMAGE}:${IMAGE_TAG}" \
+            "${DEST_IMAGE}:${IMAGE_TAG}"
