@@ -154,3 +154,5 @@ if [ "$RESULT" == "SUCCESS" ] || [ "$RESULT" == "UNSTABLE" ]; then
 else
     exit 1
 fi
+
+# Test ci images
