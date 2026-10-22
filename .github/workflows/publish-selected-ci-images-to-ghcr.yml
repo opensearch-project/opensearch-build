@@ -1,3 +1,4 @@
+---
 name: Publish selected ci images to GHCR
 
 # This is a temporary solution so that github actions can run ghcr.io ci-runner images instead of public.ecr.aws
@@ -8,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       image_tag:
-        description: "Tag of opensearchstaging/ci-runner, copy to ghcr.io/opensearch-project/opensearchstaging/ci-runner (tag ex. ci-runner-almalinux8-opensearch-build-v1)"
+        description: 'Tag of opensearchstaging/ci-runner, copy to ghcr.io/opensearch-project/opensearchstaging/ci-runner (tag ex. ci-runner-almalinux8-opensearch-build-v1)'
         required: true
         type: string
 
@@ -26,14 +27,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Log in to GHCR
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9  # v3.7.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install crane
-        uses: iarekylew00t/crane-installer@129958071ac638780427317f25d7c5e66f5e88e4 # v1
+        uses: iarekylew00t/crane-installer@129958071ac638780427317f25d7c5e66f5e88e4  # v1
         with:
           crane-release: v0.15.2
 
