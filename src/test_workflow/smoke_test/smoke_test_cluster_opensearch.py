@@ -53,7 +53,7 @@ class SmokeTestClusterOpenSearch():
         # A remote base must stay "/"-separated: on Windows os.path.join would emit
         # backslashes, validators.url() would reject the result, and
         # Manifest.from_urlpath() would raise "Invalid manifest".
-        if base.startswith("https://") or base.startswith("http://"):
+        if base.startswith("https://"):
             return posixpath.join(base, *parts)
         return os.path.join(base, *parts)
 
