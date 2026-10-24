@@ -55,7 +55,7 @@ class TestPublishToMaven extends BuildPipelineTest {
 
     @Test
     public void testMavenReleasePipeline() {
-        super.testPipeline('jenkins/release-workflows/publish-to-maven-lf.jenkinsfile', 'tests/jenkins/jenkinsjob-regression-files/opensearch-maven-release/publish-to-maven-lf.jenkinsfile')
+        super.testPipeline('jenkins/release-workflows/publish-to-maven-lf.jenkinsfile', 'tests/jenkins/jenkinsjob-regression-files/opensearch-maven-release/publish-to-maven.jenkinsfile')
     }
 
     @Test

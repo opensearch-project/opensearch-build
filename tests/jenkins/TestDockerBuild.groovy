@@ -58,7 +58,7 @@ class TestDockerBuild extends BuildPipelineTest {
     @Test
     void DockerBuildRegression() {
         super.testPipeline('jenkins/docker/docker-build-lf.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/docker/docker-build-lf.jenkinsfile')
+                'tests/jenkins/jenkinsjob-regression-files/docker/docker-build.jenkinsfile')
     }
 
     @Test

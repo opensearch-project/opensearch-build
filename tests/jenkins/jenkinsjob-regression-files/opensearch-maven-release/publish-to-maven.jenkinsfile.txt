@@ -1,0 +1,296 @@
+   publish-to-maven-lf.run()
+      publish-to-maven-lf.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      publish-to-maven-lf.library({identifier=jenkins@lf-jenkins, retriever=null})
+      publish-to-maven-lf.pipeline(groovy.lang.Closure)
+         publish-to-maven-lf.timeout({time=6, unit=HOURS})
+         publish-to-maven-lf.echo(Executing on agent [docker:[alwaysPull:true, args:-e JAVA_HOME=/opt/java/openjdk-11, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, image:opensearchorg/opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+         publish-to-maven-lf.stage(sign-stage-and-release, groovy.lang.Closure)
+            publish-to-maven-lf.script(groovy.lang.Closure)
+               publish-to-maven-lf.echo(Downloading from S3.)
+               publish-to-maven-lf.withSecrets({secrets=[{envVar=ARTIFACT_BUCKET_NAME, secretRef=op://opensearch-release-secrets/aws-resource-arns/jenkins-artifact-bucket-name-lf}]}, groovy.lang.Closure)
+                  publish-to-maven-lf.downloadFromS3({localPath=/tmp/workspace/artifacts, bucketName=dummy-prod-bucket, downloadPath=distribution-build-opensearch/null/null/linux/x64/tar/builds/, roleAccountNumberCred=jenkins-aws-account-public-lf, assumedRoleName=opensearch-bundle, force=true})
+                     downloadFromS3.withSecrets({secrets=[{envVar=AWS_ACCOUNT_NUMBER, secretRef=op://opensearch-release-secrets/aws-accounts/jenkins-aws-account-public-lf}]}, groovy.lang.Closure)
+                        downloadFromS3.withAWS({role=opensearch-bundle, roleAccount=AWS_ACCOUNT_NUMBER, duration=900, roleSessionName=jenkins-session, region=us-east-1}, groovy.lang.Closure)
+                           downloadFromS3.s3Download({file=/tmp/workspace/artifacts, bucket=dummy-prod-bucket, path=distribution-build-opensearch/null/null/linux/x64/tar/builds/, force=true})
+               publish-to-maven-lf.echo(Signing, Staging and Publishing Maven artifacts.)
+               publish-to-maven-lf.echo(Major version is 2)
+               publish-to-maven-lf.echo(Signing email is opensearch@amazon.com)
+               publish-to-maven-lf.publishToMaven({signingArtifactsPath=/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/manifest.yml, mavenArtifactsPath=/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/maven, autoPublish=true, email=opensearch@amazon.com, multiPartsUpload=true, skipPublishedCheck=false})
+                  publishToMaven.legacySCM(groovy.lang.Closure)
+                  publishToMaven.library({identifier=jenkins@lf-jenkins, retriever=null})
+                  publishToMaven.loadCustomScript({scriptPath=publish/stage-maven-release.sh, scriptName=stage-maven-release.sh})
+                     loadCustomScript.libraryResource(publish/stage-maven-release.sh)
+                     loadCustomScript.writeFile({file=stage-maven-release.sh, text=#!/bin/bash
+
+###### Information ############################################################################
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+#
+# Name:          stage-maven-release.sh
+# Language:      Shell
+#
+# About:         Deploy opensearch artifacts to maven central.
+#                This script will zip all artifacts in the passed in directory into a bundle and
+#                upload it to the Sonatype Central Publisher Portal, then wait for validation.
+#                If AUTO_PUBLISH is enabled, it will publish to maven central once validated, and wait until published.
+#                The folder passed as input should contain subfolders org/opensearch
+#                to ensure artifacts are deployed under the correct groupId.
+#                Example: ./stage-maven-release.sh -d /maven -a false
+#                - where maven contains /maven/org/opensearch
+#
+# Usage:         ./stage-maven-release.sh -d <directory> -a <true|false> [-n <upload_name>]
+#
+###############################################################################################
+set -e
+
+usage() {
+  echo "usage: $0 [-h] -d <path_to_artifacts_dir> -a <true|false> [-n <upload_name>]"
+  echo "  -h      display help"
+  echo "  -d      parent directory containing artifacts to org/opensearch namespace."
+  echo "          example: dir = ~/.m2/repository where repository contains /org/opensearch"
+  echo "  -a      auto-publish to maven central after validation passes. Defaults to false."
+  echo "  -n      upload zip name without .zip. Defaults to maven_upload."
+  echo "Required environment variables:"
+  echo "SONATYPE_USERNAME - username with publish rights to a sonatype repository"
+  echo "SONATYPE_PASSWORD - publishing token for sonatype"
+  exit 1
+}
+AUTO_PUBLISH=false
+UPLOAD_NAME="maven_upload"
+CENTRAL_PORTAL_URL="https://central.sonatype.com"
+
+while getopts ":ha:d:n:" option; do
+  case $option in
+  h)
+    usage
+    ;;
+  a)
+    AUTO_PUBLISH="${OPTARG}"
+    ;;
+  d)
+    ARTIFACT_DIRECTORY="${OPTARG}"
+    ;;
+  n)
+    UPLOAD_NAME="${OPTARG}"
+    ;;
+  \?)
+    echo "Invalid option -$OPTARG" >&2
+    usage
+    ;;
+  :)
+    echo "Option -$OPTARG requires an argument" >&2
+    usage
+    ;;
+  esac
+done
+
+if [ "$AUTO_PUBLISH" != "true" ] && [ "$AUTO_PUBLISH" != "false" ]; then
+  echo "Error: Invalid value for -a: '$AUTO_PUBLISH'. Must be 'true' or 'false'"
+  usage
+fi
+
+required_env_vars=(ARTIFACT_DIRECTORY SONATYPE_USERNAME SONATYPE_PASSWORD)
+for var in "${required_env_vars[@]}"; do
+  if [ -z "${!var}" ]; then
+    echo "Error: $var is required"
+    usage
+  fi
+done
+
+if [ ! -d "$ARTIFACT_DIRECTORY" ]; then
+  echo "Invalid directory $ARTIFACT_DIRECTORY does not exist"
+  usage
+fi
+
+[ ! -d "$ARTIFACT_DIRECTORY"/org/opensearch ] && {
+  echo "Given directory does not contain opensearch artifacts"
+  usage
+}
+
+workdir=$(mktemp -d)
+
+cleanup() {
+  rm -rf "${workdir}"
+}
+trap cleanup TERM INT EXIT
+
+echo "AUTO_PUBLISH variable is set to: '$AUTO_PUBLISH'"
+echo "==========================================="
+echo "Deploying artifacts under ${ARTIFACT_DIRECTORY} to Central Publisher Portal."
+echo "==========================================="
+
+# Since 2026-10, Central Publisher Portal validation fails with a misleading "Bundle has content that does NOT have a .pom file"
+# when the bundle contains maven-metadata*.xml files, even though the poms are present.
+# https://github.com/opensearch-project/opensearch-build-libraries/issues/944, https://community.sonatype.com/t/central-portal-rejects-a-valid-bundle-bundle-has-content-that-does-not-have-a-pom-file-poms-are-present/16708
+echo "Removing maven-metadata files so that Central Publisher Portal will not reject bundles"
+find "${ARTIFACT_DIRECTORY}" -name 'maven-metadata*.xml*' -delete
+
+SONATYPE_AUTH="Authorization: Bearer $(printf '%s:%s' "${SONATYPE_USERNAME}" "${SONATYPE_PASSWORD}" | base64 | tr -d '\n')"
+if [ "${AUTO_PUBLISH}" = true ]; then
+  PUBLISHING_TYPE="AUTOMATIC"
+  EXPECTED_STATE="PUBLISHED"
+  EXPECTED_MESSAGE="Deployment published to Maven Central."
+else
+  PUBLISHING_TYPE="USER_MANAGED"
+  EXPECTED_STATE="VALIDATED"
+  EXPECTED_MESSAGE="Deployment validated, please publish it manually via Sonatype portal ${CENTRAL_PORTAL_URL}/publishing ."
+fi
+
+bundle="${workdir}/${UPLOAD_NAME}.zip"
+(cd "${ARTIFACT_DIRECTORY}" && zip -qr "${bundle}" .)
+echo "Uploading ${UPLOAD_NAME}.zip ($(du -h "${bundle}" | cut -f1)) with publishingType=${PUBLISHING_TYPE} at $(date -u)."
+RESPONSE_CODE=$(curl -s -o "${workdir}/upload_response" -w "%{http_code}" --max-time 1800 -X POST -H "${SONATYPE_AUTH}" \
+  --form bundle=@"${bundle}" "${CENTRAL_PORTAL_URL}/api/v1/publisher/upload?publishingType=${PUBLISHING_TYPE}" || true)
+echo "Upload response code: ${RESPONSE_CODE} at $(date -u)."
+
+if [[ ${RESPONSE_CODE} != 2* ]]; then
+  echo "Failed to upload bundle. Response code: ${RESPONSE_CODE}"
+  echo "Please check the Sonatype portal ${CENTRAL_PORTAL_URL}/publishing ."
+  exit 1
+fi
+PORTAL_DEPLOYMENT_ID=$(cat "${workdir}/upload_response")
+if [ -z "${PORTAL_DEPLOYMENT_ID}" ]; then
+  echo "Upload returned no deployment ID, please check via Sonatype portal ${CENTRAL_PORTAL_URL}/publishing ."
+  exit 1
+fi
+
+# Wait for the Portal validation, and the publish when AUTO_PUBLISH=true
+MAX_STATUS_CHECKS=60
+for i in $(seq 1 "${MAX_STATUS_CHECKS}"); do
+  DEPLOYMENT_STATUS=$(curl -s --max-time 30 -X POST -H "${SONATYPE_AUTH}" "${CENTRAL_PORTAL_URL}/api/v1/publisher/status?id=${PORTAL_DEPLOYMENT_ID}" || true)
+  DEPLOYMENT_STATE=$(echo "${DEPLOYMENT_STATUS}" | jq -R -r 'fromjson? | .deploymentState // empty')
+  echo "Deployment state: ${DEPLOYMENT_STATE:-no response or invalid data} (${i}/${MAX_STATUS_CHECKS})."
+  if [ "${DEPLOYMENT_STATE}" = "FAILED" ]; then
+    DEPLOYMENT_ERRORS=$(echo "${DEPLOYMENT_STATUS}" | jq -R -r 'fromjson? | .errors // empty')
+    echo "==========================================="
+    echo "Deployment failed with errors:"
+    echo "${DEPLOYMENT_ERRORS}"
+    echo "==========================================="
+    echo "Please check the errors via Sonatype portal ${CENTRAL_PORTAL_URL}/publishing ."
+    exit 1
+  fi
+  if [ "${DEPLOYMENT_STATE}" = "${EXPECTED_STATE}" ]; then
+    break
+  fi
+  if [ "${i}" -eq "${MAX_STATUS_CHECKS}" ]; then
+    echo "Timed out waiting for the deployment, please check via Sonatype portal ${CENTRAL_PORTAL_URL}/publishing ."
+    exit 1
+  fi
+  sleep 30
+done
+
+echo "${EXPECTED_MESSAGE}"
+
+echo "==========================================="
+echo "Done."
+echo "==========================================="
+})
+                     loadCustomScript.sh(chmod a+x ./stage-maven-release.sh)
+                  publishToMaven.signArtifacts({artifactPath=/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/manifest.yml, type=maven, platform=linux, sigtype=.asc, email=opensearch@amazon.com})
+                     signArtifacts.fileExists(/tmp/workspace/sign.sh)
+                     signArtifacts.dir(opensearch-build, groovy.lang.Closure)
+                        signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
+                     signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import - && curl -sSL https://artifacts.opensearch.org/publickeys/opensearch-release.pgp | gpg --import -)
+                     signArtifacts.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-token}, {envVar=SIGNER_CLIENT_ROLE, secretRef=op://opensearch-release-secrets/client-signing/jenkins-signer-client-role}, {envVar=SIGNER_CLIENT_EXTERNAL_ID, secretRef=op://opensearch-release-secrets/client-signing/jenkins-signer-client-external-id}, {envVar=SIGNER_CLIENT_UNSIGNED_BUCKET, secretRef=op://opensearch-release-secrets/client-signing/jenkins-signer-client-unsigned-bucket}, {envVar=SIGNER_CLIENT_SIGNED_BUCKET, secretRef=op://opensearch-release-secrets/client-signing/jenkins-signer-client-signed-bucket}]}, groovy.lang.Closure)
+                        signArtifacts.sh(#!/bin/bash
+                   set +x
+                   export ROLE=SIGNER_CLIENT_ROLE
+                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
+                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
+
+                   /tmp/workspace/opensearch-build/sign.sh /tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/manifest.yml --type maven --platform linux --sigtype .asc --email opensearch@amazon.com
+               )
+                  publishToMaven.withSecrets({secrets=[{envVar=SONATYPE_USERNAME, secretRef=op://opensearch-release-secrets/maven-central-portal-credentials/username}, {envVar=SONATYPE_PASSWORD, secretRef=op://opensearch-release-secrets/maven-central-portal-credentials/password}]}, groovy.lang.Closure)
+                     publishToMaven.println(Uploading Maven artifacts in multiple parts.)
+                     publishToMaven.sh(#!/bin/bash
+                    set -e
+                    sonatype_auth="Authorization: Bearer $(printf '%s:%s' "${SONATYPE_USERNAME}" "${SONATYPE_PASSWORD}" | base64 | tr -d '\n')"
+                    parts_dir="/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/maven/multiparts"
+                    part_folders=""
+                    part_size=0
+                    failed_folders=""
+                    part_count=0
+                    parts_summary=()
+                    upload_prefix="$(date -u +%Y-%m-%d)-234"
+
+                    upload_part() {
+                        part_count=$((part_count + 1))
+                        part_size_mb=$((part_size / 1024))
+                        part_files=$(find "${parts_dir}" -type f | wc -l | tr -d ' ')
+                        part_folder_count=$(echo ${part_folders} | wc -w | tr -d ' ')
+                        echo "Uploading Part ${part_count} (${part_size_mb}MB, ${part_folder_count} folders, ${part_files} files):${part_folders}"
+                        if ./stage-maven-release.sh -d "${parts_dir}" -a true -n "${upload_prefix}-part${part_count}"; then
+                            part_status="uploaded"
+                        else
+                            part_status="failed"
+                            failed_folders="${failed_folders}${part_folders}"
+                        fi
+                        echo "Part ${part_count} ${part_status}."
+                        parts_summary+=("Part ${part_count} (${part_size_mb}MB, ${part_folder_count} folders, ${part_files} files): ${part_status}")
+                        rm -rf "${parts_dir}"
+                        part_folders=""
+                        part_size=0
+                    }
+
+                    # Pack folders into parts of up to 500MB to stay well under the Portal 1GB bundle limit
+                    for folder in $(cd "/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/maven" && ls -d org/opensearch/* org/opensearch/plugin/* | grep -vx 'org/opensearch/plugin'); do
+
+                        # Verify pom status
+                        pom=$(cd "/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/maven" && find "${folder}" -name '*.pom' | head -1)
+                        if [ -z "${pom}" ]; then
+                            echo "Skipping ${folder}, no pom found."
+                            failed_folders="${failed_folders} ${folder}"
+                            continue
+                        fi
+
+                        # Verify Maven Central publish, first pom only as all poms in a folder are published together
+                        if [ "false" != "true" ]; then
+                            version_dir=${pom%/*}
+                            artifact_dir=${version_dir%/*}
+                            namespace=$(echo "${artifact_dir%/*}" | tr / .)
+                            name=${artifact_dir##*/}
+                            version=${version_dir##*/}
+                            published=$(curl -s --max-time 30 -H "${sonatype_auth}" "https://central.sonatype.com/api/v1/publisher/published?namespace=${namespace}&name=${name}&version=${version}" | jq -R -r 'fromjson? | .published // empty')
+                            if [ "${published}" = "true" ]; then
+                                echo "Skipping ${folder}, already on Maven Central."
+                                continue
+                            fi
+                        fi
+
+                        # Verify folder size
+                        size=$(du -sk "/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/maven/${folder}" | cut -f1)
+                        if [ "${part_size}" -gt 0 ] && [ $((part_size + size)) -gt 512000 ]; then
+                            upload_part
+                        fi
+                        echo "Adding ${folder}."
+                        mkdir -p "${parts_dir}/$(dirname "${folder}")"
+                        mv "/tmp/workspace/artifacts/distribution-build-opensearch/null/null/linux/x64/tar/builds/opensearch/maven/${folder}" "${parts_dir}/${folder}"
+                        part_folders="${part_folders} ${folder}"
+                        part_size=$((part_size + size))
+                    done
+
+                    # One last push
+                    if [ "${part_size}" -gt 0 ]; then
+                        upload_part
+                    fi
+
+                    # Output parts summary
+                    echo "==========================================="
+                    echo "Multi-parts upload summary:"
+                    printf '%s\n' "${parts_summary[@]}"
+                    echo "==========================================="
+
+                    # Output failure folders
+                    if [ -n "${failed_folders}" ]; then
+                        echo "Failed to upload:${failed_folders}"
+                        exit 1
+                    fi
+                )
+         publish-to-maven-lf.script(groovy.lang.Closure)
+            publish-to-maven-lf.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

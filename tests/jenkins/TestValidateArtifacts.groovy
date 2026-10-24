@@ -56,7 +56,7 @@ class TestValidateArtifacts extends BuildPipelineTest {
     @Test
     public void testValidateArtifactsPipeline() {
         super.testPipeline("jenkins/validate-artifacts/validate-artifacts-lf.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/validate-artifacts/validate-artifacts-lf.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/validate-artifacts/validate-artifacts.jenkinsfile")
         assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('./validation.sh --version 2.3.0  --distribution docker  --arch x64 --projects opensearch opensearch-dashboards --docker-source dockerhub ecr --os-build-number 6039 --osd-build-number 4104   --using-staging-artifact-only --skip-core-plugins arrow-base arrow-flight-rpc'))
         assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('./validation.sh --version 2.3.0  --distribution tar --platform linux --arch x64 --projects opensearch opensearch-dashboards  --os-build-number 6039 --osd-build-number 4104 --artifact-type production   --skip-core-plugins arrow-base arrow-flight-rpc'))
         assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('./validation.sh --version 2.3.0  --distribution yum --platform linux --arch x64 --projects opensearch opensearch-dashboards  --os-build-number 6039 --osd-build-number 4104 --artifact-type production   --skip-core-plugins arrow-base arrow-flight-rpc'))
