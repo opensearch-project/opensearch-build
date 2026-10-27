@@ -10,7 +10,7 @@
 // @job-name: publish-to-maven
 // @description: Publishes OpenSearch artifacts to Maven Central repository.
 
-lib = library(identifier: 'jenkins@13.11.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@13.11.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -28,6 +28,9 @@ pipeline {
             registryUrl 'https://public.ecr.aws/'
             alwaysPull true
         }
+    }
+    options {
+        timeout(time: 6, unit: 'HOURS')
     }
     parameters {
         string(
@@ -71,7 +74,9 @@ pipeline {
                         signingArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
                         mavenArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/maven",
                         autoPublish: true,
-                        email: "${email}"
+                        email: "${email}",
+                        multiPartsUpload: true,
+                        skipPublishedCheck: false
                     )
                 }
             }
