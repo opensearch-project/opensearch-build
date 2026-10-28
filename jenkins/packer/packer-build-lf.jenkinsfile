@@ -81,7 +81,7 @@ pipeline {
 
                     // Start to build packer
                     withSecrets(secrets: secret_aws_account) {
-                        withAWS(role: 'opensearch-packer', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 3600, roleSessionName: 'jenkins-session', useNode: true) {
+                        withAWS(role: 'opensearch-packer', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 3600, roleSessionName: 'jenkins-session') {
                             sh ("cd packer && packer build -color=false $PACKER_TEMPLATE_NAME_SUBSTITUTE")
                         }
                     }
