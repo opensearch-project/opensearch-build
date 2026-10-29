@@ -100,8 +100,40 @@ jobs:
         continue-on-error: true
         run: ./gradlew spotlessJavaCheck --no-daemon || true
 
-      - name: Increment Version in ${{ matrix.entry.repo }}
+      - name: Check plugin version before increment
         if: ${{ matrix.entry.repo != 'OpenSearch' }}
+        id: version_check
+        run: |
+          if [ ${{ matrix.entry.path }} ]; then
+            echo "The gradle path is ${{ matrix.entry.path }}"
+            cd ${{ matrix.entry.path }}
+          fi
+
+          current_version=$(./gradlew properties -q | awk '/^version:/ { print $2; exit }')
+          if [ -z "$current_version" ]; then
+            echo "Unable to determine the current version for ${{ matrix.entry.repo }}" >&2
+            exit 1
+          fi
+
+          normalize_version() {
+            echo "$1" | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+)\.0(-SNAPSHOT)?$/\1\2/'
+          }
+
+          current_version=$(normalize_version "$current_version")
+          target_version=$(normalize_version "${{ env.OPENSEARCH_VERSION }}")
+          current_base=${current_version%-SNAPSHOT}
+          target_base=${target_version%-SNAPSHOT}
+
+          if [ "$(printf '%s\n%s\n' "$current_base" "$target_base" | sort -V | tail -n 1)" = "$current_base" ]; then
+            echo "Skipping version increment for ${{ matrix.entry.repo }} on ${{ matrix.branch }}: current version $current_version is not older than target $target_version."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Incrementing ${{ matrix.entry.repo }} on ${{ matrix.branch }} from $current_version to $target_version."
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Increment Version in ${{ matrix.entry.repo }}
+        if: ${{ matrix.entry.repo != 'OpenSearch' && steps.version_check.outputs.skip != 'true' }}
         run: |
           rm -rvf .git/hooks
           echo "OpenSearch Core repo version on branch ${{ matrix.branch }} is ${{ env.OPENSEARCH_VERSION_NUMBER }}"
@@ -112,7 +144,7 @@ jobs:
           ./gradlew updateVersion -DnewVersion=${{ env.OPENSEARCH_VERSION }}
 
       - name: Create Pull Request
-        if: ${{ matrix.entry.repo != 'OpenSearch' }}
+        if: ${{ matrix.entry.repo != 'OpenSearch' && steps.version_check.outputs.skip != 'true' }}
         id: cpr
         uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
@@ -131,7 +163,7 @@ jobs:
             - Incremented version to **${{ env.OPENSEARCH_VERSION }}**.
 
       - name: Check outputs
-        if: ${{ matrix.entry.repo != 'OpenSearch' }}
+        if: ${{ matrix.entry.repo != 'OpenSearch' && steps.version_check.outputs.skip != 'true' }}
         run: |-
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
