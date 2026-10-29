@@ -19,8 +19,7 @@
                      release-notes-generate.node(Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, groovy.lang.Closure)
                         release-notes-generate.sh(echo OpenSearch with index 0 will sleep 0 seconds to reduce load && sleep 0)
                         release-notes-generate.unstash(release-notes-opensearch-12345)
-                        release-notes-generate.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
-                        release-notes-generate.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                        release-notes-generate.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-token}]}, groovy.lang.Closure)
                            release-notes-generate.sh(
                                                                 #!/bin/bash
                                                                 set +e
@@ -84,8 +83,7 @@
                      release-notes-generate.node(Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host, groovy.lang.Closure)
                         release-notes-generate.sh(echo sql with index 1 will sleep 30 seconds to reduce load && sleep 30)
                         release-notes-generate.unstash(release-notes-opensearch-12345)
-                        release-notes-generate.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
-                        release-notes-generate.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                        release-notes-generate.withSecrets({secrets=[{envVar=GITHUB_USER, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-username}, {envVar=GITHUB_TOKEN, secretRef=op://opensearch-release-secrets/github-bot/ci-bot-token}]}, groovy.lang.Closure)
                            release-notes-generate.sh(
                                                                 #!/bin/bash
                                                                 set +e
