@@ -262,6 +262,87 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
 
     @patch('boto3.client')
     @patch('time.sleep')
+    def test_call_bedrock_claude_retries_without_temperature_when_model_rejects_it(self, mock_sleep: MagicMock, mock_boto3_client: MagicMock) -> None:
+        """Test Bedrock call is retried without temperature when the model rejects it."""
+        mock_client = MagicMock()
+
+        temperature_error = ClientError(
+            error_response={'Error': {'Code': 'ValidationException', 'Message': '`temperature` is deprecated for this model.'}},
+            operation_name='invoke_model'
+        )
+        mock_client.invoke_model.side_effect = [temperature_error, self.mock_response]
+        mock_boto3_client.return_value = mock_client
+
+        self.mock_args.model_id = "us.anthropic.claude-opus-4-8"
+        generator = AIReleaseNotesGenerator(self.mock_args)
+
+        result = generator.call_bedrock_claude("Test prompt")
+
+        self.assertEqual(result, "Generated release notes")
+        self.assertEqual(mock_client.invoke_model.call_count, 2)
+        first_body = json.loads(mock_client.invoke_model.call_args_list[0].kwargs['body'])
+        second_body = json.loads(mock_client.invoke_model.call_args_list[1].kwargs['body'])
+        self.assertEqual(first_body["temperature"], 0.1)
+        self.assertEqual(second_body, {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 2000,
+            "messages": [{"role": "user", "content": "Test prompt"}]
+        })
+        mock_sleep.assert_not_called()
+
+    @patch('boto3.client')
+    @patch('time.sleep')
+    def test_call_bedrock_claude_without_temperature_keeps_retry_budget(self, mock_sleep: MagicMock, mock_boto3_client: MagicMock) -> None:
+        """Test dropping temperature does not use up a retry for throttling."""
+        mock_client = MagicMock()
+
+        temperature_error = ClientError(
+            error_response={'Error': {'Code': 'ValidationException', 'Message': '`temperature` is deprecated for this model.'}},
+            operation_name='invoke_model'
+        )
+        throttling_error = ClientError(
+            error_response={'Error': {'Code': 'ThrottlingException', 'Message': 'Rate exceeded'}},
+            operation_name='invoke_model'
+        )
+        mock_client.invoke_model.side_effect = [temperature_error, throttling_error, throttling_error, throttling_error, self.mock_response]
+        mock_boto3_client.return_value = mock_client
+
+        generator = AIReleaseNotesGenerator(self.mock_args)
+
+        result = generator.call_bedrock_claude("Test prompt")
+
+        self.assertEqual(result, "Generated release notes")
+        self.assertEqual(mock_client.invoke_model.call_count, 5)
+        self.assertEqual(mock_sleep.call_count, 3)
+
+    @patch('boto3.client')
+    @patch('time.sleep')
+    @patch('sys.exit')
+    @patch('logging.error')
+    def test_call_bedrock_claude_temperature_rejected_twice_exits(self, mock_logging: MagicMock, mock_sys_exit: MagicMock, mock_sleep: MagicMock, mock_boto3_client: MagicMock) -> None:
+        """Test Bedrock call exits when the request is still rejected without temperature."""
+        mock_client = MagicMock()
+
+        temperature_error = ClientError(
+            error_response={'Error': {'Code': 'ValidationException', 'Message': '`temperature` is deprecated for this model.'}},
+            operation_name='invoke_model'
+        )
+        mock_client.invoke_model.side_effect = temperature_error
+        mock_boto3_client.return_value = mock_client
+        mock_sys_exit.side_effect = SystemExit(1)
+
+        generator = AIReleaseNotesGenerator(self.mock_args)
+
+        with self.assertRaises(SystemExit):
+            generator.call_bedrock_claude("Test prompt")
+
+        self.assertEqual(mock_client.invoke_model.call_count, 2)
+        mock_sleep.assert_not_called()
+        mock_logging.assert_any_call("AWS Bedrock Error (ValidationException): `temperature` is deprecated for this model.")
+        mock_sys_exit.assert_called_with(1)
+
+    @patch('boto3.client')
+    @patch('time.sleep')
     @patch('sys.exit')
     @patch('logging.error')
     @patch('logging.warning')

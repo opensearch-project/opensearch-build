@@ -53,7 +53,7 @@ class AIReleaseNotesGenerator:
         jitter: float = random.uniform(0.1, 0.5)
         return delay + jitter
 
-    def call_bedrock_claude(self, prompt: str) -> str:
+    def call_bedrock_claude(self, prompt: str, send_temperature: bool = True) -> str:
         """Call AWS Bedrock Claude Sonnet 3.5 v2 model with retry logic"""
 
         # Prepare the request body
@@ -68,6 +68,8 @@ class AIReleaseNotesGenerator:
                 }
             ]
         }
+        if not send_temperature:
+            del request_body["temperature"]
 
         last_exception: Exception = None
 
@@ -88,6 +90,11 @@ class AIReleaseNotesGenerator:
                 error_code = e.response['Error']['Code']
                 error_message = e.response['Error']['Message']
                 last_exception = e
+
+                if error_code == "ValidationException" and "temperature" in error_message.lower() and send_temperature:
+                    # Newer Claude models (e.g. Opus 4.8) reject the temperature parameter
+                    logging.warning(f"Model {self.model_id} does not accept the temperature parameter ({error_message}). Retrying without it.")
+                    return self.call_bedrock_claude(prompt, send_temperature=False)
 
                 if not self._should_retry(e):
                     # Handle non-retryable errors immediately
