@@ -29,6 +29,9 @@ pipeline {
             alwaysPull true
         }
     }
+    options {
+        timeout(time: 6, unit: 'HOURS')
+    }
     parameters {
         string(
             name: 'BUILD_ID',
@@ -71,7 +74,9 @@ pipeline {
                         signingArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
                         mavenArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/maven",
                         autoPublish: true,
-                        email: "${email}"
+                        email: "${email}",
+                        multiPartsUpload: true,
+                        skipPublishedCheck: false
                     )
                 }
             }

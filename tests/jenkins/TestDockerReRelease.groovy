@@ -61,7 +61,7 @@ class TestDockerReRelease extends BuildPipelineTest {
     @Test
     void testReRelease() {
         super.testPipeline('jenkins/docker/docker-re-release-lf.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/docker/docker-re-release-lf.jenkinsfile')
+                'tests/jenkins/jenkinsjob-regression-files/docker/docker-re-release.jenkinsfile')
     }
 
     @Test

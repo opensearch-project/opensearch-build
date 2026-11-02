@@ -48,10 +48,6 @@ class TestReleaseNotesGenerate extends BuildPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
-        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
-            closure.delegate = delegate
-            return helper.callClosure(closure)
-        })
         helper.registerAllowedMethod("readYaml", [Map], {
             return new Yaml().load(('tests/jenkins/data/opensearch-2.2.0.yml' as File).text)
             //c -> lib.jenkins.InputManifest.new(readYaml(file: 'tests/jenkins/data/opensearch-2.2.0.yml'))

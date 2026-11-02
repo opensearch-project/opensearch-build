@@ -56,7 +56,7 @@ class TestPromoteContainer extends BuildPipelineTest {
         binding.setVariable('TAG_MAJOR_VERSION', majorVersionBoolean)
 
         super.testPipeline("jenkins/release-workflows/promote-docker-ecr-lf.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDocker-lf.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDocker.jenkinsfile")
     }
 
     @Test
@@ -71,7 +71,7 @@ class TestPromoteContainer extends BuildPipelineTest {
         binding.setVariable('TAG_MAJOR_VERSION', majorVersionBoolean)
 
         super.testPipeline("jenkins/release-workflows/promote-docker-ecr-lf.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDockerLatest-lf.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDockerLatest.jenkinsfile")
     }
 
     @Test
@@ -86,7 +86,7 @@ class TestPromoteContainer extends BuildPipelineTest {
         binding.setVariable('TAG_MAJOR_VERSION', majorVersionBoolean)
 
         super.testPipeline("jenkins/release-workflows/promote-docker-ecr-lf.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDockerMajor-lf.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDockerMajor.jenkinsfile")
     }
 
     @Test
@@ -101,7 +101,7 @@ class TestPromoteContainer extends BuildPipelineTest {
         binding.setVariable('TAG_MAJOR_VERSION', majorVersionBoolean)
 
         super.testPipeline("jenkins/release-workflows/promote-docker-ecr-lf.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDockerLatestMajor-lf.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDockerLatestMajor.jenkinsfile")
     }
 
     @Test
@@ -116,7 +116,7 @@ class TestPromoteContainer extends BuildPipelineTest {
         binding.setVariable('TAG_MAJOR_VERSION', majorVersionBoolean)
 
         super.testPipeline("jenkins/release-workflows/promote-docker-ecr-lf.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToECRLatestMajor-lf.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToECRLatestMajor.jenkinsfile")
     }
 
     @Test
@@ -131,7 +131,7 @@ class TestPromoteContainer extends BuildPipelineTest {
         binding.setVariable('TAG_MAJOR_VERSION', majorVersionBoolean)
 
         super.testPipeline("jenkins/release-workflows/promote-docker-ecr-lf.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDockerECRLatestMajor-lf.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/promotion/promote-container/promote-container-testPromoteContainerToDockerECRLatestMajor.jenkinsfile")
     }
 
 }

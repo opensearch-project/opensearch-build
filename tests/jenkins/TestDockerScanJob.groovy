@@ -38,6 +38,6 @@ class TestDockerScanJob extends BuildPipelineTest {
     @Test
     void DockerScan_test() {
         super.testPipeline('jenkins/docker/docker-scan-lf.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/docker/docker-scan-lf.jenkinsfile')
+                'tests/jenkins/jenkinsjob-regression-files/docker/docker-scan.jenkinsfile')
     }
 }
