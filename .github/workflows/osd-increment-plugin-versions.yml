@@ -89,6 +89,20 @@ jobs:
         if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         run: |
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
+          # Skip if plugin is already ahead of core (e.g. plugin 3.9.1 vs core 3.9.0) to avoid downgrade PRs
+          PLUGIN_VERSION_NUMBER=$(node -p "require('./package.json').version" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+' || true)
+          if [ -z "$PLUGIN_VERSION_NUMBER" ]; then
+            echo "::warning::${{ matrix.entry.repo }} ${{ matrix.branch }}: cannot read plugin version, skip downgrade check"
+          fi
+          if [ -n "$PLUGIN_VERSION_NUMBER" ] && [ "$PLUGIN_VERSION_NUMBER" != "${{ env.DASHBOARD_VERSION }}" ] && printf '%s\n%s\n' "${{ env.DASHBOARD_VERSION }}" "$PLUGIN_VERSION_NUMBER" | sort -V -C; then
+            echo "::notice::${{ matrix.entry.repo }} ${{ matrix.branch }}: plugin version $PLUGIN_VERSION_NUMBER is newer than core ${{ env.DASHBOARD_VERSION }}, skip increment"
+            if [ "${{ matrix.entry.repo }}" = "opensearch-dashboards-functional-test" ]; then
+              echo "OSD_PLUGIN_VERSION=${{ env.DASHBOARD_VERSION }}" >> $GITHUB_ENV
+            else
+              echo "OSD_PLUGIN_VERSION=${{ env.DASHBOARD_VERSION }}.0" >> $GITHUB_ENV
+            fi
+            exit 0
+          fi
           if [ ${{ matrix.entry.path }} ]; then
               yarn osd bootstrap --single-version=loose
               cp -R ${{ matrix.entry.path }} ../
