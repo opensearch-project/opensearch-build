@@ -266,10 +266,10 @@ jobs:
               "<table><tr><th>Path</th><th>Line</th><th>Severity</th><th>Description</th></tr>" +
               (
                 .issues | map(
-                  "<tr><td>" + .path + "</td><td>" + 
+                  "<tr><td>" + (.path | @html | gsub("\r?\n"; "<br/>")) + "</td><td>" + 
                   (.line | tostring) + "</td><td>" + 
-                  .severity + "</td><td>" + 
-                  .description + "</td></tr>"
+                  (.severity | @html | gsub("\r?\n"; "<br/>")) + "</td><td>" + 
+                  (.description | @html | gsub("\r?\n"; "<br/>")) + "</td></tr>"
                 ) | join("")
               ) +
               "</table><p>" +
@@ -279,7 +279,7 @@ jobs:
               " | High: " + (.counts.high | tostring) + 
               " | Medium: " + (.counts.medium | tostring) + 
               " | Low: " + (.counts.low | tostring) + "</strong></p>"
-            ')
+            ' | tr '\r\n' '  ')
             echo "diff_report=$diff_report_temp" >> $GITHUB_ENV
           else
             echo "Diff analyzer did not find any specific issues yet"
