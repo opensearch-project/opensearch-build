@@ -102,7 +102,7 @@ jobs:
           else
             echo "wrong github event: ${{ github.event_name }}, must be 'push' or 'pull_request_target'"
             echo "diff_analyzer=5" >> $GITHUB_ENV
-            echo "diff_report='wrong github event'" >> $GITHUB_ENV
+            echo "diff_report=wrong github event" >> $GITHUB_ENV
             exit 1
           fi
 
@@ -136,9 +136,15 @@ jobs:
           fi
 
           if [ -n "$FAIL_REASON" ]; then
-            echo "$FAIL_REASON, requires skip by maintainers after manual review"
+            FAIL_MESSAGE="$FAIL_REASON, requires skip by maintainers after manual review"
+            echo "$FAIL_MESSAGE"
+            EOF_MARKER="DIFF_REPORT_EOF_$(openssl rand -hex 16)"
             echo "diff_analyzer=5" >> $GITHUB_ENV
-            echo "diff_report='$FAIL_REASON, requires skip by maintainers after manual review'" >> $GITHUB_ENV
+            {
+              echo "diff_report<<$EOF_MARKER"
+              echo "$FAIL_MESSAGE"
+              echo "$EOF_MARKER"
+            } >> $GITHUB_ENV
             exit 1
           fi
           echo "-------------------------------------------------------"
@@ -279,11 +285,16 @@ jobs:
               " | High: " + (.counts.high | tostring) + 
               " | Medium: " + (.counts.medium | tostring) + 
               " | Low: " + (.counts.low | tostring) + "</strong></p>"
-            ' | tr '\r\n' '  ')
-            echo "diff_report=$diff_report_temp" >> $GITHUB_ENV
+            ')
+            EOF_MARKER="DIFF_REPORT_EOF_$(openssl rand -hex 16)"
+            {
+              echo "diff_report<<$EOF_MARKER"
+              echo "$diff_report_temp"
+              echo "$EOF_MARKER"
+            } >> $GITHUB_ENV
           else
             echo "Diff analyzer did not find any specific issues yet"
-            echo "diff_report='No specific issues has been found by AI on this PR'" >> $GITHUB_ENV
+            echo "diff_report=No specific issues has been found by AI on this PR" >> $GITHUB_ENV
           fi
 
           if [ "$DIFF_ISSUE_CRITICAL" != "0" ]; then
