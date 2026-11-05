@@ -117,15 +117,18 @@ jobs:
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3.diff" \
             "https://api.github.com/repos/${{ github.repository }}/compare/${BASE_SHA}...${HEAD_SHA}")
+          CURL_RC=$?
 
           DIFF_SIZE=$(cat $DIFF_CONTENT_PATH | wc -c)
           DIFF_TOKEN_EST=$((DIFF_SIZE / 3))
           DIFF_FIRST_LINE=$(head -n 1 $DIFF_CONTENT_PATH)
-          echo "Compare API response code: $DIFF_HTTP_CODE"
+          echo "Compare API response code: $DIFF_HTTP_CODE (curl exit $CURL_RC)"
           echo "Check diff size of '$DIFF_SIZE', token number '$DIFF_TOKEN_EST', max token limit '$CLAUDE_CODE_MAX_INPUT_TOKENS'"
 
           FAIL_REASON=""
-          if [ "$DIFF_HTTP_CODE" != "200" ]; then
+          if [ "$CURL_RC" != "0" ]; then
+            FAIL_REASON="Failed to retrieve diff"
+          elif [ "$DIFF_HTTP_CODE" != "200" ]; then
             FAIL_REASON="Failed to retrieve diff"
           elif [ ! -s $DIFF_CONTENT_PATH ]; then
             FAIL_REASON="Diff is empty"
