@@ -113,17 +113,32 @@ jobs:
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
         run: |
           echo "Get diff between base($BASE_SHA) and head($HEAD_SHA)"
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          DIFF_HTTP_CODE=$(curl -sS -o $DIFF_CONTENT_PATH -w '%{http_code}' \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3.diff" \
-            "https://api.github.com/repos/${{ github.repository }}/compare/${BASE_SHA}...${HEAD_SHA}" > $DIFF_CONTENT_PATH
+            "https://api.github.com/repos/${{ github.repository }}/compare/${BASE_SHA}...${HEAD_SHA}")
 
           DIFF_SIZE=$(cat $DIFF_CONTENT_PATH | wc -c)
           DIFF_TOKEN_EST=$((DIFF_SIZE / 3))
+          DIFF_FIRST_LINE=$(head -n 1 $DIFF_CONTENT_PATH)
+          echo "Compare API response code: $DIFF_HTTP_CODE"
           echo "Check diff size of '$DIFF_SIZE', token number '$DIFF_TOKEN_EST', max token limit '$CLAUDE_CODE_MAX_INPUT_TOKENS'"
-          if [ "$DIFF_TOKEN_EST" -ge "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
-            echo "Diff too large, requires skip by maintainers after manual review"
+
+          FAIL_REASON=""
+          if [ "$DIFF_HTTP_CODE" != "200" ]; then
+            FAIL_REASON="Failed to retrieve diff"
+          elif [ ! -s $DIFF_CONTENT_PATH ]; then
+            FAIL_REASON="Diff is empty"
+          elif [[ "$DIFF_FIRST_LINE" != "diff --git "* ]]; then
+            FAIL_REASON="Diff format is invalid"
+          elif [ "$DIFF_TOKEN_EST" -ge "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
+            FAIL_REASON="Diff too large"
+          fi
+
+          if [ -n "$FAIL_REASON" ]; then
+            echo "$FAIL_REASON, requires skip by maintainers after manual review"
             echo "diff_analyzer=5" >> $GITHUB_ENV
-            echo "diff_report='Diff too large, requires skip by maintainers after manual review'" >> $GITHUB_ENV
+            echo "diff_report='$FAIL_REASON, requires skip by maintainers after manual review'" >> $GITHUB_ENV
             exit 1
           fi
           echo "-------------------------------------------------------"
