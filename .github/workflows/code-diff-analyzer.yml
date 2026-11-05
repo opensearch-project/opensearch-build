@@ -102,7 +102,7 @@ jobs:
           else
             echo "wrong github event: ${{ github.event_name }}, must be 'push' or 'pull_request_target'"
             echo "diff_analyzer=5" >> $GITHUB_ENV
-            echo "diff_report='wrong github event'" >> $GITHUB_ENV
+            echo "diff_report=wrong github event" >> $GITHUB_ENV
             exit 1
           fi
 
@@ -113,24 +113,50 @@ jobs:
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
         run: |
           echo "Get diff between base($BASE_SHA) and head($HEAD_SHA)"
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          rm -f $DIFF_CONTENT_PATH
+          curl -sS -o $DIFF_CONTENT_PATH -w '%{http_code}' \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3.diff" \
-            "https://api.github.com/repos/${{ github.repository }}/compare/${BASE_SHA}...${HEAD_SHA}" > $DIFF_CONTENT_PATH
+            "https://api.github.com/repos/${{ github.repository }}/compare/${BASE_SHA}...${HEAD_SHA}" > diff_http_code.txt
+          CURL_RC=$?
+          DIFF_HTTP_CODE=$(cat diff_http_code.txt)
 
           DIFF_SIZE=$(cat $DIFF_CONTENT_PATH | wc -c)
           DIFF_TOKEN_EST=$((DIFF_SIZE / 3))
+          DIFF_FIRST_LINE=$(head -n 1 $DIFF_CONTENT_PATH)
+          echo "Compare API response code: $DIFF_HTTP_CODE (curl exit $CURL_RC)"
           echo "Check diff size of '$DIFF_SIZE', token number '$DIFF_TOKEN_EST', max token limit '$CLAUDE_CODE_MAX_INPUT_TOKENS'"
-          if [ "$DIFF_TOKEN_EST" -ge "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
-            echo "Diff too large, requires skip by maintainers after manual review"
+
+          FAIL_REASON=""
+          if [ "$CURL_RC" != "0" ]; then
+            FAIL_REASON="Failed to retrieve diff"
+          elif [ "$DIFF_HTTP_CODE" != "200" ]; then
+            FAIL_REASON="Failed to retrieve diff"
+          elif [ ! -s $DIFF_CONTENT_PATH ]; then
+            FAIL_REASON="Diff is empty"
+          elif [[ "$DIFF_FIRST_LINE" != "diff --git "* ]]; then
+            FAIL_REASON="Diff format is invalid"
+          elif [ "$DIFF_TOKEN_EST" -ge "$CLAUDE_CODE_MAX_INPUT_TOKENS" ]; then
+            FAIL_REASON="Diff too large"
+          fi
+
+          if [ -n "$FAIL_REASON" ]; then
+            FAIL_MESSAGE="$FAIL_REASON, requires skip by maintainers after manual review"
+            echo "$FAIL_MESSAGE"
+            EOF_MARKER="DIFF_REPORT_EOF_$(date +%s%N)_$(openssl rand -hex 16)"
             echo "diff_analyzer=5" >> $GITHUB_ENV
-            echo "diff_report='Diff too large, requires skip by maintainers after manual review'" >> $GITHUB_ENV
+            {
+              echo "diff_report<<$EOF_MARKER"
+              echo "$FAIL_MESSAGE"
+              echo "$EOF_MARKER"
+            } >> $GITHUB_ENV
             exit 1
           fi
           echo "-------------------------------------------------------"
           cat $DIFF_CONTENT_PATH
           echo "-------------------------------------------------------"
 
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
         with:
           node-version: 24
@@ -143,7 +169,7 @@ jobs:
 
       - name: Configure AWS credentials
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
-        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6
+        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885  # v6
         with:
           role-to-assume: ${{ secrets.BEDROCK_ACCESS_ROLE }}
           aws-region: us-east-1
@@ -229,18 +255,18 @@ jobs:
           echo "Processing AI results"
           diff_report_json=$(cat $DIFF_REPORT_PATH | jq -c '.')
           echo "-------------------------------------------------------"
-          echo $diff_report_json | jq -r
+          echo "$diff_report_json" | jq -r
           echo "-------------------------------------------------------"
           unset AWS_ACCESS_KEY_ID
           unset AWS_SECRET_ACCESS_KEY  
 
           echo "Start issue count"
-          DIFF_ISSUE_TOTAL=$(echo $diff_report_json | jq -r .counts.total)
-          DIFF_ISSUE_CRITICAL=$(echo $diff_report_json | jq -r .counts.critical)
-          DIFF_ISSUE_HIGH=$(echo $diff_report_json | jq -r .counts.high)
-          DIFF_ISSUE_MEDIUM=$(echo $diff_report_json | jq -r .counts.medium)
-          DIFF_ISSUE_LOW=$(echo $diff_report_json | jq -r .counts.low)
-          DIFF_TRUNCATED=$(echo $diff_report_json | jq -r .truncated)
+          DIFF_ISSUE_TOTAL=$(echo "$diff_report_json" | jq -r .counts.total)
+          DIFF_ISSUE_CRITICAL=$(echo "$diff_report_json" | jq -r .counts.critical)
+          DIFF_ISSUE_HIGH=$(echo "$diff_report_json" | jq -r .counts.high)
+          DIFF_ISSUE_MEDIUM=$(echo "$diff_report_json" | jq -r .counts.medium)
+          DIFF_ISSUE_LOW=$(echo "$diff_report_json" | jq -r .counts.low)
+          DIFF_TRUNCATED=$(echo "$diff_report_json" | jq -r .truncated)
           echo "Issue Count: Total($DIFF_ISSUE_TOTAL), Critical($DIFF_ISSUE_CRITICAL), High($DIFF_ISSUE_HIGH), Medium($DIFF_ISSUE_MEDIUM), Low($DIFF_ISSUE_LOW)"
           echo "-------------------------------------------------------"
 
@@ -251,10 +277,10 @@ jobs:
               "<table><tr><th>Path</th><th>Line</th><th>Severity</th><th>Description</th></tr>" +
               (
                 .issues | map(
-                  "<tr><td>" + .path + "</td><td>" + 
+                  "<tr><td>" + (.path | @html | gsub("\r?\n"; "<br/>")) + "</td><td>" + 
                   (.line | tostring) + "</td><td>" + 
-                  .severity + "</td><td>" + 
-                  .description + "</td></tr>"
+                  (.severity | @html | gsub("\r?\n"; "<br/>")) + "</td><td>" + 
+                  (.description | @html | gsub("\r?\n"; "<br/>")) + "</td></tr>"
                 ) | join("")
               ) +
               "</table><p>" +
@@ -265,10 +291,15 @@ jobs:
               " | Medium: " + (.counts.medium | tostring) + 
               " | Low: " + (.counts.low | tostring) + "</strong></p>"
             ')
-            echo "diff_report=$diff_report_temp" >> $GITHUB_ENV
+            EOF_MARKER="DIFF_REPORT_EOF_$(date +%s%N)_$(openssl rand -hex 16)"
+            {
+              echo "diff_report<<$EOF_MARKER"
+              echo "$diff_report_temp"
+              echo "$EOF_MARKER"
+            } >> $GITHUB_ENV
           else
             echo "Diff analyzer did not find any specific issues yet"
-            echo "diff_report='No specific issues has been found by AI on this PR'" >> $GITHUB_ENV
+            echo "diff_report=No specific issues has been found by AI on this PR" >> $GITHUB_ENV
           fi
 
           if [ "$DIFF_ISSUE_CRITICAL" != "0" ]; then
@@ -308,7 +339,7 @@ jobs:
       - name: Find existing PR Code Analyzer comment
         if: ${{ always() && github.event_name == 'pull_request_target' && inputs.update_pr_comment_with_analyzer_report && env.diff_analyzer != '0' && env.diff_analyzer != '9' }}
         id: find-comment
-        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e  # v3
         with:
           issue-number: ${{ github.event.number }}
           comment-author: 'github-actions[bot]'
@@ -325,9 +356,15 @@ jobs:
             *) echo "hard_fail_name=High" >> $GITHUB_ENV ;;
           esac
 
+          if [ "${{ env.diff_analyzer }}" = "5" ] || [ -z "${{ env.diff_analyzer }}" ]; then
+            echo "analyzer_result=could not analyze" >> $GITHUB_ENV
+          else
+            echo "analyzer_result=found issues on" >> $GITHUB_ENV
+          fi
+
       - name: Create Comment Failure Git Diff Analyzer
         if: ${{ always() && github.event_name == 'pull_request_target' && inputs.update_pr_comment_with_analyzer_report && env.diff_analyzer != '0' && env.diff_analyzer != '9' }}
-        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9  # v5
         with:
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           repository: ${{ github.repository }}
@@ -336,11 +373,11 @@ jobs:
           body: |
             ## PR Code Analyzer :exclamation:
 
-            **AI-powered '*Code-Diff-Analyzer*' found issues on commit ${{ env.HEAD_SHA }}.**
+            **AI-powered '*Code-Diff-Analyzer*' ${{ env.analyzer_result }} commit ${{ env.HEAD_SHA || 'unknown' }}.**
 
             :no_entry: **Hard block**: Issues at **${{ env.hard_fail_name }}** severity or above will block this PR from merging.
 
-            ${{ env.diff_report }}
+            ${{ env.diff_report || 'Analyzer failed unexpectedly, please check the workflow logs' }}
 
             ***
 
