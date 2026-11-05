@@ -113,11 +113,12 @@ jobs:
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
         run: |
           echo "Get diff between base($BASE_SHA) and head($HEAD_SHA)"
-          DIFF_HTTP_CODE=$(curl -sS -o $DIFF_CONTENT_PATH -w '%{http_code}' \
+          curl -sS -o $DIFF_CONTENT_PATH -w '%{http_code}' \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3.diff" \
-            "https://api.github.com/repos/${{ github.repository }}/compare/${BASE_SHA}...${HEAD_SHA}")
+            "https://api.github.com/repos/${{ github.repository }}/compare/${BASE_SHA}...${HEAD_SHA}" > diff_http_code.txt
           CURL_RC=$?
+          DIFF_HTTP_CODE=$(cat diff_http_code.txt)
 
           DIFF_SIZE=$(cat $DIFF_CONTENT_PATH | wc -c)
           DIFF_TOKEN_EST=$((DIFF_SIZE / 3))
