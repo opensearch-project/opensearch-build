@@ -113,6 +113,7 @@ jobs:
         if: ${{ env.diff_analyzer != '5' && env.diff_analyzer != '9' }}
         run: |
           echo "Get diff between base($BASE_SHA) and head($HEAD_SHA)"
+          rm -f $DIFF_CONTENT_PATH
           curl -sS -o $DIFF_CONTENT_PATH -w '%{http_code}' \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3.diff" \
@@ -142,7 +143,7 @@ jobs:
           if [ -n "$FAIL_REASON" ]; then
             FAIL_MESSAGE="$FAIL_REASON, requires skip by maintainers after manual review"
             echo "$FAIL_MESSAGE"
-            EOF_MARKER="DIFF_REPORT_EOF_$(openssl rand -hex 16)"
+            EOF_MARKER="DIFF_REPORT_EOF_$(date +%s%N)_$(openssl rand -hex 16)"
             echo "diff_analyzer=5" >> $GITHUB_ENV
             {
               echo "diff_report<<$EOF_MARKER"
@@ -290,7 +291,7 @@ jobs:
               " | Medium: " + (.counts.medium | tostring) + 
               " | Low: " + (.counts.low | tostring) + "</strong></p>"
             ')
-            EOF_MARKER="DIFF_REPORT_EOF_$(openssl rand -hex 16)"
+            EOF_MARKER="DIFF_REPORT_EOF_$(date +%s%N)_$(openssl rand -hex 16)"
             {
               echo "diff_report<<$EOF_MARKER"
               echo "$diff_report_temp"
@@ -372,7 +373,7 @@ jobs:
           body: |
             ## PR Code Analyzer :exclamation:
 
-            **AI-powered '*Code-Diff-Analyzer*' ${{ env.analyzer_result }} commit ${{ env.HEAD_SHA }}.**
+            **AI-powered '*Code-Diff-Analyzer*' ${{ env.analyzer_result }} commit ${{ env.HEAD_SHA || 'unknown' }}.**
 
             :no_entry: **Hard block**: Issues at **${{ env.hard_fail_name }}** severity or above will block this PR from merging.
 
