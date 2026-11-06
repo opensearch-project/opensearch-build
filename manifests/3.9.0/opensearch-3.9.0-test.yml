@@ -106,6 +106,14 @@ components:
         path.repo:
           - /tmp
           - logs
+        # Enable the gRPC aux transport (transport-grpc core module, shipped in the distribution) so the
+        # k-NN gRPC ITs (org.opensearch.knn.integ.grpc.*) can dial the node. The port is pinned to 9400 to
+        # match tests.grpc.port's default in KNNGrpcIntegTestCase (integtest.sh runs integTest against the
+        # external cluster and does not pass -Dtests.grpc.port). The gRPC ITs run plaintext and are skipped
+        # under the with-security config (https=true), so no secure-transport-grpc/TLS wiring is needed here.
+        aux.transport.types:
+          - transport-grpc
+        aux.transport.transport-grpc.port: 9400
     smoke-test:
       test-spec: k-NN.yml
   - name: ml-commons
