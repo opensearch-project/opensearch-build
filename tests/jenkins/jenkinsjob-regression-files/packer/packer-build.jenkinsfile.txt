@@ -13,7 +13,7 @@
                packer-build-lf.withSecrets({secrets=[{envVar=vpc_id, secretRef=op://opensearch-release-secrets/packer-build-ids/jenkins-agent-vpc-id-lf}, {envVar=subnet_id, secretRef=op://opensearch-release-secrets/packer-build-ids/jenkins-agent-subnet-id-lf}, {envVar=sg_id, secretRef=op://opensearch-release-secrets/packer-build-ids/jenkins-agent-sg-id-lf}, {envVar=region_id, secretRef=op://opensearch-release-secrets/packer-build-ids/jenkins-agent-region-id-lf}]}, groovy.lang.Closure)
                packer-build-lf.writeJSON({file=./packer/substitute_jenkins-agent-al2-arm64.json, json={variables={name-base=Jenkins-Agent-AL2-X64, os-version=AL2, build-region=region_id_123, build-vpc=vpc_id_123, build-subnet=subnet_id_123, build-secgrp=sg_id_123, build-time={{isotime "2006-01-02T03-04-05Z"}}, aws_ami_region=region_id_123}}, pretty=2})
                packer-build-lf.withSecrets({secrets=[{envVar=AWS_ACCOUNT_PUBLIC, secretRef=op://opensearch-release-secrets/aws-accounts/jenkins-aws-account-public-lf}]}, groovy.lang.Closure)
-                  packer-build-lf.withAWS({role=opensearch-packer, roleAccount=aws_account_public_123, duration=3600, roleSessionName=jenkins-session, useNode=true}, groovy.lang.Closure)
+                  packer-build-lf.withAWS({role=opensearch-packer, roleAccount=aws_account_public_123, duration=3600, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      packer-build-lf.sh(cd packer && packer build -color=false substitute_jenkins-agent-al2-arm64.json)
          packer-build-lf.script(groovy.lang.Closure)
             packer-build-lf.postCleanup()
