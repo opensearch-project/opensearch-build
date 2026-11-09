@@ -22,10 +22,10 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: bd8e22b90110457db2743c938234d05c06654811
+    ref: 7446d1a01ac7d52736993451cb91ed8b0e9f150a
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 9d6bf88d325477933293771ea0ce3d5faccf4ba9
+    ref: daa9b040f2b36a1751ee3e9668c41be9830a244c
     platforms:
       - linux
       - windows
@@ -39,13 +39,13 @@ components:
       - common-utils
   - name: opensearch-remote-metadata-sdk
     repository: https://github.com/opensearch-project/opensearch-remote-metadata-sdk.git
-    ref: 5929bb86273c5d61e5955c50bdaa460c9b877307
+    ref: 006f69ab50d6c21edf04408f38da69724fb914ff
     platforms:
       - linux
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 3d48af7b8be05f55d1af3869eb55990610e8f01d
+    ref: 93d84c735c771baf9188e17775a31c2fc48c7128
     platforms:
       - linux
       - windows
@@ -89,7 +89,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: c485beafb136c5eb3be5fd77731db47700b0ade0
+    ref: 16489a3092e4ae84ef722911d39f717b0b4e1a34
     platforms:
       - linux
       - windows
@@ -100,7 +100,7 @@ components:
       - security
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 947531fa43248f13b35a4f20af40b537b0a7a5cb
+    ref: 44839334abe4c5c6c97480209fe0b0306f657ebf
     platforms:
       - linux
       - windows
@@ -136,7 +136,7 @@ components:
       - common-utils
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: 97c8871f2cdd5821600bba80ed754bf3747f8ee8
+    ref: efcdb4a5828b9e87c362c800d39aa31090eff604
     platforms:
       - linux
       - windows
@@ -145,7 +145,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 676ac007910a5cdcf0128f9cf3405c0924f36d46
+    ref: 2d9a71f3a1d11394477cbc1829e270039b4ae038
     platforms:
       - linux
       - windows
@@ -221,7 +221,7 @@ components:
       - job-scheduler
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: cd1124cde30e2a08f2a6db8c1a5dac1285fb3d26
+    ref: a54c1ce130d5620eb4f94ef8f9464a7fe0f31920
     platforms:
       - linux
       - windows
