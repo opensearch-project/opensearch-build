@@ -31,7 +31,6 @@ pipeline {
         parameterizedCron '''
             H */4 * * * %INPUT_MANIFEST=3.11.0/opensearch-3.11.0.yml
             H */4 * * * %INPUT_MANIFEST=2.19.8/opensearch-2.19.8.yml
-            H */4 * * * %INPUT_MANIFEST=3.10.0/opensearch-3.10.0.yml
         '''
     }
     parameters {
