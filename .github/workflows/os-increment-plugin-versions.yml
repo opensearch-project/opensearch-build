@@ -58,8 +58,8 @@ jobs:
         branch:
           - '2.19'
           - 'main'
-          - '3.9'
           - '3.10'
+          - '3.11'
     steps:
       - name: Check out OpenSearch repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -108,6 +108,15 @@ jobs:
           if [ ${{ matrix.entry.path }} ]; then
             echo "The gradle path is ${{ matrix.entry.path }}"
             cd ${{ matrix.entry.path }}
+          fi
+          # Skip if plugin is already ahead of core (e.g. plugin 3.9.1 vs core 3.9.0) to avoid downgrade PRs
+          PLUGIN_VERSION_NUMBER=$(./gradlew properties -q | awk '/^version:/ {print $2; exit}' | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+' || true)
+          if [ -z "$PLUGIN_VERSION_NUMBER" ]; then
+            echo "::warning::${{ matrix.entry.repo }} ${{ matrix.branch }}: cannot read plugin version, skip downgrade check"
+          fi
+          if [ -n "$PLUGIN_VERSION_NUMBER" ] && [ "$PLUGIN_VERSION_NUMBER" != "${{ env.OPENSEARCH_VERSION_NUMBER }}" ] && printf '%s\n%s\n' "${{ env.OPENSEARCH_VERSION_NUMBER }}" "$PLUGIN_VERSION_NUMBER" | sort -V -C; then
+            echo "::notice::${{ matrix.entry.repo }} ${{ matrix.branch }}: plugin version $PLUGIN_VERSION_NUMBER is newer than core ${{ env.OPENSEARCH_VERSION_NUMBER }}, skip increment"
+            exit 0
           fi
           ./gradlew updateVersion -DnewVersion=${{ env.OPENSEARCH_VERSION }}
 

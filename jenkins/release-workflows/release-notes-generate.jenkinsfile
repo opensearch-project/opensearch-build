@@ -15,6 +15,11 @@ lib = library(identifier: 'jenkins@12.0.0', retriever: modernSCM([
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
+def secret_github_bot = [
+    [envVar: 'GITHUB_USER', secretRef: 'op://opensearch-release-secrets/github-bot/ci-bot-username'],
+    [envVar: 'GITHUB_TOKEN', secretRef: 'op://opensearch-release-secrets/github-bot/ci-bot-token']
+]
+
 pipeline {
     options {
         timeout(time: 2, unit: 'HOURS')
@@ -119,7 +124,7 @@ pipeline {
                                                         } else {
                                                             filename = "opensearch-${repoName}.release-notes-${version}.0.md"
                                                         }
-                                                        withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                                        withSecrets(secrets: secret_github_bot) {
                                                             def refParam = params.REF ? "--ref ${REF}" : ""
                                                             def skipChangelogFlag = params.SKIP_CHANELOG ? "--skip-changelog" : ""
                                                             def commitSelectionArg = params.BASE_REF ? "--base-ref ${BASE_REF}" : "--date ${GIT_LOG_DATE}"

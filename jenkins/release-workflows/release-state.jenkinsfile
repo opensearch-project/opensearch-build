@@ -30,7 +30,7 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H * * * * %VERSION=3.9.0;CRITERIA=all
+            H * * * * %VERSION=3.10.0;CRITERIA=all
             H 1 * * * %CRITERIA=all
         '''
     }

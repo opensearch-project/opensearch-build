@@ -79,6 +79,9 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        path.repo:
+          - /tmp
     smoke-test:
       test-spec: geospatial.yml
   - name: index-management
