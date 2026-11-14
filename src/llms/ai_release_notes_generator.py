@@ -54,13 +54,12 @@ class AIReleaseNotesGenerator:
         return delay + jitter
 
     def call_bedrock_claude(self, prompt: str, send_temperature: bool = True) -> str:
-        """Call AWS Bedrock Claude Sonnet 3.5 v2 model with retry logic"""
+        """Call the configured AWS Bedrock Claude model with retry logic"""
 
         # Prepare the request body
         request_body = {
             "anthropic_version": "bedrock-2023-05-31",
             "max_tokens": self.max_tokens_override,
-            "temperature": 0.1,
             "messages": [
                 {
                     "role": "user",
@@ -68,8 +67,8 @@ class AIReleaseNotesGenerator:
                 }
             ]
         }
-        if not send_temperature:
-            del request_body["temperature"]
+        if send_temperature:
+            request_body["temperature"] = 0.1
 
         last_exception: Exception = None
 

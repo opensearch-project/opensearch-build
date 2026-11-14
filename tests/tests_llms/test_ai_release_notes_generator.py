@@ -141,8 +141,8 @@ class TestAIReleaseNotesGenerator(unittest.TestCase):
         expected_body = {
             "anthropic_version": "bedrock-2023-05-31",
             "max_tokens": 2000,
-            "temperature": 0.1,
-            "messages": [{"role": "user", "content": "Test prompt"}]
+            "messages": [{"role": "user", "content": "Test prompt"}],
+            "temperature": 0.1
         }
         self.mock_bedrock_client.invoke_model.assert_called_once_with(
             modelId="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
