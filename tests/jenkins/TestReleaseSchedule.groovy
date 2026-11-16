@@ -32,7 +32,7 @@ class TestReleaseSchedule extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('13.9.0')
+                .defaultVersion('lf-jenkins')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -68,7 +68,7 @@ class TestReleaseSchedule extends BuildPipelineTest {
     @Test
     void testRegistersEachParsedRelease() {
         addParam('RELEASES_URL', 'https://opensearch.org/releases.html')
-        runScript('jenkins/release-workflows/release-schedule.jenkinsfile')
+        runScript('jenkins/release-workflows/release-schedule-lf.jenkinsfile')
         assertThat(getCommandExecutions('echo', 'Parsed 2 release schedule row(s)'),
                 hasItem(containsString('Parsed 2 release schedule row(s) from https://opensearch.org/releases.html.')))
         assertThat(getCommandExecutions('echo', 'Registering schedule for 3.5.0'),

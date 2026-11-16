@@ -33,7 +33,7 @@ jobs:
 
   manifest-checks:
     needs: [list-changed-manifests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       PYTHON_VERSION: 3.9
     strategy:
