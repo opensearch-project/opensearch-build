@@ -1,5 +1,78 @@
 # OpenSearch and OpenSearch Dashboards 3.10.0 Release Notes
 
+## Release Highlights
+
+OpenSearch 3.10 adds deeper observability for applications and AI agents, simpler hybrid and agentic search, pull-based ingestion from object storage, and cleaner plugin state recovery from snapshots.
+
+### New and Updated Features
+
+#### Observability and analytics
+
+* **View databases, queues, and external APIs on the service map:** With Data Prepper 2.17, APM detects dependencies such as PostgreSQL, Redis, Kafka, external HTTP services, and LLM endpoints in client spans. Each dependency appears as a typed node with its own rate, error, and duration (RED) metrics.
+* **Trace AI agent conversations from session to failing call:** A new Sessions view in Agent Traces groups agent executions into multi-turn conversations. You can open a failing turn to identify the LLM or tool call that failed, and a new Related logs tab lists the logs generated during each trace.
+* **Visualize Prometheus metrics in Vega and Vega-Lite:** Vega and Vega-Lite specifications can now query Prometheus data connections using PromQL. Data is fetched on the server, so you do not need to enable external URLs.
+* **Build every chart from one visualization editor:** Create visualization now recommends the visualization editor, and the classic types have moved to a collapsed Legacy visualization types section. A Code/Builder switch lets you build PPL queries point by point.
+* **Scale dashboard variables to large value lists:** You can search the full list of a variable's values. A new Custom all value field lets you specify the query value used when All is selected.
+* **Visualize data flows with Sankey charts:** A new Sankey visualization in Discover and Dashboards shows how volume flows between two fields. You can build one from a PPL stats ... by query.
+* **Accelerate PPL queries with time-range index pruning:** PPL now skips indexes that hold no data in the selected time range, including data stream backing indexes. Query results do not change.
+* **Stream PPL results and run queries asynchronously:** When streaming results are enabled, Discover shows PPL results while a long-running query runs, and you can end the query early. Applications can submit PPL queries asynchronously, track their progress, and cancel them.
+* **Query flat_object fields with PPL:** PPL can read, filter, convert, and inspect the type of the leaf fields of flat_object fields.
+* **Run cross-cluster PPL queries:** Remote and mixed local and remote index patterns now work in PPL and Discover, even when no matching index exists on the local cluster.
+* **Use Unicode string literals in PPL:** The Calcite PPL engine now supports Unicode string literals.
+* **Limit regex work in PPL:** A new dynamic setting, plugins.ppl.regex.match.limit (default 100000), limits the number of steps performed during a single parse or rex regex match.
+* **Export explicit bucket histograms from OpenTelemetry metrics:** A new static setting lets the OpenTelemetry metrics exporter emit explicit bucket histograms. This can help you send metrics to backends that do not accept exponential histograms.
+* **Set the OpenTelemetry service name for each cluster:** A new telemetry.otel.service.name setting replaces the fixed OpenSearch service name. This makes traces from multiple clusters easier to tell apart in a shared backend.
+
+#### Search modernization
+
+* **Run hybrid queries without a search pipeline:** A new fusion mode for the hybrid query defines score normalization and combination in the query body. Fused hybrid queries can be nested inside bool, dis_max, or other fused hybrid queries.
+* **Set hybrid subquery weights per request:** A new weights parameter sets subquery weights for each request, in fusion mode or in pipeline-based queries.
+* **Return a full page of distinct groups from hybrid queries:** A new index setting makes hybrid queries with collapse collect the top groups instead of the top documents. It is disabled by default.
+* **Connect to Gemini Enterprise Agent Platform models:** Google Gemini Enterprise Agent Platform (formerly Vertex AI) endpoints are now included in the default trusted endpoint list. The blueprints for text generation, text embeddings, streaming, and batch inference have been updated and tested.
+* **Combine half-float storage with deeper compression:** half_float vectors now support 2-bit and 4-bit scalar quantization. New SIMD kernels can accelerate graph construction for 2-bit and 4-bit indexes, and 1-bit quantized queries are now scored using a precomputed table.
+* **Use k-NN queries in percolator fields:** k-NN queries stored in percolator fields now run with exact search instead of failing.
+* **Rescore nested document results on the Lucene engine:** Rescoring now works with expand_nested_docs for the Lucene engine, so nested document results are refined using full-precision distances.
+* **Use %queryText% in LLM-as-a-Judge prompts:** LLM-as-a-Judge prompt templates in Search Relevance Workbench now use %queryText% as the standard placeholder. Existing templates that use %SearchText% continue to work with a deprecation notice.
+* **Give the query planner the target index name:** The default QueryPlanningTool prompt now passes the index name to the LLM, including for aliases and wildcard patterns. Custom query planner prompts are not affected.
+
+#### Scalability and resiliency
+
+* **Ingest data directly from object storage using pull-based ingestion:** A new object store source reads uncompressed, append-only NDJSON files from Amazon S3, Google Cloud Storage, Azure Blob Storage, or a shared file system. Each record maps to a stable document ID, so recovery and replays do not create duplicates.
+* **Restore plugin state cleanly from a snapshot:** A new post-restore hook lets Alerting and Index State Management (ISM) carry restored state over to the new cluster. REST administrators can now restore an approved list of system indexes without the admin certificate.
+* **Limit concurrent search requests per workload group:** Workload management now supports per-node (node_limit) or cluster-wide (shared_limit) limits on concurrent search requests, applied to the group as a whole, per user, or per role.
+* **Reuse notification channels from any application:** A new Send Notification API delivers messages through the email, chat, SNS, and webhook channels already configured in OpenSearch. A new notifications_send_access role allows sending without permission to create or modify channels.
+* **Identify active queries by user, role, and application in Query Insights:** Live Queries now shows each running PPL query as a single entry and adds user, role, and application ID columns. The live query tables are now sortable.
+* **Return only the top rows from _cat APIs:** The _cat APIs now accept a limit parameter that is applied after sorting. For example, s=store:desc&limit=5 returns the five largest entries.
+* **Sustain indexing throughput under concurrent bulk loads:** XContent now uses a thread-local JSON buffer recycler by default, which can help prevent throughput drops during heavy concurrent bulk indexing. The new opensearch.xcontent.recycler.pool system property lets you switch back to the previous pool.
+
+#### Security
+
+* **Update many roles, role mappings, and action groups at once:** New bulk create and update operations validate the full request before writing any change. One invalid or unauthorized entry causes the whole request to be rejected.
+* **Store on-behalf-of token keys in a keystore:** On-behalf-of token role claims are now encrypted with AES-256-GCM. Signing and encryption keys can be loaded from a node-level keystore instead of the security index.
+* **Investigate failed logins from audit logs:** Failed login audit events now record the attempted user and the reason the credential was refused. Raw tokens are not stored.
+* **Protect every resource type in a shared index:** Resource sharing now requires every resource type stored in the same index to be protected together, and the Security plugin flags misconfigurations at startup.
+* **Run Security configuration changes as background tasks:** Security configuration write APIs now accept a wait_for_completion parameter. The default behavior is unchanged.
+
+#### Infrastructure updates
+
+* **JDK security fixes:** The bundled OpenJDK builds include October 2026 security fixes.
+
+#### Experimental features
+
+OpenSearch 3.10 includes the following experimental functionality. For instructions on how to enable experimental features, refer to the documentation for the feature.
+
+* **Keep agentic search predictable using search templates:** The LLM selects a registered search template and fills in only its parameters instead of writing the full query DSL. Template filling can run in the OpenSearch cluster or the OpenSearch Agent Server.
+* **Enhance performance with Intel Scalable Vector Search:** A sandbox engine framework in the k-NN plugin supports experimental vector search engines, with Intel Scalable Vector Search (SVS) as the first. SVS uses Vamana graphs and LeanVec compression.
+* **Check how a cluster setting is defined before you change it:** A new experimental API returns the definition of any cluster setting, including plugin-provided settings: whether it is dynamic or static, its default, and its value type and allowed range. It reports definitions only, not configured values.
+
+
+## Release Details
+[OpenSearch and OpenSearch Dashboards 3.10.0](https://opensearch.org/artifacts/by-version/#release-3-10-0) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-3.10.0.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-3.10.0.md).
+
 ## FEATURES
 
 ### OpenSearch Alerting Dashboards Plugin
