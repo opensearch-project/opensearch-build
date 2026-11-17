@@ -95,7 +95,7 @@ class TestPackerBuild extends BuildPipelineTest {
         assertThat(gitCheckoutCommands, hasItem("{\$class=GitSCM, branches=[{name=main}], userRemoteConfigs=[{url=https://github.com/opensearch-project/opensearch-ci}]}".toString()))
 
         def aws = getCommands('withAWS', 'packer')
-        assertThat(aws, hasItem('{role=opensearch-packer, roleAccount=aws_account_public_123, duration=3600, roleSessionName=jenkins-session, useNode=true}, groovy.lang.Closure'))
+        assertThat(aws, hasItem('{role=opensearch-packer, roleAccount=aws_account_public_123, duration=3600, roleSessionName=jenkins-session}, groovy.lang.Closure'))
 
         def packerCommands = getCommands('sh', 'packer')
         assertThat(packerCommands, hasItem('cd packer && packer build -color=false substitute_jenkins-agent-al2-arm64.json'))
