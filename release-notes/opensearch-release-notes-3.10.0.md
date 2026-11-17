@@ -379,10 +379,6 @@
 
 * Add test for PluginClient listener that completes inside runAs on the calling thread ([#1027](https://github.com/opensearch-project/common-utils/pull/1027))
 
-### OpenSearch Custom Codecs
-
-* Add SPDX license header checker and missing license headers to source files ([#372](https://github.com/opensearch-project/custom-codecs/pull/372))
-
 ### OpenSearch Dashboards Maps
 
 * Pin Cypress version in FTR E2E workflow to prevent breakage from upstream major releases ([#876](https://github.com/opensearch-project/dashboards-maps/pull/876))
@@ -401,10 +397,6 @@
 
 * Raise the REST integration test task wait cap to 60 seconds for slow CI runners ([#5195](https://github.com/opensearch-project/ml-commons/pull/5195))
 * Skip `RestSearchTemplateFillToolIT` on the containerized cluster leg where the mock server is unreachable ([#5165](https://github.com/opensearch-project/ml-commons/pull/5165))
-
-### OpenSearch ML Commons Dashboards
-
-* Add SPDX license header checker and missing license headers to source files ([#516](https://github.com/opensearch-project/ml-commons-dashboards/pull/516))
 
 ### OpenSearch Neural Search
 
@@ -496,11 +488,6 @@
 
 * Update moment dependency to 2.31.0 to address CVEs ([#1260](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1260))
 
-### OpenSearch Asynchronous Search
-
-* Move @bharath-techie to emeritus maintainer status ([#877](https://github.com/opensearch-project/asynchronous-search/pull/877))
-* Remove trailing blank line from MAINTAINERS.md to fix spotlessMiscCheck build failure ([#883](https://github.com/opensearch-project/asynchronous-search/pull/883))
-
 ### OpenSearch Dashboards Assistant
 
 * Update brace-expansion to 5.0.12 and dompurify to 3.4.17 to address CVEs ([#748](https://github.com/opensearch-project/dashboards-assistant/pull/748))
@@ -512,7 +499,6 @@
 ### OpenSearch Dashboards Notifications
 
 * Remediate CVEs in dashboards-notifications by bumping `qs` to 6.16.0 ([#502](https://github.com/opensearch-project/dashboards-notifications/pull/502))
-* Update maintainer status for manaswini1920 to emeritus ([#492](https://github.com/opensearch-project/dashboards-notifications/pull/492))
 
 ### OpenSearch Dashboards Observability
 
@@ -525,28 +511,14 @@
 ### OpenSearch Dashboards Query Workbench
 
 * Bump `qs` to 6.16.1 to address CVE-2026-110816 (medium severity DoS) ([#615](https://github.com/opensearch-project/dashboards-query-workbench/pull/615))
-* Move @anirudha to emeritus maintainer status ([#604](https://github.com/opensearch-project/dashboards-query-workbench/pull/604))
 
 ### OpenSearch Dashboards Reporting
 
-* Update maintainer status for penghuo to emeritus ([#813](https://github.com/opensearch-project/dashboards-reporting/pull/813))
 * Update brace-expansion to 1.1.21/2.1.7 and dompurify to 3.4.17 to address CVEs ([#831](https://github.com/opensearch-project/dashboards-reporting/pull/831))
 
 ### OpenSearch Flow Framework
 
 * Deprecate `filter_by_backend_roles` setting, targeting removal in 4.0 in favor of security plugin resource sharing ([#1490](https://github.com/opensearch-project/flow-framework/pull/1490))
-
-### OpenSearch Index Management
-
-* Update maintainer status for vikasvb90 to emeritus ([#1744](https://github.com/opensearch-project/index-management/pull/1744))
-
-### OpenSearch Job Scheduler
-
-* Move @joshpalis to emeritus maintainer status ([#1012](https://github.com/opensearch-project/job-scheduler/pull/1012))
-
-### OpenSearch ML Commons
-
-* Increment version to 3.10.0-SNAPSHOT ([#5100](https://github.com/opensearch-project/ml-commons/pull/5100))
 
 ### OpenSearch Query Insights Dashboards
 
