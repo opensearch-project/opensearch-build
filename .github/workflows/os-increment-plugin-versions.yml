@@ -70,7 +70,7 @@ jobs:
 
       - name: Fetch OpenSearch version
         run: |
-          OPENSEARCH_VERSION=$(cat buildSrc/version.properties | grep opensearch | cut -d= -f2 | grep -oE '[0-9.]+')
+          OPENSEARCH_VERSION=$(python3 -c 'import tomllib; print(tomllib.load(open("gradle/libs.versions.toml", "rb"))["versions"]["opensearch"])')
           echo "OPENSEARCH_VERSION_NUMBER=$OPENSEARCH_VERSION" >> $GITHUB_ENV
           OPENSEARCH_VERSION=$OPENSEARCH_VERSION-SNAPSHOT
           echo "OPENSEARCH_VERSION=$OPENSEARCH_VERSION" >> $GITHUB_ENV
