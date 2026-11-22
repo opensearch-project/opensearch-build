@@ -72,11 +72,10 @@ class PerfTestCluster(TestCluster):
         self.cluster_endpoint_with_port = None
 
     def start(self) -> None:
-        os.chdir(self.work_dir)
         command = f"cdk deploy {self.params} --outputs-file {self.output_file}"
-        logging.info(f'Executing "{command}" in {os.getcwd()}')
-        subprocess.check_call(command, cwd=os.getcwd(), shell=True)
-        with open(self.output_file, "r") as read_file:
+        logging.info(f'Executing "{command}" in {self.work_dir}')
+        subprocess.check_call(command, cwd=self.work_dir, shell=True)
+        with open(os.path.join(self.work_dir, self.output_file), "r") as read_file:
             load_output = json.load(read_file)
             self.create_endpoint(load_output)
 
@@ -97,10 +96,9 @@ class PerfTestCluster(TestCluster):
         return 443 if self.cluster_config.security else 80
 
     def terminate(self) -> None:
-        os.chdir(self.work_dir)
         command = f"cdk destroy {self.params} --force"
-        logging.info(f'Executing "{command}" in {os.getcwd()}')
-        subprocess.check_call(command, cwd=os.getcwd(), shell=True)
+        logging.info(f'Executing "{command}" in {self.work_dir}')
+        subprocess.check_call(command, cwd=self.work_dir, shell=True)
 
     def service(self) -> Service:  # type: ignore[override]
         return None
