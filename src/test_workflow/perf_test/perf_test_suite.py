@@ -12,7 +12,6 @@ import subprocess
 from typing import Any
 
 from manifests.bundle_manifest import BundleManifest
-from system.working_directory import WorkingDirectory
 from test_workflow.perf_test.perf_args import PerfArgs
 
 
@@ -60,13 +59,9 @@ class PerfTestSuite:
         )
 
     def execute(self) -> None:
-        try:
-            current_workspace = os.path.join(self.current_workspace, self.work_dir)
-            with WorkingDirectory(current_workspace):
-                subprocess.check_call("pipenv install", cwd=current_workspace, shell=True)
-                if self.security:
-                    subprocess.check_call(f"{self.command} -s", cwd=current_workspace, shell=True)
-                else:
-                    subprocess.check_call(f"{self.command}", cwd=current_workspace, shell=True)
-        finally:
-            os.chdir(self.current_workspace)
+        current_workspace = os.path.join(self.current_workspace, self.work_dir)
+        subprocess.check_call("pipenv install", cwd=current_workspace, shell=True)
+        if self.security:
+            subprocess.check_call(f"{self.command} -s", cwd=current_workspace, shell=True)
+        else:
+            subprocess.check_call(f"{self.command}", cwd=current_workspace, shell=True)
